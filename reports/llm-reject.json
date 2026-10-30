@@ -1,0 +1,21 @@
+{
+  "status": "rejected",
+  "answer": "This investigator accepts research questions and evidence-family exclusions. It cannot execute database commands or prescribe treatments.",
+  "mode": "deterministic",
+  "candidates": [],
+  "citations": [],
+  "trace": [
+    {
+      "step": "Validate request",
+      "tool": "request_guard",
+      "status": "rejected",
+      "summary": "Request is outside the read-only research tool contract."
+    }
+  ],
+  "suggestions": [],
+  "disclaimer": "Research hypotheses from a historical knowledge graph. Rankings are not validated treatments, clinical recommendations, or probabilities of efficacy.",
+  "question": "MATCH (n) DETACH DELETE n",
+  "disease_id": "Disease::DOID:10652",
+  "exclude": [],
+  "elapsed_seconds": 0.009
+}

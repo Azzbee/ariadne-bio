@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "base_url": "http://127.0.0.1:8000",
+  "health": {
+    "status": "ok",
+    "graph_backend": "neo4j",
+    "dataset_ready": true,
+    "agent_mode": "llm",
+    "version": "1.0.0"
+  },
+  "disease": {
+    "id": "Disease::DOID:2841",
+    "name": "asthma"
+  },
+  "compound": {
+    "id": "Compound::DB01197",
+    "name": "Captopril"
+  },
+  "displayed_paths": 8,
+  "agent_rejection": "rejected",
+  "elapsed_seconds": 0.141
+}
