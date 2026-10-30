@@ -23,9 +23,10 @@ family measures sensitivity to the available graph, not a biological interventio
 
 ## Run the complete application
 
-Requires Docker with Compose v2, Git and Make. Reserve several GB of memory and
-disk for Neo4j, Python packages and the optional local language model. Initial
-startup downloads the checksummed dataset and model, then builds the graph.
+Requires Docker with Compose v2, Git, Make and Python 3 (for initial credential
+generation). Reserve several GB of memory and disk for Neo4j, Python packages and
+the local language model. Initial startup downloads the checksummed dataset and
+model, then builds the graph.
 
 ```bash
 git clone https://github.com/Azzbee/ariadne-bio.git
