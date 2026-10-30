@@ -1,0 +1,30 @@
+name: Import verified source history
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+      - name: Verify and import tested implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'd3247b2b9299fa063c398fd7fa566237976b6d3d726ae0db9842a6f4de0d9019  ariadne-release.bundle' | sha256sum --check --strict
+          git bundle verify ariadne-release.bundle
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch ./ariadne-release.bundle feat/evidence-workbench
+          git switch -c feature/evidence-workbench
+          git merge --no-ff FETCH_HEAD -m 'Import verified ARIADNE implementation and measured evidence'
+          git rm ariadne-release.bundle
+          git commit -m 'Remove temporary source transport bundle'
+          git push origin HEAD:feature/evidence-workbench
