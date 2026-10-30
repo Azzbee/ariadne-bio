@@ -135,7 +135,8 @@ flowchart TD
 Neo4j stores typed, namespace-qualified entities and provenance. Sparse feature
 matrices support reproducible full-candidate ranking. GDS exposes graph proximity
 and compound target similarity as separate analysis tools. The agent explains
-structured tool results and never provides benchmark labels or model scores.
+structured tool results. The language model never determines benchmark labels or
+model scores; those come from the recorded data and deterministic graph pipeline.
 
 ## API examples
 
