@@ -1,0 +1,107 @@
+{
+  "name": "Typed-path logistic retrieval",
+  "version": "1.0",
+  "seed": 42,
+  "feature_names": [
+    "log_direct",
+    "log_interaction",
+    "log_pathway",
+    "normalized_direct",
+    "normalized_interaction",
+    "normalized_pathway",
+    "log_compound_degree",
+    "log_disease_degree"
+  ],
+  "mean": [
+    0.29633369852200747,
+    1.0139479738011008,
+    4.89283005021538,
+    0.011665114262097119,
+    0.09592414403867225,
+    2.0614783502002973,
+    1.7342632989095008,
+    5.01064288854549
+  ],
+  "scale": [
+    0.5160971623752143,
+    1.1811835841241562,
+    2.3639134330057314,
+    0.02195736026985026,
+    0.16144380687506094,
+    1.1629784513257757,
+    0.9576089201068587,
+    1.030146314281978
+  ],
+  "coefficients": [
+    0.3228075516663724,
+    0.8868421691157965,
+    4.028486079269715,
+    0.3168737900138326,
+    -0.34612117207902693,
+    -2.6699919249037065,
+    -0.8184159672334073,
+    -1.3799764522794016
+  ],
+  "intercept": -0.5903294074627099,
+  "regularization_C": 10.0,
+  "training_positive_pairs": 528,
+  "training_unobserved_pairs": 5280,
+  "class_weight": "balanced",
+  "negative_sampling_seed": 43,
+  "validation_metrics": {
+    "recall_at_10": 0.07964601769911504,
+    "mrr": 0.027357082678330917,
+    "mean_rank": 287.46902654867256,
+    "median_rank": 155.0,
+    "hits_at_10": 9,
+    "evaluated_links": 113,
+    "evaluated_diseases": 44
+  },
+  "selection": "Maximum validation MRR, then Recall@10, then stronger regularization",
+  "validation_search": [
+    {
+      "C": 0.01,
+      "recall_at_10": 0.035398230088495575,
+      "mrr": 0.018908297474223262,
+      "mean_rank": 306.39823008849555,
+      "median_rank": 175.0,
+      "hits_at_10": 4,
+      "evaluated_links": 113,
+      "evaluated_diseases": 44
+    },
+    {
+      "C": 0.1,
+      "recall_at_10": 0.04424778761061947,
+      "mrr": 0.024553378021032482,
+      "mean_rank": 297.87610619469024,
+      "median_rank": 158.0,
+      "hits_at_10": 5,
+      "evaluated_links": 113,
+      "evaluated_diseases": 44
+    },
+    {
+      "C": 1.0,
+      "recall_at_10": 0.07079646017699115,
+      "mrr": 0.02606531424723157,
+      "mean_rank": 289.2300884955752,
+      "median_rank": 160.0,
+      "hits_at_10": 8,
+      "evaluated_links": 113,
+      "evaluated_diseases": 44
+    },
+    {
+      "C": 10.0,
+      "recall_at_10": 0.07964601769911504,
+      "mrr": 0.027357082678330917,
+      "mean_rank": 287.46902654867256,
+      "median_rank": 155.0,
+      "hits_at_10": 9,
+      "evaluated_links": 113,
+      "evaluated_diseases": 44
+    }
+  ],
+  "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+  "interpretation": "Relative retrieval score; not calibrated clinical probability",
+  "fit_scope": "Training split only; no refit on validation or test labels",
+  "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3"
+}
