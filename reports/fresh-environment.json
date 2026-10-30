@@ -1,0 +1,48 @@
+{
+  "executed_at": "2026-10-30T21:40:00.265848+00:00",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "executable": "/tmp/ariadne-venv-clean/bin/python",
+  "include_system_site_packages": false,
+  "site_package_paths": [
+    "/tmp/ariadne-venv-clean/lib/python3.12/site-packages"
+  ],
+  "dependency_install": {
+    "command": "python -m pip install --require-hashes -r requirements-dev.txt",
+    "exit_code": 0
+  },
+  "lock_sha256": "ff42eb8b8f0286691f8e7aedb82d7f19cfd8c8b1e2752e9c54a46ed72bc06605",
+  "commands": [
+    {
+      "command": [
+        "/tmp/ariadne-venv-clean/bin/python",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.324,
+      "output": "No broken requirements found.\n"
+    },
+    {
+      "command": [
+        "make",
+        "test",
+        "PYTHON=/tmp/ariadne-venv-clean/bin/python"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 6.925,
+      "output": "/tmp/ariadne-venv-clean/bin/python -m pytest -m \"not integration and not llm\" --cov --cov-report=term-missing --cov-report=xml --junitxml=reports/junit.xml\n============================= test session starts ==============================\nplatform linux -- Python 3.12.14, pytest-9.2.0, pluggy-1.7.0\nrootdir: /workspace/scratch/6b648cf07c4b/ariadne\nconfigfile: pyproject.toml\ntestpaths: tests\nplugins: platformdirs-4.14.0, anyio-4.15.1, cov-7.1.0, langsmith-0.14.16\ncollected 111 items / 8 deselected / 103 selected\n\ntests/test_agent.py .............................                        [ 28%]\ntests/test_api.py .......................                                [ 50%]\ntests/test_evaluation.py ...........                                     [ 61%]\ntests/test_export.py .........                                           [ 69%]\ntests/test_graph_engine.py ...........................                   [ 96%]\ntests/test_infrastructure.py ....                                        [100%]\n\n- generated xml file: /workspace/scratch/6b648cf07c4b/ariadne/reports/junit.xml -\n================================ tests coverage ================================\n_______________ coverage: platform linux, python 3.12.14-final-0 _______________\n\nName                         Stmts   Miss Branch BrPart  Cover   Missing\n------------------------------------------------------------------------\napp/__init__.py                  1      0      0      0   100%\napp/agent.py                   164      5     42      3    95%   135, 230-233, 271->273\napp/config.py                   29      0      8      0   100%\napp/graph_engine.py            300      3    116      7    98%   90->92, 103->exit, 133, 148->150, 168, 413, 512->521\napp/main.py                     88      2      6      3    95%   86, 168, 182->184\napp/neo4j_repository.py        142    114     52      0    14%   50-56, 61-76, 83-91, 95, 99-104, 108-117, 121-169, 173-217, 229-242, 250-267, 271-282, 294-306, 315-335\napp/schemas.py                  83      0      2      0   100%\napp/service.py                  32      2     10      1    93%   16-17\nscripts/__init__.py              0      0      0      0   100%\nscripts/evaluate.py            135      6     26      0    96%   363-368\nscripts/export_snapshot.py      87     12     30      4    86%   102, 106, 108, 113, 189-198\nscripts/load_neo4j.py           13     13      2      0     0%   3-20\nscripts/prepare_data.py        106     11     30      3    88%   93, 147, 153, 207-214\n------------------------------------------------------------------------\nTOTAL                         1180    168    324     21    84%\nCoverage XML written to file coverage.xml\nRequired test coverage of 60.0% reached. Total coverage: 83.58%\n====================== 103 passed, 8 deselected in 4.93s =======================\nnode --test frontend/tests/*.test.js\n\u2714 uses the live API when its health endpoint is valid (2.451396ms)\n\u2714 a static host serving HTML at /api does not masquerade as a live graph (0.486385ms)\n\u2714 snapshot case fetches are lazy and concurrent reads share one request (0.781181ms)\n\u2714 missing recorded evidence is reported instead of fabricated (0.899289ms)\n\u2714 snapshot agent exposes deterministic provenance and routes evidence exclusion (1.757026ms)\n\u2714 rejected snapshot requests do not retrieve a case (0.447487ms)\n\u2714 out-of-scope snapshot questions request clarification (0.620478ms)\n\u2714 live endpoint encoding protects namespace IDs and validates response errors (0.499936ms)\n\u2714 manifest case paths cannot traverse directories or load external origins (0.335397ms)\n\u2714 service error details survive into a useful message (3.701627ms)\n\u2714 an explicitly named disease overrides a stale UI selection in snapshot questions (1.324863ms)\n\u2714 multiple distinct explicit diseases require clarification despite a selected disease (0.252512ms)\n\u2714 layout uses exact path topology and leaves imported records untouched (1.363511ms)\n\u2714 empty evidence leaves endpoints but never invents edges (0.962575ms)\n\u2714 layout is deterministic across rerenders (0.527608ms)\n\u2714 metapath families distinguish direct, interaction, and shared pathway evidence (0.19157ms)\n\u2714 published cases are consumable through the actual frontend adapter in every evidence configuration (87.656529ms)\n\u2714 exclusions are allowlisted, deduplicated, and canonically sorted (2.42104ms)\n\u2714 untrusted graph names cannot inject markup (0.283619ms)\n\u2714 only absolute web record links are allowed (0.27766ms)\n\u2714 missing metrics are not displayed as measured zeroes (0.336489ms)\n\u2714 metric normalization retains the model identity (1.151912ms)\n\u2714 ablation comparison does not invent a rank for unpublished candidates (0.437542ms)\n\u2714 read-only guardrail distinguishes evidence exclusion from destructive requests (0.768111ms)\n\u2714 source names stay separate from validated source URLs (0.319023ms)\n\u2714 a shared disease ID takes priority over suggested defaults (0.297069ms)\n\u2714 explicit disease matching keeps the longest overlapping name and whole words (0.813991ms)\n\u2714 disease matching normalizes apostrophes, punctuation, case, and spacing (0.375147ms)\n\u2714 evidence caption describes the execution backend\u2019s actual sampling order (0.307274ms)\n\u2139 tests 29\n\u2139 suites 0\n\u2139 pass 29\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 161.030971\n"
+    },
+    {
+      "command": [
+        "make",
+        "notebook",
+        "PYTHON=/tmp/ariadne-venv-clean/bin/python"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 8.289,
+      "output": "/tmp/ariadne-venv-clean/bin/python infra/run_notebook.py\nExecuted every cell successfully: demo.executed.ipynb\n"
+    }
+  ],
+  "status": "passed"
+}

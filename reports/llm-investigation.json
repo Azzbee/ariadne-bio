@@ -1,0 +1,776 @@
+{
+  "question": "Which compounds have evidence for Alzheimer's disease?",
+  "disease_id": "Disease::DOID:10652",
+  "exclude": [],
+  "status": "complete",
+  "answer": "For Alzheimer's disease, Galantamine ranks first in this graph-based research screen. Its evidence contains 6 direct, 11 interaction, and 1,237 shared-pathway paths. Hetionet also records this compound\u2013disease pair as a treatment label. These connections do not establish therapeutic benefit or safety. Source databases may consolidate multiple reports into a single relationship.",
+  "disease": {
+    "id": "Disease::DOID:10652",
+    "name": "Alzheimer's disease"
+  },
+  "candidates": [
+    {
+      "id": "Compound::DB00674",
+      "name": "Galantamine",
+      "rank": 1,
+      "score": 0.9327727,
+      "baseline_rank": 1,
+      "rank_delta": 0,
+      "known_treatment": true,
+      "features": {
+        "direct": 6,
+        "interaction": 11,
+        "pathway": 1237
+      },
+      "evidence_count": 1254
+    },
+    {
+      "id": "Compound::DB00184",
+      "name": "Nicotine",
+      "rank": 2,
+      "score": 0.92146227,
+      "baseline_rank": 2,
+      "rank_delta": 0,
+      "known_treatment": false,
+      "features": {
+        "direct": 6,
+        "interaction": 15,
+        "pathway": 1976
+      },
+      "evidence_count": 1997
+    },
+    {
+      "id": "Compound::DB00514",
+      "name": "Dextromethorphan",
+      "rank": 3,
+      "score": 0.91685711,
+      "baseline_rank": 3,
+      "rank_delta": 0,
+      "known_treatment": false,
+      "features": {
+        "direct": 5,
+        "interaction": 20,
+        "pathway": 1547
+      },
+      "evidence_count": 1572
+    },
+    {
+      "id": "Compound::DB01355",
+      "name": "Hexobarbital",
+      "rank": 4,
+      "score": 0.9030935,
+      "baseline_rank": 4,
+      "rank_delta": 0,
+      "known_treatment": false,
+      "features": {
+        "direct": 4,
+        "interaction": 19,
+        "pathway": 1042
+      },
+      "evidence_count": 1065
+    },
+    {
+      "id": "Compound::DB00273",
+      "name": "Topiramate",
+      "rank": 5,
+      "score": 0.89980194,
+      "baseline_rank": 5,
+      "rank_delta": 0,
+      "known_treatment": false,
+      "features": {
+        "direct": 4,
+        "interaction": 23,
+        "pathway": 1329
+      },
+      "evidence_count": 1356
+    },
+    {
+      "id": "Compound::DB00476",
+      "name": "Duloxetine",
+      "rank": 6,
+      "score": 0.89787222,
+      "baseline_rank": 6,
+      "rank_delta": 0,
+      "known_treatment": false,
+      "features": {
+        "direct": 4,
+        "interaction": 9,
+        "pathway": 822
+      },
+      "evidence_count": 835
+    },
+    {
+      "id": "Compound::DB00540",
+      "name": "Nortriptyline",
+      "rank": 7,
+      "score": 0.89251815,
+      "baseline_rank": 7,
+      "rank_delta": 0,
+      "known_treatment": false,
+      "features": {
+        "direct": 5,
+        "interaction": 23,
+        "pathway": 2847
+      },
+      "evidence_count": 2875
+    },
+    {
+      "id": "Compound::DB00237",
+      "name": "Butabarbital",
+      "rank": 8,
+      "score": 0.88865855,
+      "baseline_rank": 8,
+      "rank_delta": 0,
+      "known_treatment": false,
+      "features": {
+        "direct": 3,
+        "interaction": 14,
+        "pathway": 454
+      },
+      "evidence_count": 471
+    },
+    {
+      "id": "Compound::DB00515",
+      "name": "Cisplatin",
+      "rank": 9,
+      "score": 0.88775182,
+      "baseline_rank": 9,
+      "rank_delta": 0,
+      "known_treatment": false,
+      "features": {
+        "direct": 4,
+        "interaction": 17,
+        "pathway": 1486
+      },
+      "evidence_count": 1507
+    },
+    {
+      "id": "Compound::DB01242",
+      "name": "Clomipramine",
+      "rank": 10,
+      "score": 0.88360334,
+      "baseline_rank": 10,
+      "rank_delta": 0,
+      "known_treatment": false,
+      "features": {
+        "direct": 4,
+        "interaction": 19,
+        "pathway": 1543
+      },
+      "evidence_count": 1566
+    }
+  ],
+  "evidence": {
+    "disease": {
+      "id": "Disease::DOID:10652",
+      "name": "Alzheimer's disease"
+    },
+    "compound": {
+      "id": "Compound::DB00674",
+      "name": "Galantamine"
+    },
+    "nodes": [
+      {
+        "identifier": "DB00674",
+        "data": "{\"inchi\": \"InChI=1S/C17H21NO3/c1-18-8-7-17-6-5-12(19)9-14(17)21-16-13(20-2)4-3-11(10-18)15(16)17/h3-6,12,14,19H,7-10H2,1-2H3/t12-,14-,17-/m0/s1\", \"inchikey\": \"InChIKey=ASUTZQLVASHGKV-JDFRZJQESA-N\", \"license\": \"CC BY-NC 4.0\", \"source\": \"DrugBank\", \"url\": \"http://www.drugbank.ca/drugs/DB00674\"}",
+        "name": "Galantamine",
+        "id": "Compound::DB00674",
+        "url": "http://www.drugbank.ca/drugs/DB00674",
+        "label": "Compound"
+      },
+      {
+        "identifier": "1141",
+        "data": "{\"chromosome\": \"1\", \"description\": \"cholinergic receptor, nicotinic, beta 2 (neuronal)\", \"license\": \"CC0 1.0\", \"source\": \"Entrez Gene\", \"url\": \"http://identifiers.org/ncbigene/1141\"}",
+        "name": "CHRNB2",
+        "id": "Gene::1141",
+        "url": "http://identifiers.org/ncbigene/1141",
+        "label": "Gene"
+      },
+      {
+        "identifier": "DOID:10652",
+        "data": "{\"license\": \"CC BY 3.0\", \"source\": \"Disease Ontology\", \"url\": \"http://purl.obolibrary.org/obo/DOID_10652\"}",
+        "name": "Alzheimer's disease",
+        "id": "Disease::DOID:10652",
+        "url": "http://purl.obolibrary.org/obo/DOID_10652",
+        "label": "Disease"
+      },
+      {
+        "identifier": "43",
+        "data": "{\"chromosome\": \"7\", \"description\": \"acetylcholinesterase (Yt blood group)\", \"license\": \"CC0 1.0\", \"source\": \"Entrez Gene\", \"url\": \"http://identifiers.org/ncbigene/43\"}",
+        "name": "ACHE",
+        "id": "Gene::43",
+        "url": "http://identifiers.org/ncbigene/43",
+        "label": "Gene"
+      },
+      {
+        "identifier": "1139",
+        "data": "{\"chromosome\": \"15\", \"description\": \"cholinergic receptor, nicotinic, alpha 7 (neuronal)\", \"license\": \"CC0 1.0\", \"source\": \"Entrez Gene\", \"url\": \"http://identifiers.org/ncbigene/1139\"}",
+        "name": "CHRNA7",
+        "id": "Gene::1139",
+        "url": "http://identifiers.org/ncbigene/1139",
+        "label": "Gene"
+      },
+      {
+        "identifier": "1137",
+        "data": "{\"chromosome\": \"20\", \"description\": \"cholinergic receptor, nicotinic, alpha 4 (neuronal)\", \"license\": \"CC0 1.0\", \"source\": \"Entrez Gene\", \"url\": \"http://identifiers.org/ncbigene/1137\"}",
+        "name": "CHRNA4",
+        "id": "Gene::1137",
+        "url": "http://identifiers.org/ncbigene/1137",
+        "label": "Gene"
+      },
+      {
+        "identifier": "351",
+        "data": "{\"chromosome\": \"21\", \"description\": \"amyloid beta (A4) precursor protein\", \"license\": \"CC0 1.0\", \"source\": \"Entrez Gene\", \"url\": \"http://identifiers.org/ncbigene/351\"}",
+        "name": "APP",
+        "id": "Gene::351",
+        "url": "http://identifiers.org/ncbigene/351",
+        "label": "Gene"
+      },
+      {
+        "identifier": "2023",
+        "data": "{\"chromosome\": \"1\", \"description\": \"enolase 1, (alpha)\", \"license\": \"CC0 1.0\", \"source\": \"Entrez Gene\", \"url\": \"http://identifiers.org/ncbigene/2023\"}",
+        "name": "ENO1",
+        "id": "Gene::2023",
+        "url": "http://identifiers.org/ncbigene/2023",
+        "label": "Gene"
+      },
+      {
+        "identifier": "WP706_r80056",
+        "data": "{\"license\": \"CC BY 3.0\", \"source\": \"WikiPathways\", \"url\": \"http://www.wikipathways.org/instance/WP706_r80056\"}",
+        "name": "SIDS Susceptibility Pathways",
+        "id": "Pathway::WP706_r80056",
+        "url": "http://www.wikipathways.org/instance/WP706_r80056",
+        "label": "Pathway"
+      },
+      {
+        "identifier": "4208",
+        "data": "{\"chromosome\": \"5\", \"description\": \"myocyte enhancer factor 2C\", \"license\": \"CC0 1.0\", \"source\": \"Entrez Gene\", \"url\": \"http://identifiers.org/ncbigene/4208\"}",
+        "name": "MEF2C",
+        "id": "Gene::4208",
+        "url": "http://identifiers.org/ncbigene/4208",
+        "label": "Gene"
+      },
+      {
+        "identifier": "1143",
+        "data": "{\"chromosome\": \"15\", \"description\": \"cholinergic receptor, nicotinic, beta 4 (neuronal)\", \"license\": \"CC0 1.0\", \"source\": \"Entrez Gene\", \"url\": \"http://identifiers.org/ncbigene/1143\"}",
+        "name": "CHRNB4",
+        "id": "Gene::1143",
+        "url": "http://identifiers.org/ncbigene/1143",
+        "label": "Gene"
+      }
+    ],
+    "edges": [
+      {
+        "license": "CC BY-NC 4.0",
+        "data": "{\"actions\": [\"allosteric modulator\"], \"license\": \"CC BY-NC 4.0\", \"pubmed_ids\": [\"10971048\", \"11129124\", \"12137632\", \"12177686\", \"12481195\", \"20480924\"], \"sources\": [\"DrugBank (target)\"], \"unbiased\": false}",
+        "sources": [
+          "DrugBank (target)"
+        ],
+        "id": "e_eadb619ee4c9c002d0c9b002",
+        "type": "BINDS",
+        "direction": "both",
+        "source": "Compound::DB00674",
+        "target": "Gene::1141"
+      },
+      {
+        "license": "ODbL 1.0",
+        "data": "{\"license\": \"ODbL 1.0\", \"sources\": [\"DisGeNET\"], \"unbiased\": false}",
+        "sources": [
+          "DisGeNET"
+        ],
+        "id": "e_b198a993016b2dec2dd22067",
+        "type": "ASSOCIATES",
+        "direction": "both",
+        "source": "Disease::DOID:10652",
+        "target": "Gene::1141"
+      },
+      {
+        "license": "CC BY-SA 3.0",
+        "data": "{\"actions\": [\"inhibitor\"], \"affinity_nM\": 136.33782, \"license\": \"CC BY-SA 3.0\", \"pubmed_ids\": [\"1026294\", \"10592235\", \"10606746\", \"10762042\", \"10971048\", \"10971049\", \"11078030\", \"11129124\", \"11752352\", \"12137632\", \"12177686\", \"12481195\", \"20480924\", \"20655219\", \"23041347\"], \"sources\": [\"ChEMBL\", \"DrugBank (target)\", \"DrugCentral (ChEMBL)\"], \"unbiased\": false, \"urls\": [\"https://www.ebi.ac.uk/chembl/compound/inspect/CHEMBL659\"]}",
+        "sources": [
+          "ChEMBL",
+          "DrugBank (target)",
+          "DrugCentral (ChEMBL)"
+        ],
+        "id": "e_c87877ec9a30595bbb421e8c",
+        "type": "BINDS",
+        "direction": "both",
+        "source": "Compound::DB00674",
+        "target": "Gene::43"
+      },
+      {
+        "data": "{\"sources\": [\"DISEASES\", \"DisGeNET\"], \"unbiased\": false}",
+        "sources": [
+          "DISEASES",
+          "DisGeNET"
+        ],
+        "id": "e_359beccc974bc566d35dfc0c",
+        "type": "ASSOCIATES",
+        "direction": "both",
+        "source": "Disease::DOID:10652",
+        "target": "Gene::43"
+      },
+      {
+        "license": "CC BY-NC 4.0",
+        "data": "{\"actions\": [\"allosteric modulator\"], \"license\": \"CC BY-NC 4.0\", \"pubmed_ids\": [\"10971048\", \"11129124\", \"12137632\", \"12177686\", \"12481195\", \"20480924\"], \"sources\": [\"DrugBank (target)\"], \"unbiased\": false}",
+        "sources": [
+          "DrugBank (target)"
+        ],
+        "id": "e_b6e2f89432fe5972cd838633",
+        "type": "BINDS",
+        "direction": "both",
+        "source": "Compound::DB00674",
+        "target": "Gene::1139"
+      },
+      {
+        "license": "ODbL 1.0",
+        "data": "{\"license\": \"ODbL 1.0\", \"sources\": [\"DOAF\", \"DisGeNET\"], \"unbiased\": false}",
+        "sources": [
+          "DOAF",
+          "DisGeNET"
+        ],
+        "id": "e_963fcc789cdf553f037616ad",
+        "type": "ASSOCIATES",
+        "direction": "both",
+        "source": "Disease::DOID:10652",
+        "target": "Gene::1139"
+      },
+      {
+        "data": "{\"sources\": [\"II_literature\", \"hetio-dag\"], \"unbiased\": false}",
+        "sources": [
+          "II_literature",
+          "hetio-dag"
+        ],
+        "id": "e_c40a7dd25c3ddb8a51d0b3bb",
+        "type": "INTERACTS",
+        "direction": "both",
+        "source": "Gene::1137",
+        "target": "Gene::1141"
+      },
+      {
+        "license": "CC BY 4.0",
+        "data": "{\"license\": \"CC BY 4.0\", \"sources\": [\"DISEASES\", \"DOAF\"], \"unbiased\": false}",
+        "sources": [
+          "DISEASES",
+          "DOAF"
+        ],
+        "id": "e_638af0b3df025d749f30f689",
+        "type": "ASSOCIATES",
+        "direction": "both",
+        "source": "Disease::DOID:10652",
+        "target": "Gene::1137"
+      },
+      {
+        "data": "{\"sources\": [\"II_literature\", \"hetio-dag\"], \"unbiased\": false}",
+        "sources": [
+          "II_literature",
+          "hetio-dag"
+        ],
+        "id": "e_0ade070fd05ea580c128cff0",
+        "type": "INTERACTS",
+        "direction": "both",
+        "source": "Gene::43",
+        "target": "Gene::351"
+      },
+      {
+        "data": "{\"sources\": [\"DISEASES\", \"DOAF\", \"DisGeNET\"], \"unbiased\": false}",
+        "sources": [
+          "DISEASES",
+          "DOAF",
+          "DisGeNET"
+        ],
+        "id": "e_ecc466895524b41e9d80a20f",
+        "type": "ASSOCIATES",
+        "direction": "both",
+        "source": "Disease::DOID:10652",
+        "target": "Gene::351"
+      },
+      {
+        "data": "{\"sources\": [\"II_binary\", \"II_literature\", \"hetio-dag\"], \"unbiased\": false}",
+        "sources": [
+          "II_binary",
+          "II_literature",
+          "hetio-dag"
+        ],
+        "id": "e_5416a8f7746e575d9f9052bb",
+        "type": "INTERACTS",
+        "direction": "both",
+        "source": "Gene::43",
+        "target": "Gene::2023"
+      },
+      {
+        "license": "ODbL 1.0",
+        "data": "{\"license\": \"ODbL 1.0\", \"sources\": [\"DisGeNET\"], \"unbiased\": false}",
+        "sources": [
+          "DisGeNET"
+        ],
+        "id": "e_c9b215078d2dc4c33501ebbc",
+        "type": "ASSOCIATES",
+        "direction": "both",
+        "source": "Disease::DOID:10652",
+        "target": "Gene::2023"
+      },
+      {
+        "license": "CC BY 3.0",
+        "data": "{\"license\": \"CC BY 3.0\", \"source\": \"WikiPathways\", \"unbiased\": false, \"url\": \"http://www.wikipathways.org/instance/WP706_r80056\"}",
+        "sources": [
+          "WikiPathways"
+        ],
+        "id": "e_58f79b9c084adc62b9c5c352",
+        "type": "PARTICIPATES",
+        "direction": "both",
+        "source": "Gene::1141",
+        "target": "Pathway::WP706_r80056"
+      },
+      {
+        "license": "CC BY 3.0",
+        "data": "{\"license\": \"CC BY 3.0\", \"source\": \"WikiPathways\", \"unbiased\": false, \"url\": \"http://www.wikipathways.org/instance/WP706_r80056\"}",
+        "sources": [
+          "WikiPathways"
+        ],
+        "id": "e_b546e42cf9078982d96877a9",
+        "type": "PARTICIPATES",
+        "direction": "both",
+        "source": "Gene::4208",
+        "target": "Pathway::WP706_r80056"
+      },
+      {
+        "license": "CC BY 4.0",
+        "data": "{\"license\": \"CC BY 4.0\", \"sources\": [\"GWAS Catalog\"], \"unbiased\": true}",
+        "sources": [
+          "GWAS Catalog"
+        ],
+        "id": "e_ffa885a5dbe321f820ac5cf1",
+        "type": "ASSOCIATES",
+        "direction": "both",
+        "source": "Disease::DOID:10652",
+        "target": "Gene::4208"
+      },
+      {
+        "license": "CC BY 3.0",
+        "data": "{\"license\": \"CC BY 3.0\", \"source\": \"WikiPathways\", \"unbiased\": false, \"url\": \"http://www.wikipathways.org/instance/WP706_r80056\"}",
+        "sources": [
+          "WikiPathways"
+        ],
+        "id": "e_ab881950a034453cd386bb97",
+        "type": "PARTICIPATES",
+        "direction": "both",
+        "source": "Gene::1139",
+        "target": "Pathway::WP706_r80056"
+      },
+      {
+        "license": "CC BY-NC 4.0",
+        "data": "{\"actions\": [\"allosteric modulator\"], \"license\": \"CC BY-NC 4.0\", \"pubmed_ids\": [\"10971048\", \"11129124\", \"12137632\", \"12177686\", \"12481195\", \"20480924\"], \"sources\": [\"DrugBank (target)\"], \"unbiased\": false}",
+        "sources": [
+          "DrugBank (target)"
+        ],
+        "id": "e_5d099f4ec12d59d6288079b9",
+        "type": "BINDS",
+        "direction": "both",
+        "source": "Compound::DB00674",
+        "target": "Gene::1143"
+      },
+      {
+        "license": "CC BY 3.0",
+        "data": "{\"license\": \"CC BY 3.0\", \"source\": \"WikiPathways\", \"unbiased\": false, \"url\": \"http://www.wikipathways.org/instance/WP706_r80056\"}",
+        "sources": [
+          "WikiPathways"
+        ],
+        "id": "e_b31413c0723afe68542177ad",
+        "type": "PARTICIPATES",
+        "direction": "both",
+        "source": "Gene::1143",
+        "target": "Pathway::WP706_r80056"
+      }
+    ],
+    "paths": [
+      {
+        "id": "p_1cc37c764a72ed03",
+        "node_ids": [
+          "Compound::DB00674",
+          "Gene::1141",
+          "Disease::DOID:10652"
+        ],
+        "edge_ids": [
+          "e_eadb619ee4c9c002d0c9b002",
+          "e_b198a993016b2dec2dd22067"
+        ],
+        "metapath": "Compound\u2013Gene\u2013Disease",
+        "family": "direct",
+        "weight": 1.0
+      },
+      {
+        "id": "p_942c6fead6fedc02",
+        "node_ids": [
+          "Compound::DB00674",
+          "Gene::43",
+          "Disease::DOID:10652"
+        ],
+        "edge_ids": [
+          "e_c87877ec9a30595bbb421e8c",
+          "e_359beccc974bc566d35dfc0c"
+        ],
+        "metapath": "Compound\u2013Gene\u2013Disease",
+        "family": "direct",
+        "weight": 1.0
+      },
+      {
+        "id": "p_588bb078a1c7645c",
+        "node_ids": [
+          "Compound::DB00674",
+          "Gene::1139",
+          "Disease::DOID:10652"
+        ],
+        "edge_ids": [
+          "e_b6e2f89432fe5972cd838633",
+          "e_963fcc789cdf553f037616ad"
+        ],
+        "metapath": "Compound\u2013Gene\u2013Disease",
+        "family": "direct",
+        "weight": 1.0
+      },
+      {
+        "id": "p_79da353c92ccdf73",
+        "node_ids": [
+          "Compound::DB00674",
+          "Gene::1141",
+          "Gene::1137",
+          "Disease::DOID:10652"
+        ],
+        "edge_ids": [
+          "e_eadb619ee4c9c002d0c9b002",
+          "e_c40a7dd25c3ddb8a51d0b3bb",
+          "e_638af0b3df025d749f30f689"
+        ],
+        "metapath": "Compound\u2013Gene\u2013Gene\u2013Disease",
+        "family": "interaction",
+        "weight": 1.0
+      },
+      {
+        "id": "p_e9f3599599a97fe3",
+        "node_ids": [
+          "Compound::DB00674",
+          "Gene::43",
+          "Gene::351",
+          "Disease::DOID:10652"
+        ],
+        "edge_ids": [
+          "e_c87877ec9a30595bbb421e8c",
+          "e_0ade070fd05ea580c128cff0",
+          "e_ecc466895524b41e9d80a20f"
+        ],
+        "metapath": "Compound\u2013Gene\u2013Gene\u2013Disease",
+        "family": "interaction",
+        "weight": 1.0
+      },
+      {
+        "id": "p_838f0cab7255bb00",
+        "node_ids": [
+          "Compound::DB00674",
+          "Gene::43",
+          "Gene::2023",
+          "Disease::DOID:10652"
+        ],
+        "edge_ids": [
+          "e_c87877ec9a30595bbb421e8c",
+          "e_5416a8f7746e575d9f9052bb",
+          "e_c9b215078d2dc4c33501ebbc"
+        ],
+        "metapath": "Compound\u2013Gene\u2013Gene\u2013Disease",
+        "family": "interaction",
+        "weight": 1.0
+      },
+      {
+        "id": "p_9daabf8751ba4620",
+        "node_ids": [
+          "Compound::DB00674",
+          "Gene::1141",
+          "Pathway::WP706_r80056",
+          "Gene::4208",
+          "Disease::DOID:10652"
+        ],
+        "edge_ids": [
+          "e_eadb619ee4c9c002d0c9b002",
+          "e_58f79b9c084adc62b9c5c352",
+          "e_b546e42cf9078982d96877a9",
+          "e_ffa885a5dbe321f820ac5cf1"
+        ],
+        "metapath": "Compound\u2013Gene\u2013Pathway\u2013Gene\u2013Disease",
+        "family": "pathway",
+        "weight": 1.0
+      },
+      {
+        "id": "p_786dffd9c577911b",
+        "node_ids": [
+          "Compound::DB00674",
+          "Gene::1139",
+          "Pathway::WP706_r80056",
+          "Gene::4208",
+          "Disease::DOID:10652"
+        ],
+        "edge_ids": [
+          "e_b6e2f89432fe5972cd838633",
+          "e_ab881950a034453cd386bb97",
+          "e_b546e42cf9078982d96877a9",
+          "e_ffa885a5dbe321f820ac5cf1"
+        ],
+        "metapath": "Compound\u2013Gene\u2013Pathway\u2013Gene\u2013Disease",
+        "family": "pathway",
+        "weight": 1.0
+      },
+      {
+        "id": "p_f87b5a020430ec46",
+        "node_ids": [
+          "Compound::DB00674",
+          "Gene::1143",
+          "Pathway::WP706_r80056",
+          "Gene::4208",
+          "Disease::DOID:10652"
+        ],
+        "edge_ids": [
+          "e_5d099f4ec12d59d6288079b9",
+          "e_b31413c0723afe68542177ad",
+          "e_b546e42cf9078982d96877a9",
+          "e_ffa885a5dbe321f820ac5cf1"
+        ],
+        "metapath": "Compound\u2013Gene\u2013Pathway\u2013Gene\u2013Disease",
+        "family": "pathway",
+        "weight": 1.0
+      }
+    ],
+    "counts": {
+      "direct": 6,
+      "interaction": 11,
+      "pathway": 1237
+    },
+    "total_paths": 1254,
+    "truncated": true,
+    "excluded": [],
+    "selection": "Bounded Neo4j samples divided by metapath family; database traversal order",
+    "execution_backend": "neo4j"
+  },
+  "citations": [
+    {
+      "id": "p_1cc37c764a72ed03",
+      "label": "Compound\u2013Gene\u2013Disease",
+      "edge_ids": [
+        "e_eadb619ee4c9c002d0c9b002",
+        "e_b198a993016b2dec2dd22067"
+      ]
+    },
+    {
+      "id": "p_942c6fead6fedc02",
+      "label": "Compound\u2013Gene\u2013Disease",
+      "edge_ids": [
+        "e_c87877ec9a30595bbb421e8c",
+        "e_359beccc974bc566d35dfc0c"
+      ]
+    },
+    {
+      "id": "p_588bb078a1c7645c",
+      "label": "Compound\u2013Gene\u2013Disease",
+      "edge_ids": [
+        "e_b6e2f89432fe5972cd838633",
+        "e_963fcc789cdf553f037616ad"
+      ]
+    },
+    {
+      "id": "p_79da353c92ccdf73",
+      "label": "Compound\u2013Gene\u2013Gene\u2013Disease",
+      "edge_ids": [
+        "e_eadb619ee4c9c002d0c9b002",
+        "e_c40a7dd25c3ddb8a51d0b3bb",
+        "e_638af0b3df025d749f30f689"
+      ]
+    },
+    {
+      "id": "p_e9f3599599a97fe3",
+      "label": "Compound\u2013Gene\u2013Gene\u2013Disease",
+      "edge_ids": [
+        "e_c87877ec9a30595bbb421e8c",
+        "e_0ade070fd05ea580c128cff0",
+        "e_ecc466895524b41e9d80a20f"
+      ]
+    },
+    {
+      "id": "p_838f0cab7255bb00",
+      "label": "Compound\u2013Gene\u2013Gene\u2013Disease",
+      "edge_ids": [
+        "e_c87877ec9a30595bbb421e8c",
+        "e_5416a8f7746e575d9f9052bb",
+        "e_c9b215078d2dc4c33501ebbc"
+      ]
+    },
+    {
+      "id": "p_9daabf8751ba4620",
+      "label": "Compound\u2013Gene\u2013Pathway\u2013Gene\u2013Disease",
+      "edge_ids": [
+        "e_eadb619ee4c9c002d0c9b002",
+        "e_58f79b9c084adc62b9c5c352",
+        "e_b546e42cf9078982d96877a9",
+        "e_ffa885a5dbe321f820ac5cf1"
+      ]
+    },
+    {
+      "id": "p_786dffd9c577911b",
+      "label": "Compound\u2013Gene\u2013Pathway\u2013Gene\u2013Disease",
+      "edge_ids": [
+        "e_b6e2f89432fe5972cd838633",
+        "e_ab881950a034453cd386bb97",
+        "e_b546e42cf9078982d96877a9",
+        "e_ffa885a5dbe321f820ac5cf1"
+      ]
+    },
+    {
+      "id": "p_f87b5a020430ec46",
+      "label": "Compound\u2013Gene\u2013Pathway\u2013Gene\u2013Disease",
+      "edge_ids": [
+        "e_5d099f4ec12d59d6288079b9",
+        "e_b31413c0723afe68542177ad",
+        "e_b546e42cf9078982d96877a9",
+        "e_ffa885a5dbe321f820ac5cf1"
+      ]
+    }
+  ],
+  "trace": [
+    {
+      "step": "Validate request",
+      "tool": "request_guard",
+      "status": "complete",
+      "summary": "Research request accepted. No generated Cypher will be executed."
+    },
+    {
+      "step": "Resolve disease",
+      "tool": "resolve_entity",
+      "status": "complete",
+      "summary": "Resolved Alzheimer's disease to Disease::DOID:10652."
+    },
+    {
+      "step": "Select tools",
+      "tool": "llm_typed_planner",
+      "status": "complete",
+      "summary": "Validated investigate plan from qwen2.5:1.5b."
+    },
+    {
+      "step": "Rank candidates",
+      "tool": "rank_compounds",
+      "status": "complete",
+      "summary": "Scored 1387 compounds with the fixed fitted graph model."
+    },
+    {
+      "step": "Retrieve evidence",
+      "tool": "fetch_paths",
+      "status": "complete",
+      "summary": "Retrieved 9 representative paths from 1254 total typed paths."
+    },
+    {
+      "step": "Compose evidence brief",
+      "tool": "grounded_renderer",
+      "status": "complete",
+      "summary": "All scores, counts, and citations come from executed graph tools."
+    }
+  ],
+  "mode": "llm",
+  "suggestions": [],
+  "disclaimer": "Research hypotheses from a historical knowledge graph. Rankings are not validated treatments, clinical recommendations, or probabilities of efficacy."
+}

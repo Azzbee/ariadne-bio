@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f3ec">
+  <meta name="description" content="ARIADNE traces biomedical evidence, ranks research hypotheses, and reveals how conclusions depend on the graph.">
+  <title>ARIADNE — Follow the evidence</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/mark.svg">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./config.js"></script>
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to investigation</a>
+  <svg class="icon-definitions" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 15v5h16v-5"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="m10 14 4-4m-6 6-2 2a4.3 4.3 0 0 1-6-6l4-4a4.3 4.3 0 0 1 6 0m4 0 2-2a4.3 4.3 0 1 1 6 6l-4 4a4.3 4.3 0 0 1-6 0" transform="translate(1 0)"/></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24"><path d="M9 19c-4.3 1.3-4.3-2.2-6-2.7m12 5v-3.4a3 3 0 0 0-.8-2.3c2.8-.3 5.8-1.4 5.8-6.2a4.8 4.8 0 0 0-1.3-3.3 4.4 4.4 0 0 0-.1-3.3s-1-.3-3.4 1.3a11.6 11.6 0 0 0-6.2 0C6.6 2.5 5.6 2.8 5.6 2.8a4.4 4.4 0 0 0-.1 3.3 4.8 4.8 0 0 0-1.3 3.4c0 4.8 3 5.9 5.8 6.2a3 3 0 0 0-.8 2.3v3.3"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M10 4H4v16h16v-6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 11a8 8 0 1 1 1 6M4 5v6h6"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 2 8 4v6c0 5-8 10-8 10S4 17 4 12V6l8-4Z"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z"/></symbol>
+  </svg>
+
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="ARIADNE home">
+      <img src="./assets/mark.svg" alt="" width="34" height="34">
+      <span>ARIADNE<span class="brand-subtitle">BIOMEDICAL EVIDENCE</span></span>
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <button class="nav-link active" data-view="investigate" aria-current="page">Investigate</button>
+      <button class="nav-link" data-view="benchmark">Benchmark</button>
+      <button class="nav-link" data-view="method">Method & sources</button>
+    </nav>
+    <div class="header-actions">
+      <span class="runtime-pill" id="runtime-pill"><span class="status-dot loading"></span>Connecting</span>
+      <a class="icon-button repo-link" href="https://github.com/Azzbee/ariadne-bio" target="_blank" rel="noopener noreferrer" title="View the source code" aria-label="View source code on GitHub"><svg class="icon"><use href="#i-github"/></svg></a>
+    </div>
+  </header>
+
+  <main id="main">
+    <div id="fatal-error" class="fatal-error" hidden role="alert">
+      <span class="eyebrow">CONNECTION INTERRUPTED</span>
+      <h1>The evidence needs a connection.</h1>
+      <p id="fatal-message"></p>
+      <button id="retry-boot" class="button button-dark">Try again <svg class="icon"><use href="#i-reset"/></svg></button>
+    </div>
+
+    <section id="investigate-view" class="view active" aria-label="Evidence investigation">
+      <div class="intro">
+        <div>
+          <div class="eyebrow"><span class="tiny-cross">✳</span> A BIOMEDICAL EVIDENCE WORKBENCH</div>
+          <h1>Trace the evidence.<br><em>Challenge the hypothesis.</em></h1>
+        </div>
+        <div class="intro-aside">
+          <p>Follow the connections between compounds,<br class="desktop-only"> genes, pathways, and disease.</p>
+          <span class="research-label"><svg class="icon"><use href="#i-shield"/></svg> Research hypotheses. Never treatment advice.</span>
+        </div>
+      </div>
+
+      <div class="dataset-strip" aria-label="Dataset overview">
+        <div class="dataset-name"><span class="dataset-orbit"></span><span id="dataset-name">HETIONET <b>v1.0</b></span></div>
+        <div><strong id="stat-nodes">—</strong><span>biological entities</span></div>
+        <div><strong id="stat-edges">—</strong><span>evidence relationships</span></div>
+        <div><strong id="stat-diseases">—</strong><span id="stat-diseases-label">diseases</span></div>
+        <div class="dataset-strip-end"><span class="small-dot"></span> Treatment labels excluded from features</div>
+      </div>
+
+      <div id="edition-notice" class="edition-notice" hidden></div>
+
+      <div class="workspace-toolbar">
+        <div class="disease-selector">
+          <label for="disease-search" class="eyebrow">01 / CHOOSE A DISEASE</label>
+          <div class="search-wrap">
+            <svg class="icon"><use href="#i-search"/></svg>
+            <input id="disease-search" type="search" placeholder="Search diseases…" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="disease-options">
+            <span class="input-shortcut" aria-hidden="true">/</span>
+            <div id="disease-options" class="disease-options" role="listbox" hidden></div>
+          </div>
+        </div>
+        <div id="disease-context" class="disease-context"><span class="skeleton-line"></span></div>
+        <div class="workspace-actions">
+          <button id="share-case" class="button button-quiet" disabled><svg class="icon"><use href="#i-link"/></svg><span>Share case</span></button>
+          <button id="export-case" class="button button-outline" disabled><svg class="icon"><use href="#i-download"/></svg><span>Export evidence</span></button>
+        </div>
+      </div>
+
+      <div class="workbench" id="workbench">
+        <aside class="candidate-panel" aria-label="Ranked compound candidates">
+          <div class="panel-heading">
+            <div><span class="eyebrow">02 / RANKED HYPOTHESES</span><h2>Candidate compounds</h2></div>
+            <span class="count-pill" id="candidate-count">—</span>
+          </div>
+          <div class="ranking-description">Model scores prioritize investigation.<br>They are not probabilities of efficacy.</div>
+          <div id="candidate-list" class="candidate-list" aria-live="polite"><div class="loading-block"><span class="spinner"></span><span>Connecting to the graph</span></div></div>
+          <button id="load-more" class="load-more" hidden>Load more candidates <svg class="icon"><use href="#i-arrow"/></svg></button>
+          <div class="candidate-footer" id="candidate-footer">Fixed model · bounded evidence paths</div>
+        </aside>
+
+        <section class="graph-panel" aria-label="Evidence graph">
+          <div class="graph-heading">
+            <div><span class="eyebrow">03 / FOLLOW THE CONNECTIONS</span><h2 id="graph-title">The evidence graph</h2></div>
+            <button id="fit-graph" class="icon-button" title="Reset graph view" aria-label="Reset graph view"><svg class="icon"><use href="#i-expand"/></svg></button>
+          </div>
+          <div class="graph-subheading" id="graph-subheading">Select a candidate to trace its supporting evidence.</div>
+          <div class="graph-canvas" id="graph-canvas">
+            <svg id="evidence-graph" viewBox="0 0 900 540" role="img" aria-label="Select a compound to display its evidence graph"></svg>
+            <div class="graph-empty" id="graph-empty"><span class="graph-empty-mark">a</span><p>Every connection has a story.<br>Choose a disease to begin.</p></div>
+            <div class="graph-tooltip" id="graph-tooltip" hidden></div>
+            <div class="graph-interaction-hint" id="graph-hint" hidden>Click a node or connection to inspect its source</div>
+          </div>
+          <div class="graph-legend"><span><i class="legend-dot compound"></i>Compound</span><span><i class="legend-dot gene"></i>Gene</span><span><i class="legend-dot pathway"></i>Pathway</span><span><i class="legend-dot disease"></i>Disease</span></div>
+          <div class="path-family-strip" id="path-family-strip">
+            <button class="path-family active" data-path-filter="all">All evidence <b id="path-count-all">—</b></button>
+            <button class="path-family" data-path-filter="direct">Direct <b id="path-count-direct">—</b></button>
+            <button class="path-family" data-path-filter="interaction">Interaction <b id="path-count-interaction">—</b></button>
+            <button class="path-family" data-path-filter="pathway">Pathway <b id="path-count-pathway">—</b></button>
+          </div>
+          <div id="graph-caption" class="graph-caption">The displayed graph is a bounded selection of supporting paths.</div>
+        </section>
+
+        <aside class="evidence-panel" aria-label="Supporting paths and source records">
+          <div class="panel-heading"><div><span class="eyebrow">RECORDS, NOT ASSUMPTIONS</span><h2>Evidence trail</h2></div><svg class="icon muted"><use href="#i-link"/></svg></div>
+          <div id="evidence-summary" class="evidence-summary"><p>Select a compound to inspect individual graph paths.</p></div>
+          <div id="path-list" class="path-list"></div>
+          <div class="evidence-note"><svg class="icon"><use href="#i-info"/></svg><p>A recorded association supports a hypothesis. It does not establish causality.</p></div>
+        </aside>
+      </div>
+
+      <section class="challenge-section" aria-labelledby="challenge-title">
+        <div class="challenge-intro"><span class="eyebrow">04 / PUT THE HYPOTHESIS UNDER PRESSURE</span><h2 id="challenge-title">What if the evidence changes?</h2><p>Switch off a relationship family. Recompute the graph features.<br>The scoring model stays fixed.</p></div>
+        <div class="evidence-switches" id="evidence-switches">
+          <label class="evidence-switch"><input type="checkbox" value="INTERACTS" checked><span class="switch-ui"></span><span><strong>Gene interactions</strong><small>Gene → gene connections</small></span><span class="family-count" data-family-count="INTERACTS">—</span></label>
+          <label class="evidence-switch"><input type="checkbox" value="PARTICIPATES" checked><span class="switch-ui"></span><span><strong>Shared pathways</strong><small>Genes participating in a pathway</small></span><span class="family-count" data-family-count="PARTICIPATES">—</span></label>
+          <details class="core-evidence"><summary>Core evidence families <svg class="icon"><use href="#i-chevron"/></svg></summary><label class="evidence-switch"><input type="checkbox" value="BINDS" checked><span class="switch-ui"></span><span><strong>Compound binding</strong><small>Compound → gene product</small></span></label><label class="evidence-switch"><input type="checkbox" value="ASSOCIATES" checked><span class="switch-ui"></span><span><strong>Disease associations</strong><small>Disease → gene associations</small></span></label></details>
+        </div>
+        <div class="challenge-result" id="challenge-result"><div class="challenge-neutral"><span class="challenge-orbit">↗</span><strong>All evidence is included.</strong><p>Turn a family off to discover which hypotheses depend on it.</p></div></div>
+      </section>
+
+      <section class="agent-section" aria-labelledby="agent-title">
+        <div class="agent-intro"><span class="eyebrow"><svg class="icon"><use href="#i-spark"/></svg> THE RESEARCH GUIDE</span><h2 id="agent-title">Ask a better question.</h2><p>Investigate a ranking, challenge its support, or follow a connection. Every answer stays attached to the evidence.</p><span class="agent-mode" id="agent-mode">Connecting…</span></div>
+        <div class="agent-workspace">
+          <form id="agent-form" class="agent-form"><label class="sr-only" for="agent-question">Ask the research guide</label><textarea id="agent-question" placeholder="Why does this compound rank highly?" rows="2" maxlength="1200" required></textarea><button class="button button-dark" id="agent-submit" type="submit"><span>Investigate</span><svg class="icon"><use href="#i-arrow"/></svg></button></form>
+          <div class="prompt-chips"><button data-prompt="Explain the top candidate and its supporting graph evidence.">Explain the top candidate <span>↗</span></button><button data-prompt="What changes without gene interactions?">Challenge the evidence <span>↗</span></button><button data-prompt="Delete all nodes in the graph.">Test the guardrail <svg class="icon"><use href="#i-shield"/></svg></button></div>
+          <div id="agent-response" class="agent-response" hidden aria-live="polite"></div>
+        </div>
+      </section>
+    </section>
+
+    <section id="benchmark-view" class="view" aria-label="Evaluation benchmark" hidden>
+      <div class="section-hero"><span class="eyebrow">MEASURED, NOT ASSUMED</span><h1>How well does the<br><em>evidence hold up?</em></h1><p>Retrospective recovery of held-out treatment links. The evaluation exposes the candidate universe, the split, the baselines, and the misses.</p></div>
+      <div id="benchmark-content"><div class="loading-block"><span class="spinner"></span><span>Loading evaluation</span></div></div>
+    </section>
+
+    <section id="method-view" class="view" aria-label="Methodology and provenance" hidden>
+      <div class="section-hero"><span class="eyebrow">OPEN BY DESIGN</span><h1>A hypothesis is only as good<br><em>as the trail behind it.</em></h1><p>The graph, the scoring model, and the rules of the investigation are inspectable. Here is what ARIADNE does—and what its results mean.</p></div>
+      <div class="method-grid">
+        <article class="method-card"><span class="method-number">01</span><h2>One graph.<br>Four biological entities.</h2><p>Compounds, genes, diseases, and pathways retain their original identifiers and available source metadata from Hetionet v1.0.</p><div class="schema-mini"><span class="schema-compound">Compound</span><span class="schema-line">binds</span><span class="schema-gene">Gene</span><span class="schema-line">associated with</span><span class="schema-disease">Disease</span><span class="schema-branch">Genes also connect through interactions and shared pathways.</span></div></article>
+        <article class="method-card"><span class="method-number">02</span><h2>Recorded evidence.<br>Separate hypotheses.</h2><p>Imported relationships describe records in a biological knowledge graph. A model score orders candidates for investigation. It is neither a clinical efficacy estimate nor a causal claim.</p><p>Known treatment relationships remain separate from the evidence graph. They supply evaluation labels and are never used as predictive edges.</p></article>
+        <article class="method-card"><span class="method-number">03</span><h2>Challenge the evidence.<br>Keep the model fixed.</h2><p>Excluding a relationship family changes the available paths and recomputes graph features. The same fitted model scores the revised evidence.</p><p>This is an evidence sensitivity analysis. Removing an edge from the graph does not reproduce a knockout experiment or an intervention in a patient.</p></article>
+        <article class="method-card"><span class="method-number">04</span><h2>Useful answers.<br>Visible boundaries.</h2><p>The live agent follows a bounded LangGraph workflow and read-only tools. It resolves the question, retrieves rankings and paths, and produces an evidence-grounded brief.</p><p>The published research edition uses recorded results and a deterministic guide. The interface always identifies which edition is running.</p></article>
+      </div>
+      <div class="provenance-section"><div><span class="eyebrow">CHAIN OF CUSTODY</span><h2>Sources & reproducibility</h2><p>Inspect the dataset identity and licensing information. Individual graph records expose the provenance actually present in the source.</p><a class="text-link repo-link" href="https://github.com/Azzbee/ariadne-bio" target="_blank" rel="noopener noreferrer">Explore the code & full documentation <svg class="icon"><use href="#i-external"/></svg></a></div><div id="provenance-content"><div class="loading-block"><span class="spinner"></span><span>Loading source manifest</span></div></div></div>
+      <aside class="limits-box"><svg class="icon"><use href="#i-shield"/></svg><div><h3>Interpretation comes first.</h3><p>The graph is incomplete and reflects historical research priorities. Unobserved treatment links are not proven negatives. Source agreement, graph proximity, or a high model rank cannot establish that a compound is effective or safe. ARIADNE is a research and teaching application.</p></div></aside>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div><img src="./assets/mark.svg" width="21" height="21" alt=""><span>ARIADNE</span><span class="footer-divider">/</span><span>Follow the evidence.</span></div><span>Built for scrutiny. Designed for discovery.</span><a href="#main">Back to top ↑</a></footer>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <dialog id="detail-dialog" class="detail-dialog"><div class="dialog-header"><span class="eyebrow" id="detail-eyebrow">SOURCE RECORD</span><button class="icon-button" data-close-dialog aria-label="Close details"><svg class="icon"><use href="#i-close"/></svg></button></div><div id="detail-content"></div></dialog>
+  <noscript><div class="noscript">ARIADNE needs JavaScript to inspect evidence and compare rankings. Enable JavaScript, or read the project’s documentation on GitHub.</div></noscript>
+</body>
+</html>

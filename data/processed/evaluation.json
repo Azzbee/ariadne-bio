@@ -1,0 +1,7375 @@
+{
+  "title": "Retrospective treatment-link retrieval",
+  "executed_at": "2026-10-30T21:23:26.445306+00:00",
+  "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+  "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
+  "seed": 42,
+  "metrics": [
+    {
+      "model": "Typed-path logistic",
+      "name": "Typed-path logistic",
+      "recall_at_10": 0.09649122807017543,
+      "mrr": 0.04389750413634674,
+      "mean_rank": 321.359649122807,
+      "median_rank": 206.0,
+      "hits_at_10": 11,
+      "evaluated_links": 114,
+      "evaluated_diseases": 47,
+      "recall_at_10_ci95": [
+        0.046506244616709734,
+        0.15958510638297868
+      ],
+      "mrr_ci95": [
+        0.019313097964358802,
+        0.08010126259344677
+      ],
+      "uncertainty": "Percentile bootstrap, diseases as clusters, 2,000 replicates"
+    },
+    {
+      "model": "Path count baseline",
+      "name": "Path count baseline",
+      "recall_at_10": 0.008771929824561403,
+      "mrr": 0.006862288728417992,
+      "mean_rank": 480.86842105263156,
+      "median_rank": 427.5,
+      "hits_at_10": 1,
+      "evaluated_links": 114,
+      "evaluated_diseases": 47,
+      "recall_at_10_ci95": [
+        0.0,
+        0.02727272727272727
+      ],
+      "mrr_ci95": [
+        0.003360082912715578,
+        0.01289019468776317
+      ],
+      "uncertainty": "Percentile bootstrap, diseases as clusters, 2,000 replicates"
+    },
+    {
+      "model": "Target-degree baseline",
+      "name": "Target-degree baseline",
+      "recall_at_10": 0.008771929824561403,
+      "mrr": 0.007231602831887212,
+      "mean_rank": 517.9473684210526,
+      "median_rank": 534.0,
+      "hits_at_10": 1,
+      "evaluated_links": 114,
+      "evaluated_diseases": 47,
+      "recall_at_10_ci95": [
+        0.0,
+        0.02727272727272727
+      ],
+      "mrr_ci95": [
+        0.00420678074352098,
+        0.012092811693599641
+      ],
+      "uncertainty": "Percentile bootstrap, diseases as clusters, 2,000 replicates"
+    },
+    {
+      "model": "Direct-overlap baseline",
+      "name": "Direct-overlap baseline",
+      "recall_at_10": 0.05263157894736842,
+      "mrr": 0.0365444896748299,
+      "mean_rank": 419.5,
+      "median_rank": 325.5,
+      "hits_at_10": 6,
+      "evaluated_links": 114,
+      "evaluated_diseases": 47,
+      "recall_at_10_ci95": [
+        0.013113038277511964,
+        0.10577651515151511
+      ],
+      "mrr_ci95": [
+        0.011715325654517782,
+        0.07110015794608925
+      ],
+      "uncertainty": "Percentile bootstrap, diseases as clusters, 2,000 replicates"
+    }
+  ],
+  "ablations": [
+    {
+      "excluded": [
+        "INTERACTS"
+      ],
+      "recall_at_10": 0.09649122807017543,
+      "mrr": 0.04220506009802241,
+      "mean_rank": 350.32456140350877,
+      "median_rank": 263.0,
+      "hits_at_10": 11,
+      "evaluated_links": 114,
+      "evaluated_diseases": 47
+    },
+    {
+      "excluded": [
+        "PARTICIPATES"
+      ],
+      "recall_at_10": 0.05263157894736842,
+      "mrr": 0.03327504815284708,
+      "mean_rank": 530.9912280701755,
+      "median_rank": 442.5,
+      "hits_at_10": 6,
+      "evaluated_links": 114,
+      "evaluated_diseases": 47
+    }
+  ],
+  "examples": [
+    {
+      "compound_id": "Compound::DB00509",
+      "compound": "Dextrothyroxine",
+      "disease_id": "Disease::DOID:1459",
+      "disease": "hypothyroidism",
+      "rank": 1,
+      "candidate_count": 1550,
+      "score": 0.958812050130056,
+      "outcome": "recovered_in_top_10",
+      "features": {
+        "direct": 3,
+        "interaction": 1,
+        "pathway": 104
+      }
+    },
+    {
+      "compound_id": "Compound::DB00455",
+      "compound": "Loratadine",
+      "disease_id": "Disease::DOID:4481",
+      "disease": "allergic rhinitis",
+      "rank": 207,
+      "candidate_count": 1541,
+      "score": 0.5842373919036228,
+      "outcome": "missed_top_10",
+      "features": {
+        "direct": 0,
+        "interaction": 1,
+        "pathway": 52
+      }
+    },
+    {
+      "compound_id": "Compound::DB00964",
+      "compound": "Apraclonidine",
+      "disease_id": "Disease::DOID:1686",
+      "disease": "glaucoma",
+      "rank": 1271,
+      "candidate_count": 1535,
+      "score": 0.2550176343620316,
+      "outcome": "missed_top_10",
+      "features": {
+        "direct": 0,
+        "interaction": 0,
+        "pathway": 263
+      }
+    }
+  ],
+  "protocol": {
+    "task": "Recover held-out recorded treatment links from biological evidence paths",
+    "split_unit": "Compound\u2013disease pair, shuffled with a fixed seed",
+    "split_fractions": {
+      "train": 0.7,
+      "validation": 0.15,
+      "test": 0.15
+    },
+    "graph": "All evidence edges retained; TREATS and PALLIATES absent from all feature matrices and graph projections",
+    "transductive": true,
+    "candidate_universe": "All 1,552 compounds, including compounds with no paths; mask train and validation positives for each test disease",
+    "candidate_count": 1552,
+    "ties": "Score descending, then namespace-qualified compound ID ascending",
+    "multiple_positives": "Other test positives remain in the candidate ranking",
+    "unobserved_sampling": "Up to 10 disease-matched unobserved pairs per training positive, without replacement per disease; all recorded positives excluded",
+    "negative_label_meaning": "Unobserved in this dataset, not established ineffective",
+    "preprocessing": "StandardScaler fitted on training pairs only",
+    "hyperparameters": "C in [0.01, 0.1, 1, 10], selected by validation MRR",
+    "metrics": "Micro Recall@10 and mean reciprocal rank over held-out positive links",
+    "ablation": "Same saved coefficients and scaler; family removal changes exact counts and affected degrees",
+    "uncertainty": "95% percentile bootstrap intervals, 2,000 replicates; diseases resampled as clusters to preserve correlated links. Intervals describe this fixed split.",
+    "llm_role": "None in ranking, fitting, split selection, or evaluation"
+  },
+  "split": {
+    "train": 528,
+    "validation": 113,
+    "test": 114,
+    "total": 755,
+    "unobserved_train": 5280,
+    "pair_ids": {
+      "train": [
+        [
+          "Compound::DB00481",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB00853",
+          "Disease::DOID:4159"
+        ],
+        [
+          "Compound::DB00519",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00958",
+          "Disease::DOID:11054"
+        ],
+        [
+          "Compound::DB01181",
+          "Disease::DOID:2994"
+        ],
+        [
+          "Compound::DB01232",
+          "Disease::DOID:635"
+        ],
+        [
+          "Compound::DB00970",
+          "Disease::DOID:1115"
+        ],
+        [
+          "Compound::DB00860",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00443",
+          "Disease::DOID:9008"
+        ],
+        [
+          "Compound::DB01136",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00222",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB01265",
+          "Disease::DOID:2043"
+        ],
+        [
+          "Compound::DB00851",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB01024",
+          "Disease::DOID:418"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:184"
+        ],
+        [
+          "Compound::DB00331",
+          "Disease::DOID:11612"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB00912",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB01073",
+          "Disease::DOID:0060073"
+        ],
+        [
+          "Compound::DB00678",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00958",
+          "Disease::DOID:1319"
+        ],
+        [
+          "Compound::DB00373",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB08828",
+          "Disease::DOID:4159"
+        ],
+        [
+          "Compound::DB00282",
+          "Disease::DOID:5408"
+        ],
+        [
+          "Compound::DB01197",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00191",
+          "Disease::DOID:9970"
+        ],
+        [
+          "Compound::DB00443",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00788",
+          "Disease::DOID:13189"
+        ],
+        [
+          "Compound::DB00250",
+          "Disease::DOID:9074"
+        ],
+        [
+          "Compound::DB00195",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01590",
+          "Disease::DOID:263"
+        ],
+        [
+          "Compound::DB04572",
+          "Disease::DOID:1115"
+        ],
+        [
+          "Compound::DB00313",
+          "Disease::DOID:6364"
+        ],
+        [
+          "Compound::DB00993",
+          "Disease::DOID:8778"
+        ],
+        [
+          "Compound::DB01048",
+          "Disease::DOID:635"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:4045"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:7147"
+        ],
+        [
+          "Compound::DB08865",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB00553",
+          "Disease::DOID:12306"
+        ],
+        [
+          "Compound::DB00722",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00291",
+          "Disease::DOID:2394"
+        ],
+        [
+          "Compound::DB00945",
+          "Disease::DOID:13378"
+        ],
+        [
+          "Compound::DB00541",
+          "Disease::DOID:219"
+        ],
+        [
+          "Compound::DB00445",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00126",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB00338",
+          "Disease::DOID:9206"
+        ],
+        [
+          "Compound::DB01001",
+          "Disease::DOID:3083"
+        ],
+        [
+          "Compound::DB01204",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB00544",
+          "Disease::DOID:10534"
+        ],
+        [
+          "Compound::DB01394",
+          "Disease::DOID:13189"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:9008"
+        ],
+        [
+          "Compound::DB00865",
+          "Disease::DOID:9970"
+        ],
+        [
+          "Compound::DB05294",
+          "Disease::DOID:1781"
+        ],
+        [
+          "Compound::DB00800",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00014",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB00261",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00869",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00459",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB00412",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB01032",
+          "Disease::DOID:13189"
+        ],
+        [
+          "Compound::DB00188",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00441",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB08881",
+          "Disease::DOID:4159"
+        ],
+        [
+          "Compound::DB01097",
+          "Disease::DOID:9074"
+        ],
+        [
+          "Compound::DB01200",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB01204",
+          "Disease::DOID:2377"
+        ],
+        [
+          "Compound::DB00264",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00775",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00449",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00762",
+          "Disease::DOID:1793"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:11054"
+        ],
+        [
+          "Compound::DB00317",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB00773",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB00641",
+          "Disease::DOID:1936"
+        ],
+        [
+          "Compound::DB00741",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB01222",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00515",
+          "Disease::DOID:2998"
+        ],
+        [
+          "Compound::DB00373",
+          "Disease::DOID:6364"
+        ],
+        [
+          "Compound::DB00796",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00468",
+          "Disease::DOID:12365"
+        ],
+        [
+          "Compound::DB00541",
+          "Disease::DOID:263"
+        ],
+        [
+          "Compound::DB00501",
+          "Disease::DOID:9970"
+        ],
+        [
+          "Compound::DB00959",
+          "Disease::DOID:9008"
+        ],
+        [
+          "Compound::DB00180",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:10534"
+        ],
+        [
+          "Compound::DB01075",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB00352",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00970",
+          "Disease::DOID:4159"
+        ],
+        [
+          "Compound::DB01217",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB01244",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:363"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB00541",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB01274",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00829",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00887",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00331",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB00694",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00966",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00773",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00958",
+          "Disease::DOID:2998"
+        ],
+        [
+          "Compound::DB00853",
+          "Disease::DOID:1319"
+        ],
+        [
+          "Compound::DB00220",
+          "Disease::DOID:635"
+        ],
+        [
+          "Compound::DB01101",
+          "Disease::DOID:263"
+        ],
+        [
+          "Compound::DB00455",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB00436",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01210",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00773",
+          "Disease::DOID:363"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:3083"
+        ],
+        [
+          "Compound::DB01030",
+          "Disease::DOID:4362"
+        ],
+        [
+          "Compound::DB00764",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00275",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00445",
+          "Disease::DOID:3571"
+        ],
+        [
+          "Compound::DB08877",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00290",
+          "Disease::DOID:1909"
+        ],
+        [
+          "Compound::DB00703",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00718",
+          "Disease::DOID:2043"
+        ],
+        [
+          "Compound::DB00945",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB02300",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB08816",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00337",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB01073",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00860",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB01241",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00860",
+          "Disease::DOID:9074"
+        ],
+        [
+          "Compound::DB00244",
+          "Disease::DOID:8778"
+        ],
+        [
+          "Compound::DB00790",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB06218",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00169",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB00305",
+          "Disease::DOID:10534"
+        ],
+        [
+          "Compound::DB00104",
+          "Disease::DOID:3277"
+        ],
+        [
+          "Compound::DB01260",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB01077",
+          "Disease::DOID:5408"
+        ],
+        [
+          "Compound::DB00995",
+          "Disease::DOID:9008"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:13189"
+        ],
+        [
+          "Compound::DB00675",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00443",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB00860",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB00394",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB01579",
+          "Disease::DOID:9970"
+        ],
+        [
+          "Compound::DB01248",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00776",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00399",
+          "Disease::DOID:5408"
+        ],
+        [
+          "Compound::DB00443",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB01014",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB00262",
+          "Disease::DOID:3070"
+        ],
+        [
+          "Compound::DB00550",
+          "Disease::DOID:12361"
+        ],
+        [
+          "Compound::DB01204",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB06201",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB01133",
+          "Disease::DOID:5408"
+        ],
+        [
+          "Compound::DB00620",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB05389",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00851",
+          "Disease::DOID:1793"
+        ],
+        [
+          "Compound::DB00853",
+          "Disease::DOID:3070"
+        ],
+        [
+          "Compound::DB00908",
+          "Disease::DOID:12365"
+        ],
+        [
+          "Compound::DB01083",
+          "Disease::DOID:9970"
+        ],
+        [
+          "Compound::DB01042",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00860",
+          "Disease::DOID:9008"
+        ],
+        [
+          "Compound::DB00178",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:2994"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:10534"
+        ],
+        [
+          "Compound::DB00570",
+          "Disease::DOID:263"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:418"
+        ],
+        [
+          "Compound::DB01033",
+          "Disease::DOID:8778"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:7147"
+        ],
+        [
+          "Compound::DB01275",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00441",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00884",
+          "Disease::DOID:5408"
+        ],
+        [
+          "Compound::DB00860",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB08881",
+          "Disease::DOID:1909"
+        ],
+        [
+          "Compound::DB00398",
+          "Disease::DOID:1781"
+        ],
+        [
+          "Compound::DB00688",
+          "Disease::DOID:9074"
+        ],
+        [
+          "Compound::DB00262",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00806",
+          "Disease::DOID:12365"
+        ],
+        [
+          "Compound::DB01128",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB00977",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB01409",
+          "Disease::DOID:3083"
+        ],
+        [
+          "Compound::DB00970",
+          "Disease::DOID:1909"
+        ],
+        [
+          "Compound::DB00515",
+          "Disease::DOID:184"
+        ],
+        [
+          "Compound::DB00238",
+          "Disease::DOID:635"
+        ],
+        [
+          "Compound::DB00434",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB00544",
+          "Disease::DOID:11934"
+        ],
+        [
+          "Compound::DB00226",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00273",
+          "Disease::DOID:6364"
+        ],
+        [
+          "Compound::DB00704",
+          "Disease::DOID:0050741"
+        ],
+        [
+          "Compound::DB00591",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB00620",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB06699",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB00421",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00619",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00441",
+          "Disease::DOID:11054"
+        ],
+        [
+          "Compound::DB01016",
+          "Disease::DOID:11714"
+        ],
+        [
+          "Compound::DB00242",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00958",
+          "Disease::DOID:5041"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:418"
+        ],
+        [
+          "Compound::DB00254",
+          "Disease::DOID:12365"
+        ],
+        [
+          "Compound::DB01039",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00993",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB08906",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:9008"
+        ],
+        [
+          "Compound::DB00661",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00445",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB01229",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00909",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00731",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB01346",
+          "Disease::DOID:12365"
+        ],
+        [
+          "Compound::DB01291",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00959",
+          "Disease::DOID:13189"
+        ],
+        [
+          "Compound::DB00445",
+          "Disease::DOID:2394"
+        ],
+        [
+          "Compound::DB00958",
+          "Disease::DOID:2394"
+        ],
+        [
+          "Compound::DB00959",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:2377"
+        ],
+        [
+          "Compound::DB00445",
+          "Disease::DOID:363"
+        ],
+        [
+          "Compound::DB06772",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB00385",
+          "Disease::DOID:11054"
+        ],
+        [
+          "Compound::DB00091",
+          "Disease::DOID:1312"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:1781"
+        ],
+        [
+          "Compound::DB00242",
+          "Disease::DOID:2377"
+        ],
+        [
+          "Compound::DB00215",
+          "Disease::DOID:0050741"
+        ],
+        [
+          "Compound::DB06589",
+          "Disease::DOID:263"
+        ],
+        [
+          "Compound::DB00552",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00622",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00444",
+          "Disease::DOID:0060073"
+        ],
+        [
+          "Compound::DB00790",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00762",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB00985",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB00695",
+          "Disease::DOID:12930"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:0060073"
+        ],
+        [
+          "Compound::DB00741",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB00544",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00544",
+          "Disease::DOID:1793"
+        ],
+        [
+          "Compound::DB00361",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB01097",
+          "Disease::DOID:418"
+        ],
+        [
+          "Compound::DB00136",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB00851",
+          "Disease::DOID:4159"
+        ],
+        [
+          "Compound::DB00993",
+          "Disease::DOID:2377"
+        ],
+        [
+          "Compound::DB00443",
+          "Disease::DOID:7147"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:263"
+        ],
+        [
+          "Compound::DB01583",
+          "Disease::DOID:1459"
+        ],
+        [
+          "Compound::DB00394",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB00782",
+          "Disease::DOID:4989"
+        ],
+        [
+          "Compound::DB00451",
+          "Disease::DOID:1459"
+        ],
+        [
+          "Compound::DB00570",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB01041",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB08868",
+          "Disease::DOID:2377"
+        ],
+        [
+          "Compound::DB00755",
+          "Disease::DOID:1192"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00480",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00985",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB01042",
+          "Disease::DOID:1192"
+        ],
+        [
+          "Compound::DB01204",
+          "Disease::DOID:1115"
+        ],
+        [
+          "Compound::DB00442",
+          "Disease::DOID:2043"
+        ],
+        [
+          "Compound::DB01101",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00331",
+          "Disease::DOID:14221"
+        ],
+        [
+          "Compound::DB00649",
+          "Disease::DOID:635"
+        ],
+        [
+          "Compound::DB01033",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00530",
+          "Disease::DOID:1793"
+        ],
+        [
+          "Compound::DB00795",
+          "Disease::DOID:7147"
+        ],
+        [
+          "Compound::DB00657",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00499",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB00290",
+          "Disease::DOID:2998"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:3571"
+        ],
+        [
+          "Compound::DB00843",
+          "Disease::DOID:10652"
+        ],
+        [
+          "Compound::DB00851",
+          "Disease::DOID:1115"
+        ],
+        [
+          "Compound::DB00523",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00570",
+          "Disease::DOID:11934"
+        ],
+        [
+          "Compound::DB00773",
+          "Disease::DOID:2994"
+        ],
+        [
+          "Compound::DB00443",
+          "Disease::DOID:2377"
+        ],
+        [
+          "Compound::DB01234",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB00920",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB01067",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB00250",
+          "Disease::DOID:12365"
+        ],
+        [
+          "Compound::DB00313",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00683",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB01057",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00284",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB00359",
+          "Disease::DOID:12365"
+        ],
+        [
+          "Compound::DB00277",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00987",
+          "Disease::DOID:0060073"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:2377"
+        ],
+        [
+          "Compound::DB00983",
+          "Disease::DOID:3083"
+        ],
+        [
+          "Compound::DB00937",
+          "Disease::DOID:9970"
+        ],
+        [
+          "Compound::DB08866",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB01190",
+          "Disease::DOID:12365"
+        ],
+        [
+          "Compound::DB00443",
+          "Disease::DOID:9074"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB01248",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB00411",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00541",
+          "Disease::DOID:4045"
+        ],
+        [
+          "Compound::DB05039",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00206",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00503",
+          "Disease::DOID:635"
+        ],
+        [
+          "Compound::DB01268",
+          "Disease::DOID:263"
+        ],
+        [
+          "Compound::DB00795",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB00958",
+          "Disease::DOID:184"
+        ],
+        [
+          "Compound::DB00959",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB01320",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00722",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00262",
+          "Disease::DOID:1909"
+        ],
+        [
+          "Compound::DB01013",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB00860",
+          "Disease::DOID:3083"
+        ],
+        [
+          "Compound::DB00230",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00570",
+          "Disease::DOID:2994"
+        ],
+        [
+          "Compound::DB01394",
+          "Disease::DOID:12236"
+        ],
+        [
+          "Compound::DB00744",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB01234",
+          "Disease::DOID:9008"
+        ],
+        [
+          "Compound::DB01024",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB00851",
+          "Disease::DOID:4045"
+        ],
+        [
+          "Compound::DB00860",
+          "Disease::DOID:7147"
+        ],
+        [
+          "Compound::DB00539",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00768",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB00398",
+          "Disease::DOID:263"
+        ],
+        [
+          "Compound::DB00555",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00620",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB00443",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB01261",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB01016",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB00705",
+          "Disease::DOID:635"
+        ],
+        [
+          "Compound::DB00722",
+          "Disease::DOID:12930"
+        ],
+        [
+          "Compound::DB00184",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB00457",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01068",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00594",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01250",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB01162",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00549",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB01003",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB04574",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB01229",
+          "Disease::DOID:263"
+        ],
+        [
+          "Compound::DB00291",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00949",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00290",
+          "Disease::DOID:2994"
+        ],
+        [
+          "Compound::DB01098",
+          "Disease::DOID:1936"
+        ],
+        [
+          "Compound::DB00244",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB00445",
+          "Disease::DOID:1192"
+        ],
+        [
+          "Compound::DB01229",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB01248",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB00620",
+          "Disease::DOID:7147"
+        ],
+        [
+          "Compound::DB01248",
+          "Disease::DOID:2394"
+        ],
+        [
+          "Compound::DB00570",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00445",
+          "Disease::DOID:10534"
+        ],
+        [
+          "Compound::DB00286",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB01156",
+          "Disease::DOID:9970"
+        ],
+        [
+          "Compound::DB04868",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00515",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB01008",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB01197",
+          "Disease::DOID:418"
+        ],
+        [
+          "Compound::DB01005",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00401",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB06697",
+          "Disease::DOID:12365"
+        ],
+        [
+          "Compound::DB00629",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00630",
+          "Disease::DOID:5408"
+        ],
+        [
+          "Compound::DB00553",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB00515",
+          "Disease::DOID:5041"
+        ],
+        [
+          "Compound::DB00384",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00695",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00741",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB01410",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00445",
+          "Disease::DOID:1793"
+        ],
+        [
+          "Compound::DB00905",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB01194",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00258",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB01234",
+          "Disease::DOID:7147"
+        ],
+        [
+          "Compound::DB04572",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB01177",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00903",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01018",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00741",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB00620",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB00588",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB01045",
+          "Disease::DOID:1024"
+        ],
+        [
+          "Compound::DB00736",
+          "Disease::DOID:9206"
+        ],
+        [
+          "Compound::DB00983",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00332",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00441",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB00515",
+          "Disease::DOID:2994"
+        ],
+        [
+          "Compound::DB00398",
+          "Disease::DOID:3571"
+        ],
+        [
+          "Compound::DB00659",
+          "Disease::DOID:0050741"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:2998"
+        ],
+        [
+          "Compound::DB00178",
+          "Disease::DOID:9744"
+        ],
+        [
+          "Compound::DB00495",
+          "Disease::DOID:635"
+        ],
+        [
+          "Compound::DB00571",
+          "Disease::DOID:6364"
+        ],
+        [
+          "Compound::DB01101",
+          "Disease::DOID:219"
+        ],
+        [
+          "Compound::DB01047",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB01080",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB01223",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00851",
+          "Disease::DOID:1192"
+        ],
+        [
+          "Compound::DB00471",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB00864",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB01105",
+          "Disease::DOID:9970"
+        ],
+        [
+          "Compound::DB00521",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00136",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB00570",
+          "Disease::DOID:2998"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:219"
+        ],
+        [
+          "Compound::DB00421",
+          "Disease::DOID:12930"
+        ],
+        [
+          "Compound::DB00987",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00982",
+          "Disease::DOID:1192"
+        ],
+        [
+          "Compound::DB00584",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB00871",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00291",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB01234",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB00851",
+          "Disease::DOID:1909"
+        ],
+        [
+          "Compound::DB01234",
+          "Disease::DOID:9074"
+        ],
+        [
+          "Compound::DB00343",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01005",
+          "Disease::DOID:11934"
+        ],
+        [
+          "Compound::DB00675",
+          "Disease::DOID:1793"
+        ],
+        [
+          "Compound::DB00347",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB01170",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01193",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00819",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00178",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00947",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00598",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00195",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00445",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00958",
+          "Disease::DOID:363"
+        ],
+        [
+          "Compound::DB00773",
+          "Disease::DOID:1115"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:9074"
+        ],
+        [
+          "Compound::DB00888",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00177",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00180",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00818",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00709",
+          "Disease::DOID:2043"
+        ],
+        [
+          "Compound::DB00724",
+          "Disease::DOID:4159"
+        ],
+        [
+          "Compound::DB01197",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00764",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB00153",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB01029",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00672",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB00515",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB00819",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00262",
+          "Disease::DOID:0060073"
+        ],
+        [
+          "Compound::DB01234",
+          "Disease::DOID:2377"
+        ],
+        [
+          "Compound::DB00515",
+          "Disease::DOID:1192"
+        ],
+        [
+          "Compound::DB00177",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB00445",
+          "Disease::DOID:1115"
+        ],
+        [
+          "Compound::DB01120",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB04572",
+          "Disease::DOID:11054"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:8778"
+        ],
+        [
+          "Compound::DB04861",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01006",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00674",
+          "Disease::DOID:10652"
+        ],
+        [
+          "Compound::DB00286",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB00287",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00091",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB01124",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB00175",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB01234",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB06287",
+          "Disease::DOID:263"
+        ],
+        [
+          "Compound::DB00307",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB01229",
+          "Disease::DOID:2394"
+        ],
+        [
+          "Compound::DB00620",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB01075",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB00762",
+          "Disease::DOID:219"
+        ],
+        [
+          "Compound::DB01042",
+          "Disease::DOID:2394"
+        ],
+        [
+          "Compound::DB00859",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB00541",
+          "Disease::DOID:1115"
+        ],
+        [
+          "Compound::DB00773",
+          "Disease::DOID:11054"
+        ],
+        [
+          "Compound::DB01030",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB08860",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00270",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00888",
+          "Disease::DOID:0060073"
+        ],
+        [
+          "Compound::DB00399",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB00938",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00443",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB01030",
+          "Disease::DOID:1192"
+        ],
+        [
+          "Compound::DB00968",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00187",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:5041"
+        ],
+        [
+          "Compound::DB00764",
+          "Disease::DOID:418"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:184"
+        ],
+        [
+          "Compound::DB01174",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00627",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00575",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB08882",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:4045"
+        ],
+        [
+          "Compound::DB00678",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:1793"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB00544",
+          "Disease::DOID:4159"
+        ],
+        [
+          "Compound::DB01033",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00441",
+          "Disease::DOID:263"
+        ],
+        [
+          "Compound::DB00970",
+          "Disease::DOID:2994"
+        ],
+        [
+          "Compound::DB00620",
+          "Disease::DOID:986"
+        ],
+        [
+          "Compound::DB00630",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB00178",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB00620",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB00530",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:11054"
+        ],
+        [
+          "Compound::DB00310",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01248",
+          "Disease::DOID:4159"
+        ],
+        [
+          "Compound::DB00722",
+          "Disease::DOID:418"
+        ],
+        [
+          "Compound::DB01206",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00443",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB00959",
+          "Disease::DOID:7147"
+        ],
+        [
+          "Compound::DB00515",
+          "Disease::DOID:11054"
+        ],
+        [
+          "Compound::DB01214",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB01043",
+          "Disease::DOID:10652"
+        ],
+        [
+          "Compound::DB00424",
+          "Disease::DOID:4989"
+        ],
+        [
+          "Compound::DB00860",
+          "Disease::DOID:2377"
+        ],
+        [
+          "Compound::DB00169",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB00990",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00275",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00967",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB01097",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB00700",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00291",
+          "Disease::DOID:2998"
+        ],
+        [
+          "Compound::DB00970",
+          "Disease::DOID:1192"
+        ],
+        [
+          "Compound::DB01248",
+          "Disease::DOID:11934"
+        ],
+        [
+          "Compound::DB01656",
+          "Disease::DOID:3083"
+        ],
+        [
+          "Compound::DB00740",
+          "Disease::DOID:332"
+        ],
+        [
+          "Compound::DB01268",
+          "Disease::DOID:1793"
+        ],
+        [
+          "Compound::DB00959",
+          "Disease::DOID:9074"
+        ],
+        [
+          "Compound::DB00553",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00361",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB01274",
+          "Disease::DOID:3083"
+        ],
+        [
+          "Compound::DB00816",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00627",
+          "Disease::DOID:1936"
+        ],
+        [
+          "Compound::DB00471",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB01144",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00795",
+          "Disease::DOID:8778"
+        ],
+        [
+          "Compound::DB00773",
+          "Disease::DOID:4045"
+        ],
+        [
+          "Compound::DB00445",
+          "Disease::DOID:1781"
+        ]
+      ],
+      "validation": [
+        [
+          "Compound::DB00876",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01177",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00524",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00794",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00958",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00443",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB02546",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00282",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB00564",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00221",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00853",
+          "Disease::DOID:1909"
+        ],
+        [
+          "Compound::DB00655",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB01029",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB00661",
+          "Disease::DOID:6364"
+        ],
+        [
+          "Compound::DB01577",
+          "Disease::DOID:9970"
+        ],
+        [
+          "Compound::DB00444",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00328",
+          "Disease::DOID:13189"
+        ],
+        [
+          "Compound::DB00710",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB00959",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB00455",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00700",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB01076",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00481",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB01259",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00571",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00808",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00570",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB01085",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00651",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB01359",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00973",
+          "Disease::DOID:1936"
+        ],
+        [
+          "Compound::DB00290",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00563",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00763",
+          "Disease::DOID:12361"
+        ],
+        [
+          "Compound::DB00541",
+          "Disease::DOID:0060073"
+        ],
+        [
+          "Compound::DB01001",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00839",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB01223",
+          "Disease::DOID:3083"
+        ],
+        [
+          "Compound::DB00590",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00169",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB00966",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00445",
+          "Disease::DOID:11054"
+        ],
+        [
+          "Compound::DB00774",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00541",
+          "Disease::DOID:1192"
+        ],
+        [
+          "Compound::DB00523",
+          "Disease::DOID:1192"
+        ],
+        [
+          "Compound::DB00361",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00973",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00177",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00993",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB00444",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB00519",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00691",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00900",
+          "Disease::DOID:635"
+        ],
+        [
+          "Compound::DB00544",
+          "Disease::DOID:11054"
+        ],
+        [
+          "Compound::DB01273",
+          "Disease::DOID:0050742"
+        ],
+        [
+          "Compound::DB01041",
+          "Disease::DOID:1024"
+        ],
+        [
+          "Compound::DB00993",
+          "Disease::DOID:418"
+        ],
+        [
+          "Compound::DB00741",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB01409",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00981",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB01030",
+          "Disease::DOID:2394"
+        ],
+        [
+          "Compound::DB00799",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB01101",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB00091",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB00322",
+          "Disease::DOID:10534"
+        ],
+        [
+          "Compound::DB01014",
+          "Disease::DOID:8778"
+        ],
+        [
+          "Compound::DB00959",
+          "Disease::DOID:2377"
+        ],
+        [
+          "Compound::DB00970",
+          "Disease::DOID:2174"
+        ],
+        [
+          "Compound::DB00665",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB00321",
+          "Disease::DOID:6364"
+        ],
+        [
+          "Compound::DB01168",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB01248",
+          "Disease::DOID:10534"
+        ],
+        [
+          "Compound::DB00773",
+          "Disease::DOID:2998"
+        ],
+        [
+          "Compound::DB00783",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB01023",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00205",
+          "Disease::DOID:12365"
+        ],
+        [
+          "Compound::DB00773",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB00741",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB00884",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB00860",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB00544",
+          "Disease::DOID:219"
+        ],
+        [
+          "Compound::DB00758",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00822",
+          "Disease::DOID:0050741"
+        ],
+        [
+          "Compound::DB00882",
+          "Disease::DOID:14227"
+        ],
+        [
+          "Compound::DB00290",
+          "Disease::DOID:4159"
+        ],
+        [
+          "Compound::DB01222",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB01202",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00762",
+          "Disease::DOID:10534"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:9074"
+        ],
+        [
+          "Compound::DB00880",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00252",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB01248",
+          "Disease::DOID:1793"
+        ],
+        [
+          "Compound::DB00701",
+          "Disease::DOID:635"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:2394"
+        ],
+        [
+          "Compound::DB00584",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00350",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00396",
+          "Disease::DOID:363"
+        ],
+        [
+          "Compound::DB00783",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB08871",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:1115"
+        ],
+        [
+          "Compound::DB00773",
+          "Disease::DOID:1192"
+        ],
+        [
+          "Compound::DB00349",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00575",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00709",
+          "Disease::DOID:635"
+        ],
+        [
+          "Compound::DB00492",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01203",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01181",
+          "Disease::DOID:2998"
+        ],
+        [
+          "Compound::DB00224",
+          "Disease::DOID:635"
+        ],
+        [
+          "Compound::DB00695",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00488",
+          "Disease::DOID:2394"
+        ],
+        [
+          "Compound::DB00795",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB00993",
+          "Disease::DOID:9074"
+        ]
+      ],
+      "test": [
+        [
+          "Compound::DB00491",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB00305",
+          "Disease::DOID:11054"
+        ],
+        [
+          "Compound::DB00959",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB00091",
+          "Disease::DOID:9074"
+        ],
+        [
+          "Compound::DB01076",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01586",
+          "Disease::DOID:12236"
+        ],
+        [
+          "Compound::DB00860",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB01234",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00773",
+          "Disease::DOID:1319"
+        ],
+        [
+          "Compound::DB00688",
+          "Disease::DOID:418"
+        ],
+        [
+          "Compound::DB00741",
+          "Disease::DOID:13189"
+        ],
+        [
+          "Compound::DB01064",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00970",
+          "Disease::DOID:4045"
+        ],
+        [
+          "Compound::DB04572",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00762",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00373",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00445",
+          "Disease::DOID:2998"
+        ],
+        [
+          "Compound::DB00397",
+          "Disease::DOID:9970"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB01101",
+          "Disease::DOID:5041"
+        ],
+        [
+          "Compound::DB01083",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB01254",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00977",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB01077",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB00542",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01206",
+          "Disease::DOID:1319"
+        ],
+        [
+          "Compound::DB00361",
+          "Disease::DOID:2394"
+        ],
+        [
+          "Compound::DB00958",
+          "Disease::DOID:2174"
+        ],
+        [
+          "Compound::DB00959",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB00678",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00620",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB00620",
+          "Disease::DOID:2377"
+        ],
+        [
+          "Compound::DB00716",
+          "Disease::DOID:2841"
+        ],
+        [
+          "Compound::DB01601",
+          "Disease::DOID:635"
+        ],
+        [
+          "Compound::DB00484",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00273",
+          "Disease::DOID:9970"
+        ],
+        [
+          "Compound::DB05812",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB01101",
+          "Disease::DOID:10534"
+        ],
+        [
+          "Compound::DB01042",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00279",
+          "Disease::DOID:1459"
+        ],
+        [
+          "Compound::DB00806",
+          "Disease::DOID:418"
+        ],
+        [
+          "Compound::DB01185",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00455",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB06777",
+          "Disease::DOID:12236"
+        ],
+        [
+          "Compound::DB00381",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01047",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB00762",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00153",
+          "Disease::DOID:11476"
+        ],
+        [
+          "Compound::DB01168",
+          "Disease::DOID:1319"
+        ],
+        [
+          "Compound::DB01234",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00273",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00970",
+          "Disease::DOID:263"
+        ],
+        [
+          "Compound::DB00014",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00227",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB01181",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00996",
+          "Disease::DOID:6364"
+        ],
+        [
+          "Compound::DB00445",
+          "Disease::DOID:184"
+        ],
+        [
+          "Compound::DB00290",
+          "Disease::DOID:0060073"
+        ],
+        [
+          "Compound::DB00641",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB00631",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00970",
+          "Disease::DOID:2998"
+        ],
+        [
+          "Compound::DB00960",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:2998"
+        ],
+        [
+          "Compound::DB01196",
+          "Disease::DOID:10283"
+        ],
+        [
+          "Compound::DB01359",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB01115",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00625",
+          "Disease::DOID:635"
+        ],
+        [
+          "Compound::DB00530",
+          "Disease::DOID:263"
+        ],
+        [
+          "Compound::DB01005",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB04845",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB01234",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB00654",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00262",
+          "Disease::DOID:1319"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB00591",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB00175",
+          "Disease::DOID:1936"
+        ],
+        [
+          "Compound::DB00860",
+          "Disease::DOID:13189"
+        ],
+        [
+          "Compound::DB00970",
+          "Disease::DOID:363"
+        ],
+        [
+          "Compound::DB01131",
+          "Disease::DOID:12365"
+        ],
+        [
+          "Compound::DB00437",
+          "Disease::DOID:13189"
+        ],
+        [
+          "Compound::DB01280",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB00620",
+          "Disease::DOID:9074"
+        ],
+        [
+          "Compound::DB00881",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00996",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:2531"
+        ],
+        [
+          "Compound::DB01132",
+          "Disease::DOID:9352"
+        ],
+        [
+          "Compound::DB00509",
+          "Disease::DOID:1459"
+        ],
+        [
+          "Compound::DB00214",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00620",
+          "Disease::DOID:9008"
+        ],
+        [
+          "Compound::DB00642",
+          "Disease::DOID:1324"
+        ],
+        [
+          "Compound::DB00999",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00688",
+          "Disease::DOID:8893"
+        ],
+        [
+          "Compound::DB00471",
+          "Disease::DOID:3083"
+        ],
+        [
+          "Compound::DB00250",
+          "Disease::DOID:1024"
+        ],
+        [
+          "Compound::DB00989",
+          "Disease::DOID:10652"
+        ],
+        [
+          "Compound::DB00341",
+          "Disease::DOID:4481"
+        ],
+        [
+          "Compound::DB01248",
+          "Disease::DOID:1909"
+        ],
+        [
+          "Compound::DB01204",
+          "Disease::DOID:1612"
+        ],
+        [
+          "Compound::DB00227",
+          "Disease::DOID:1936"
+        ],
+        [
+          "Compound::DB01005",
+          "Disease::DOID:1319"
+        ],
+        [
+          "Compound::DB00741",
+          "Disease::DOID:9074"
+        ],
+        [
+          "Compound::DB00997",
+          "Disease::DOID:1192"
+        ],
+        [
+          "Compound::DB00603",
+          "Disease::DOID:363"
+        ],
+        [
+          "Compound::DB01234",
+          "Disease::DOID:8577"
+        ],
+        [
+          "Compound::DB00635",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB00373",
+          "Disease::DOID:10763"
+        ],
+        [
+          "Compound::DB00860",
+          "Disease::DOID:3310"
+        ],
+        [
+          "Compound::DB00964",
+          "Disease::DOID:1686"
+        ],
+        [
+          "Compound::DB00995",
+          "Disease::DOID:7148"
+        ],
+        [
+          "Compound::DB00441",
+          "Disease::DOID:1793"
+        ],
+        [
+          "Compound::DB01351",
+          "Disease::DOID:1826"
+        ],
+        [
+          "Compound::DB00999",
+          "Disease::DOID:585"
+        ],
+        [
+          "Compound::DB01098",
+          "Disease::DOID:3393"
+        ],
+        [
+          "Compound::DB01204",
+          "Disease::DOID:0060073"
+        ]
+      ]
+    }
+  },
+  "feature_definitions": {
+    "direct": "C-BINDS-G-ASSOCIATES-D; exact number of shared genes",
+    "interaction": "C-BINDS-G-INTERACTS-G-ASSOCIATES-D; symmetric interactions, distinct genes",
+    "pathway": "C-BINDS-G-PARTICIPATES-P-PARTICIPATES-G-ASSOCIATES-D; distinct genes, exact simple paths",
+    "transformation": "log1p(counts), log1p(counts/sqrt(binding_degree*association_degree)), log1p endpoint degrees"
+  },
+  "limitations": [
+    "Retrospective recovery is not clinical efficacy validation or new drug discovery.",
+    "The evidence graph is historical and transductive; this is not a temporal or unseen-disease generalization test.",
+    "Removing indication edges prevents direct graph leakage, but correlated literature curation can still encode prior medical knowledge.",
+    "Unobserved pairs can contain real but undocumented treatments; retrieval scores are not calibrated probabilities.",
+    "A single fixed split has sampling uncertainty. All test links and failures are retained in the report.",
+    "Dense well-studied biology receives more coverage. Source relationships are consolidated observations, not independent studies.",
+    "Evidence-family ablation measures model sensitivity, not causal biological interventions.",
+    "Binding and association edges do not encode beneficial action direction, dose, safety, contraindications, or tissue specificity. High-ranking compounds can be medically inappropriate."
+  ],
+  "test_ranks": {
+    "Typed-path logistic": [
+      {
+        "compound_id": "Compound::DB00290",
+        "compound": "Bleomycin",
+        "disease_id": "Disease::DOID:0060073",
+        "disease": "lymphatic system cancer",
+        "rank": 107,
+        "candidate_count": 1545,
+        "score": 0.5627152007070783
+      },
+      {
+        "compound_id": "Compound::DB01204",
+        "compound": "Mitoxantrone",
+        "disease_id": "Disease::DOID:0060073",
+        "disease": "lymphatic system cancer",
+        "rank": 29,
+        "candidate_count": 1545,
+        "score": 0.6632282121000509
+      },
+      {
+        "compound_id": "Compound::DB00250",
+        "compound": "Dapsone",
+        "disease_id": "Disease::DOID:1024",
+        "disease": "leprosy",
+        "rank": 348,
+        "candidate_count": 1550,
+        "score": 0.5403727584192048
+      },
+      {
+        "compound_id": "Compound::DB00977",
+        "compound": "Ethinyl Estradiol",
+        "disease_id": "Disease::DOID:10283",
+        "disease": "prostate cancer",
+        "rank": 31,
+        "candidate_count": 1534,
+        "score": 0.8403399660507235
+      },
+      {
+        "compound_id": "Compound::DB01196",
+        "compound": "Estramustine",
+        "disease_id": "Disease::DOID:10283",
+        "disease": "prostate cancer",
+        "rank": 118,
+        "candidate_count": 1534,
+        "score": 0.7404294681425286
+      },
+      {
+        "compound_id": "Compound::DB05812",
+        "compound": "Abiraterone",
+        "disease_id": "Disease::DOID:10283",
+        "disease": "prostate cancer",
+        "rank": 168,
+        "candidate_count": 1534,
+        "score": 0.7038448633257446
+      },
+      {
+        "compound_id": "Compound::DB01101",
+        "compound": "Capecitabine",
+        "disease_id": "Disease::DOID:10534",
+        "disease": "stomach cancer",
+        "rank": 278,
+        "candidate_count": 1544,
+        "score": 0.5953821234733995
+      },
+      {
+        "compound_id": "Compound::DB00989",
+        "compound": "Rivastigmine",
+        "disease_id": "Disease::DOID:10652",
+        "disease": "Alzheimer's disease",
+        "rank": 44,
+        "candidate_count": 1549,
+        "score": 0.8544131523760643
+      },
+      {
+        "compound_id": "Compound::DB00214",
+        "compound": "Torasemide",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 464,
+        "candidate_count": 1494,
+        "score": 0.5552572670049413
+      },
+      {
+        "compound_id": "Compound::DB00373",
+        "compound": "Timolol",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 406,
+        "candidate_count": 1494,
+        "score": 0.5755915476600311
+      },
+      {
+        "compound_id": "Compound::DB00381",
+        "compound": "Amlodipine",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 565,
+        "candidate_count": 1494,
+        "score": 0.4962178892317706
+      },
+      {
+        "compound_id": "Compound::DB00542",
+        "compound": "Benazepril",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 298,
+        "candidate_count": 1494,
+        "score": 0.6394760203298477
+      },
+      {
+        "compound_id": "Compound::DB00881",
+        "compound": "Quinapril",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 479,
+        "candidate_count": 1494,
+        "score": 0.550981186757976
+      },
+      {
+        "compound_id": "Compound::DB00960",
+        "compound": "Pindolol",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 274,
+        "candidate_count": 1494,
+        "score": 0.6551619652881775
+      },
+      {
+        "compound_id": "Compound::DB00999",
+        "compound": "Hydrochlorothiazide",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 258,
+        "candidate_count": 1494,
+        "score": 0.6663145420709785
+      },
+      {
+        "compound_id": "Compound::DB01076",
+        "compound": "Atorvastatin",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 135,
+        "candidate_count": 1494,
+        "score": 0.7484880659864782
+      },
+      {
+        "compound_id": "Compound::DB01115",
+        "compound": "Nifedipine",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 176,
+        "candidate_count": 1494,
+        "score": 0.722898787420467
+      },
+      {
+        "compound_id": "Compound::DB01359",
+        "compound": "Penbutolol",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 242,
+        "candidate_count": 1494,
+        "score": 0.6804226700178524
+      },
+      {
+        "compound_id": "Compound::DB00305",
+        "compound": "Mitomycin",
+        "disease_id": "Disease::DOID:11054",
+        "disease": "urinary bladder cancer",
+        "rank": 117,
+        "candidate_count": 1542,
+        "score": 0.6873818565718167
+      },
+      {
+        "compound_id": "Compound::DB00153",
+        "compound": "Ergocalciferol",
+        "disease_id": "Disease::DOID:11476",
+        "disease": "osteoporosis",
+        "rank": 17,
+        "candidate_count": 1539,
+        "score": 0.8573007757306491
+      },
+      {
+        "compound_id": "Compound::DB01077",
+        "compound": "Etidronic acid",
+        "disease_id": "Disease::DOID:11476",
+        "disease": "osteoporosis",
+        "rank": 930,
+        "candidate_count": 1539,
+        "score": 0.28871873386156016
+      },
+      {
+        "compound_id": "Compound::DB00997",
+        "compound": "Doxorubicin",
+        "disease_id": "Disease::DOID:1192",
+        "disease": "peripheral nervous system neoplasm",
+        "rank": 4,
+        "candidate_count": 1541,
+        "score": 0.8824301059580502
+      },
+      {
+        "compound_id": "Compound::DB01586",
+        "compound": "Ursodeoxycholic acid",
+        "disease_id": "Disease::DOID:12236",
+        "disease": "primary biliary cirrhosis",
+        "rank": 182,
+        "candidate_count": 1551,
+        "score": 0.7200810579578034
+      },
+      {
+        "compound_id": "Compound::DB06777",
+        "compound": "Chenodeoxycholic acid",
+        "disease_id": "Disease::DOID:12236",
+        "disease": "primary biliary cirrhosis",
+        "rank": 516,
+        "candidate_count": 1551,
+        "score": 0.4283406938953988
+      },
+      {
+        "compound_id": "Compound::DB01131",
+        "compound": "Proguanil",
+        "disease_id": "Disease::DOID:12365",
+        "disease": "malaria",
+        "rank": 34,
+        "candidate_count": 1542,
+        "score": 0.6957973656996057
+      },
+      {
+        "compound_id": "Compound::DB00437",
+        "compound": "Allopurinol",
+        "disease_id": "Disease::DOID:13189",
+        "disease": "gout",
+        "rank": 1030,
+        "candidate_count": 1546,
+        "score": 0.5080499199446787
+      },
+      {
+        "compound_id": "Compound::DB00741",
+        "compound": "Hydrocortisone",
+        "disease_id": "Disease::DOID:13189",
+        "disease": "gout",
+        "rank": 56,
+        "candidate_count": 1546,
+        "score": 0.8039370706188304
+      },
+      {
+        "compound_id": "Compound::DB00860",
+        "compound": "Prednisolone",
+        "disease_id": "Disease::DOID:13189",
+        "disease": "gout",
+        "rank": 403,
+        "candidate_count": 1546,
+        "score": 0.5370679865303566
+      },
+      {
+        "compound_id": "Compound::DB00262",
+        "compound": "Carmustine",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 1008,
+        "candidate_count": 1550,
+        "score": 0.30019598058124886
+      },
+      {
+        "compound_id": "Compound::DB00773",
+        "compound": "Etoposide",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 205,
+        "candidate_count": 1550,
+        "score": 0.6167349503985506
+      },
+      {
+        "compound_id": "Compound::DB01005",
+        "compound": "Hydroxyurea",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 577,
+        "candidate_count": 1550,
+        "score": 0.43658735541940996
+      },
+      {
+        "compound_id": "Compound::DB01168",
+        "compound": "Procarbazine",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 998,
+        "candidate_count": 1550,
+        "score": 0.301542503352398
+      },
+      {
+        "compound_id": "Compound::DB01206",
+        "compound": "Lomustine",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 970,
+        "candidate_count": 1550,
+        "score": 0.30912397779220924
+      },
+      {
+        "compound_id": "Compound::DB00642",
+        "compound": "Pemetrexed",
+        "disease_id": "Disease::DOID:1324",
+        "disease": "lung cancer",
+        "rank": 313,
+        "candidate_count": 1538,
+        "score": 0.5613643322044214
+      },
+      {
+        "compound_id": "Compound::DB00997",
+        "compound": "Doxorubicin",
+        "disease_id": "Disease::DOID:1324",
+        "disease": "lung cancer",
+        "rank": 27,
+        "candidate_count": 1538,
+        "score": 0.8578341477577723
+      },
+      {
+        "compound_id": "Compound::DB00279",
+        "compound": "Liothyronine",
+        "disease_id": "Disease::DOID:1459",
+        "disease": "hypothyroidism",
+        "rank": 2,
+        "candidate_count": 1550,
+        "score": 0.9404724581591185
+      },
+      {
+        "compound_id": "Compound::DB00509",
+        "compound": "Dextrothyroxine",
+        "disease_id": "Disease::DOID:1459",
+        "disease": "hypothyroidism",
+        "rank": 1,
+        "candidate_count": 1550,
+        "score": 0.958812050130056,
+        "outcome": "recovered_in_top_10",
+        "features": {
+          "direct": 3,
+          "interaction": 1,
+          "pathway": 104
+        }
+      },
+      {
+        "compound_id": "Compound::DB00014",
+        "compound": "Goserelin",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 1227,
+        "candidate_count": 1529,
+        "score": 0.15801973899577235
+      },
+      {
+        "compound_id": "Compound::DB00762",
+        "compound": "Irinotecan",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 8,
+        "candidate_count": 1529,
+        "score": 0.9152166677275847
+      },
+      {
+        "compound_id": "Compound::DB01185",
+        "compound": "Fluoxymesterone",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 319,
+        "candidate_count": 1529,
+        "score": 0.6485130877546819
+      },
+      {
+        "compound_id": "Compound::DB01204",
+        "compound": "Mitoxantrone",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 12,
+        "candidate_count": 1529,
+        "score": 0.9104782657981111
+      },
+      {
+        "compound_id": "Compound::DB04572",
+        "compound": "Thiotepa",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 1031,
+        "candidate_count": 1529,
+        "score": 0.25538134214568015
+      },
+      {
+        "compound_id": "Compound::DB04845",
+        "compound": "Ixabepilone",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 144,
+        "candidate_count": 1529,
+        "score": 0.7535315378035067
+      },
+      {
+        "compound_id": "Compound::DB00373",
+        "compound": "Timolol",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 653,
+        "candidate_count": 1535,
+        "score": 0.38443906397477895
+      },
+      {
+        "compound_id": "Compound::DB00484",
+        "compound": "Brimonidine",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 747,
+        "candidate_count": 1535,
+        "score": 0.35210617662106064
+      },
+      {
+        "compound_id": "Compound::DB00654",
+        "compound": "Latanoprost",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 223,
+        "candidate_count": 1535,
+        "score": 0.6000464071523754
+      },
+      {
+        "compound_id": "Compound::DB00964",
+        "compound": "Apraclonidine",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 1271,
+        "candidate_count": 1535,
+        "score": 0.2550176343620316,
+        "outcome": "missed_top_10",
+        "features": {
+          "direct": 0,
+          "interaction": 0,
+          "pathway": 263
+        }
+      },
+      {
+        "compound_id": "Compound::DB00441",
+        "compound": "Gemcitabine",
+        "disease_id": "Disease::DOID:1793",
+        "disease": "pancreatic cancer",
+        "rank": 8,
+        "candidate_count": 1543,
+        "score": 0.815536641394168
+      },
+      {
+        "compound_id": "Compound::DB00273",
+        "compound": "Topiramate",
+        "disease_id": "Disease::DOID:1826",
+        "disease": "epilepsy syndrome",
+        "rank": 1,
+        "candidate_count": 1530,
+        "score": 0.9666473733349296
+      },
+      {
+        "compound_id": "Compound::DB00996",
+        "compound": "Gabapentin",
+        "disease_id": "Disease::DOID:1826",
+        "disease": "epilepsy syndrome",
+        "rank": 715,
+        "candidate_count": 1530,
+        "score": 0.4647870042315802
+      },
+      {
+        "compound_id": "Compound::DB01351",
+        "compound": "Amobarbital",
+        "disease_id": "Disease::DOID:1826",
+        "disease": "epilepsy syndrome",
+        "rank": 44,
+        "candidate_count": 1530,
+        "score": 0.9058286262329001
+      },
+      {
+        "compound_id": "Compound::DB00445",
+        "compound": "Epirubicin",
+        "disease_id": "Disease::DOID:184",
+        "disease": "bone cancer",
+        "rank": 576,
+        "candidate_count": 1548,
+        "score": 0.580362725686579
+      },
+      {
+        "compound_id": "Compound::DB01248",
+        "compound": "Docetaxel",
+        "disease_id": "Disease::DOID:1909",
+        "disease": "melanoma",
+        "rank": 7,
+        "candidate_count": 1546,
+        "score": 0.8536639073701658
+      },
+      {
+        "compound_id": "Compound::DB00175",
+        "compound": "Pravastatin",
+        "disease_id": "Disease::DOID:1936",
+        "disease": "atherosclerosis",
+        "rank": 293,
+        "candidate_count": 1548,
+        "score": 0.5420233726513511
+      },
+      {
+        "compound_id": "Compound::DB00227",
+        "compound": "Lovastatin",
+        "disease_id": "Disease::DOID:1936",
+        "disease": "atherosclerosis",
+        "rank": 81,
+        "candidate_count": 1548,
+        "score": 0.7376825685505205
+      },
+      {
+        "compound_id": "Compound::DB00958",
+        "compound": "Carboplatin",
+        "disease_id": "Disease::DOID:2174",
+        "disease": "ocular cancer",
+        "rank": 68,
+        "candidate_count": 1551,
+        "score": 0.6325866010467225
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:2377",
+        "disease": "multiple sclerosis",
+        "rank": 84,
+        "candidate_count": 1542,
+        "score": 0.7205661342404739
+      },
+      {
+        "compound_id": "Compound::DB00361",
+        "compound": "Vinorelbine",
+        "disease_id": "Disease::DOID:2394",
+        "disease": "ovarian cancer",
+        "rank": 12,
+        "candidate_count": 1543,
+        "score": 0.8524472195850952
+      },
+      {
+        "compound_id": "Compound::DB00631",
+        "compound": "Clofarabine",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 136,
+        "candidate_count": 1509,
+        "score": 0.6666225692497822
+      },
+      {
+        "compound_id": "Compound::DB00635",
+        "compound": "Prednisone",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 44,
+        "candidate_count": 1509,
+        "score": 0.7843506800874582
+      },
+      {
+        "compound_id": "Compound::DB00762",
+        "compound": "Irinotecan",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 5,
+        "candidate_count": 1509,
+        "score": 0.8733056465056461
+      },
+      {
+        "compound_id": "Compound::DB01042",
+        "compound": "Melphalan",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 1039,
+        "candidate_count": 1509,
+        "score": 0.20919329037450884
+      },
+      {
+        "compound_id": "Compound::DB01181",
+        "compound": "Ifosfamide",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 964,
+        "candidate_count": 1509,
+        "score": 0.22759025395049162
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 41,
+        "candidate_count": 1509,
+        "score": 0.788053680711365
+      },
+      {
+        "compound_id": "Compound::DB01254",
+        "compound": "Dasatinib",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 11,
+        "candidate_count": 1509,
+        "score": 0.8496470792764281
+      },
+      {
+        "compound_id": "Compound::DB01280",
+        "compound": "Nelarabine",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 274,
+        "candidate_count": 1509,
+        "score": 0.5611575412188243
+      },
+      {
+        "compound_id": "Compound::DB00530",
+        "compound": "Erlotinib",
+        "disease_id": "Disease::DOID:263",
+        "disease": "kidney cancer",
+        "rank": 58,
+        "candidate_count": 1541,
+        "score": 0.7817374177317289
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:263",
+        "disease": "kidney cancer",
+        "rank": 369,
+        "candidate_count": 1541,
+        "score": 0.5310906183392019
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 44,
+        "candidate_count": 1520,
+        "score": 0.7591800003169239
+      },
+      {
+        "compound_id": "Compound::DB00635",
+        "compound": "Prednisone",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 27,
+        "candidate_count": 1520,
+        "score": 0.7901170187363445
+      },
+      {
+        "compound_id": "Compound::DB00716",
+        "compound": "Nedocromil",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 26,
+        "candidate_count": 1520,
+        "score": 0.7922418560075862
+      },
+      {
+        "compound_id": "Compound::DB01064",
+        "compound": "Isoprenaline",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 465,
+        "candidate_count": 1520,
+        "score": 0.41956859658113643
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 13,
+        "candidate_count": 1520,
+        "score": 0.8298330385733373
+      },
+      {
+        "compound_id": "Compound::DB00445",
+        "compound": "Epirubicin",
+        "disease_id": "Disease::DOID:2998",
+        "disease": "testicular cancer",
+        "rank": 22,
+        "candidate_count": 1544,
+        "score": 0.6722367032320534
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:2998",
+        "disease": "testicular cancer",
+        "rank": 468,
+        "candidate_count": 1544,
+        "score": 0.5215512888797962
+      },
+      {
+        "compound_id": "Compound::DB00997",
+        "compound": "Doxorubicin",
+        "disease_id": "Disease::DOID:2998",
+        "disease": "testicular cancer",
+        "rank": 19,
+        "candidate_count": 1544,
+        "score": 0.7148595129519215
+      },
+      {
+        "compound_id": "Compound::DB00471",
+        "compound": "Montelukast",
+        "disease_id": "Disease::DOID:3083",
+        "disease": "chronic obstructive pulmonary disease",
+        "rank": 1173,
+        "candidate_count": 1544,
+        "score": 0.302414634646747
+      },
+      {
+        "compound_id": "Compound::DB00635",
+        "compound": "Prednisone",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 85,
+        "candidate_count": 1540,
+        "score": 0.5849155882258253
+      },
+      {
+        "compound_id": "Compound::DB00860",
+        "compound": "Prednisolone",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 71,
+        "candidate_count": 1540,
+        "score": 0.5984849526190198
+      },
+      {
+        "compound_id": "Compound::DB00959",
+        "compound": "Methylprednisolone",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 169,
+        "candidate_count": 1540,
+        "score": 0.521385581170307
+      },
+      {
+        "compound_id": "Compound::DB01047",
+        "compound": "Fluocinonide",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 294,
+        "candidate_count": 1540,
+        "score": 0.4844638741015225
+      },
+      {
+        "compound_id": "Compound::DB00227",
+        "compound": "Lovastatin",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 182,
+        "candidate_count": 1528,
+        "score": 0.6327839409203977
+      },
+      {
+        "compound_id": "Compound::DB00641",
+        "compound": "Simvastatin",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 196,
+        "candidate_count": 1528,
+        "score": 0.6188969547188805
+      },
+      {
+        "compound_id": "Compound::DB00678",
+        "compound": "Losartan",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 20,
+        "candidate_count": 1528,
+        "score": 0.8019398321920126
+      },
+      {
+        "compound_id": "Compound::DB01098",
+        "compound": "Rosuvastatin",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 55,
+        "candidate_count": 1528,
+        "score": 0.7354100140839129
+      },
+      {
+        "compound_id": "Compound::DB00603",
+        "compound": "Medroxyprogesterone Acetate",
+        "disease_id": "Disease::DOID:363",
+        "disease": "uterine cancer",
+        "rank": 7,
+        "candidate_count": 1547,
+        "score": 0.8994171110234415
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:363",
+        "disease": "uterine cancer",
+        "rank": 759,
+        "candidate_count": 1547,
+        "score": 0.3372978064900417
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:4045",
+        "disease": "muscle cancer",
+        "rank": 731,
+        "candidate_count": 1547,
+        "score": 0.4520854213688553
+      },
+      {
+        "compound_id": "Compound::DB00688",
+        "compound": "Mycophenolate mofetil",
+        "disease_id": "Disease::DOID:418",
+        "disease": "systemic scleroderma",
+        "rank": 353,
+        "candidate_count": 1544,
+        "score": 0.44643818659751366
+      },
+      {
+        "compound_id": "Compound::DB00806",
+        "compound": "Pentoxifylline",
+        "disease_id": "Disease::DOID:418",
+        "disease": "systemic scleroderma",
+        "rank": 682,
+        "candidate_count": 1544,
+        "score": 0.41512987744607066
+      },
+      {
+        "compound_id": "Compound::DB00341",
+        "compound": "Cetirizine",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 1020,
+        "candidate_count": 1541,
+        "score": 0.3522366369426004
+      },
+      {
+        "compound_id": "Compound::DB00455",
+        "compound": "Loratadine",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 207,
+        "candidate_count": 1541,
+        "score": 0.5842373919036228,
+        "outcome": "missed_top_10",
+        "features": {
+          "direct": 0,
+          "interaction": 1,
+          "pathway": 52
+        }
+      },
+      {
+        "compound_id": "Compound::DB00959",
+        "compound": "Methylprednisolone",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 235,
+        "candidate_count": 1541,
+        "score": 0.5751072473830439
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 10,
+        "candidate_count": 1541,
+        "score": 0.7563482546815717
+      },
+      {
+        "compound_id": "Compound::DB01101",
+        "compound": "Capecitabine",
+        "disease_id": "Disease::DOID:5041",
+        "disease": "esophageal cancer",
+        "rank": 559,
+        "candidate_count": 1549,
+        "score": 0.42636372440564496
+      },
+      {
+        "compound_id": "Compound::DB00999",
+        "compound": "Hydrochlorothiazide",
+        "disease_id": "Disease::DOID:585",
+        "disease": "nephrolithiasis",
+        "rank": 124,
+        "candidate_count": 1552,
+        "score": 0.5857158566168454
+      },
+      {
+        "compound_id": "Compound::DB00625",
+        "compound": "Efavirenz",
+        "disease_id": "Disease::DOID:635",
+        "disease": "acquired immunodeficiency syndrome",
+        "rank": 625,
+        "candidate_count": 1540,
+        "score": 0.45516351395303856
+      },
+      {
+        "compound_id": "Compound::DB01601",
+        "compound": "Lopinavir",
+        "disease_id": "Disease::DOID:635",
+        "disease": "acquired immunodeficiency syndrome",
+        "rank": 299,
+        "candidate_count": 1540,
+        "score": 0.5648674761998157
+      },
+      {
+        "compound_id": "Compound::DB00996",
+        "compound": "Gabapentin",
+        "disease_id": "Disease::DOID:6364",
+        "disease": "migraine",
+        "rank": 818,
+        "candidate_count": 1546,
+        "score": 0.4039418629960994
+      },
+      {
+        "compound_id": "Compound::DB00995",
+        "compound": "Auranofin",
+        "disease_id": "Disease::DOID:7148",
+        "disease": "rheumatoid arthritis",
+        "rank": 314,
+        "candidate_count": 1538,
+        "score": 0.5105578322210436
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:8577",
+        "disease": "ulcerative colitis",
+        "rank": 48,
+        "candidate_count": 1537,
+        "score": 0.8564200859519999
+      },
+      {
+        "compound_id": "Compound::DB00591",
+        "compound": "Fluocinolone Acetonide",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 442,
+        "candidate_count": 1535,
+        "score": 0.49481205769327213
+      },
+      {
+        "compound_id": "Compound::DB00688",
+        "compound": "Mycophenolate mofetil",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 73,
+        "candidate_count": 1535,
+        "score": 0.6711807502667635
+      },
+      {
+        "compound_id": "Compound::DB00860",
+        "compound": "Prednisolone",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 169,
+        "candidate_count": 1535,
+        "score": 0.6013691493228286
+      },
+      {
+        "compound_id": "Compound::DB01005",
+        "compound": "Hydroxyurea",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 495,
+        "candidate_count": 1535,
+        "score": 0.4806111019789927
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:9008",
+        "disease": "psoriatic arthritis",
+        "rank": 207,
+        "candidate_count": 1545,
+        "score": 0.49914850576153635
+      },
+      {
+        "compound_id": "Compound::DB00091",
+        "compound": "Cyclosporine",
+        "disease_id": "Disease::DOID:9074",
+        "disease": "systemic lupus erythematosus",
+        "rank": 245,
+        "candidate_count": 1542,
+        "score": 0.5954185927581566
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:9074",
+        "disease": "systemic lupus erythematosus",
+        "rank": 7,
+        "candidate_count": 1542,
+        "score": 0.857131529236871
+      },
+      {
+        "compound_id": "Compound::DB00741",
+        "compound": "Hydrocortisone",
+        "disease_id": "Disease::DOID:9074",
+        "disease": "systemic lupus erythematosus",
+        "rank": 48,
+        "candidate_count": 1542,
+        "score": 0.7675893018444571
+      },
+      {
+        "compound_id": "Compound::DB00491",
+        "compound": "Miglitol",
+        "disease_id": "Disease::DOID:9352",
+        "disease": "type 2 diabetes mellitus",
+        "rank": 961,
+        "candidate_count": 1533,
+        "score": 0.2918700023736282
+      },
+      {
+        "compound_id": "Compound::DB01083",
+        "compound": "Orlistat",
+        "disease_id": "Disease::DOID:9352",
+        "disease": "type 2 diabetes mellitus",
+        "rank": 552,
+        "candidate_count": 1533,
+        "score": 0.5059963576269395
+      },
+      {
+        "compound_id": "Compound::DB01132",
+        "compound": "Pioglitazone",
+        "disease_id": "Disease::DOID:9352",
+        "disease": "type 2 diabetes mellitus",
+        "rank": 363,
+        "candidate_count": 1533,
+        "score": 0.6069733313260506
+      },
+      {
+        "compound_id": "Compound::DB00273",
+        "compound": "Topiramate",
+        "disease_id": "Disease::DOID:9970",
+        "disease": "obesity",
+        "rank": 525,
+        "candidate_count": 1543,
+        "score": 0.47594049938400096
+      },
+      {
+        "compound_id": "Compound::DB00397",
+        "compound": "Phenylpropanolamine",
+        "disease_id": "Disease::DOID:9970",
+        "disease": "obesity",
+        "rank": 153,
+        "candidate_count": 1543,
+        "score": 0.7092561685360703
+      }
+    ],
+    "Path count baseline": [
+      {
+        "compound_id": "Compound::DB00290",
+        "compound": "Bleomycin",
+        "disease_id": "Disease::DOID:0060073",
+        "disease": "lymphatic system cancer",
+        "rank": 187,
+        "candidate_count": 1545,
+        "score": 4.0
+      },
+      {
+        "compound_id": "Compound::DB01204",
+        "compound": "Mitoxantrone",
+        "disease_id": "Disease::DOID:0060073",
+        "disease": "lymphatic system cancer",
+        "rank": 49,
+        "candidate_count": 1545,
+        "score": 10.0
+      },
+      {
+        "compound_id": "Compound::DB00250",
+        "compound": "Dapsone",
+        "disease_id": "Disease::DOID:1024",
+        "disease": "leprosy",
+        "rank": 231,
+        "candidate_count": 1550,
+        "score": 48.0
+      },
+      {
+        "compound_id": "Compound::DB00977",
+        "compound": "Ethinyl Estradiol",
+        "disease_id": "Disease::DOID:10283",
+        "disease": "prostate cancer",
+        "rank": 272,
+        "candidate_count": 1534,
+        "score": 2448.0
+      },
+      {
+        "compound_id": "Compound::DB01196",
+        "compound": "Estramustine",
+        "disease_id": "Disease::DOID:10283",
+        "disease": "prostate cancer",
+        "rank": 595,
+        "candidate_count": 1534,
+        "score": 1240.0
+      },
+      {
+        "compound_id": "Compound::DB05812",
+        "compound": "Abiraterone",
+        "disease_id": "Disease::DOID:10283",
+        "disease": "prostate cancer",
+        "rank": 356,
+        "candidate_count": 1534,
+        "score": 2024.0
+      },
+      {
+        "compound_id": "Compound::DB01101",
+        "compound": "Capecitabine",
+        "disease_id": "Disease::DOID:10534",
+        "disease": "stomach cancer",
+        "rank": 653,
+        "candidate_count": 1544,
+        "score": 499.0
+      },
+      {
+        "compound_id": "Compound::DB00989",
+        "compound": "Rivastigmine",
+        "disease_id": "Disease::DOID:10652",
+        "disease": "Alzheimer's disease",
+        "rank": 722,
+        "candidate_count": 1549,
+        "score": 388.0
+      },
+      {
+        "compound_id": "Compound::DB00214",
+        "compound": "Torasemide",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 741,
+        "candidate_count": 1494,
+        "score": 1212.0
+      },
+      {
+        "compound_id": "Compound::DB00373",
+        "compound": "Timolol",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 367,
+        "candidate_count": 1494,
+        "score": 2695.0
+      },
+      {
+        "compound_id": "Compound::DB00381",
+        "compound": "Amlodipine",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 204,
+        "candidate_count": 1494,
+        "score": 4086.0
+      },
+      {
+        "compound_id": "Compound::DB00542",
+        "compound": "Benazepril",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 1064,
+        "candidate_count": 1494,
+        "score": 525.0
+      },
+      {
+        "compound_id": "Compound::DB00881",
+        "compound": "Quinapril",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 1225,
+        "candidate_count": 1494,
+        "score": 237.0
+      },
+      {
+        "compound_id": "Compound::DB00960",
+        "compound": "Pindolol",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 270,
+        "candidate_count": 1494,
+        "score": 3432.0
+      },
+      {
+        "compound_id": "Compound::DB00999",
+        "compound": "Hydrochlorothiazide",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 773,
+        "candidate_count": 1494,
+        "score": 1116.0
+      },
+      {
+        "compound_id": "Compound::DB01076",
+        "compound": "Atorvastatin",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 143,
+        "candidate_count": 1494,
+        "score": 5030.0
+      },
+      {
+        "compound_id": "Compound::DB01115",
+        "compound": "Nifedipine",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 60,
+        "candidate_count": 1494,
+        "score": 9730.0
+      },
+      {
+        "compound_id": "Compound::DB01359",
+        "compound": "Penbutolol",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 383,
+        "candidate_count": 1494,
+        "score": 2574.0
+      },
+      {
+        "compound_id": "Compound::DB00305",
+        "compound": "Mitomycin",
+        "disease_id": "Disease::DOID:11054",
+        "disease": "urinary bladder cancer",
+        "rank": 1155,
+        "candidate_count": 1542,
+        "score": 71.0
+      },
+      {
+        "compound_id": "Compound::DB00153",
+        "compound": "Ergocalciferol",
+        "disease_id": "Disease::DOID:11476",
+        "disease": "osteoporosis",
+        "rank": 505,
+        "candidate_count": 1539,
+        "score": 321.0
+      },
+      {
+        "compound_id": "Compound::DB01077",
+        "compound": "Etidronic acid",
+        "disease_id": "Disease::DOID:11476",
+        "disease": "osteoporosis",
+        "rank": 1065,
+        "candidate_count": 1539,
+        "score": 84.0
+      },
+      {
+        "compound_id": "Compound::DB00997",
+        "compound": "Doxorubicin",
+        "disease_id": "Disease::DOID:1192",
+        "disease": "peripheral nervous system neoplasm",
+        "rank": 84,
+        "candidate_count": 1541,
+        "score": 737.0
+      },
+      {
+        "compound_id": "Compound::DB01586",
+        "compound": "Ursodeoxycholic acid",
+        "disease_id": "Disease::DOID:12236",
+        "disease": "primary biliary cirrhosis",
+        "rank": 375,
+        "candidate_count": 1551,
+        "score": 248.0
+      },
+      {
+        "compound_id": "Compound::DB06777",
+        "compound": "Chenodeoxycholic acid",
+        "disease_id": "Disease::DOID:12236",
+        "disease": "primary biliary cirrhosis",
+        "rank": 736,
+        "candidate_count": 1551,
+        "score": 125.0
+      },
+      {
+        "compound_id": "Compound::DB01131",
+        "compound": "Proguanil",
+        "disease_id": "Disease::DOID:12365",
+        "disease": "malaria",
+        "rank": 458,
+        "candidate_count": 1542,
+        "score": 117.0
+      },
+      {
+        "compound_id": "Compound::DB00437",
+        "compound": "Allopurinol",
+        "disease_id": "Disease::DOID:13189",
+        "disease": "gout",
+        "rank": 586,
+        "candidate_count": 1546,
+        "score": 51.0
+      },
+      {
+        "compound_id": "Compound::DB00741",
+        "compound": "Hydrocortisone",
+        "disease_id": "Disease::DOID:13189",
+        "disease": "gout",
+        "rank": 223,
+        "candidate_count": 1546,
+        "score": 119.0
+      },
+      {
+        "compound_id": "Compound::DB00860",
+        "compound": "Prednisolone",
+        "disease_id": "Disease::DOID:13189",
+        "disease": "gout",
+        "rank": 548,
+        "candidate_count": 1546,
+        "score": 56.0
+      },
+      {
+        "compound_id": "Compound::DB00262",
+        "compound": "Carmustine",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 1077,
+        "candidate_count": 1550,
+        "score": 49.0
+      },
+      {
+        "compound_id": "Compound::DB00773",
+        "compound": "Etoposide",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 218,
+        "candidate_count": 1550,
+        "score": 391.0
+      },
+      {
+        "compound_id": "Compound::DB01005",
+        "compound": "Hydroxyurea",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 763,
+        "candidate_count": 1550,
+        "score": 108.0
+      },
+      {
+        "compound_id": "Compound::DB01168",
+        "compound": "Procarbazine",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 1169,
+        "candidate_count": 1550,
+        "score": 34.0
+      },
+      {
+        "compound_id": "Compound::DB01206",
+        "compound": "Lomustine",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 1190,
+        "candidate_count": 1550,
+        "score": 29.0
+      },
+      {
+        "compound_id": "Compound::DB00642",
+        "compound": "Pemetrexed",
+        "disease_id": "Disease::DOID:1324",
+        "disease": "lung cancer",
+        "rank": 611,
+        "candidate_count": 1538,
+        "score": 725.0
+      },
+      {
+        "compound_id": "Compound::DB00997",
+        "compound": "Doxorubicin",
+        "disease_id": "Disease::DOID:1324",
+        "disease": "lung cancer",
+        "rank": 80,
+        "candidate_count": 1538,
+        "score": 3363.0
+      },
+      {
+        "compound_id": "Compound::DB00279",
+        "compound": "Liothyronine",
+        "disease_id": "Disease::DOID:1459",
+        "disease": "hypothyroidism",
+        "rank": 220,
+        "candidate_count": 1550,
+        "score": 208.0
+      },
+      {
+        "compound_id": "Compound::DB00509",
+        "compound": "Dextrothyroxine",
+        "disease_id": "Disease::DOID:1459",
+        "disease": "hypothyroidism",
+        "rank": 545,
+        "candidate_count": 1550,
+        "score": 108.0
+      },
+      {
+        "compound_id": "Compound::DB00014",
+        "compound": "Goserelin",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 930,
+        "candidate_count": 1529,
+        "score": 555.0
+      },
+      {
+        "compound_id": "Compound::DB00762",
+        "compound": "Irinotecan",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 168,
+        "candidate_count": 1529,
+        "score": 3328.0
+      },
+      {
+        "compound_id": "Compound::DB01185",
+        "compound": "Fluoxymesterone",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 391,
+        "candidate_count": 1529,
+        "score": 1763.0
+      },
+      {
+        "compound_id": "Compound::DB01204",
+        "compound": "Mitoxantrone",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 296,
+        "candidate_count": 1529,
+        "score": 2215.0
+      },
+      {
+        "compound_id": "Compound::DB04572",
+        "compound": "Thiotepa",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 1084,
+        "candidate_count": 1529,
+        "score": 357.0
+      },
+      {
+        "compound_id": "Compound::DB04845",
+        "compound": "Ixabepilone",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 646,
+        "candidate_count": 1529,
+        "score": 1069.0
+      },
+      {
+        "compound_id": "Compound::DB00373",
+        "compound": "Timolol",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 490,
+        "candidate_count": 1535,
+        "score": 249.0
+      },
+      {
+        "compound_id": "Compound::DB00484",
+        "compound": "Brimonidine",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 520,
+        "candidate_count": 1535,
+        "score": 239.0
+      },
+      {
+        "compound_id": "Compound::DB00654",
+        "compound": "Latanoprost",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 965,
+        "candidate_count": 1535,
+        "score": 89.0
+      },
+      {
+        "compound_id": "Compound::DB00964",
+        "compound": "Apraclonidine",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 461,
+        "candidate_count": 1535,
+        "score": 263.0
+      },
+      {
+        "compound_id": "Compound::DB00441",
+        "compound": "Gemcitabine",
+        "disease_id": "Disease::DOID:1793",
+        "disease": "pancreatic cancer",
+        "rank": 356,
+        "candidate_count": 1543,
+        "score": 593.0
+      },
+      {
+        "compound_id": "Compound::DB00273",
+        "compound": "Topiramate",
+        "disease_id": "Disease::DOID:1826",
+        "disease": "epilepsy syndrome",
+        "rank": 138,
+        "candidate_count": 1530,
+        "score": 3022.0
+      },
+      {
+        "compound_id": "Compound::DB00996",
+        "compound": "Gabapentin",
+        "disease_id": "Disease::DOID:1826",
+        "disease": "epilepsy syndrome",
+        "rank": 697,
+        "candidate_count": 1530,
+        "score": 758.0
+      },
+      {
+        "compound_id": "Compound::DB01351",
+        "compound": "Amobarbital",
+        "disease_id": "Disease::DOID:1826",
+        "disease": "epilepsy syndrome",
+        "rank": 279,
+        "candidate_count": 1530,
+        "score": 1973.0
+      },
+      {
+        "compound_id": "Compound::DB00445",
+        "compound": "Epirubicin",
+        "disease_id": "Disease::DOID:184",
+        "disease": "bone cancer",
+        "rank": 265,
+        "candidate_count": 1548,
+        "score": 273.0
+      },
+      {
+        "compound_id": "Compound::DB01248",
+        "compound": "Docetaxel",
+        "disease_id": "Disease::DOID:1909",
+        "disease": "melanoma",
+        "rank": 68,
+        "candidate_count": 1546,
+        "score": 4159.0
+      },
+      {
+        "compound_id": "Compound::DB00175",
+        "compound": "Pravastatin",
+        "disease_id": "Disease::DOID:1936",
+        "disease": "atherosclerosis",
+        "rank": 209,
+        "candidate_count": 1548,
+        "score": 1395.0
+      },
+      {
+        "compound_id": "Compound::DB00227",
+        "compound": "Lovastatin",
+        "disease_id": "Disease::DOID:1936",
+        "disease": "atherosclerosis",
+        "rank": 166,
+        "candidate_count": 1548,
+        "score": 1617.0
+      },
+      {
+        "compound_id": "Compound::DB00958",
+        "compound": "Carboplatin",
+        "disease_id": "Disease::DOID:2174",
+        "disease": "ocular cancer",
+        "rank": 334,
+        "candidate_count": 1551,
+        "score": 198.0
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:2377",
+        "disease": "multiple sclerosis",
+        "rank": 695,
+        "candidate_count": 1542,
+        "score": 209.0
+      },
+      {
+        "compound_id": "Compound::DB00361",
+        "compound": "Vinorelbine",
+        "disease_id": "Disease::DOID:2394",
+        "disease": "ovarian cancer",
+        "rank": 381,
+        "candidate_count": 1543,
+        "score": 449.0
+      },
+      {
+        "compound_id": "Compound::DB00631",
+        "compound": "Clofarabine",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 671,
+        "candidate_count": 1509,
+        "score": 766.0
+      },
+      {
+        "compound_id": "Compound::DB00635",
+        "compound": "Prednisone",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 427,
+        "candidate_count": 1509,
+        "score": 1200.0
+      },
+      {
+        "compound_id": "Compound::DB00762",
+        "compound": "Irinotecan",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 194,
+        "candidate_count": 1509,
+        "score": 2264.0
+      },
+      {
+        "compound_id": "Compound::DB01042",
+        "compound": "Melphalan",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 1150,
+        "candidate_count": 1509,
+        "score": 232.0
+      },
+      {
+        "compound_id": "Compound::DB01181",
+        "compound": "Ifosfamide",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 573,
+        "candidate_count": 1509,
+        "score": 919.0
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 95,
+        "candidate_count": 1509,
+        "score": 4325.0
+      },
+      {
+        "compound_id": "Compound::DB01254",
+        "compound": "Dasatinib",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 3,
+        "candidate_count": 1509,
+        "score": 33079.0
+      },
+      {
+        "compound_id": "Compound::DB01280",
+        "compound": "Nelarabine",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 839,
+        "candidate_count": 1509,
+        "score": 532.0
+      },
+      {
+        "compound_id": "Compound::DB00530",
+        "compound": "Erlotinib",
+        "disease_id": "Disease::DOID:263",
+        "disease": "kidney cancer",
+        "rank": 38,
+        "candidate_count": 1541,
+        "score": 2669.0
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:263",
+        "disease": "kidney cancer",
+        "rank": 783,
+        "candidate_count": 1541,
+        "score": 275.0
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 707,
+        "candidate_count": 1520,
+        "score": 392.0
+      },
+      {
+        "compound_id": "Compound::DB00635",
+        "compound": "Prednisone",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 575,
+        "candidate_count": 1520,
+        "score": 535.0
+      },
+      {
+        "compound_id": "Compound::DB00716",
+        "compound": "Nedocromil",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 180,
+        "candidate_count": 1520,
+        "score": 1648.0
+      },
+      {
+        "compound_id": "Compound::DB01064",
+        "compound": "Isoprenaline",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 31,
+        "candidate_count": 1520,
+        "score": 5384.0
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 111,
+        "candidate_count": 1520,
+        "score": 2258.0
+      },
+      {
+        "compound_id": "Compound::DB00445",
+        "compound": "Epirubicin",
+        "disease_id": "Disease::DOID:2998",
+        "disease": "testicular cancer",
+        "rank": 337,
+        "candidate_count": 1544,
+        "score": 54.0
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:2998",
+        "disease": "testicular cancer",
+        "rank": 758,
+        "candidate_count": 1544,
+        "score": 23.0
+      },
+      {
+        "compound_id": "Compound::DB00997",
+        "compound": "Doxorubicin",
+        "disease_id": "Disease::DOID:2998",
+        "disease": "testicular cancer",
+        "rank": 116,
+        "candidate_count": 1544,
+        "score": 143.0
+      },
+      {
+        "compound_id": "Compound::DB00471",
+        "compound": "Montelukast",
+        "disease_id": "Disease::DOID:3083",
+        "disease": "chronic obstructive pulmonary disease",
+        "rank": 428,
+        "candidate_count": 1544,
+        "score": 324.0
+      },
+      {
+        "compound_id": "Compound::DB00635",
+        "compound": "Prednisone",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 558,
+        "candidate_count": 1540,
+        "score": 122.0
+      },
+      {
+        "compound_id": "Compound::DB00860",
+        "compound": "Prednisolone",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 681,
+        "candidate_count": 1540,
+        "score": 90.0
+      },
+      {
+        "compound_id": "Compound::DB00959",
+        "compound": "Methylprednisolone",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 773,
+        "candidate_count": 1540,
+        "score": 73.0
+      },
+      {
+        "compound_id": "Compound::DB01047",
+        "compound": "Fluocinonide",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 625,
+        "candidate_count": 1540,
+        "score": 103.0
+      },
+      {
+        "compound_id": "Compound::DB00227",
+        "compound": "Lovastatin",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 176,
+        "candidate_count": 1528,
+        "score": 3412.0
+      },
+      {
+        "compound_id": "Compound::DB00641",
+        "compound": "Simvastatin",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 197,
+        "candidate_count": 1528,
+        "score": 3217.0
+      },
+      {
+        "compound_id": "Compound::DB00678",
+        "compound": "Losartan",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 161,
+        "candidate_count": 1528,
+        "score": 3636.0
+      },
+      {
+        "compound_id": "Compound::DB01098",
+        "compound": "Rosuvastatin",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 214,
+        "candidate_count": 1528,
+        "score": 3051.0
+      },
+      {
+        "compound_id": "Compound::DB00603",
+        "compound": "Medroxyprogesterone Acetate",
+        "disease_id": "Disease::DOID:363",
+        "disease": "uterine cancer",
+        "rank": 167,
+        "candidate_count": 1547,
+        "score": 638.0
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:363",
+        "disease": "uterine cancer",
+        "rank": 867,
+        "candidate_count": 1547,
+        "score": 127.0
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:4045",
+        "disease": "muscle cancer",
+        "rank": 822,
+        "candidate_count": 1547,
+        "score": 39.0
+      },
+      {
+        "compound_id": "Compound::DB00688",
+        "compound": "Mycophenolate mofetil",
+        "disease_id": "Disease::DOID:418",
+        "disease": "systemic scleroderma",
+        "rank": 288,
+        "candidate_count": 1544,
+        "score": 113.0
+      },
+      {
+        "compound_id": "Compound::DB00806",
+        "compound": "Pentoxifylline",
+        "disease_id": "Disease::DOID:418",
+        "disease": "systemic scleroderma",
+        "rank": 294,
+        "candidate_count": 1544,
+        "score": 111.0
+      },
+      {
+        "compound_id": "Compound::DB00341",
+        "compound": "Cetirizine",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 637,
+        "candidate_count": 1541,
+        "score": 33.0
+      },
+      {
+        "compound_id": "Compound::DB00455",
+        "compound": "Loratadine",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 486,
+        "candidate_count": 1541,
+        "score": 53.0
+      },
+      {
+        "compound_id": "Compound::DB00959",
+        "compound": "Methylprednisolone",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 581,
+        "candidate_count": 1541,
+        "score": 40.0
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 171,
+        "candidate_count": 1541,
+        "score": 155.0
+      },
+      {
+        "compound_id": "Compound::DB01101",
+        "compound": "Capecitabine",
+        "disease_id": "Disease::DOID:5041",
+        "disease": "esophageal cancer",
+        "rank": 680,
+        "candidate_count": 1549,
+        "score": 360.0
+      },
+      {
+        "compound_id": "Compound::DB00999",
+        "compound": "Hydrochlorothiazide",
+        "disease_id": "Disease::DOID:585",
+        "disease": "nephrolithiasis",
+        "rank": 507,
+        "candidate_count": 1552,
+        "score": 92.0
+      },
+      {
+        "compound_id": "Compound::DB00625",
+        "compound": "Efavirenz",
+        "disease_id": "Disease::DOID:635",
+        "disease": "acquired immunodeficiency syndrome",
+        "rank": 954,
+        "candidate_count": 1540,
+        "score": 28.0
+      },
+      {
+        "compound_id": "Compound::DB01601",
+        "compound": "Lopinavir",
+        "disease_id": "Disease::DOID:635",
+        "disease": "acquired immunodeficiency syndrome",
+        "rank": 810,
+        "candidate_count": 1540,
+        "score": 44.0
+      },
+      {
+        "compound_id": "Compound::DB00996",
+        "compound": "Gabapentin",
+        "disease_id": "Disease::DOID:6364",
+        "disease": "migraine",
+        "rank": 607,
+        "candidate_count": 1546,
+        "score": 100.0
+      },
+      {
+        "compound_id": "Compound::DB00995",
+        "compound": "Auranofin",
+        "disease_id": "Disease::DOID:7148",
+        "disease": "rheumatoid arthritis",
+        "rank": 203,
+        "candidate_count": 1538,
+        "score": 1021.0
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:8577",
+        "disease": "ulcerative colitis",
+        "rank": 107,
+        "candidate_count": 1537,
+        "score": 921.0
+      },
+      {
+        "compound_id": "Compound::DB00591",
+        "compound": "Fluocinolone Acetonide",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 623,
+        "candidate_count": 1535,
+        "score": 122.0
+      },
+      {
+        "compound_id": "Compound::DB00688",
+        "compound": "Mycophenolate mofetil",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 244,
+        "candidate_count": 1535,
+        "score": 286.0
+      },
+      {
+        "compound_id": "Compound::DB00860",
+        "compound": "Prednisolone",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 471,
+        "candidate_count": 1535,
+        "score": 160.0
+      },
+      {
+        "compound_id": "Compound::DB01005",
+        "compound": "Hydroxyurea",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 981,
+        "candidate_count": 1535,
+        "score": 55.0
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:9008",
+        "disease": "psoriatic arthritis",
+        "rank": 261,
+        "candidate_count": 1545,
+        "score": 19.0
+      },
+      {
+        "compound_id": "Compound::DB00091",
+        "compound": "Cyclosporine",
+        "disease_id": "Disease::DOID:9074",
+        "disease": "systemic lupus erythematosus",
+        "rank": 120,
+        "candidate_count": 1542,
+        "score": 847.0
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:9074",
+        "disease": "systemic lupus erythematosus",
+        "rank": 558,
+        "candidate_count": 1542,
+        "score": 216.0
+      },
+      {
+        "compound_id": "Compound::DB00741",
+        "compound": "Hydrocortisone",
+        "disease_id": "Disease::DOID:9074",
+        "disease": "systemic lupus erythematosus",
+        "rank": 283,
+        "candidate_count": 1542,
+        "score": 405.0
+      },
+      {
+        "compound_id": "Compound::DB00491",
+        "compound": "Miglitol",
+        "disease_id": "Disease::DOID:9352",
+        "disease": "type 2 diabetes mellitus",
+        "rank": 1041,
+        "candidate_count": 1533,
+        "score": 334.0
+      },
+      {
+        "compound_id": "Compound::DB01083",
+        "compound": "Orlistat",
+        "disease_id": "Disease::DOID:9352",
+        "disease": "type 2 diabetes mellitus",
+        "rank": 319,
+        "candidate_count": 1533,
+        "score": 1593.0
+      },
+      {
+        "compound_id": "Compound::DB01132",
+        "compound": "Pioglitazone",
+        "disease_id": "Disease::DOID:9352",
+        "disease": "type 2 diabetes mellitus",
+        "rank": 321,
+        "candidate_count": 1533,
+        "score": 1581.0
+      },
+      {
+        "compound_id": "Compound::DB00273",
+        "compound": "Topiramate",
+        "disease_id": "Disease::DOID:9970",
+        "disease": "obesity",
+        "rank": 344,
+        "candidate_count": 1543,
+        "score": 2128.0
+      },
+      {
+        "compound_id": "Compound::DB00397",
+        "compound": "Phenylpropanolamine",
+        "disease_id": "Disease::DOID:9970",
+        "disease": "obesity",
+        "rank": 229,
+        "candidate_count": 1543,
+        "score": 2887.0
+      }
+    ],
+    "Target-degree baseline": [
+      {
+        "compound_id": "Compound::DB00290",
+        "compound": "Bleomycin",
+        "disease_id": "Disease::DOID:0060073",
+        "disease": "lymphatic system cancer",
+        "rank": 916,
+        "candidate_count": 1545,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB01204",
+        "compound": "Mitoxantrone",
+        "disease_id": "Disease::DOID:0060073",
+        "disease": "lymphatic system cancer",
+        "rank": 341,
+        "candidate_count": 1545,
+        "score": 11.0
+      },
+      {
+        "compound_id": "Compound::DB00250",
+        "compound": "Dapsone",
+        "disease_id": "Disease::DOID:1024",
+        "disease": "leprosy",
+        "rank": 230,
+        "candidate_count": 1550,
+        "score": 14.0
+      },
+      {
+        "compound_id": "Compound::DB00977",
+        "compound": "Ethinyl Estradiol",
+        "disease_id": "Disease::DOID:10283",
+        "disease": "prostate cancer",
+        "rank": 281,
+        "candidate_count": 1534,
+        "score": 12.0
+      },
+      {
+        "compound_id": "Compound::DB01196",
+        "compound": "Estramustine",
+        "disease_id": "Disease::DOID:10283",
+        "disease": "prostate cancer",
+        "rank": 642,
+        "candidate_count": 1534,
+        "score": 6.0
+      },
+      {
+        "compound_id": "Compound::DB05812",
+        "compound": "Abiraterone",
+        "disease_id": "Disease::DOID:10283",
+        "disease": "prostate cancer",
+        "rank": 506,
+        "candidate_count": 1534,
+        "score": 8.0
+      },
+      {
+        "compound_id": "Compound::DB01101",
+        "compound": "Capecitabine",
+        "disease_id": "Disease::DOID:10534",
+        "disease": "stomach cancer",
+        "rank": 643,
+        "candidate_count": 1544,
+        "score": 6.0
+      },
+      {
+        "compound_id": "Compound::DB00989",
+        "compound": "Rivastigmine",
+        "disease_id": "Disease::DOID:10652",
+        "disease": "Alzheimer's disease",
+        "rank": 860,
+        "candidate_count": 1549,
+        "score": 4.0
+      },
+      {
+        "compound_id": "Compound::DB00214",
+        "compound": "Torasemide",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 654,
+        "candidate_count": 1494,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB00373",
+        "compound": "Timolol",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 574,
+        "candidate_count": 1494,
+        "score": 6.0
+      },
+      {
+        "compound_id": "Compound::DB00381",
+        "compound": "Amlodipine",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 111,
+        "candidate_count": 1494,
+        "score": 21.0
+      },
+      {
+        "compound_id": "Compound::DB00542",
+        "compound": "Benazepril",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 784,
+        "candidate_count": 1494,
+        "score": 4.0
+      },
+      {
+        "compound_id": "Compound::DB00881",
+        "compound": "Quinapril",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 914,
+        "candidate_count": 1494,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00960",
+        "compound": "Pindolol",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 605,
+        "candidate_count": 1494,
+        "score": 6.0
+      },
+      {
+        "compound_id": "Compound::DB00999",
+        "compound": "Hydrochlorothiazide",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 409,
+        "candidate_count": 1494,
+        "score": 9.0
+      },
+      {
+        "compound_id": "Compound::DB01076",
+        "compound": "Atorvastatin",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 88,
+        "candidate_count": 1494,
+        "score": 24.0
+      },
+      {
+        "compound_id": "Compound::DB01115",
+        "compound": "Nifedipine",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 80,
+        "candidate_count": 1494,
+        "score": 25.0
+      },
+      {
+        "compound_id": "Compound::DB01359",
+        "compound": "Penbutolol",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 727,
+        "candidate_count": 1494,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB00305",
+        "compound": "Mitomycin",
+        "disease_id": "Disease::DOID:11054",
+        "disease": "urinary bladder cancer",
+        "rank": 1060,
+        "candidate_count": 1542,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00153",
+        "compound": "Ergocalciferol",
+        "disease_id": "Disease::DOID:11476",
+        "disease": "osteoporosis",
+        "rank": 524,
+        "candidate_count": 1539,
+        "score": 7.0
+      },
+      {
+        "compound_id": "Compound::DB01077",
+        "compound": "Etidronic acid",
+        "disease_id": "Disease::DOID:11476",
+        "disease": "osteoporosis",
+        "rank": 1140,
+        "candidate_count": 1539,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00997",
+        "compound": "Doxorubicin",
+        "disease_id": "Disease::DOID:1192",
+        "disease": "peripheral nervous system neoplasm",
+        "rank": 32,
+        "candidate_count": 1541,
+        "score": 32.0
+      },
+      {
+        "compound_id": "Compound::DB01586",
+        "compound": "Ursodeoxycholic acid",
+        "disease_id": "Disease::DOID:12236",
+        "disease": "primary biliary cirrhosis",
+        "rank": 445,
+        "candidate_count": 1551,
+        "score": 9.0
+      },
+      {
+        "compound_id": "Compound::DB06777",
+        "compound": "Chenodeoxycholic acid",
+        "disease_id": "Disease::DOID:12236",
+        "disease": "primary biliary cirrhosis",
+        "rank": 907,
+        "candidate_count": 1551,
+        "score": 4.0
+      },
+      {
+        "compound_id": "Compound::DB01131",
+        "compound": "Proguanil",
+        "disease_id": "Disease::DOID:12365",
+        "disease": "malaria",
+        "rank": 561,
+        "candidate_count": 1542,
+        "score": 7.0
+      },
+      {
+        "compound_id": "Compound::DB00437",
+        "compound": "Allopurinol",
+        "disease_id": "Disease::DOID:13189",
+        "disease": "gout",
+        "rank": 814,
+        "candidate_count": 1546,
+        "score": 4.0
+      },
+      {
+        "compound_id": "Compound::DB00741",
+        "compound": "Hydrocortisone",
+        "disease_id": "Disease::DOID:13189",
+        "disease": "gout",
+        "rank": 253,
+        "candidate_count": 1546,
+        "score": 13.0
+      },
+      {
+        "compound_id": "Compound::DB00860",
+        "compound": "Prednisolone",
+        "disease_id": "Disease::DOID:13189",
+        "disease": "gout",
+        "rank": 556,
+        "candidate_count": 1546,
+        "score": 7.0
+      },
+      {
+        "compound_id": "Compound::DB00262",
+        "compound": "Carmustine",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 1061,
+        "candidate_count": 1550,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00773",
+        "compound": "Etoposide",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 147,
+        "candidate_count": 1550,
+        "score": 19.0
+      },
+      {
+        "compound_id": "Compound::DB01005",
+        "compound": "Hydroxyurea",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 981,
+        "candidate_count": 1550,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB01168",
+        "compound": "Procarbazine",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 1159,
+        "candidate_count": 1550,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB01206",
+        "compound": "Lomustine",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 992,
+        "candidate_count": 1550,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00642",
+        "compound": "Pemetrexed",
+        "disease_id": "Disease::DOID:1324",
+        "disease": "lung cancer",
+        "rank": 541,
+        "candidate_count": 1538,
+        "score": 7.0
+      },
+      {
+        "compound_id": "Compound::DB00997",
+        "compound": "Doxorubicin",
+        "disease_id": "Disease::DOID:1324",
+        "disease": "lung cancer",
+        "rank": 31,
+        "candidate_count": 1538,
+        "score": 32.0
+      },
+      {
+        "compound_id": "Compound::DB00279",
+        "compound": "Liothyronine",
+        "disease_id": "Disease::DOID:1459",
+        "disease": "hypothyroidism",
+        "rank": 183,
+        "candidate_count": 1550,
+        "score": 16.0
+      },
+      {
+        "compound_id": "Compound::DB00509",
+        "compound": "Dextrothyroxine",
+        "disease_id": "Disease::DOID:1459",
+        "disease": "hypothyroidism",
+        "rank": 471,
+        "candidate_count": 1550,
+        "score": 8.0
+      },
+      {
+        "compound_id": "Compound::DB00014",
+        "compound": "Goserelin",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 1030,
+        "candidate_count": 1529,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00762",
+        "compound": "Irinotecan",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 122,
+        "candidate_count": 1529,
+        "score": 20.0
+      },
+      {
+        "compound_id": "Compound::DB01185",
+        "compound": "Fluoxymesterone",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 737,
+        "candidate_count": 1529,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB01204",
+        "compound": "Mitoxantrone",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 333,
+        "candidate_count": 1529,
+        "score": 11.0
+      },
+      {
+        "compound_id": "Compound::DB04572",
+        "compound": "Thiotepa",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 1170,
+        "candidate_count": 1529,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB04845",
+        "compound": "Ixabepilone",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 383,
+        "candidate_count": 1529,
+        "score": 10.0
+      },
+      {
+        "compound_id": "Compound::DB00373",
+        "compound": "Timolol",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 596,
+        "candidate_count": 1535,
+        "score": 6.0
+      },
+      {
+        "compound_id": "Compound::DB00484",
+        "compound": "Brimonidine",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 815,
+        "candidate_count": 1535,
+        "score": 4.0
+      },
+      {
+        "compound_id": "Compound::DB00654",
+        "compound": "Latanoprost",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 933,
+        "candidate_count": 1535,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00964",
+        "compound": "Apraclonidine",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 848,
+        "candidate_count": 1535,
+        "score": 4.0
+      },
+      {
+        "compound_id": "Compound::DB00441",
+        "compound": "Gemcitabine",
+        "disease_id": "Disease::DOID:1793",
+        "disease": "pancreatic cancer",
+        "rank": 203,
+        "candidate_count": 1543,
+        "score": 15.0
+      },
+      {
+        "compound_id": "Compound::DB00273",
+        "compound": "Topiramate",
+        "disease_id": "Disease::DOID:1826",
+        "disease": "epilepsy syndrome",
+        "rank": 72,
+        "candidate_count": 1530,
+        "score": 25.0
+      },
+      {
+        "compound_id": "Compound::DB00996",
+        "compound": "Gabapentin",
+        "disease_id": "Disease::DOID:1826",
+        "disease": "epilepsy syndrome",
+        "rank": 725,
+        "candidate_count": 1530,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB01351",
+        "compound": "Amobarbital",
+        "disease_id": "Disease::DOID:1826",
+        "disease": "epilepsy syndrome",
+        "rank": 292,
+        "candidate_count": 1530,
+        "score": 12.0
+      },
+      {
+        "compound_id": "Compound::DB00445",
+        "compound": "Epirubicin",
+        "disease_id": "Disease::DOID:184",
+        "disease": "bone cancer",
+        "rank": 464,
+        "candidate_count": 1548,
+        "score": 8.0
+      },
+      {
+        "compound_id": "Compound::DB01248",
+        "compound": "Docetaxel",
+        "disease_id": "Disease::DOID:1909",
+        "disease": "melanoma",
+        "rank": 52,
+        "candidate_count": 1546,
+        "score": 29.0
+      },
+      {
+        "compound_id": "Compound::DB00175",
+        "compound": "Pravastatin",
+        "disease_id": "Disease::DOID:1936",
+        "disease": "atherosclerosis",
+        "rank": 136,
+        "candidate_count": 1548,
+        "score": 19.0
+      },
+      {
+        "compound_id": "Compound::DB00227",
+        "compound": "Lovastatin",
+        "disease_id": "Disease::DOID:1936",
+        "disease": "atherosclerosis",
+        "rank": 137,
+        "candidate_count": 1548,
+        "score": 19.0
+      },
+      {
+        "compound_id": "Compound::DB00958",
+        "compound": "Carboplatin",
+        "disease_id": "Disease::DOID:2174",
+        "disease": "ocular cancer",
+        "rank": 217,
+        "candidate_count": 1551,
+        "score": 15.0
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:2377",
+        "disease": "multiple sclerosis",
+        "rank": 700,
+        "candidate_count": 1542,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB00361",
+        "compound": "Vinorelbine",
+        "disease_id": "Disease::DOID:2394",
+        "disease": "ovarian cancer",
+        "rank": 273,
+        "candidate_count": 1543,
+        "score": 12.0
+      },
+      {
+        "compound_id": "Compound::DB00631",
+        "compound": "Clofarabine",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 683,
+        "candidate_count": 1509,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB00635",
+        "compound": "Prednisone",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 529,
+        "candidate_count": 1509,
+        "score": 7.0
+      },
+      {
+        "compound_id": "Compound::DB00762",
+        "compound": "Irinotecan",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 120,
+        "candidate_count": 1509,
+        "score": 20.0
+      },
+      {
+        "compound_id": "Compound::DB01042",
+        "compound": "Melphalan",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 1107,
+        "candidate_count": 1509,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB01181",
+        "compound": "Ifosfamide",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 323,
+        "candidate_count": 1509,
+        "score": 11.0
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 36,
+        "candidate_count": 1509,
+        "score": 31.0
+      },
+      {
+        "compound_id": "Compound::DB01254",
+        "compound": "Dasatinib",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 4,
+        "candidate_count": 1509,
+        "score": 64.0
+      },
+      {
+        "compound_id": "Compound::DB01280",
+        "compound": "Nelarabine",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 858,
+        "candidate_count": 1509,
+        "score": 4.0
+      },
+      {
+        "compound_id": "Compound::DB00530",
+        "compound": "Erlotinib",
+        "disease_id": "Disease::DOID:263",
+        "disease": "kidney cancer",
+        "rank": 33,
+        "candidate_count": 1541,
+        "score": 31.0
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:263",
+        "disease": "kidney cancer",
+        "rank": 731,
+        "candidate_count": 1541,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 692,
+        "candidate_count": 1520,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB00635",
+        "compound": "Prednisone",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 539,
+        "candidate_count": 1520,
+        "score": 7.0
+      },
+      {
+        "compound_id": "Compound::DB00716",
+        "compound": "Nedocromil",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 702,
+        "candidate_count": 1520,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB01064",
+        "compound": "Isoprenaline",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 427,
+        "candidate_count": 1520,
+        "score": 9.0
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 41,
+        "candidate_count": 1520,
+        "score": 31.0
+      },
+      {
+        "compound_id": "Compound::DB00445",
+        "compound": "Epirubicin",
+        "disease_id": "Disease::DOID:2998",
+        "disease": "testicular cancer",
+        "rank": 462,
+        "candidate_count": 1544,
+        "score": 8.0
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:2998",
+        "disease": "testicular cancer",
+        "rank": 735,
+        "candidate_count": 1544,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB00997",
+        "compound": "Doxorubicin",
+        "disease_id": "Disease::DOID:2998",
+        "disease": "testicular cancer",
+        "rank": 32,
+        "candidate_count": 1544,
+        "score": 32.0
+      },
+      {
+        "compound_id": "Compound::DB00471",
+        "compound": "Montelukast",
+        "disease_id": "Disease::DOID:3083",
+        "disease": "chronic obstructive pulmonary disease",
+        "rank": 469,
+        "candidate_count": 1544,
+        "score": 8.0
+      },
+      {
+        "compound_id": "Compound::DB00635",
+        "compound": "Prednisone",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 546,
+        "candidate_count": 1540,
+        "score": 7.0
+      },
+      {
+        "compound_id": "Compound::DB00860",
+        "compound": "Prednisolone",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 555,
+        "candidate_count": 1540,
+        "score": 7.0
+      },
+      {
+        "compound_id": "Compound::DB00959",
+        "compound": "Methylprednisolone",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 967,
+        "candidate_count": 1540,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB01047",
+        "compound": "Fluocinonide",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 976,
+        "candidate_count": 1540,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00227",
+        "compound": "Lovastatin",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 135,
+        "candidate_count": 1528,
+        "score": 19.0
+      },
+      {
+        "compound_id": "Compound::DB00641",
+        "compound": "Simvastatin",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 155,
+        "candidate_count": 1528,
+        "score": 18.0
+      },
+      {
+        "compound_id": "Compound::DB00678",
+        "compound": "Losartan",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 125,
+        "candidate_count": 1528,
+        "score": 20.0
+      },
+      {
+        "compound_id": "Compound::DB01098",
+        "compound": "Rosuvastatin",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 214,
+        "candidate_count": 1528,
+        "score": 15.0
+      },
+      {
+        "compound_id": "Compound::DB00603",
+        "compound": "Medroxyprogesterone Acetate",
+        "disease_id": "Disease::DOID:363",
+        "disease": "uterine cancer",
+        "rank": 361,
+        "candidate_count": 1547,
+        "score": 10.0
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:363",
+        "disease": "uterine cancer",
+        "rank": 736,
+        "candidate_count": 1547,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:4045",
+        "disease": "muscle cancer",
+        "rank": 736,
+        "candidate_count": 1547,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB00688",
+        "compound": "Mycophenolate mofetil",
+        "disease_id": "Disease::DOID:418",
+        "disease": "systemic scleroderma",
+        "rank": 126,
+        "candidate_count": 1544,
+        "score": 20.0
+      },
+      {
+        "compound_id": "Compound::DB00806",
+        "compound": "Pentoxifylline",
+        "disease_id": "Disease::DOID:418",
+        "disease": "systemic scleroderma",
+        "rank": 485,
+        "candidate_count": 1544,
+        "score": 8.0
+      },
+      {
+        "compound_id": "Compound::DB00341",
+        "compound": "Cetirizine",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 1226,
+        "candidate_count": 1541,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB00455",
+        "compound": "Loratadine",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 465,
+        "candidate_count": 1541,
+        "score": 8.0
+      },
+      {
+        "compound_id": "Compound::DB00959",
+        "compound": "Methylprednisolone",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 966,
+        "candidate_count": 1541,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 41,
+        "candidate_count": 1541,
+        "score": 31.0
+      },
+      {
+        "compound_id": "Compound::DB01101",
+        "compound": "Capecitabine",
+        "disease_id": "Disease::DOID:5041",
+        "disease": "esophageal cancer",
+        "rank": 646,
+        "candidate_count": 1549,
+        "score": 6.0
+      },
+      {
+        "compound_id": "Compound::DB00999",
+        "compound": "Hydrochlorothiazide",
+        "disease_id": "Disease::DOID:585",
+        "disease": "nephrolithiasis",
+        "rank": 431,
+        "candidate_count": 1552,
+        "score": 9.0
+      },
+      {
+        "compound_id": "Compound::DB00625",
+        "compound": "Efavirenz",
+        "disease_id": "Disease::DOID:635",
+        "disease": "acquired immunodeficiency syndrome",
+        "rank": 609,
+        "candidate_count": 1540,
+        "score": 6.0
+      },
+      {
+        "compound_id": "Compound::DB01601",
+        "compound": "Lopinavir",
+        "disease_id": "Disease::DOID:635",
+        "disease": "acquired immunodeficiency syndrome",
+        "rank": 574,
+        "candidate_count": 1540,
+        "score": 7.0
+      },
+      {
+        "compound_id": "Compound::DB00996",
+        "compound": "Gabapentin",
+        "disease_id": "Disease::DOID:6364",
+        "disease": "migraine",
+        "rank": 738,
+        "candidate_count": 1546,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB00995",
+        "compound": "Auranofin",
+        "disease_id": "Disease::DOID:7148",
+        "disease": "rheumatoid arthritis",
+        "rank": 966,
+        "candidate_count": 1538,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:8577",
+        "disease": "ulcerative colitis",
+        "rank": 40,
+        "candidate_count": 1537,
+        "score": 31.0
+      },
+      {
+        "compound_id": "Compound::DB00591",
+        "compound": "Fluocinolone Acetonide",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 928,
+        "candidate_count": 1535,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00688",
+        "compound": "Mycophenolate mofetil",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 124,
+        "candidate_count": 1535,
+        "score": 20.0
+      },
+      {
+        "compound_id": "Compound::DB00860",
+        "compound": "Prednisolone",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 553,
+        "candidate_count": 1535,
+        "score": 7.0
+      },
+      {
+        "compound_id": "Compound::DB01005",
+        "compound": "Hydroxyurea",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 968,
+        "candidate_count": 1535,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:9008",
+        "disease": "psoriatic arthritis",
+        "rank": 704,
+        "candidate_count": 1545,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB00091",
+        "compound": "Cyclosporine",
+        "disease_id": "Disease::DOID:9074",
+        "disease": "systemic lupus erythematosus",
+        "rank": 40,
+        "candidate_count": 1542,
+        "score": 30.0
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:9074",
+        "disease": "systemic lupus erythematosus",
+        "rank": 700,
+        "candidate_count": 1542,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB00741",
+        "compound": "Hydrocortisone",
+        "disease_id": "Disease::DOID:9074",
+        "disease": "systemic lupus erythematosus",
+        "rank": 251,
+        "candidate_count": 1542,
+        "score": 13.0
+      },
+      {
+        "compound_id": "Compound::DB00491",
+        "compound": "Miglitol",
+        "disease_id": "Disease::DOID:9352",
+        "disease": "type 2 diabetes mellitus",
+        "rank": 692,
+        "candidate_count": 1533,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB01083",
+        "compound": "Orlistat",
+        "disease_id": "Disease::DOID:9352",
+        "disease": "type 2 diabetes mellitus",
+        "rank": 376,
+        "candidate_count": 1533,
+        "score": 10.0
+      },
+      {
+        "compound_id": "Compound::DB01132",
+        "compound": "Pioglitazone",
+        "disease_id": "Disease::DOID:9352",
+        "disease": "type 2 diabetes mellitus",
+        "rank": 428,
+        "candidate_count": 1533,
+        "score": 9.0
+      },
+      {
+        "compound_id": "Compound::DB00273",
+        "compound": "Topiramate",
+        "disease_id": "Disease::DOID:9970",
+        "disease": "obesity",
+        "rank": 76,
+        "candidate_count": 1543,
+        "score": 25.0
+      },
+      {
+        "compound_id": "Compound::DB00397",
+        "compound": "Phenylpropanolamine",
+        "disease_id": "Disease::DOID:9970",
+        "disease": "obesity",
+        "rank": 403,
+        "candidate_count": 1543,
+        "score": 9.0
+      }
+    ],
+    "Direct-overlap baseline": [
+      {
+        "compound_id": "Compound::DB00290",
+        "compound": "Bleomycin",
+        "disease_id": "Disease::DOID:0060073",
+        "disease": "lymphatic system cancer",
+        "rank": 178,
+        "candidate_count": 1545,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB01204",
+        "compound": "Mitoxantrone",
+        "disease_id": "Disease::DOID:0060073",
+        "disease": "lymphatic system cancer",
+        "rank": 1046,
+        "candidate_count": 1545,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00250",
+        "compound": "Dapsone",
+        "disease_id": "Disease::DOID:1024",
+        "disease": "leprosy",
+        "rank": 150,
+        "candidate_count": 1550,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00977",
+        "compound": "Ethinyl Estradiol",
+        "disease_id": "Disease::DOID:10283",
+        "disease": "prostate cancer",
+        "rank": 74,
+        "candidate_count": 1534,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB01196",
+        "compound": "Estramustine",
+        "disease_id": "Disease::DOID:10283",
+        "disease": "prostate cancer",
+        "rank": 243,
+        "candidate_count": 1534,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB05812",
+        "compound": "Abiraterone",
+        "disease_id": "Disease::DOID:10283",
+        "disease": "prostate cancer",
+        "rank": 267,
+        "candidate_count": 1534,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB01101",
+        "compound": "Capecitabine",
+        "disease_id": "Disease::DOID:10534",
+        "disease": "stomach cancer",
+        "rank": 52,
+        "candidate_count": 1544,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00989",
+        "compound": "Rivastigmine",
+        "disease_id": "Disease::DOID:10652",
+        "disease": "Alzheimer's disease",
+        "rank": 72,
+        "candidate_count": 1549,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00214",
+        "compound": "Torasemide",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 308,
+        "candidate_count": 1494,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00373",
+        "compound": "Timolol",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 325,
+        "candidate_count": 1494,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00381",
+        "compound": "Amlodipine",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 326,
+        "candidate_count": 1494,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00542",
+        "compound": "Benazepril",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 343,
+        "candidate_count": 1494,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00881",
+        "compound": "Quinapril",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 644,
+        "candidate_count": 1494,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB00960",
+        "compound": "Pindolol",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 248,
+        "candidate_count": 1494,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00999",
+        "compound": "Hydrochlorothiazide",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 404,
+        "candidate_count": 1494,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB01076",
+        "compound": "Atorvastatin",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 151,
+        "candidate_count": 1494,
+        "score": 4.0
+      },
+      {
+        "compound_id": "Compound::DB01115",
+        "compound": "Nifedipine",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 156,
+        "candidate_count": 1494,
+        "score": 4.0
+      },
+      {
+        "compound_id": "Compound::DB01359",
+        "compound": "Penbutolol",
+        "disease_id": "Disease::DOID:10763",
+        "disease": "hypertension",
+        "rank": 267,
+        "candidate_count": 1494,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00305",
+        "compound": "Mitomycin",
+        "disease_id": "Disease::DOID:11054",
+        "disease": "urinary bladder cancer",
+        "rank": 81,
+        "candidate_count": 1542,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB00153",
+        "compound": "Ergocalciferol",
+        "disease_id": "Disease::DOID:11476",
+        "disease": "osteoporosis",
+        "rank": 8,
+        "candidate_count": 1539,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB01077",
+        "compound": "Etidronic acid",
+        "disease_id": "Disease::DOID:11476",
+        "disease": "osteoporosis",
+        "rank": 964,
+        "candidate_count": 1539,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00997",
+        "compound": "Doxorubicin",
+        "disease_id": "Disease::DOID:1192",
+        "disease": "peripheral nervous system neoplasm",
+        "rank": 16,
+        "candidate_count": 1541,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB01586",
+        "compound": "Ursodeoxycholic acid",
+        "disease_id": "Disease::DOID:12236",
+        "disease": "primary biliary cirrhosis",
+        "rank": 219,
+        "candidate_count": 1551,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB06777",
+        "compound": "Chenodeoxycholic acid",
+        "disease_id": "Disease::DOID:12236",
+        "disease": "primary biliary cirrhosis",
+        "rank": 1442,
+        "candidate_count": 1551,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB01131",
+        "compound": "Proguanil",
+        "disease_id": "Disease::DOID:12365",
+        "disease": "malaria",
+        "rank": 21,
+        "candidate_count": 1542,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB00437",
+        "compound": "Allopurinol",
+        "disease_id": "Disease::DOID:13189",
+        "disease": "gout",
+        "rank": 403,
+        "candidate_count": 1546,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00741",
+        "compound": "Hydrocortisone",
+        "disease_id": "Disease::DOID:13189",
+        "disease": "gout",
+        "rank": 54,
+        "candidate_count": 1546,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB00860",
+        "compound": "Prednisolone",
+        "disease_id": "Disease::DOID:13189",
+        "disease": "gout",
+        "rank": 765,
+        "candidate_count": 1546,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00262",
+        "compound": "Carmustine",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 415,
+        "candidate_count": 1550,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00773",
+        "compound": "Etoposide",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 802,
+        "candidate_count": 1550,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB01005",
+        "compound": "Hydroxyurea",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 982,
+        "candidate_count": 1550,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB01168",
+        "compound": "Procarbazine",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 1088,
+        "candidate_count": 1550,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB01206",
+        "compound": "Lomustine",
+        "disease_id": "Disease::DOID:1319",
+        "disease": "brain cancer",
+        "rank": 1114,
+        "candidate_count": 1550,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00642",
+        "compound": "Pemetrexed",
+        "disease_id": "Disease::DOID:1324",
+        "disease": "lung cancer",
+        "rank": 332,
+        "candidate_count": 1538,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB00997",
+        "compound": "Doxorubicin",
+        "disease_id": "Disease::DOID:1324",
+        "disease": "lung cancer",
+        "rank": 53,
+        "candidate_count": 1538,
+        "score": 4.0
+      },
+      {
+        "compound_id": "Compound::DB00279",
+        "compound": "Liothyronine",
+        "disease_id": "Disease::DOID:1459",
+        "disease": "hypothyroidism",
+        "rank": 1,
+        "candidate_count": 1550,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00509",
+        "compound": "Dextrothyroxine",
+        "disease_id": "Disease::DOID:1459",
+        "disease": "hypothyroidism",
+        "rank": 2,
+        "candidate_count": 1550,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00014",
+        "compound": "Goserelin",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 936,
+        "candidate_count": 1529,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00762",
+        "compound": "Irinotecan",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 27,
+        "candidate_count": 1529,
+        "score": 8.0
+      },
+      {
+        "compound_id": "Compound::DB01185",
+        "compound": "Fluoxymesterone",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 162,
+        "candidate_count": 1529,
+        "score": 4.0
+      },
+      {
+        "compound_id": "Compound::DB01204",
+        "compound": "Mitoxantrone",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 38,
+        "candidate_count": 1529,
+        "score": 7.0
+      },
+      {
+        "compound_id": "Compound::DB04572",
+        "compound": "Thiotepa",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 888,
+        "candidate_count": 1529,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB04845",
+        "compound": "Ixabepilone",
+        "disease_id": "Disease::DOID:1612",
+        "disease": "breast cancer",
+        "rank": 549,
+        "candidate_count": 1529,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00373",
+        "compound": "Timolol",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 427,
+        "candidate_count": 1535,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00484",
+        "compound": "Brimonidine",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 512,
+        "candidate_count": 1535,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00654",
+        "compound": "Latanoprost",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 114,
+        "candidate_count": 1535,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB00964",
+        "compound": "Apraclonidine",
+        "disease_id": "Disease::DOID:1686",
+        "disease": "glaucoma",
+        "rank": 890,
+        "candidate_count": 1535,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00441",
+        "compound": "Gemcitabine",
+        "disease_id": "Disease::DOID:1793",
+        "disease": "pancreatic cancer",
+        "rank": 17,
+        "candidate_count": 1543,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00273",
+        "compound": "Topiramate",
+        "disease_id": "Disease::DOID:1826",
+        "disease": "epilepsy syndrome",
+        "rank": 3,
+        "candidate_count": 1530,
+        "score": 12.0
+      },
+      {
+        "compound_id": "Compound::DB00996",
+        "compound": "Gabapentin",
+        "disease_id": "Disease::DOID:1826",
+        "disease": "epilepsy syndrome",
+        "rank": 774,
+        "candidate_count": 1530,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB01351",
+        "compound": "Amobarbital",
+        "disease_id": "Disease::DOID:1826",
+        "disease": "epilepsy syndrome",
+        "rank": 89,
+        "candidate_count": 1530,
+        "score": 6.0
+      },
+      {
+        "compound_id": "Compound::DB00445",
+        "compound": "Epirubicin",
+        "disease_id": "Disease::DOID:184",
+        "disease": "bone cancer",
+        "rank": 792,
+        "candidate_count": 1548,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB01248",
+        "compound": "Docetaxel",
+        "disease_id": "Disease::DOID:1909",
+        "disease": "melanoma",
+        "rank": 15,
+        "candidate_count": 1546,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB00175",
+        "compound": "Pravastatin",
+        "disease_id": "Disease::DOID:1936",
+        "disease": "atherosclerosis",
+        "rank": 111,
+        "candidate_count": 1548,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB00227",
+        "compound": "Lovastatin",
+        "disease_id": "Disease::DOID:1936",
+        "disease": "atherosclerosis",
+        "rank": 38,
+        "candidate_count": 1548,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00958",
+        "compound": "Carboplatin",
+        "disease_id": "Disease::DOID:2174",
+        "disease": "ocular cancer",
+        "rank": 818,
+        "candidate_count": 1551,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:2377",
+        "disease": "multiple sclerosis",
+        "rank": 99,
+        "candidate_count": 1542,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB00361",
+        "compound": "Vinorelbine",
+        "disease_id": "Disease::DOID:2394",
+        "disease": "ovarian cancer",
+        "rank": 30,
+        "candidate_count": 1543,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00631",
+        "compound": "Clofarabine",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 129,
+        "candidate_count": 1509,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00635",
+        "compound": "Prednisone",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 62,
+        "candidate_count": 1509,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00762",
+        "compound": "Irinotecan",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 20,
+        "candidate_count": 1509,
+        "score": 5.0
+      },
+      {
+        "compound_id": "Compound::DB01042",
+        "compound": "Melphalan",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 1084,
+        "candidate_count": 1509,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB01181",
+        "compound": "Ifosfamide",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 1158,
+        "candidate_count": 1509,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 74,
+        "candidate_count": 1509,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB01254",
+        "compound": "Dasatinib",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 1,
+        "candidate_count": 1509,
+        "score": 16.0
+      },
+      {
+        "compound_id": "Compound::DB01280",
+        "compound": "Nelarabine",
+        "disease_id": "Disease::DOID:2531",
+        "disease": "hematologic cancer",
+        "rank": 500,
+        "candidate_count": 1509,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB00530",
+        "compound": "Erlotinib",
+        "disease_id": "Disease::DOID:263",
+        "disease": "kidney cancer",
+        "rank": 76,
+        "candidate_count": 1541,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:263",
+        "disease": "kidney cancer",
+        "rank": 359,
+        "candidate_count": 1541,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 52,
+        "candidate_count": 1520,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00635",
+        "compound": "Prednisone",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 53,
+        "candidate_count": 1520,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00716",
+        "compound": "Nedocromil",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 20,
+        "candidate_count": 1520,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB01064",
+        "compound": "Isoprenaline",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 275,
+        "candidate_count": 1520,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:2841",
+        "disease": "asthma",
+        "rank": 27,
+        "candidate_count": 1520,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00445",
+        "compound": "Epirubicin",
+        "disease_id": "Disease::DOID:2998",
+        "disease": "testicular cancer",
+        "rank": 334,
+        "candidate_count": 1544,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:2998",
+        "disease": "testicular cancer",
+        "rank": 828,
+        "candidate_count": 1544,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00997",
+        "compound": "Doxorubicin",
+        "disease_id": "Disease::DOID:2998",
+        "disease": "testicular cancer",
+        "rank": 855,
+        "candidate_count": 1544,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00471",
+        "compound": "Montelukast",
+        "disease_id": "Disease::DOID:3083",
+        "disease": "chronic obstructive pulmonary disease",
+        "rank": 738,
+        "candidate_count": 1544,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00635",
+        "compound": "Prednisone",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 520,
+        "candidate_count": 1540,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00860",
+        "compound": "Prednisolone",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 734,
+        "candidate_count": 1540,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00959",
+        "compound": "Methylprednisolone",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 825,
+        "candidate_count": 1540,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB01047",
+        "compound": "Fluocinonide",
+        "disease_id": "Disease::DOID:3310",
+        "disease": "atopic dermatitis",
+        "rank": 905,
+        "candidate_count": 1540,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00227",
+        "compound": "Lovastatin",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 125,
+        "candidate_count": 1528,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00641",
+        "compound": "Simvastatin",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 171,
+        "candidate_count": 1528,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00678",
+        "compound": "Losartan",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 31,
+        "candidate_count": 1528,
+        "score": 4.0
+      },
+      {
+        "compound_id": "Compound::DB01098",
+        "compound": "Rosuvastatin",
+        "disease_id": "Disease::DOID:3393",
+        "disease": "coronary artery disease",
+        "rank": 87,
+        "candidate_count": 1528,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00603",
+        "compound": "Medroxyprogesterone Acetate",
+        "disease_id": "Disease::DOID:363",
+        "disease": "uterine cancer",
+        "rank": 5,
+        "candidate_count": 1547,
+        "score": 3.0
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:363",
+        "disease": "uterine cancer",
+        "rank": 877,
+        "candidate_count": 1547,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00970",
+        "compound": "Dactinomycin",
+        "disease_id": "Disease::DOID:4045",
+        "disease": "muscle cancer",
+        "rank": 857,
+        "candidate_count": 1547,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00688",
+        "compound": "Mycophenolate mofetil",
+        "disease_id": "Disease::DOID:418",
+        "disease": "systemic scleroderma",
+        "rank": 576,
+        "candidate_count": 1544,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00806",
+        "compound": "Pentoxifylline",
+        "disease_id": "Disease::DOID:418",
+        "disease": "systemic scleroderma",
+        "rank": 685,
+        "candidate_count": 1544,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00341",
+        "compound": "Cetirizine",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 231,
+        "candidate_count": 1541,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00455",
+        "compound": "Loratadine",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 334,
+        "candidate_count": 1541,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00959",
+        "compound": "Methylprednisolone",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 809,
+        "candidate_count": 1541,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:4481",
+        "disease": "allergic rhinitis",
+        "rank": 1069,
+        "candidate_count": 1541,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB01101",
+        "compound": "Capecitabine",
+        "disease_id": "Disease::DOID:5041",
+        "disease": "esophageal cancer",
+        "rank": 394,
+        "candidate_count": 1549,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB00999",
+        "compound": "Hydrochlorothiazide",
+        "disease_id": "Disease::DOID:585",
+        "disease": "nephrolithiasis",
+        "rank": 877,
+        "candidate_count": 1552,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00625",
+        "compound": "Efavirenz",
+        "disease_id": "Disease::DOID:635",
+        "disease": "acquired immunodeficiency syndrome",
+        "rank": 582,
+        "candidate_count": 1540,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB01601",
+        "compound": "Lopinavir",
+        "disease_id": "Disease::DOID:635",
+        "disease": "acquired immunodeficiency syndrome",
+        "rank": 1268,
+        "candidate_count": 1540,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00996",
+        "compound": "Gabapentin",
+        "disease_id": "Disease::DOID:6364",
+        "disease": "migraine",
+        "rank": 945,
+        "candidate_count": 1546,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00995",
+        "compound": "Auranofin",
+        "disease_id": "Disease::DOID:7148",
+        "disease": "rheumatoid arthritis",
+        "rank": 202,
+        "candidate_count": 1538,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB01234",
+        "compound": "Dexamethasone",
+        "disease_id": "Disease::DOID:8577",
+        "disease": "ulcerative colitis",
+        "rank": 136,
+        "candidate_count": 1537,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00591",
+        "compound": "Fluocinolone Acetonide",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 497,
+        "candidate_count": 1535,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00688",
+        "compound": "Mycophenolate mofetil",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 587,
+        "candidate_count": 1535,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00860",
+        "compound": "Prednisolone",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 746,
+        "candidate_count": 1535,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB01005",
+        "compound": "Hydroxyurea",
+        "disease_id": "Disease::DOID:8893",
+        "disease": "psoriasis",
+        "rank": 879,
+        "candidate_count": 1535,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:9008",
+        "disease": "psoriatic arthritis",
+        "rank": 502,
+        "candidate_count": 1545,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00091",
+        "compound": "Cyclosporine",
+        "disease_id": "Disease::DOID:9074",
+        "disease": "systemic lupus erythematosus",
+        "rank": 281,
+        "candidate_count": 1542,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00620",
+        "compound": "Triamcinolone",
+        "disease_id": "Disease::DOID:9074",
+        "disease": "systemic lupus erythematosus",
+        "rank": 25,
+        "candidate_count": 1542,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00741",
+        "compound": "Hydrocortisone",
+        "disease_id": "Disease::DOID:9074",
+        "disease": "systemic lupus erythematosus",
+        "rank": 132,
+        "candidate_count": 1542,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB00491",
+        "compound": "Miglitol",
+        "disease_id": "Disease::DOID:9352",
+        "disease": "type 2 diabetes mellitus",
+        "rank": 988,
+        "candidate_count": 1533,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB01083",
+        "compound": "Orlistat",
+        "disease_id": "Disease::DOID:9352",
+        "disease": "type 2 diabetes mellitus",
+        "rank": 678,
+        "candidate_count": 1533,
+        "score": 1.0
+      },
+      {
+        "compound_id": "Compound::DB01132",
+        "compound": "Pioglitazone",
+        "disease_id": "Disease::DOID:9352",
+        "disease": "type 2 diabetes mellitus",
+        "rank": 371,
+        "candidate_count": 1533,
+        "score": 2.0
+      },
+      {
+        "compound_id": "Compound::DB00273",
+        "compound": "Topiramate",
+        "disease_id": "Disease::DOID:9970",
+        "disease": "obesity",
+        "rank": 805,
+        "candidate_count": 1543,
+        "score": 0.0
+      },
+      {
+        "compound_id": "Compound::DB00397",
+        "compound": "Phenylpropanolamine",
+        "disease_id": "Disease::DOID:9970",
+        "disease": "obesity",
+        "rank": 97,
+        "candidate_count": 1543,
+        "score": 3.0
+      }
+    ]
+  },
+  "runtime_seconds": 4.581,
+  "environment": {
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "scikit_learn": "1.8.0"
+  }
+}
