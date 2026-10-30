@@ -1,0 +1,44 @@
+{
+  "dataset": "Hetionet",
+  "version": "1.0",
+  "upstream_commit": "8a6cc0c5604d0e2908786e4de38af67b8e46ee4a",
+  "url": "https://media.githubusercontent.com/media/hetio/hetionet/8a6cc0c5604d0e2908786e4de38af67b8e46ee4a/hetnet/json/hetionet-v1.0.json.bz2",
+  "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+  "compressed_bytes": 16112094,
+  "nodes": 24456,
+  "edges": 255730,
+  "node_counts": {
+    "Compound": 1552,
+    "Disease": 137,
+    "Gene": 20945,
+    "Pathway": 1822
+  },
+  "edge_counts": {
+    "INTERACTS": 147164,
+    "PARTICIPATES": 84372,
+    "BINDS": 11571,
+    "ASSOCIATES": 12623
+  },
+  "treatment_labels": 755,
+  "discarded_self_loops": 0,
+  "evidence_relationships": [
+    "ASSOCIATES",
+    "BINDS",
+    "INTERACTS",
+    "PARTICIPATES"
+  ],
+  "excluded_from_features": [
+    "TREATS",
+    "PALLIATES"
+  ],
+  "citation": {
+    "title": "Systematic integration of biomedical knowledge prioritizes drugs for repurposing",
+    "authors": "Himmelstein et al.",
+    "year": 2017,
+    "doi": "https://doi.org/10.7554/eLife.26726",
+    "repository": "https://github.com/hetio/hetionet"
+  },
+  "license_policy": "Original Hetionet repository content is CC0; constituent resources retain their own terms. Node and edge metadata preserve available source/license attributes. A missing license or primary citation is not an open-license claim.",
+  "provenance_policy": "Source names and metadata are imported unchanged, except source lists are normalized for presentation. Consolidated relations are not independent studies.",
+  "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0"
+}

@@ -1,0 +1,35 @@
+[project]
+name = "ariadne-bio"
+version = "1.0.0"
+description = "Trace biomedical graph evidence. Challenge the hypothesis."
+requires-python = ">=3.11"
+license = "MIT"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+  "integration: requires a running Neo4j service with GDS",
+  "full_data: requires the downloaded, prepared Hetionet graph",
+  "llm: requires a configured live language model provider",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["app", "scripts"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+fail_under = 60
+exclude_also = [
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py311", "py312"]
+
+[tool.pylint.main]
+py-version = "3.11"

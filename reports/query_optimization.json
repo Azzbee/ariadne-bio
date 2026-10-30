@@ -1,0 +1,214 @@
+{
+  "scan": {
+    "latency_ms": [
+      7.132,
+      11.091,
+      7.285,
+      6.961,
+      6.995,
+      7.13,
+      6.691
+    ],
+    "median_ms": 7.13,
+    "profile": {
+      "args": {
+        "GlobalMemory": 64,
+        "planner-impl": "IDP",
+        "Memory": 0,
+        "string-representation": "Cypher 5\n\nPlanner COST\n\nRuntime SLOTTED\n\nRuntime version 5.26\n\n+------------------+----+-----------------------------+----------------+-------+---------+----------------+------------------------+\n| Operator         | Id | Details                     | Estimated Rows | Rows  | DB Hits | Memory (Bytes) | Page Cache Hits/Misses |\n+------------------+----+-----------------------------+----------------+-------+---------+----------------+------------------------+\n| +ProduceResults  |  0 | `n.id`                      |          18342 |     1 |       0 |              0 |                    0/0 |\n| |                +----+-----------------------------+----------------+-------+---------+----------------+------------------------+\n| +Projection      |  1 | cache[n.id] AS `n.id`       |          18342 |     1 |       0 |                |                    0/0 |\n| |                +----+-----------------------------+----------------+-------+---------+----------------+------------------------+\n| +Filter          |  2 | toString(cache[n.id]) = $id |          18342 |     1 |   24456 |                |                    0/0 |\n| |                +----+-----------------------------+----------------+-------+---------+----------------+------------------------+\n| +NodeByLabelScan |  3 | n:Entity                    |          24456 | 24456 |   24457 |                |                    0/0 |\n+------------------+----+-----------------------------+----------------+-------+---------+----------------+------------------------+\n\nTotal database accesses: 48913, total allocated memory: 64\n",
+        "runtime": "SLOTTED",
+        "runtime-impl": "SLOTTED",
+        "version": "5",
+        "DbHits": 0,
+        "Details": "`n.id`",
+        "planner-version": "5.26",
+        "runtime-version": "5.26",
+        "Id": 0,
+        "EstimatedRows": 18342.0,
+        "planner": "COST",
+        "PageCacheMisses": 0,
+        "Rows": 1,
+        "PageCacheHits": 0
+      },
+      "pageCacheMisses": 0,
+      "children": [
+        {
+          "args": {
+            "Details": "cache[n.id] AS `n.id`",
+            "Id": 1,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 18342.0,
+            "DbHits": 0,
+            "Rows": 1,
+            "PageCacheHits": 0
+          },
+          "pageCacheMisses": 0,
+          "children": [
+            {
+              "args": {
+                "Details": "toString(cache[n.id]) = $id",
+                "Id": 2,
+                "PageCacheMisses": 0,
+                "EstimatedRows": 18342.0,
+                "DbHits": 24456,
+                "Rows": 1,
+                "PageCacheHits": 0
+              },
+              "pageCacheMisses": 0,
+              "children": [
+                {
+                  "args": {
+                    "Details": "n:Entity",
+                    "Id": 3,
+                    "PageCacheMisses": 0,
+                    "EstimatedRows": 24456.0,
+                    "DbHits": 24457,
+                    "Rows": 24456,
+                    "PageCacheHits": 0
+                  },
+                  "pageCacheMisses": 0,
+                  "dbHits": 24457,
+                  "identifiers": [
+                    "n"
+                  ],
+                  "operatorType": "NodeByLabelScan@neo4j",
+                  "rows": 24456,
+                  "pageCacheHitRatio": 0.0,
+                  "pageCacheHits": 0
+                }
+              ],
+              "dbHits": 24456,
+              "identifiers": [
+                "n"
+              ],
+              "operatorType": "Filter@neo4j",
+              "rows": 1,
+              "pageCacheHitRatio": 0.0,
+              "pageCacheHits": 0
+            }
+          ],
+          "dbHits": 0,
+          "identifiers": [
+            "n",
+            "`n.id`"
+          ],
+          "operatorType": "Projection@neo4j",
+          "rows": 1,
+          "pageCacheHitRatio": 0.0,
+          "pageCacheHits": 0
+        }
+      ],
+      "dbHits": 0,
+      "identifiers": [
+        "n",
+        "`n.id`"
+      ],
+      "operatorType": "ProduceResults@neo4j",
+      "rows": 1,
+      "pageCacheHitRatio": 0.0,
+      "pageCacheHits": 0
+    },
+    "total_db_hits": 48913,
+    "operators": [
+      "ProduceResults@neo4j",
+      "Projection@neo4j",
+      "Filter@neo4j",
+      "NodeByLabelScan@neo4j"
+    ]
+  },
+  "indexed": {
+    "latency_ms": [
+      1.356,
+      4.712,
+      1.324,
+      1.071,
+      0.899,
+      1.079,
+      1.0
+    ],
+    "median_ms": 1.079,
+    "profile": {
+      "args": {
+        "GlobalMemory": 64,
+        "planner-impl": "IDP",
+        "Memory": 0,
+        "string-representation": "Cypher 5\n\nPlanner COST\n\nRuntime SLOTTED\n\nRuntime version 5.26\n\n+----------------------+----+-------------------------------------------------+----------------+------+---------+----------------+------------------------+\n| Operator             | Id | Details                                         | Estimated Rows | Rows | DB Hits | Memory (Bytes) | Page Cache Hits/Misses |\n+----------------------+----+-------------------------------------------------+----------------+------+---------+----------------+------------------------+\n| +ProduceResults      |  0 | `n.id`                                          |              1 |    1 |       0 |              0 |                    0/0 |\n| |                    +----+-------------------------------------------------+----------------+------+---------+----------------+------------------------+\n| +Projection          |  1 | cache[n.id] AS `n.id`                           |              1 |    1 |       0 |                |                    0/0 |\n| |                    +----+-------------------------------------------------+----------------+------+---------+----------------+------------------------+\n| +NodeUniqueIndexSeek |  2 | UNIQUE n:Entity(id) WHERE id = $id, cache[n.id] |              1 |    1 |       2 |                |                    0/0 |\n+----------------------+----+-------------------------------------------------+----------------+------+---------+----------------+------------------------+\n\nTotal database accesses: 2, total allocated memory: 64\n",
+        "runtime": "SLOTTED",
+        "runtime-impl": "SLOTTED",
+        "version": "5",
+        "DbHits": 0,
+        "Details": "`n.id`",
+        "planner-version": "5.26",
+        "runtime-version": "5.26",
+        "Id": 0,
+        "EstimatedRows": 1.0,
+        "planner": "COST",
+        "PageCacheMisses": 0,
+        "Rows": 1,
+        "PageCacheHits": 0
+      },
+      "pageCacheMisses": 0,
+      "children": [
+        {
+          "args": {
+            "Details": "cache[n.id] AS `n.id`",
+            "Id": 1,
+            "PageCacheMisses": 0,
+            "EstimatedRows": 1.0,
+            "DbHits": 0,
+            "Rows": 1,
+            "PageCacheHits": 0
+          },
+          "pageCacheMisses": 0,
+          "children": [
+            {
+              "args": {
+                "Details": "UNIQUE n:Entity(id) WHERE id = $id, cache[n.id]",
+                "Id": 2,
+                "PageCacheMisses": 0,
+                "EstimatedRows": 1.0,
+                "DbHits": 2,
+                "Rows": 1,
+                "PageCacheHits": 0
+              },
+              "pageCacheMisses": 0,
+              "dbHits": 2,
+              "identifiers": [
+                "n"
+              ],
+              "operatorType": "NodeUniqueIndexSeek@neo4j",
+              "rows": 1,
+              "pageCacheHitRatio": 0.0,
+              "pageCacheHits": 0
+            }
+          ],
+          "dbHits": 0,
+          "identifiers": [
+            "n",
+            "`n.id`"
+          ],
+          "operatorType": "Projection@neo4j",
+          "rows": 1,
+          "pageCacheHitRatio": 0.0,
+          "pageCacheHits": 0
+        }
+      ],
+      "dbHits": 0,
+      "identifiers": [
+        "n",
+        "`n.id`"
+      ],
+      "operatorType": "ProduceResults@neo4j",
+      "rows": 1,
+      "pageCacheHitRatio": 0.0,
+      "pageCacheHits": 0
+    },
+    "total_db_hits": 2,
+    "operators": [
+      "ProduceResults@neo4j",
+      "Projection@neo4j",
+      "NodeUniqueIndexSeek@neo4j"
+    ]
+  },
+  "protocol": "Seven warm local round trips per equivalent query; one PROFILE run."
+}
