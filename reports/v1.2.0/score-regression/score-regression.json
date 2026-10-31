@@ -1,0 +1,391 @@
+{
+  "schema_version": "1.0",
+  "started_at_utc": "2026-10-31T18:51:27.462167+00:00",
+  "application_version": "1.2.0",
+  "reproduce": "python -m scripts.verify_assessments --data-dir data/processed --output reports/v1.1.0",
+  "source": {
+    "baseline_revision": "27f735ae9d0487ffd8c1fc3c740c2a7f99910893",
+    "baseline_engine_sha256": "014064fcede6d8c698f5b60c496e0dbea328bf9a701dc2d2ed607b32a9fcfe10",
+    "current_engine_sha256": "80c18947f85dfaea71f32fd0b7608d5977b11be2d1f01fcdf2cc6e292910b81c",
+    "verifier_sha256": "d354622def64d0430dbea9bd374392f03ad4c9c1c87cde0e291fa70d9fda6f6d",
+    "method": "Actual checksum-verified v1.0.0 GraphEngine loaded from local Git and current GraphEngine, both reading the same existing data and model artifacts."
+  },
+  "dataset": {
+    "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+    "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
+    "manifest_sha256": "e49eb7ccb61740ba391e8c99f18bf01c77f33342579b927c3ff2e2181cc78234",
+    "compounds": 1552,
+    "diseases": 137
+  },
+  "model": {
+    "name": "Typed-path logistic retrieval",
+    "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
+    "artifact_sha256": "266370f46df03d4b3554f4441e336c19e53d4ca74ec00aaff3a16b684dcecc70",
+    "evaluation_artifact_sha256": "313844d07db165396356eb79e59f2792b2963bb2e3cb5db397ad4b1db2fbed08",
+    "refitted": false
+  },
+  "status": "passed",
+  "comparison": "Exact float64 bytes, no numerical tolerance; all pairs including unsupported ones",
+  "array_hash_encoding": "Little-endian IEEE-754 float64, row-major compound/disease order",
+  "exclusion_configurations": 16,
+  "compared_scores": 3401984,
+  "unequal_scores": 0,
+  "all_finite": true,
+  "max_absolute_difference": 0.0,
+  "scenarios": [
+    {
+      "excluded": [],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "b1155e6125f5a90f2d445e21716091419ecc32cc5bcc97504fb5fb5f4a98f785",
+      "current_scores_sha256": "b1155e6125f5a90f2d445e21716091419ecc32cc5bcc97504fb5fb5f4a98f785"
+    },
+    {
+      "excluded": [
+        "ASSOCIATES"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "058e34f77b3c1f2803fee7df288a7eed3446cf0d0f156e4c841cd9eaf1db8b59",
+      "current_scores_sha256": "058e34f77b3c1f2803fee7df288a7eed3446cf0d0f156e4c841cd9eaf1db8b59"
+    },
+    {
+      "excluded": [
+        "BINDS"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "ec746adfd1d0cf65cda5353a8e927ebffb3a52ed375666a9e9ffc87f71b519c4",
+      "current_scores_sha256": "ec746adfd1d0cf65cda5353a8e927ebffb3a52ed375666a9e9ffc87f71b519c4"
+    },
+    {
+      "excluded": [
+        "INTERACTS"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "3ff1120351986b34715ee53834b14d87d7740f5b892eb19835487c5413318ebf",
+      "current_scores_sha256": "3ff1120351986b34715ee53834b14d87d7740f5b892eb19835487c5413318ebf"
+    },
+    {
+      "excluded": [
+        "PARTICIPATES"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "51abe87e4060caa18a5946c3b01ff417f48bf28a07d4c88aab30ad986cbd2746",
+      "current_scores_sha256": "51abe87e4060caa18a5946c3b01ff417f48bf28a07d4c88aab30ad986cbd2746"
+    },
+    {
+      "excluded": [
+        "ASSOCIATES",
+        "BINDS"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "4847c04e269bbb8a81f7a25be331355c76d4584fb3ed749c4435f1ce1d35919e",
+      "current_scores_sha256": "4847c04e269bbb8a81f7a25be331355c76d4584fb3ed749c4435f1ce1d35919e"
+    },
+    {
+      "excluded": [
+        "ASSOCIATES",
+        "INTERACTS"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "058e34f77b3c1f2803fee7df288a7eed3446cf0d0f156e4c841cd9eaf1db8b59",
+      "current_scores_sha256": "058e34f77b3c1f2803fee7df288a7eed3446cf0d0f156e4c841cd9eaf1db8b59"
+    },
+    {
+      "excluded": [
+        "ASSOCIATES",
+        "PARTICIPATES"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "058e34f77b3c1f2803fee7df288a7eed3446cf0d0f156e4c841cd9eaf1db8b59",
+      "current_scores_sha256": "058e34f77b3c1f2803fee7df288a7eed3446cf0d0f156e4c841cd9eaf1db8b59"
+    },
+    {
+      "excluded": [
+        "BINDS",
+        "INTERACTS"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "ec746adfd1d0cf65cda5353a8e927ebffb3a52ed375666a9e9ffc87f71b519c4",
+      "current_scores_sha256": "ec746adfd1d0cf65cda5353a8e927ebffb3a52ed375666a9e9ffc87f71b519c4"
+    },
+    {
+      "excluded": [
+        "BINDS",
+        "PARTICIPATES"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "ec746adfd1d0cf65cda5353a8e927ebffb3a52ed375666a9e9ffc87f71b519c4",
+      "current_scores_sha256": "ec746adfd1d0cf65cda5353a8e927ebffb3a52ed375666a9e9ffc87f71b519c4"
+    },
+    {
+      "excluded": [
+        "INTERACTS",
+        "PARTICIPATES"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "228eb83d0c4f254c84e4dc620c291b943f39071fefb36f4386b0d9e02c544ab7",
+      "current_scores_sha256": "228eb83d0c4f254c84e4dc620c291b943f39071fefb36f4386b0d9e02c544ab7"
+    },
+    {
+      "excluded": [
+        "ASSOCIATES",
+        "BINDS",
+        "INTERACTS"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "4847c04e269bbb8a81f7a25be331355c76d4584fb3ed749c4435f1ce1d35919e",
+      "current_scores_sha256": "4847c04e269bbb8a81f7a25be331355c76d4584fb3ed749c4435f1ce1d35919e"
+    },
+    {
+      "excluded": [
+        "ASSOCIATES",
+        "BINDS",
+        "PARTICIPATES"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "4847c04e269bbb8a81f7a25be331355c76d4584fb3ed749c4435f1ce1d35919e",
+      "current_scores_sha256": "4847c04e269bbb8a81f7a25be331355c76d4584fb3ed749c4435f1ce1d35919e"
+    },
+    {
+      "excluded": [
+        "ASSOCIATES",
+        "INTERACTS",
+        "PARTICIPATES"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "058e34f77b3c1f2803fee7df288a7eed3446cf0d0f156e4c841cd9eaf1db8b59",
+      "current_scores_sha256": "058e34f77b3c1f2803fee7df288a7eed3446cf0d0f156e4c841cd9eaf1db8b59"
+    },
+    {
+      "excluded": [
+        "BINDS",
+        "INTERACTS",
+        "PARTICIPATES"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "ec746adfd1d0cf65cda5353a8e927ebffb3a52ed375666a9e9ffc87f71b519c4",
+      "current_scores_sha256": "ec746adfd1d0cf65cda5353a8e927ebffb3a52ed375666a9e9ffc87f71b519c4"
+    },
+    {
+      "excluded": [
+        "ASSOCIATES",
+        "BINDS",
+        "INTERACTS",
+        "PARTICIPATES"
+      ],
+      "shape": [
+        1552,
+        137
+      ],
+      "compared_scores": 212624,
+      "unequal_scores": 0,
+      "all_finite": true,
+      "max_absolute_difference": 0.0,
+      "baseline_scores_sha256": "4847c04e269bbb8a81f7a25be331355c76d4584fb3ed749c4435f1ce1d35919e",
+      "current_scores_sha256": "4847c04e269bbb8a81f7a25be331355c76d4584fb3ed749c4435f1ce1d35919e"
+    }
+  ],
+  "examples": [
+    {
+      "disease": {
+        "id": "Disease::DOID:10652",
+        "name": "Alzheimer's disease"
+      },
+      "compound": {
+        "id": "Compound::DB00184",
+        "name": "Nicotine"
+      },
+      "excluded": [
+        "INTERACTS"
+      ],
+      "baseline": {
+        "supported": true,
+        "rank": 2,
+        "score": 0.9214622689328253,
+        "score_status": "supported_retrieval",
+        "logit": 2.462382671150505,
+        "evidence_count": 1997,
+        "features": {
+          "direct": 6,
+          "interaction": 15,
+          "pathway": 1976
+        }
+      },
+      "current": {
+        "supported": true,
+        "rank": 10,
+        "score": 0.679737639791153,
+        "score_status": "supported_retrieval",
+        "logit": 0.7525663643524769,
+        "evidence_count": 1982,
+        "features": {
+          "direct": 6,
+          "interaction": 0,
+          "pathway": 1976
+        }
+      },
+      "delta": {
+        "score": -0.24172462914167236,
+        "logit": -1.7098163067980279,
+        "rank": -8,
+        "evidence_count": -15
+      },
+      "rank_unchanged": false,
+      "assessment_file": "assessment-nicotine-interacts.json",
+      "assessment_sha256": "6f49f7925ac4b93a73e882ee5eed023c69431a8077425e8cbae1b78fab62546f"
+    },
+    {
+      "disease": {
+        "id": "Disease::DOID:10652",
+        "name": "Alzheimer's disease"
+      },
+      "compound": {
+        "id": "Compound::DB00674",
+        "name": "Galantamine"
+      },
+      "excluded": [
+        "INTERACTS"
+      ],
+      "baseline": {
+        "supported": true,
+        "rank": 1,
+        "score": 0.932772698441492,
+        "score_status": "supported_retrieval",
+        "logit": 2.630082108558693,
+        "evidence_count": 1254,
+        "features": {
+          "direct": 6,
+          "interaction": 11,
+          "pathway": 1237
+        }
+      },
+      "current": {
+        "supported": true,
+        "rank": 1,
+        "score": 0.7509460388944176,
+        "score_status": "supported_retrieval",
+        "logit": 1.1036642125913592,
+        "evidence_count": 1243,
+        "features": {
+          "direct": 6,
+          "interaction": 0,
+          "pathway": 1237
+        }
+      },
+      "delta": {
+        "score": -0.18182665954707444,
+        "logit": -1.5264178959673338,
+        "rank": 0,
+        "evidence_count": -11
+      },
+      "rank_unchanged": true,
+      "assessment_file": "assessment-galantamine-interacts.json",
+      "assessment_sha256": "682e997b3125bcb7b5b2aa6a7abe83c62ed2839b154f8ef970bc7bfec9cbcca1"
+    }
+  ],
+  "completed_at_utc": "2026-10-31T18:51:34.542739+00:00"
+}
