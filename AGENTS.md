@@ -54,6 +54,16 @@ IDs are namespace-qualified strings, e.g. `Disease::DOID:...`.
 - GET `/algorithms/{disease_id}?limit=10` => GDS or exact local algorithm results,
   explicit execution backend. Never label local execution as GDS.
 - GET `/provenance` => dataset manifest, citation, source license policy.
+- POST `/audit` body `{disease_id,compound_id,top_k:10,budget:2}` => versioned
+  binding-envelope certificate with `scope`, `identity`, `baseline`, `results`
+  for each budget, `proof` and `certificate_sha256`. All BINDS edges, including
+  competitors, are eligible; the full graph is used independently of UI exclusions.
+  Integer `budget` is 0..2 and `top_k` 1..100. The audit-only canonical float64
+  scorer must not change legacy rankings or assessment bytes.
+- POST `/audit/verify` body `{certificate:<complete response>}` =>
+  `{status:"verified"|"invalid",valid,checks,errors,verification_method,replayed_witnesses}`.
+  Verification recomputes the same-algorithm bound and independently replays
+  witnesses by matrix edits; a content hash alone is never sufficient.
 
 ## Data engine interface
 
