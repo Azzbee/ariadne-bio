@@ -5,18 +5,24 @@ import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { AriadneAPI } from '../api.js';
 import { loadCandidateInvestigation } from '../investigation.js';
+import { auditLinkParameters, rivalExampleURL, witnessChanges } from '../audit-model.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 let available = true;
 try { await access(resolve(root, 'data/manifest.json')); }
 catch { available = false; }
 
-test('published cases are consumable through the actual frontend adapter in every evidence configuration', { skip: !available }, async () => {
-  const fetcher = async url => {
-    const data = JSON.parse(await readFile(resolve(root, url.replace(/^\.\//, '')), 'utf8'));
-    return { ok: true, status: 200, headers: { get: () => 'application/json' }, json: async () => data };
+async function snapshotFetcher(url) {
+  const bytes = await readFile(resolve(root, url.replace(/^\.\//, '')));
+  return {
+    ok: true, status: 200, headers: { get: () => 'application/json' },
+    json: async () => JSON.parse(bytes.toString('utf8')),
+    arrayBuffer: async () => bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)
   };
-  const api = new AriadneAPI({}, fetcher);
+}
+
+test('published cases are consumable through the actual frontend adapter in every evidence configuration', { skip: !available }, async () => {
+  const api = new AriadneAPI({}, snapshotFetcher);
   await api.initialize(true);
   const diseases = await api.diseases();
   assert.ok(diseases.items.length >= 1);
@@ -49,10 +55,7 @@ test('published cases are consumable through the actual frontend adapter in ever
 });
 
 async function snapshotAPI() {
-  const api = new AriadneAPI({}, async url => ({
-    ok: true, status: 200, headers: { get: () => 'application/json' },
-    json: async () => JSON.parse(await readFile(resolve(root, url.replace(/^\.\//, '')), 'utf8'))
-  }));
+  const api = new AriadneAPI({}, snapshotFetcher);
   await api.initialize(true);
   return api;
 }
@@ -138,4 +141,34 @@ test('snapshot guide resolves explicit compounds, selected context, and top-cand
   const missing = await api.agent(`Explain ${unpublished.name}`, diseaseId, [], nicotine);
   assert.equal(missing.status, 'clarification');
   assert.match(missing.answer, /not included in the published results/);
+});
+
+test('the published rival-change example preserves the focus score while a rival changes shortlist membership', { skip: !available }, async () => {
+  const api = await snapshotAPI();
+  const link = new URL(rivalExampleURL('https://example.test/?mode=snapshot&exclude=INTERACTS&view=method'));
+  const diseaseId = link.searchParams.get('disease'), compoundId = link.searchParams.get('compound');
+  const parameters = auditLinkParameters(link.searchParams);
+  const ranking = await api.rankings(diseaseId);
+  const investigation = await loadCandidateInvestigation(api, diseaseId, compoundId, [], ranking.candidates);
+  assert.equal(investigation.candidate.name, 'Nifedipine');
+  const certificate = await api.audit(diseaseId, compoundId, parameters.topK, parameters.budget);
+  const row = certificate.results.at(-1);
+  assert.equal(certificate.baseline.rank, 10);
+  assert.equal(row.focus_only_worst_rank, 10);
+  assert.equal(row.worst_supported_rank, 11);
+  assert.equal(row.top_k_robust, false);
+  assert.equal(certificate.minimum_failure_budget, 1);
+  assert.equal(row.rank_witness.focus.score, certificate.baseline.score);
+  assert.deepEqual(row.rank_witness.focus.counts, certificate.baseline.counts);
+  assert.ok(row.rank_witness.removed_records.every(record => record.source !== compoundId));
+  const comparison = witnessChanges(certificate, row.rank_witness);
+  assert.equal(comparison[0].id, compoundId);
+  assert.equal(comparison[0].after.rank, 11);
+  assert.deepEqual(comparison[0].removed_edge_ids, []);
+  assert.equal(comparison[1].name, 'Pimozide');
+  assert.equal(comparison[1].before.rank, 11);
+  assert.equal(comparison[1].after.rank, 9);
+  const verification = await api.verifyAudit(JSON.parse(JSON.stringify(certificate)));
+  assert.equal(verification.valid, true);
+  assert.equal(verification.verification_execution, 'recorded_snapshot');
 });
