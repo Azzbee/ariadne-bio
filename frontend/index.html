@@ -100,7 +100,7 @@
             <span class="count-pill" id="candidate-count">—</span>
           </div>
           <div class="ranking-description">Model scores prioritize investigation.<br>They are not probabilities of efficacy.</div>
-          <div id="candidate-list" class="candidate-list" aria-live="polite"><div class="loading-block"><span class="spinner"></span><span>Connecting to the graph</span></div></div>
+          <div id="candidate-list" class="candidate-list"><div class="loading-block"><span class="spinner"></span><span>Connecting to the graph</span></div></div>
           <button id="load-more" class="load-more" hidden>Load more candidates <svg class="icon"><use href="#i-arrow"/></svg></button>
           <div class="candidate-footer" id="candidate-footer">Fixed model · bounded evidence paths</div>
         </aside>
@@ -112,17 +112,17 @@
           </div>
           <div class="graph-subheading" id="graph-subheading">Select a candidate to trace its supporting evidence.</div>
           <div class="graph-canvas" id="graph-canvas">
-            <svg id="evidence-graph" viewBox="0 0 900 540" role="img" aria-label="Select a compound to display its evidence graph"></svg>
+            <svg id="evidence-graph" viewBox="0 0 900 540" role="group" aria-label="Select a compound to display its evidence graph"></svg>
             <div class="graph-empty" id="graph-empty"><span class="graph-empty-mark">a</span><p>Every connection has a story.<br>Choose a disease to begin.</p></div>
             <div class="graph-tooltip" id="graph-tooltip" hidden></div>
             <div class="graph-interaction-hint" id="graph-hint" hidden>Click a node or connection to inspect its source</div>
           </div>
           <div class="graph-legend"><span><i class="legend-dot compound"></i>Compound</span><span><i class="legend-dot gene"></i>Gene</span><span><i class="legend-dot pathway"></i>Pathway</span><span><i class="legend-dot disease"></i>Disease</span></div>
           <div class="path-family-strip" id="path-family-strip">
-            <button class="path-family active" data-path-filter="all">All evidence <b id="path-count-all">—</b></button>
-            <button class="path-family" data-path-filter="direct">Direct <b id="path-count-direct">—</b></button>
-            <button class="path-family" data-path-filter="interaction">Interaction <b id="path-count-interaction">—</b></button>
-            <button class="path-family" data-path-filter="pathway">Pathway <b id="path-count-pathway">—</b></button>
+            <button class="path-family active" data-path-filter="all" aria-pressed="true">All evidence <b id="path-count-all">—</b></button>
+            <button class="path-family" data-path-filter="direct" aria-pressed="false">Direct <b id="path-count-direct">—</b></button>
+            <button class="path-family" data-path-filter="interaction" aria-pressed="false">Interaction <b id="path-count-interaction">—</b></button>
+            <button class="path-family" data-path-filter="pathway" aria-pressed="false">Pathway <b id="path-count-pathway">—</b></button>
           </div>
           <div id="graph-caption" class="graph-caption">The displayed graph is a bounded selection of supporting paths.</div>
         </section>
@@ -134,6 +134,9 @@
           <div class="evidence-note"><svg class="icon"><use href="#i-info"/></svg><p>A recorded association supports a hypothesis. It does not establish causality.</p></div>
         </aside>
       </div>
+
+      <p id="investigation-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+      <section id="assessment-section" class="assessment-section" aria-labelledby="assessment-title" hidden></section>
 
       <section class="challenge-section" aria-labelledby="challenge-title">
         <div class="challenge-intro"><span class="eyebrow">04 / PUT THE HYPOTHESIS UNDER PRESSURE</span><h2 id="challenge-title">What if the evidence changes?</h2><p>Switch off a relationship family. Recompute the graph features.<br>The scoring model stays fixed.</p></div>
@@ -148,8 +151,8 @@
       <section class="agent-section" aria-labelledby="agent-title">
         <div class="agent-intro"><span class="eyebrow"><svg class="icon"><use href="#i-spark"/></svg> THE RESEARCH GUIDE</span><h2 id="agent-title">Ask a better question.</h2><p>Investigate a ranking, challenge its support, or follow a connection. Every answer stays attached to the evidence.</p><span class="agent-mode" id="agent-mode">Connecting…</span></div>
         <div class="agent-workspace">
-          <form id="agent-form" class="agent-form"><label class="sr-only" for="agent-question">Ask the research guide</label><textarea id="agent-question" placeholder="Why does this compound rank highly?" rows="2" maxlength="1200" required></textarea><button class="button button-dark" id="agent-submit" type="submit"><span>Investigate</span><svg class="icon"><use href="#i-arrow"/></svg></button></form>
-          <div class="prompt-chips"><button data-prompt="Explain the top candidate and its supporting graph evidence.">Explain the top candidate <span>↗</span></button><button data-prompt="What changes without gene interactions?">Challenge the evidence <span>↗</span></button><button data-prompt="Delete all nodes in the graph.">Test the guardrail <svg class="icon"><use href="#i-shield"/></svg></button></div>
+          <form id="agent-form" class="agent-form"><label class="sr-only" for="agent-question">Ask the research guide about the selected compound</label><textarea id="agent-question" placeholder="Explain the selected compound’s score and evidence." rows="2" maxlength="1200" required></textarea><button class="button button-dark" id="agent-submit" type="submit"><span>Investigate</span><svg class="icon"><use href="#i-arrow"/></svg></button></form>
+          <div class="prompt-chips"><button data-prompt="Explain the selected compound and its supporting graph evidence.">Explain selected compound <span>↗</span></button><button data-prompt="What changes without gene interactions?">Challenge the evidence <span>↗</span></button><button data-prompt="Delete all nodes in the graph.">Test the guardrail <svg class="icon"><use href="#i-shield"/></svg></button></div>
           <div id="agent-response" class="agent-response" hidden aria-live="polite"></div>
         </div>
       </section>
@@ -175,7 +178,7 @@
 
   <footer class="site-footer"><div><img src="./assets/mark.svg" width="21" height="21" alt=""><span>ARIADNE</span><span class="footer-divider">/</span><span>Follow the evidence.</span></div><span>Built for scrutiny. Designed for discovery.</span><a href="#main">Back to top ↑</a></footer>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <dialog id="detail-dialog" class="detail-dialog"><div class="dialog-header"><span class="eyebrow" id="detail-eyebrow">SOURCE RECORD</span><button class="icon-button" data-close-dialog aria-label="Close details"><svg class="icon"><use href="#i-close"/></svg></button></div><div id="detail-content"></div></dialog>
+  <dialog id="detail-dialog" class="detail-dialog" aria-labelledby="detail-eyebrow"><div class="dialog-header"><span class="eyebrow" id="detail-eyebrow">SOURCE RECORD</span><button class="icon-button" data-close-dialog aria-label="Close details"><svg class="icon"><use href="#i-close"/></svg></button></div><div id="detail-content"></div></dialog>
   <noscript><div class="noscript">ARIADNE needs JavaScript to inspect evidence and compare rankings. Enable JavaScript, or read the project’s documentation on GitHub.</div></noscript>
 </body>
 </html>

@@ -28,6 +28,13 @@ IDs are namespace-qualified strings, e.g. `Disease::DOID:...`.
   rank_delta,known_treatment,features:{direct,interaction,pathway}, evidence_count}],
   total, excluded, model, interpretation, elapsed_ms}`.
   `exclude` comma-separated families in `BINDS,ASSOCIATES,INTERACTS,PARTICIPATES`.
+- GET `/assessment/{disease_id}/{compound_id}?exclude=INTERACTS`
+  => `{schema_version,disease,compound,known_treatment,excluded,model,
+  baseline,current,delta,decomposition,interpretation}`. Both states include
+  `{supported,rank|null,score,score_status,logit,evidence_count,features}`.
+  `decomposition` has the saved intercept and ordered signed feature terms;
+  intercept + contributions reconstructs the logit. Unsupported pairs remain
+  inspectable with a diagnostic score and no supported rank.
 - GET `/evidence/{disease_id}/{compound_id}?exclude=&limit=12`
   => `{disease, compound, nodes:[{id,name,label,url}],
   edges:[{id,source,target,type,sources,license}],
@@ -39,8 +46,8 @@ IDs are namespace-qualified strings, e.g. `Disease::DOID:...`.
   explanation, elapsed_ms}`.
 - GET `/evaluation` => report JSON including `metrics` (list of model rows),
   `protocol`, `split`, `examples`, `limitations`, `dataset_sha256`.
-- POST `/agent` body `{question, disease_id?, exclude:[]}` =>
-  `{status:"complete"|"rejected"|"clarification",answer, disease?, candidates:[],
+- POST `/agent` body `{question, disease_id?, compound_id?, exclude:[]}` =>
+  `{status:"complete"|"rejected"|"clarification",answer, disease?, compound?, assessment?, candidates:[],
   evidence?, citations:[], trace:[{step,tool,status,summary}],
   mode:"llm"|"deterministic", suggestions:[], disclaimer}`.
 - GET `/similar/{compound_id}?limit=10` => `{compound,algorithm,items}`.
@@ -55,6 +62,7 @@ IDs are namespace-qualified strings, e.g. `Disease::DOID:...`.
 `stats()`, `diseases(query='',limit=30,offset=0)`,
 `rankings(disease_id,exclude=(),limit=20,offset=0)`,
 `evidence(disease_id,compound_id,exclude=(),limit=12)`,
+`assessment(disease_id,compound_id,exclude=())`,
 `challenge(disease_id,exclude,limit=10)`, `similar(compound_id,limit=10)`,
 `algorithms(disease_id,limit=10)`, `evaluation()`, `provenance()`.
 

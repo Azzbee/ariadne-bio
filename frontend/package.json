@@ -1,12 +1,12 @@
 {
   "name": "ariadne-evidence-workbench",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "description": "The ARIADNE biomedical evidence workbench. Dependency-free browser client.",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "check": "node --check app.js && node --check api.js && node --check graph.js && node --check utils.js"
+    "check": "node --check app.js && node --check api.js && node --check graph.js && node --check utils.js && node --check investigation.js"
   },
   "engines": { "node": ">=18" }
 }

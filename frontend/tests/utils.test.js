@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   exclusionKey, escapeHTML, safeURL, metricRows, metricValue, makeChallenge,
-  isUnsafeQuestion, sourceEntries, selectDisease, diseaseMentions, evidenceSelection, number, score, pct
+  isUnsafeQuestion, sourceEntries, selectDisease, diseaseMentions, diseaseReferences, compoundReferences,
+  requestedExclusions, requestsTopCandidate, evidenceSelection, number, score, pct
 } from '../utils.js';
 
 test('exclusions are allowlisted, deduplicated, and canonically sorted', () => {
@@ -87,4 +88,29 @@ test('evidence caption describes the execution backend’s actual sampling order
   assert.equal(evidenceSelection({ truncated: true, selection }), `Sample selection: ${selection}.`);
   assert.equal(evidenceSelection({ truncated: false, selection }), 'All available paths are shown.');
   assert.doesNotMatch(evidenceSelection({ truncated: true }), /lexicographic|entity order/);
+});
+
+test('qualified IDs resolve case-insensitively and unknown IDs survive beside valid names', () => {
+  const nicotine = { id: 'Compound::DB00184', name: 'Nicotine' };
+  const compounds = [nicotine];
+  assert.deepEqual(compoundReferences(compounds, 'Explain COMPOUND::db00184.'), { matches: [nicotine], unknown: [] });
+  assert.deepEqual(compoundReferences(compounds, 'Nicotine and Compound::DB99999'), { matches: [nicotine], unknown: ['Compound::DB99999'] });
+  assert.deepEqual(compoundReferences(compounds, 'Compound::DB00184 and Compound::DB99999').unknown, ['Compound::DB99999']);
+  const asthma = { id: 'Disease::DOID:2841', name: 'asthma' };
+  assert.deepEqual(diseaseReferences([asthma], 'disease::doid:2841'), { matches: [asthma], unknown: [] });
+  assert.deepEqual(diseaseReferences([asthma], 'asthma Disease::DOID:999999').unknown, ['Disease::DOID:999999']);
+});
+
+test('top-candidate intent includes scored, ranked, plural, and numbered requests', () => {
+  for (const question of ['highest scoring compound', 'highest-scoring compound', 'highest ranked compound', 'highest-ranked compound', 'top 3 candidates', 'Which compounds have evidence?']) {
+    assert.equal(requestsTopCandidate(question), true, question);
+  }
+  assert.equal(requestsTopCandidate('Explain the selected compound'), false);
+});
+
+test('snapshot evidence-removal parsing preserves selected settings and respects explicit negation', () => {
+  assert.deepEqual(requestedExclusions('Exclude gene interactions and shared pathways'), ['INTERACTS', 'PARTICIPATES']);
+  assert.deepEqual(requestedExclusions('Disable compound binding', ['INTERACTS']), ['BINDS', 'INTERACTS']);
+  assert.deepEqual(requestedExclusions('Investigate without disease associations'), ['ASSOCIATES']);
+  assert.deepEqual(requestedExclusions("Do not remove binding. Don't exclude interactions. Never disable pathways."), []);
 });

@@ -2,7 +2,8 @@
 
 ## Full local stack
 
-Install Docker with the Compose v2 plugin, Git and Make, then run:
+Install Docker with the Compose v2 plugin, Git, Make and Python 3 (used once to
+generate private local credentials), then run:
 
 ```bash
 git clone https://github.com/Azzbee/ariadne-bio.git
@@ -11,10 +12,27 @@ make docker-run
 ```
 
 The startup sequence creates `.env` if absent, builds the checksum-verified GDS
-image, starts Neo4j and Ollama, downloads the configured model, and starts the API
-and frontend. The API prepares graph/model artifacts if needed and performs an
+image, starts Neo4j and Ollama, verifies or downloads the configured model, and starts
+the API and frontend. The API prepares graph/model artifacts if needed and performs an
 idempotent Neo4j import before serving traffic. Persistent Docker volumes retain
-the graph and model between starts.
+the graph and model between starts. A matching installed model is reused without a
+pull. Reserve approximately 8 GB available RAM and 20 GB free disk for the local
+stack; image extraction requires substantially more space than compressed downloads.
+
+The default Qwen model's full manifest identity is pinned in
+[bootstrap_model.py](../infra/bootstrap_model.py). Initialization uses Ollama's
+[model inventory](https://docs.ollama.com/api/tags) and
+[pull API](https://github.com/ollama/ollama/blob/main/docs/api.md#pull-a-model).
+An existing mismatched model stops startup without being overwritten or silently
+pulled again. An absent model is pulled once and checked before the API starts.
+The actual digest, expected digest, size, reuse status and check time are written
+to `reports/ollama-model.json`.
+
+For a different **local** model, set `ARIADNE_LLM_MODEL`. An optional
+`ARIADNE_LLM_MODEL_DIGEST` pins its full SHA-256 manifest digest. Without that
+explicit pin, the actual identity is recorded as `recorded_unpinned`; it is not
+claimed to reproduce the reference model. External providers use the core stack
+and do not pass through the local Ollama initializer.
 
 | Address | Service |
 | --- | --- |
@@ -41,7 +59,7 @@ verify a live provider with the full stack or configured external service.
 
 ### Configured language-model provider
 
-Set these values in `.env` and recreate the API:
+Use `make docker-core`, then set these values in `.env` and recreate the API:
 
 ```dotenv
 ARIADNE_AGENT_MODE=llm
@@ -62,13 +80,20 @@ docker compose up -d --force-recreate api
 
 ## Native Python development
 
+Install Python 3.11+ (3.12 is the reference), Node.js 18+ (22 in CI), Make and Git.
+Python dependencies are hash locked. The frontend has no package dependencies,
+but its test runner requires Node. The native API serves the frontend on the
+same port; use http://localhost:8000.
+
 ```bash
 make install
 make data
-make run
+ARIADNE_AGENT_MODE=deterministic make run
 ```
 
-This starts the deterministic in-memory graph implementation on port 8000.
+This explicitly starts the deterministic in-memory implementation on port 8000.
+The shared `.env` defaults to the internal Docker Ollama hostname; the command
+above prevents accidental attempts to use that hostname from the native process.
 To use a running Neo4j service instead, export the local configuration:
 
 ```bash
@@ -91,6 +116,7 @@ published local port. For the standard Compose application use the internal
 
 ## Verification commands
 
+`make snapshot` first exports the complete six-case research edition. Then
 `make test` runs unit and API checks plus the frontend module tests. The coverage
 gate is 60% with branch measurement enabled. `make lint` enforces a Pylint score
 of at least 9.5 and checks Black formatting. `make notebook` executes every
@@ -99,13 +125,28 @@ notebook cell with the current virtual environment's Python kernel.
 `make smoke` exercises the running reverse proxy and API. For Neo4j integration,
 export the `.env` values as above and run `make test-integration`. The CI workflow
 does this against a newly built Compose deployment and retains logs and reports.
+`make test-llm` verifies actual provider inference, evidence exclusions, rejection,
+and named-compound focus against http://127.0.0.1:8080; set
+`ARIADNE_TEST_BASE_URL` when testing a different local address. It fails if an
+expected LLM success falls back to deterministic execution.
+
+The HTTP smoke check verifies the frontend's actual response headers, reconstructs
+both assessment scores, and confirms that a compound remains inspectable after
+all of its evidence is removed. Invoke `python infra/smoke.py --base-url URL`
+through the Nginx address when ports are customized.
 
 ## Images and CI
 
 The GitHub workflow pins third-party actions to verified commit SHAs. It
 installs pinned Python dependencies, downloads checksummed data, runs tests,
 executes the notebook, builds the full stack and exercises the API. Image
-publication waits for both quality and integration jobs.
+publication waits for both quality and integration jobs. Immediately after checkout, each CI job runs
+`infra/prepare_ci_evidence.py --job quality|integration` and records its checkout
+SHA and Actions identifiers separately. Quality removes only the outputs it will
+rebuild, including generated model/evaluation metadata; integration removes only
+operational reports and preserves the prepared scientific artifacts. This
+prevents an early failure from uploading a committed success from an older run.
+The source graph, notebook and historical reference reports are preserved.
 
 Images are tagged with both `latest` and the source commit SHA:
 
@@ -133,7 +174,8 @@ agent implementation used for the technical demonstration.
 | --- | --- |
 | First startup takes time | Inspect `make docker-logs`. The first run downloads data and model weights and imports Neo4j. Subsequent starts reuse volumes. |
 | Neo4j authentication fails after changing `.env` | The existing data volume retains its configured password. Restore the original password or change it through an authenticated Neo4j session. |
-| Model unavailable | Verify the configured base URL and model, or rerun `docker compose --profile llm run --rm ollama-init`. Check the reported agent mode. |
+| Model unavailable | Verify the configured base URL and model. For local Ollama, rerun `make docker-run`; it checks existing identity and downloads only an absent model. Check the response mode and model report. |
+| Model identity mismatch | Inspect `reports/ollama-model.json`. Startup intentionally stops. Review the configured model and full digest; do not change the expected identity just to make an unknown model pass. No existing model is replaced automatically. |
 | Port already in use | Change the appropriate `*_PORT` variable in `.env` and recreate services. |
 | Download checksum mismatch | Remove only the corrupted raw archive and retry. Do not change the expected checksum to make an unknown file pass. |
 | Browser graph empty | Inspect the API error and selected disease. A compound can have no surviving paths after evidence exclusion. This is a valid result. |

@@ -77,13 +77,16 @@ services:
       retries: 30
 
   ollama-init:
-    image: ollama/ollama:0.40.13@sha256:b2f0122c476bc9fe7ce679d8bb4bd555351e25e2554eefb156f61cb0a89cf429
+    image: python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c
     profiles: [llm]
     restart: "no"
     environment:
       OLLAMA_HOST: http://ollama:11434
-    entrypoint: ["ollama", "pull"]
-    command: ["${ARIADNE_LLM_MODEL:-qwen2.5:1.5b}"]
+      ARIADNE_LLM_MODEL: ${ARIADNE_LLM_MODEL:-qwen2.5:1.5b}
+      ARIADNE_LLM_MODEL_DIGEST: ${ARIADNE_LLM_MODEL_DIGEST:-}
+    volumes:
+      - ./infra/bootstrap_model.py:/opt/ariadne/bootstrap_model.py:ro
+    entrypoint: ["python", "/opt/ariadne/bootstrap_model.py"]
     depends_on:
       ollama:
         condition: service_healthy

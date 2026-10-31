@@ -11,11 +11,13 @@ from datetime import datetime, timezone
 import hashlib
 import itertools
 import json
+import math
 from pathlib import Path
 import re
 import time
 
-from app.graph_engine import DISCLAIMER, FAMILIES, GraphEngine
+from app import __version__
+from app.graph_engine import DISCLAIMER, FAMILIES, FEATURE_NAMES, GraphEngine
 from scripts.prepare_data import write_json
 
 DEFAULT_DISEASES = (
@@ -66,10 +68,18 @@ def build_case(engine: GraphEngine, disease_id: str, top_k: int = 12) -> dict:
         }
         for compound_id in sorted(compounds)
     }
+    assessments = {
+        compound_id: {
+            ",".join(excluded): engine.assessment(disease_id, compound_id, exclude=excluded)
+            for excluded in combinations
+        }
+        for compound_id in sorted(compounds)
+    }
     return {
         "disease": rankings[""]["disease"],
         "rankings": rankings,
         "evidence": evidence,
+        "assessments": assessments,
         "challenges": challenges,
         "algorithms": engine.algorithms(disease_id, limit=10),
         "similarities": {
@@ -80,12 +90,118 @@ def build_case(engine: GraphEngine, disease_id: str, top_k: int = 12) -> dict:
             "top_k": top_k,
             "distinct_compounds": len(compounds),
             "evidence_path_limit": 12,
+            "assessment_count": len(compounds) * len(combinations),
             "selection_policy": (
-                "Exact ranked top-k for each configuration; evidence for their union under "
-                "all configurations. Empty configurations are explicit."
+                "Exact ranked top-k for each configuration; evidence and exact score "
+                "assessments for their union under all configurations. Unsupported and "
+                "off-shortlist assessments remain inspectable. Empty configurations are explicit."
             ),
         },
     }
+
+
+def _validate_terms(terms: list[dict]) -> None:
+    """Check each feature calculation, including signs and the saved scaling reference."""
+    if [term["name"] for term in terms] != FEATURE_NAMES:
+        raise ValueError("An assessment does not explain every fitted feature")
+    for term in terms:
+        if not math.isfinite(term["scale"]) or term["scale"] <= 0:
+            raise ValueError("Assessment feature scales must be positive and finite")
+        for suffix in ("before", "after"):
+            standardized = (term[f"value_{suffix}"] - term["mean"]) / term["scale"]
+            contribution = standardized * term["coefficient"]
+            if not math.isclose(
+                standardized, term[f"standardized_{suffix}"], rel_tol=1e-11, abs_tol=1e-12
+            ) or not math.isclose(
+                contribution, term[f"contribution_{suffix}"], rel_tol=1e-11, abs_tol=1e-12
+            ):
+                raise ValueError(
+                    "Assessment feature contribution disagrees with the fitted formula"
+                )
+        if not math.isclose(
+            term["contribution_after"] - term["contribution_before"],
+            term["contribution_delta"],
+            rel_tol=1e-11,
+            abs_tol=1e-12,
+        ):
+            raise ValueError("Assessment feature change disagrees with its before/after terms")
+
+
+def _validate_assessment(assessment: dict, baseline_evidence: dict, current_evidence: dict) -> None:
+    """Reject stale, missing or arithmetically inconsistent selected-pair explanations."""
+    decomposition = assessment["decomposition"]
+    terms = decomposition["features"]
+    _validate_terms(terms)
+    for state_name, suffix, evidence in (
+        ("baseline", "before", baseline_evidence),
+        ("current", "after", current_evidence),
+    ):
+        state = assessment[state_name]
+        if (
+            state["features"] != evidence["counts"]
+            or state["evidence_count"] != evidence["total_paths"]
+        ):
+            raise ValueError("Assessment and evidence counts differ")
+        if state["supported"] != (state["evidence_count"] > 0):
+            raise ValueError("Assessment support status disagrees with the evidence")
+        if (state["rank"] is not None) != state["supported"]:
+            raise ValueError("An unsupported assessment cannot have a supported rank")
+        logit = state["logit"]
+        if not math.isfinite(logit) or not math.isfinite(state["score"]):
+            raise ValueError("Assessment scores and logits must be finite")
+        reconstructed = decomposition["intercept"] + math.fsum(
+            term[f"contribution_{suffix}"] for term in terms
+        )
+        expected_score = (
+            1 / (1 + math.exp(-logit)) if logit >= 0 else math.exp(logit) / (1 + math.exp(logit))
+        )
+        if not math.isclose(reconstructed, logit, rel_tol=1e-11, abs_tol=1e-12):
+            raise ValueError("Assessment contributions do not reconstruct the logit")
+        if not math.isclose(expected_score, state["score"], rel_tol=1e-11, abs_tol=1e-12):
+            raise ValueError("Assessment logit does not reconstruct its score")
+    expected_delta = assessment["current"]["logit"] - assessment["baseline"]["logit"]
+    if not math.isclose(
+        math.fsum(term["contribution_delta"] for term in terms),
+        expected_delta,
+        rel_tol=1e-11,
+        abs_tol=1e-12,
+    ) or not math.isclose(
+        assessment["delta"]["logit"], expected_delta, rel_tol=1e-11, abs_tol=1e-12
+    ):
+        raise ValueError("Assessment changes do not reconstruct the logit change")
+    if not math.isclose(
+        assessment["delta"]["score"],
+        assessment["current"]["score"] - assessment["baseline"]["score"],
+        rel_tol=1e-11,
+        abs_tol=1e-12,
+    ):
+        raise ValueError("Assessment score change disagrees with its before/after values")
+
+
+def _validate_ranking(case: dict, key: str, ranking: dict) -> None:
+    """Bind every displayed candidate to its exact evidence and score assessment."""
+    for candidate in ranking["candidates"]:
+        if candidate["id"] not in case["evidence"]:
+            raise ValueError("A displayed candidate is missing evidence")
+        evidence = case["evidence"][candidate["id"]].get(key)
+        if evidence is None:
+            raise ValueError("A displayed candidate is missing scenario evidence")
+        if evidence["counts"] != candidate["features"]:
+            raise ValueError("Displayed path counts do not match ranking features")
+        if evidence["total_paths"] != candidate["evidence_count"]:
+            raise ValueError("Displayed total evidence count is inconsistent")
+        if set(evidence["excluded"]) != set(ranking["excluded"]):
+            raise ValueError("Evidence and ranking refer to different configurations")
+        if any(edge["type"] in ranking["excluded"] for edge in evidence["edges"]):
+            raise ValueError("A removed family appears in a published explanation")
+        assessment = case["assessments"][candidate["id"]].get(key)
+        if assessment is None:
+            raise ValueError("A displayed candidate is missing its scenario assessment")
+        current = assessment["current"]
+        if current["rank"] != candidate["rank"] or not math.isclose(
+            current["score"], candidate["score"], rel_tol=0, abs_tol=5e-9
+        ):
+            raise ValueError("Assessment and ranking disagree")
 
 
 def validate_case(case: dict) -> None:
@@ -93,24 +209,24 @@ def validate_case(case: dict) -> None:
     expected = {",".join(excluded) for excluded in exclusion_combinations()}
     if set(case["rankings"]) != expected or set(case["challenges"]) != expected:
         raise ValueError("A published case is missing an evidence configuration")
+    if set(case.get("assessments", {})) != set(case["evidence"]):
+        raise ValueError("A published candidate is missing its score assessment")
     for key, ranking in case["rankings"].items():
-        for candidate in ranking["candidates"]:
-            if candidate["id"] not in case["evidence"]:
-                raise ValueError("A displayed candidate is missing evidence")
-            evidence = case["evidence"][candidate["id"]].get(key)
-            if evidence is None:
-                raise ValueError("A displayed candidate is missing scenario evidence")
-            if evidence["counts"] != candidate["features"]:
-                raise ValueError("Displayed path counts do not match ranking features")
-            if evidence["total_paths"] != candidate["evidence_count"]:
-                raise ValueError("Displayed total evidence count is inconsistent")
-            if set(evidence["excluded"]) != set(ranking["excluded"]):
-                raise ValueError("Evidence and ranking refer to different configurations")
-            if any(edge["type"] in ranking["excluded"] for edge in evidence["edges"]):
-                raise ValueError("A removed family appears in a published explanation")
-    for variants in case["evidence"].values():
+        _validate_ranking(case, key, ranking)
+    for compound_id, variants in case["evidence"].items():
         if set(variants) != expected:
             raise ValueError("Selected candidates cannot be inspected in all configurations")
+        assessments = case["assessments"][compound_id]
+        if set(assessments) != expected:
+            raise ValueError("Selected candidates need assessments in all configurations")
+        for key, assessment in assessments.items():
+            if (
+                assessment["compound"]["id"] != compound_id
+                or assessment["disease"] != case["disease"]
+                or ",".join(assessment["excluded"]) != key
+            ):
+                raise ValueError("Assessment identity or exclusions do not match the case")
+            _validate_assessment(assessment, variants[""], variants[key])
 
 
 def export_snapshot(
@@ -146,6 +262,10 @@ def export_snapshot(
         "generated_by": "python -m scripts.export_snapshot",
         "default_disease_id": disease_ids[0],
         "diseases": diseases,
+        "compounds": [
+            {"id": identifier, "name": engine.nodes[identifier]["name"]}
+            for identifier in engine.entities["Compound"]
+        ],
         "cases": cases,
         "stats": engine.stats(),
         "provenance": engine.provenance(),
@@ -155,7 +275,7 @@ def export_snapshot(
             "graph_backend": "published research snapshot",
             "agent_mode": "deterministic",
             "dataset_ready": True,
-            "version": "1.0.0",
+            "version": __version__,
         },
         "dataset_sha256": engine.manifest.get("dataset_sha256"),
         "model_sha256": engine.model.get("model_sha256"),

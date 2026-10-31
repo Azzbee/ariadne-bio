@@ -1,6 +1,10 @@
 import { AriadneAPI } from './api.js';
 import { EvidenceGraph, pathFamily } from './graph.js';
 import {
+  RequestGate, agentMatchesInvestigation, appendRankingPage, investigationKey,
+  loadCandidateInvestigation, rankMovement, signedNumber
+} from './investigation.js';
+import {
   FAMILY_LABELS, compactNumber, escapeHTML as esc, evidenceSelection, exclusionKey, metricRows,
   metricValue, number, objectText, pct, safeURL, score, selectDisease, sourceEntries, titleCase
 } from './utils.js';
@@ -12,10 +16,14 @@ const api = new AriadneAPI(config);
 const query = new URLSearchParams(location.search);
 const state = {
   health: null, stats: null, diseases: [], disease: null, rankings: null,
-  candidate: null, evidence: null, challenge: null, excluded: [], filter: 'all',
+  candidate: null, assessment: null, evidence: null, challenge: null, challengeError: null, excluded: [], filter: 'all',
   evaluation: null, provenance: null, agent: null, activePath: null, view: 'investigate',
-  rankRequest: 0, evidenceRequest: 0, searchIndex: -1, shownDiseases: [], busy: false
+  searchIndex: -1, shownDiseases: [], busy: false, evidenceBusy: false, agentBusy: false
 };
+const rankGate = new RequestGate();
+const evidenceGate = new RequestGate();
+const agentGate = new RequestGate();
+const pageGate = new RequestGate();
 let toastTimer;
 let bootRequest = 0;
 
@@ -37,13 +45,34 @@ function inlineError(error, retryId) {
   return `<div class="inline-error">${esc(errorMessage(error))}${retryId ? `<button id="${retryId}" type="button">Try again</button>` : ''}</div>`;
 }
 function currentExcluded() { return [...document.querySelectorAll('#evidence-switches input:not(:checked)')].map(input => input.value); }
+function rankingContext() { return investigationKey(state.disease?.id, state.excluded); }
+function selectedContext() { return investigationKey(state.disease?.id, state.excluded, state.candidate?.id); }
+
+function refreshControls() {
+  const loadingCase = state.busy || state.evidenceBusy;
+  $('export-case').disabled = loadingCase || !state.evidence || !state.assessment;
+  $('share-case').disabled = loadingCase || !state.disease || !state.candidate;
+  $('agent-submit').disabled = loadingCase || state.agentBusy || !state.candidate;
+  document.querySelectorAll('[data-prompt]').forEach(button => { button.disabled = $('agent-submit').disabled; });
+  document.querySelectorAll('[data-path-filter]').forEach(button => { button.disabled = loadingCase || !state.evidence; });
+  $('fit-graph').disabled = loadingCase || !state.evidence;
+  $('workbench').setAttribute('aria-busy', String(loadingCase));
+}
+
+function invalidateAgent() {
+  agentGate.invalidate();
+  state.agent = null;
+  state.agentBusy = false;
+  $('agent-response').hidden = true;
+  $('agent-response').innerHTML = '';
+  $('agent-submit').innerHTML = `<span>Investigate</span>${icon('arrow')}`;
+  refreshControls();
+}
 
 function setBusy(busy) {
   state.busy = busy;
   $('workbench').classList.toggle('busy', busy);
-  document.querySelectorAll('#evidence-switches input').forEach(input => { input.disabled = busy; });
-  $('export-case').disabled = busy || !state.evidence;
-  $('share-case').disabled = busy || !state.disease;
+  refreshControls();
 }
 
 function setView(view, updateURL = true) {
@@ -137,8 +166,9 @@ function renderDiseaseOptions(term = '') {
   const queryText = term.toLowerCase().trim();
   state.shownDiseases = state.diseases.filter(item => `${item.name} ${item.id}`.toLowerCase().includes(queryText));
   state.searchIndex = -1;
+  $('disease-search').removeAttribute('aria-activedescendant');
   $('disease-options').innerHTML = state.shownDiseases.length
-    ? state.shownDiseases.map((item, index) => `<button type="button" class="disease-option" role="option" id="disease-option-${index}" data-disease-index="${index}" aria-selected="false">${esc(item.name)}<small>${esc(item.id)}</small></button>`).join('')
+    ? state.shownDiseases.map((item, index) => `<button type="button" tabindex="-1" class="disease-option" role="option" id="disease-option-${index}" data-disease-index="${index}" aria-selected="false">${esc(item.name)}<small>${esc(item.id)}</small></button>`).join('')
     : '<div class="disease-empty">No matching disease in this edition.</div>';
   $('disease-options').hidden = false;
   $('disease-search').setAttribute('aria-expanded', 'true');
@@ -154,7 +184,7 @@ function closeSearch() {
 function moveSearch(direction) {
   const count = state.shownDiseases.length;
   if (!count) return;
-  state.searchIndex = (state.searchIndex + direction + count) % count;
+  state.searchIndex = state.searchIndex < 0 ? (direction > 0 ? 0 : count - 1) : (state.searchIndex + direction + count) % count;
   document.querySelectorAll('.disease-option').forEach((option, index) => option.setAttribute('aria-selected', String(index === state.searchIndex)));
   const option = $(`disease-option-${state.searchIndex}`);
   if (option) { option.scrollIntoView({ block: 'nearest' }); $('disease-search').setAttribute('aria-activedescendant', option.id); }
@@ -164,10 +194,10 @@ async function chooseDisease(disease, preferredCompound = null) {
   if (!disease) return;
   state.disease = disease;
   state.candidate = null;
+  state.assessment = null;
   state.evidence = null;
-  state.agent = null;
   state.filter = 'all';
-  $('agent-response').hidden = true;
+  invalidateAgent();
   $('disease-search').value = disease.name;
   closeSearch();
   $('disease-context').innerHTML = `<strong>${esc(disease.name)}</strong><br><span class="case-stamp">${esc(disease.id)}</span>`;
@@ -176,62 +206,79 @@ async function chooseDisease(disease, preferredCompound = null) {
 
 async function loadRankings(preferredCompound = state.candidate?.id) {
   if (!state.disease) return;
-  const request = ++state.rankRequest;
-  state.evidenceRequest += 1;
+  const request = rankGate.begin(rankingContext());
+  evidenceGate.invalidate();
+  pageGate.invalidate();
+  invalidateAgent();
   state.evidence = null;
+  state.assessment = null;
+  state.rankings = null;
+  state.challenge = null;
+  state.challengeError = null;
+  state.evidenceBusy = false;
   $('candidate-list').innerHTML = loading('Following the evidence');
+  $('assessment-section').hidden = true;
+  graph.clear();
+  $('graph-tooltip').hidden = true;
   $('graph-canvas').classList.add('graph-loading');
   $('path-list').innerHTML = '';
   $('evidence-summary').innerHTML = '<p>Loading supporting paths…</p>';
   $('load-more').hidden = true;
+  $('load-more').disabled = false;
+  renderChallenge(true);
   setBusy(true);
   const diseaseId = state.disease.id;
   const excluded = [...state.excluded];
   const previousCandidate = state.candidate;
   try {
-    const results = await Promise.all([
+    const [rankings, comparison] = await Promise.all([
       api.rankings(diseaseId, excluded, 12),
-      excluded.length ? api.challenge(diseaseId, excluded, 12) : Promise.resolve(null)
+      excluded.length ? api.challenge(diseaseId, excluded, 12).then(value => ({ value })).catch(error => ({ error })) : Promise.resolve({ value: null })
     ]);
-    if (request !== state.rankRequest) return;
-    [state.rankings, state.challenge] = results;
+    if (!rankGate.current(request, rankingContext())) return;
+    state.rankings = rankings;
+    state.challenge = comparison.value || null;
+    state.challengeError = comparison.error || null;
     renderCandidates();
     renderChallenge();
-    let chosen = state.rankings.candidates.find(item => item.id === preferredCompound);
-    if (!chosen && previousCandidate?.id === preferredCompound && state.challenge) {
-      const changed = state.challenge.changes.find(item => item.id === preferredCompound);
-      if (changed) chosen = {
-        ...previousCandidate, rank: changed.after_rank, score: changed.score_after,
-        baseline_rank: changed.before_rank, rank_delta: changed.rank_delta, pinned: true
-      };
-    }
-    chosen ||= state.rankings.candidates[0];
+    const chosen = preferredCompound
+      ? state.rankings.candidates.find(item => item.id === preferredCompound)
+        || (previousCandidate?.id === preferredCompound ? previousCandidate : { id: preferredCompound, name: 'Selected compound' })
+      : state.rankings.candidates[0];
     if (chosen) await chooseCandidate(chosen);
     else clearEvidence('No graph-supported candidates remain.', 'The excluded families remove every supported path. Restore compound binding and disease associations to investigate candidates.');
-    updateURLState();
+    if (rankGate.current(request, rankingContext())) updateURLState();
   } catch (error) {
-    if (request !== state.rankRequest) return;
+    if (!rankGate.current(request, rankingContext())) return;
     $('candidate-list').innerHTML = inlineError(error, 'retry-rankings');
     $('retry-rankings')?.addEventListener('click', () => loadRankings(preferredCompound));
-    clearEvidence('The ranking could not be loaded.', errorMessage(error));
+    clearEvidence('The ranking could not be loaded.', errorMessage(error), false);
+    state.challengeError = error;
     renderChallenge();
   } finally {
-    if (request === state.rankRequest) { setBusy(false); $('graph-canvas').classList.remove('graph-loading'); }
+    if (rankGate.current(request, rankingContext())) {
+      setBusy(false);
+      if (!state.evidenceBusy) $('graph-canvas').classList.remove('graph-loading');
+    }
   }
 }
 
 function renderCandidates() {
   const candidates = state.rankings?.candidates || [];
+  const list = $('candidate-list');
+  const focusedId = list.contains(document.activeElement) ? document.activeElement.dataset.compoundId : null;
+  const scroll = { left: list.scrollLeft, top: list.scrollTop };
   $('candidate-count').textContent = number(candidates.length);
+  const pinned = state.candidate?.pinned && !candidates.some(item => item.id === state.candidate.id)
+    ? `<div class="pinned-candidate"><span>SELECTED INVESTIGATION</span><strong>${esc(state.candidate.name)}</strong><small>${!state.assessment ? 'Refreshing this compound’s assessment…' : state.candidate.rank === null ? 'No supporting paths remain. The assessment stays available.' : 'Rank #' + state.candidate.rank + ' · outside the displayed shortlist'}</small></div>` : '';
   if (!candidates.length) {
-    $('candidate-list').innerHTML = '<div class="empty-message">No supported paths remain with this evidence configuration. Restore the core evidence families.</div>';
+    list.innerHTML = pinned + '<div class="empty-message">No supported paths remain with this evidence configuration. Restore the core evidence families.</div>';
     $('candidate-footer').textContent = 'No evidence-supported hypotheses under this configuration.';
+    $('load-more').hidden = true;
     return;
   }
   const maxScore = Math.max(...candidates.map(item => Number(item.score)), 0.001);
-  const pinned = state.candidate?.pinned && !candidates.some(item => item.id === state.candidate.id)
-    ? `<div class="pinned-candidate"><span>PINNED INVESTIGATION</span><strong>${esc(state.candidate.name)}</strong><small>${state.candidate.rank === null ? 'No supporting paths remain' : 'Now ranked #' + state.candidate.rank + ', outside the displayed top ' + candidates.length}</small></div>` : '';
-  $('candidate-list').innerHTML = pinned + candidates.map(candidate => {
+  list.innerHTML = pinned + candidates.map(candidate => {
     const delta = Number(candidate.rank_delta || 0);
     const change = state.excluded.length ? `<span class="rank-delta ${delta > 0 ? 'up' : delta < 0 ? 'down' : 'same'}" title="Rank change from all evidence">${delta > 0 ? '↑ ' + delta : delta < 0 ? '↓ ' + Math.abs(delta) : '—'}</span>` : '';
     return `<button class="candidate-card${state.candidate?.id === candidate.id ? ' selected' : ''}" data-compound-id="${esc(candidate.id)}" aria-pressed="${state.candidate?.id === candidate.id}" aria-label="Inspect ${esc(candidate.name)}, rank ${candidate.rank}, model score ${score(candidate.score)}">
@@ -245,53 +292,79 @@ function renderCandidates() {
     ? `${number(Math.min(published, candidates.length))} published candidates · ${number(state.rankings.total)} supported in the full ranking`
     : `${number(candidates.length)} of ${number(state.rankings.total)} supported candidates · fixed model`;
   $('load-more').hidden = api.mode === 'snapshot' || candidates.length >= state.rankings.total;
+  if (focusedId) [...list.querySelectorAll('[data-compound-id]')].find(button => button.dataset.compoundId === focusedId)?.focus({ preventScroll: true });
+  list.scrollLeft = scroll.left;
+  list.scrollTop = scroll.top;
 }
 
 async function chooseCandidate(candidate) {
-  const request = ++state.evidenceRequest;
   state.candidate = candidate;
+  const request = evidenceGate.begin(selectedContext());
+  invalidateAgent();
+  state.evidence = null;
+  state.assessment = null;
+  state.evidenceBusy = true;
   state.activePath = null;
   renderCandidates();
   $('graph-title').textContent = candidate.name;
-  $('graph-subheading').innerHTML = `Model score <strong>${score(candidate.score)}</strong> <span class="hypothesis-indicator">${candidate.known_treatment ? 'RECORDED INDICATION' : 'RESEARCH HYPOTHESIS'}</span>${state.excluded.length ? ' <span class="family-off">Evidence excluded</span>' : ''}${candidate.pinned ? ` <span class="case-stamp">${candidate.rank === null ? 'No supported rank' : 'Rank #' + candidate.rank}</span>` : ''}`;
+  $('graph-subheading').textContent = 'Retrieving this compound’s assessment and source records…';
+  $('assessment-section').hidden = true;
+  graph.clear();
+  $('graph-tooltip').hidden = true;
   $('graph-canvas').classList.add('graph-loading');
   $('graph-empty').hidden = true;
+  $('graph-hint').hidden = true;
   $('path-list').innerHTML = '';
   $('evidence-summary').innerHTML = '<p>Retrieving source records…</p>';
-  $('export-case').disabled = true;
+  ['all', 'direct', 'interaction', 'pathway'].forEach(key => { $(`path-count-${key}`).textContent = '—'; });
+  refreshControls();
+  const diseaseId = state.disease.id;
+  const excluded = [...state.excluded];
   try {
-    const evidence = await api.evidence(state.disease.id, candidate.id, state.excluded, 12);
-    if (request !== state.evidenceRequest) return;
-    state.evidence = evidence;
-    state.candidate.features = evidence.counts;
-    state.candidate.evidence_count = evidence.total_paths;
+    const result = await loadCandidateInvestigation(api, diseaseId, candidate.id, excluded, state.rankings?.candidates || []);
+    if (!evidenceGate.current(request, selectedContext())) return;
+    Object.assign(state, result);
+    renderCandidates();
+    $('graph-title').textContent = state.candidate.name;
+    $('graph-subheading').innerHTML = `${state.candidate.supported ? 'Model score' : 'Unsupported · diagnostic score'} <strong>${score(state.candidate.score)}</strong> <span class="hypothesis-indicator">${state.candidate.known_treatment ? 'RECORDED INDICATION' : 'RESEARCH HYPOTHESIS'}</span>${state.excluded.length ? ' <span class="family-off">Evidence excluded</span>' : ''}${state.candidate.pinned ? ` <span class="case-stamp">${state.candidate.rank === null ? 'No supported rank' : 'Rank #' + state.candidate.rank}</span>` : ''}`;
     renderEvidence();
-    $('export-case').disabled = false;
-    $('share-case').disabled = false;
+    renderAssessment();
+    $('investigation-status').textContent = `${state.candidate.name}: ${state.candidate.supported ? 'rank ' + state.candidate.rank : 'no supported rank'}, ${number(state.evidence.total_paths)} supporting paths. ${state.excluded.length ? 'Evidence exclusions applied.' : 'All evidence included.'}`;
     updateURLState();
   } catch (error) {
-    if (request !== state.evidenceRequest) return;
+    if (!evidenceGate.current(request, selectedContext())) return;
     state.evidence = null;
+    state.assessment = null;
     $('path-list').innerHTML = inlineError(error, 'retry-evidence');
     $('retry-evidence')?.addEventListener('click', () => chooseCandidate(candidate));
     $('evidence-summary').innerHTML = '<p>The supporting records could not be loaded.</p>';
-    $('evidence-graph').replaceChildren();
+    graph.clear();
     $('graph-caption').textContent = errorMessage(error);
-  } finally { if (request === state.evidenceRequest) $('graph-canvas').classList.remove('graph-loading'); }
+  } finally {
+    if (evidenceGate.current(request, selectedContext())) {
+      state.evidenceBusy = false;
+      $('graph-canvas').classList.remove('graph-loading');
+      refreshControls();
+    }
+  }
 }
 
-function clearEvidence(title, message) {
+function clearEvidence(title, message, clearSelection = true) {
   state.evidence = null;
-  state.candidate = null;
+  state.assessment = null;
+  state.evidenceBusy = false;
+  if (clearSelection) state.candidate = null;
+  $('assessment-section').hidden = true;
   $('graph-title').textContent = title;
   $('graph-subheading').textContent = message;
-  $('evidence-graph').replaceChildren();
+  graph.clear();
   $('graph-empty').hidden = true;
   $('graph-hint').hidden = true;
   $('evidence-summary').innerHTML = '<p>No supporting records are displayed.</p>';
   $('path-list').innerHTML = '';
   $('graph-caption').textContent = 'An unsupported ranking is not presented as evidence.';
   ['all', 'direct', 'interaction', 'pathway'].forEach(key => { $(`path-count-${key}`).textContent = '0'; });
+  refreshControls();
 }
 
 function renderEvidence() {
@@ -305,7 +378,11 @@ function renderEvidence() {
   $('graph-empty').hidden = true;
   $('path-count-all').textContent = compactNumber(evidence.total_paths);
   for (const family of ['direct', 'interaction', 'pathway']) $(`path-count-${family}`).textContent = compactNumber(evidence.counts?.[family] || 0);
-  document.querySelectorAll('[data-path-filter]').forEach(button => button.classList.toggle('active', button.dataset.pathFilter === state.filter));
+  document.querySelectorAll('[data-path-filter]').forEach(button => {
+    const active = button.dataset.pathFilter === state.filter;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
   const fullCount = state.filter === 'all' ? evidence.total_paths : evidence.counts?.[state.filter] || 0;
   $('evidence-summary').innerHTML = `<div class="summary-counts"><strong>${number(fullCount)}</strong> supporting ${fullCount === 1 ? 'path' : 'paths'}</div><p>${number(paths.length)} displayed · complete counts used by the model</p>`;
   $('path-list').innerHTML = paths.length ? paths.map((path, index) => {
@@ -316,18 +393,55 @@ function renderEvidence() {
   if (!paths.length && !fullCount) $('graph-caption').textContent = 'This evidence family provides no supporting paths under the current configuration.';
 }
 
-function renderChallenge() {
+function renderAssessment() {
+  const assessment = state.assessment;
+  if (!assessment) { $('assessment-section').hidden = true; return; }
+  const { baseline, current, decomposition, model } = assessment;
+  const changed = assessment.excluded.length > 0;
+  const terms = decomposition.features || [];
+  const contributionField = changed ? 'contribution_delta' : 'contribution_after';
+  const maximum = Math.max(...terms.map(term => Math.abs(Number(term[contributionField]) || 0)), .001);
+  const rankText = value => value.supported ? `#${number(value.rank)}` : 'No supported rank';
+  const rows = [
+    ['Supported rank', rankText(baseline), rankText(current), rankMovement(baseline, current)],
+    ['Model score', score(baseline.score), score(current.score), signedNumber(assessment.delta.score)],
+    ['Complete paths', number(baseline.evidence_count), number(current.evidence_count), signedNumber(assessment.delta.evidence_count, 0)],
+    ['Direct paths', number(baseline.features.direct), number(current.features.direct), signedNumber(current.features.direct - baseline.features.direct, 0)],
+    ['Interaction paths', number(baseline.features.interaction), number(current.features.interaction), signedNumber(current.features.interaction - baseline.features.interaction, 0)],
+    ['Pathway paths', number(baseline.features.pathway), number(current.features.pathway), signedNumber(current.features.pathway - baseline.features.pathway, 0)]
+  ];
+  const bars = terms.map(term => {
+    const value = Number(term[contributionField]);
+    const width = Number.isFinite(value) ? Math.abs(value) / maximum * 50 : 0;
+    return `<li class="contribution-row"><span class="contribution-label">${esc(term.label || term.name)}</span><span class="contribution-track" aria-hidden="true"><span class="contribution-zero"></span><span class="contribution-bar ${value < 0 ? 'negative' : 'positive'}" style="width:${width}%;${value < 0 ? 'right' : 'left'}:50%"></span></span><span class="contribution-value">${signedNumber(value)}</span></li>`;
+  }).join('');
+  const table = terms.map(term => `<tr><th scope="row">${esc(term.label || term.name)}<small>${esc(term.definition || '')}</small><small>Training mean ${number(term.mean, 6)} · scale ${number(term.scale, 6)}</small></th><td>${number(term.value_before, 5)}</td><td>${number(term.value_after, 5)}</td><td>${signedNumber(term.coefficient, 5)}</td><td>${signedNumber(term.contribution_before, 5)}</td><td>${signedNumber(term.contribution_after, 5)}</td><td>${signedNumber(term.contribution_delta, 5)}</td></tr>`).join('');
+  $('assessment-section').innerHTML = `
+    <div class="assessment-heading"><div><span class="eyebrow">THE SELECTED COMPOUND · BEFORE & AFTER</span><h2 id="assessment-title">${esc(assessment.compound.name)}<span>Follow the same hypothesis.</span></h2></div><span class="assessment-context${current.supported ? '' : ' unsupported'}">${current.supported ? `${changed ? 'Evidence challenged' : 'All evidence included'} · rank #${number(current.rank)}` : 'NO SUPPORTED RANK'}</span></div>
+    <div class="assessment-grid">
+      <div class="assessment-comparison"><p class="assessment-intro">${changed ? esc(assessment.excluded.map(family => FAMILY_LABELS[family] || family).join(' + ')) + ' excluded.' : 'The current configuration includes every evidence family.'} The same fitted model scores both columns.</p><div class="assessment-table-wrap"><table class="assessment-table"><caption class="sr-only">${esc(assessment.compound.name)} for ${esc(assessment.disease.name)}: all-evidence baseline compared with the current configuration</caption><thead><tr><th scope="col">Measure</th><th scope="col">All evidence</th><th scope="col">Current</th><th scope="col">Change</th></tr></thead><tbody>${rows.map((row, index) => `<tr${index === 2 ? ' class="path-total-row"' : index > 2 ? ' class="path-detail-row"' : ''}><th scope="row">${row[0]}</th><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td></tr>`).join('')}</tbody></table></div><p class="assessment-note${current.supported ? '' : ' unsupported-note'}">${current.supported ? 'Model scores prioritize retrieval. They are not probabilities of clinical efficacy. Rank changes also depend on how the other compounds move.' : 'No supporting paths remain. The finite score is a diagnostic model output only; this compound is excluded from the supported ranking. Its identity and baseline stay available.'}</p></div>
+      <div class="assessment-explanation"><div class="contribution-heading"><div><span class="eyebrow">EXACT FITTED-MODEL TERMS</span><h3>${changed ? 'What moved the score?' : 'How the score is assembled.'}</h3></div><span class="contribution-unit">${changed ? 'Δ LOGIT' : 'LOGIT'}</span></div><p class="contribution-description">${changed ? 'Each bar is the exact change in a feature’s contribution from the all-evidence baseline.' : 'Each bar is a feature’s signed contribution relative to its training mean.'} Values add in logit space.</p><ol class="contribution-list">${bars}</ol><div class="logit-equation"><span>${changed ? 'Total logit change' : 'Intercept + feature terms'}</span><strong>${changed ? signedNumber(assessment.delta.logit, 4) : `${signedNumber(decomposition.intercept, 4)} + (${signedNumber(current.logit - decomposition.intercept, 4)}) = ${signedNumber(current.logit, 4)}`}</strong></div><p class="contribution-caption">Negative terms decrease the model logit; positive terms increase it. Bar lengths share one absolute scale. These are model calculations, not biological effects.</p></div>
+    </div>
+    <details class="assessment-details"><summary>Inspect all ${terms.length} terms, the formula, and model identity <span>Exact arithmetic · no generated attribution</span></summary><div class="assessment-formula"><code>term = coefficient × (feature − training mean) / scale</code><code>logit = intercept + Σ terms · score = sigmoid(logit)</code><p>Baseline logit ${signedNumber(baseline.logit, 6)} → current logit ${signedNumber(current.logit, 6)}. Intercept ${signedNumber(decomposition.intercept, 6)} is unchanged. ${esc(decomposition.degree_divisor || '')}</p></div><div class="assessment-detail-scroll" tabindex="0" role="region" aria-label="Exact model terms table"><table class="assessment-terms-table"><thead><tr><th scope="col">Feature</th><th scope="col">Value before</th><th scope="col">Value current</th><th scope="col">Coefficient</th><th scope="col">Term before</th><th scope="col">Term current</th><th scope="col">Term change</th></tr></thead><tbody>${table}</tbody></table></div><p class="assessment-interpretation">${esc(assessment.interpretation)}</p><dl class="assessment-identity"><dt>Model</dt><dd>${esc(model.name)} · ${esc(model.version)}</dd><dt>Model SHA-256</dt><dd><code>${esc(model.model_sha256)}</code></dd><dt>Dataset SHA-256</dt><dd><code>${esc(model.dataset_sha256)}</code></dd></dl><p class="assessment-export-note">The evidence export includes full-precision feature values, means, scales, coefficients, and both assessments. Displayed values are rounded.</p></details>`;
+  $('assessment-section').hidden = false;
+}
+
+function renderChallenge(pending = false) {
   if (!state.excluded.length) {
     $('challenge-result').innerHTML = '<div class="challenge-neutral"><span class="challenge-orbit">↗</span><strong>All evidence is included.</strong><p>Turn a family off to discover which hypotheses depend on it.</p></div>';
     return;
   }
   const names = state.excluded.map(value => FAMILY_LABELS[value] || value).join(' + ');
+  if (pending) {
+    $('challenge-result').innerHTML = loading('Recomputing the comparison');
+    return;
+  }
   const changes = (state.challenge?.changes || []).filter(change => change.before_rank !== change.after_rank).sort((a, b) => {
     const dropA = a.after_rank === null ? 10000 : Math.abs(a.rank_delta || 0);
     const dropB = b.after_rank === null ? 10000 : Math.abs(b.rank_delta || 0);
     return dropB - dropA;
   }).slice(0, 3);
-  $('challenge-result').innerHTML = `<span class="challenge-active-label">${icon('info')} ${esc(names)} excluded</span>${changes.length ? changes.map(change => `<div class="challenge-change"><span>${esc(change.name)}</span><span class="rank-comparison">${change.before_rank === null ? 'unranked' : '#' + change.before_rank} → <b>${change.after_rank === null ? 'no paths' : '#' + change.after_rank}</b></span></div>`).join('') : '<div class="challenge-change"><span>No rank changes among displayed candidates.</span></div>'}<p class="challenge-footnote">Same fitted model. Changed evidence. Rank movement is sensitivity, not a biological effect.</p><button id="reset-evidence" class="reset-button">${icon('reset')} Restore all evidence</button>`;
+  $('challenge-result').innerHTML = `<span class="challenge-active-label">${icon('info')} ${esc(names)} excluded</span>${state.challengeError ? `<p class="challenge-unavailable">The ranking-wide comparison could not be loaded. ${esc(errorMessage(state.challengeError))}</p>` : changes.length ? changes.map(change => `<div class="challenge-change"><span>${esc(change.name)}</span><span class="rank-comparison">${change.before_rank === null ? 'unranked' : '#' + change.before_rank} → <b>${change.after_rank === null ? 'no paths' : '#' + change.after_rank}</b></span></div>`).join('') : '<div class="challenge-change"><span>No rank changes among displayed candidates.</span></div>'}<p class="challenge-footnote">Same fitted model. Changed evidence. Rank movement is sensitivity, not a biological effect.</p><button id="reset-evidence" class="reset-button">${icon('reset')} Restore all evidence</button>`;
   $('reset-evidence').addEventListener('click', async () => {
     document.querySelectorAll('#evidence-switches input').forEach(input => { input.checked = true; });
     state.excluded = [];
@@ -360,22 +474,33 @@ function showEdge(edge) {
 async function askAgent(event) {
   event?.preventDefault();
   const question = $('agent-question').value.trim();
-  if (!question || !state.disease) return;
-  $('agent-submit').disabled = true;
+  if (!question || !state.disease || state.busy || state.evidenceBusy) return;
+  const request = agentGate.begin(selectedContext());
+  const diseaseId = state.disease.id;
+  const compoundId = state.candidate?.id || null;
+  const excluded = [...state.excluded];
+  state.agent = null;
+  state.agentBusy = true;
+  refreshControls();
   $('agent-submit').innerHTML = '<span class="spinner small"></span><span>Following evidence</span>';
   $('agent-response').hidden = false;
   $('agent-response').className = 'agent-response';
   $('agent-response').innerHTML = loading('Resolving the question and retrieving graph evidence');
   try {
-    const response = await api.agent(question, state.disease.id, state.excluded);
-    state.agent = { question, ...response };
+    const response = await api.agent(question, diseaseId, excluded, compoundId);
+    if (!agentGate.current(request, selectedContext())) return;
+    state.agent = { question, ...response, request_context: request.context };
     renderAgent(response);
   } catch (error) {
+    if (!agentGate.current(request, selectedContext())) return;
     $('agent-response').innerHTML = inlineError(error, 'retry-agent');
     $('retry-agent')?.addEventListener('click', () => askAgent());
   } finally {
-    $('agent-submit').disabled = false;
-    $('agent-submit').innerHTML = `<span>Investigate</span>${icon('arrow')}`;
+    if (agentGate.current(request, selectedContext())) {
+      state.agentBusy = false;
+      $('agent-submit').innerHTML = `<span>Investigate</span>${icon('arrow')}`;
+      refreshControls();
+    }
   }
 }
 
@@ -390,7 +515,9 @@ function renderAgent(response) {
     return url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(labelText)} ↗</a>` : `<span>${esc(labelText)}</span>`;
   }).join('');
   const trace = (response.trace || []).map(step => `<li><b>${esc(step.tool || step.step || 'step')} · ${esc(step.status || 'complete')}</b>${esc(step.summary || '')}</li>`).join('');
-  $('agent-response').innerHTML = `<div class="agent-response-header"><span>${rejected ? '○' : '✳'} ${label}</span><span>${esc(mode)}</span></div><div class="agent-answer">${esc(response.answer || 'No answer was returned.')}</div>${citations ? `<div class="agent-citations">${citations}</div>` : ''}${trace ? `<details class="agent-trace" open><summary>Inspect ${response.trace.length} workflow steps</summary><ol class="trace-list">${trace}</ol></details>` : ''}<p class="agent-disclaimer">${esc(response.disclaimer || 'Research hypotheses, not validated treatments.')}</p>`;
+  const scope = [response.compound?.name, response.disease?.name].filter(Boolean).join(' · ');
+  const sameScope = agentMatchesInvestigation(state.agent, state.disease?.id, state.candidate?.id, state.excluded);
+  $('agent-response').innerHTML = `<div class="agent-response-header"><span>${rejected ? '○' : '✳'} ${label}</span><span>${esc(mode)}</span></div>${scope ? `<p class="agent-scope"><strong>${esc(scope)}</strong>${sameScope ? '' : '<span>This answer uses a different investigation scope and is not attached to the current case export.</span>'}</p>` : ''}<div class="agent-answer">${esc(response.answer || 'No answer was returned.')}</div>${citations ? `<div class="agent-citations">${citations}</div>` : ''}${trace ? `<details class="agent-trace" open><summary>Inspect ${response.trace.length} workflow steps</summary><ol class="trace-list">${trace}</ol></details>` : ''}<p class="agent-disclaimer">${esc(response.disclaimer || 'Research hypotheses, not validated treatments.')}</p>`;
 }
 
 async function loadEvaluation() {
@@ -463,14 +590,15 @@ function renderProvenance(provenance) {
 }
 
 function exportCase() {
-  if (!state.evidence) return;
+  if (!state.evidence || !state.assessment || state.busy || state.evidenceBusy) return;
   const payload = {
-    application: 'ARIADNE', version: state.health?.version || '1.0.0',
+    application: 'ARIADNE', version: state.health?.version || '1.1.0',
     exported_at: new Date().toISOString(), edition: api.mode,
     disease: state.disease, selected_compound: state.candidate,
     excluded_families: state.excluded, ranking: state.rankings,
-    evidence: state.evidence, challenge: state.challenge,
-    agent_brief: state.agent, dataset_sha256: state.stats?.dataset_sha256,
+    assessment: state.assessment, evidence: state.evidence, challenge: state.challenge,
+    agent_brief: agentMatchesInvestigation(state.agent, state.disease?.id, state.candidate?.id, state.excluded) ? state.agent : null,
+    dataset_sha256: state.stats?.dataset_sha256,
     model: state.stats?.model,
     interpretation: 'Research hypotheses and recorded graph evidence. Not clinical advice or a causal intervention.'
   };
@@ -517,6 +645,12 @@ $('disease-options').addEventListener('click', event => {
   const option = event.target.closest('[data-disease-index]');
   if (option) chooseDisease(state.shownDiseases[Number(option.dataset.diseaseIndex)]);
 });
+$('disease-options').addEventListener('pointerdown', event => {
+  if (event.pointerType === 'mouse' && event.target.closest('[data-disease-index]')) event.preventDefault();
+});
+document.querySelector('.disease-selector').addEventListener('focusout', event => {
+  if (!event.currentTarget.contains(event.relatedTarget)) closeSearch();
+});
 document.addEventListener('click', event => { if (!event.target.closest('.disease-selector')) closeSearch(); });
 document.addEventListener('keydown', event => {
   if (event.key === '/' && !event.ctrlKey && !event.metaKey && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName) && !$('detail-dialog').open) {
@@ -530,16 +664,22 @@ $('candidate-list').addEventListener('click', event => {
   if (candidate) chooseCandidate(candidate);
 });
 $('load-more').addEventListener('click', async () => {
+  if (!state.rankings || state.busy) return;
+  const request = pageGate.begin(rankingContext());
   $('load-more').disabled = true;
   const diseaseId = state.disease.id;
-  const excluded = exclusionKey(state.excluded);
+  const excluded = [...state.excluded];
+  const offset = state.rankings.candidates.length;
   try {
-    const next = await api.rankings(diseaseId, state.excluded, 12, state.rankings.candidates.length);
-    if (state.disease.id !== diseaseId || exclusionKey(state.excluded) !== excluded) return;
-    state.rankings.candidates.push(...next.candidates);
+    const next = await api.rankings(diseaseId, excluded, 12, offset);
+    if (!pageGate.current(request, rankingContext())) return;
+    const combined = appendRankingPage(state.rankings, next, offset);
+    if (!combined) return;
+    state.rankings = combined;
+    if (state.candidate) state.candidate.pinned = !combined.candidates.some(candidate => candidate.id === state.candidate.id);
     renderCandidates();
-  } catch (error) { toast(errorMessage(error)); }
-  finally { $('load-more').disabled = false; }
+  } catch (error) { if (pageGate.current(request, rankingContext())) toast(errorMessage(error)); }
+  finally { if (pageGate.current(request, rankingContext())) $('load-more').disabled = false; }
 });
 $('evidence-switches').addEventListener('change', async event => {
   if (!event.target.matches('input')) return;

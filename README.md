@@ -21,12 +21,23 @@ family measures sensitivity to the available graph, not a biological interventio
 
 ![ARIADNE evidence workbench with actual Hetionet records](docs/screenshots/workbench.jpg)
 
+## Inspect the published research edition
+
+[Download the standalone research edition](https://github.com/Azzbee/ariadne-bio/releases/latest)
+from the release assets. Extract `ariadne-research-edition.zip`, run
+`python3 -m http.server 8080 --bind 127.0.0.1` inside it, and open
+http://localhost:8080. It needs no Docker, API key or model download. Its recorded
+results and deterministic guide are explicitly identified. The release also
+includes the narrated demonstration, captions, checksums and verification evidence.
+
 ## Run the complete application
 
 Requires Docker with Compose v2, Git, Make and Python 3 (for initial credential
-generation). Reserve several GB of memory and disk for Neo4j, Python packages and
-the local language model. Initial startup downloads the checksummed dataset and
-model, then builds the graph.
+generation). A practical local budget is 8 GB available RAM and 20 GB free disk;
+the verified reference CI runner has 16 GB RAM. The pinned Ollama image alone has
+about 3.4 GB of compressed layers, before extraction, and the default model is
+about 1 GB. Initial startup prepares the checksummed dataset and verifies the
+local model's full manifest digest before starting the application.
 
 ```bash
 git clone https://github.com/Azzbee/ariadne-bio.git
@@ -56,9 +67,19 @@ and can call a live language model. [Deployment details](docs/deployment.md).
 4. Ask the agent to explain the investigation. Inspect its tool trace and citations.
 5. Open Evaluation to compare the model with baselines and inspect an actual failure.
 
-The model and scaler stay fixed during challenge mode. Every evidence count is
-computed over the full permitted graph; the UI displays a bounded selection of
-paths and reports truncation.
+Version 1.1 keeps the selected compound visible when evidence changes, even when
+it falls outside the displayed ranking or loses every supporting path. Its
+assessment shows the all-evidence baseline beside the selected scenario, with
+exact signed feature contributions that reconstruct both scores. Ask about a
+named compound and the agent focuses its evidence and assessment on that compound
+while retaining the correctly ordered ranking as context.
+
+The model and scaler stay fixed during challenge mode. Contributions add in
+**logit space**, relative to the saved training-feature means; they are not causal
+attributions or clinical probabilities. A pair with no surviving paths has no
+supported rank; its finite model output is labeled diagnostic. Every evidence
+count uses the full permitted graph; displayed paths are bounded and truncation
+is reported. See the [model card](docs/model_card.md) and [API contract](docs/api.md).
 
 ![Executed retrospective benchmark and its explicit evaluation protocol](docs/screenshots/benchmark.jpg)
 
@@ -86,9 +107,15 @@ and the [model card](docs/model_card.md).
 
 ## Reproduce and verify
 
+Native development requires Python 3.11+ (3.12 is the tested reference), Node.js
+18+ (CI uses 22), Make and Git. Node runs the dependency-free frontend tests;
+`make install` installs the Python environment. Generate the snapshot before
+running tests to include all six published cases and all sixteen exclusion sets.
+
 ```bash
 make install          # Python 3.11+; the verified reference runtime is Python 3.12
 make data             # Download, checksum, prepare, train and evaluate
+make snapshot         # Export every recorded scenario for frontend verification
 make test             # Unit/API tests, branch coverage gate and frontend tests
 make lint             # Pylint >=9.5 and Black formatting
 make notebook         # Execute every notebook cell with the active interpreter
@@ -97,26 +124,36 @@ make test-integration # Genuine Neo4j/Cypher/GDS tests; see deployment instructi
 make test-llm         # Actual provider investigation, challenge routing and rejection
 ```
 
-The reference build passed **103 Python tests, 29 frontend tests, 8 genuine
+Version 1.1 local verification and interface changes are recorded in the
+[1.1 verification notes](docs/releases/v1.1.0.md). The workflow badge
+links to actual CI status; configured checks alone are not a successful run.
+
+The published **1.0 historical reference** passed **103 Python tests, 29 frontend tests, 8 genuine
 Neo4j/GDS integration tests and 3 actual local-LLM HTTP tests**. A separate clean
 Python environment installed the hash-locked dependencies without system packages,
 passed the tests at **83.58% branch-aware coverage**, and executed every notebook
-cell. The full source passed **Pylint 10.00/10** and Black. See
-[fresh-environment evidence](reports/fresh-environment.json),
-[database test results](reports/neo4j-junit.xml) and
-[actual LLM test results](reports/llm-junit.xml).
+cell. The 1.0 source passed **Pylint 10.00/10** and Black. Its immutable evidence:
+[fresh-environment evidence](https://github.com/Azzbee/ariadne-bio/blob/v1.0.0/reports/fresh-environment.json),
+[database test results](https://github.com/Azzbee/ariadne-bio/blob/v1.0.0/reports/neo4j-junit.xml) and
+[actual LLM test results](https://github.com/Azzbee/ariadne-bio/blob/v1.0.0/reports/llm-junit.xml).
 
 Measured query plans reduced database hits from **48,913 to 2** for an equivalent
 identity lookup. Warm local timings and complete PROFILE plans are retained in
 [query optimization evidence](reports/query_optimization.json). These timings
 describe the measured machine, not a production performance guarantee.
 
-The CI workflow repeats these checks, starts Compose from a fresh checkout, and
-publishes API and frontend images only after quality and integration jobs pass.
+The current CI workflow is configured to verify selected-compound assessment,
+exact score reconstruction, retained unsupported pairs, frontend response headers,
+and a live LLM request that overrides stale compound selection. It deletes old
+operational reports before collecting fresh evidence for the actual checkout,
+records the default model identity, and publishes API and frontend images only
+after quality and full-stack integration pass. Release proof is tied to the
+verified source commit; [release instructions](docs/releasing.md) describe it.
 The workflow badge above reports its actual status. Registry locations:
 [API image](https://github.com/Azzbee/ariadne-bio/pkgs/container/ariadne-bio-api)
 and [frontend image](https://github.com/Azzbee/ariadne-bio/pkgs/container/ariadne-bio-frontend).
-Publication and public pull availability must be verified in the release evidence.
+The published release includes anonymous manifest, configuration and layer-byte
+verification. Repeat that verification for each release commit.
 
 ## Architecture
 
@@ -145,12 +182,13 @@ model scores; those come from the recorded data and deterministic graph pipeline
 curl 'http://localhost:8080/api/diseases?q=asthma'
 curl 'http://localhost:8080/api/rankings/Disease::DOID:2841?limit=5'
 curl 'http://localhost:8080/api/evidence/Disease::DOID:2841/Compound::DB00961?limit=8'
+curl 'http://localhost:8080/api/assessment/Disease::DOID:10652/Compound::DB00184?exclude=INTERACTS'
 curl -X POST 'http://localhost:8080/api/challenge' \
   -H 'Content-Type: application/json' \
   -d '{"disease_id":"Disease::DOID:2841","exclude":["INTERACTS"],"limit":5}'
 curl -X POST 'http://localhost:8080/api/agent' \
   -H 'Content-Type: application/json' \
-  -d '{"question":"Explain the evidence for asthma","disease_id":"Disease::DOID:2841"}'
+  -d '{"question":"Explain Nicotine for Alzheimer disease","disease_id":"Disease::DOID:10652","compound_id":"Compound::DB00184","exclude":["INTERACTS"]}'
 ```
 
 ## Documentation
@@ -161,6 +199,8 @@ curl -X POST 'http://localhost:8080/api/agent' \
 | Why these choices instead of a generic generated graph? | [Anti-genericity appendix](docs/anti_genericity.md) |
 | How are leakage, candidates and failure cases handled? | [Model card](docs/model_card.md) |
 | Where did the data come from, and under what terms? | [Data sources and licenses](docs/data_sources.md) |
+| What does each API response mean? | [API contract and examples](docs/api.md) |
+| How do I release a tested source revision? | [Release verification](docs/releasing.md) |
 | How do I run, configure and troubleshoot it? | [Deployment](docs/deployment.md) |
 | What does each grading criterion map to? | [Rubric evidence matrix](docs/rubric.md) |
 | What should the recorded demonstration show? | [Nine-minute walkthrough](docs/demo_script.md) |

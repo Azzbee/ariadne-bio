@@ -62,9 +62,9 @@ visualization and query results without clipping model features.
 | FastAPI | Validate inputs and outputs, enforce limits, expose structured errors |
 | Neo4j | Store and query typed evidence with constraints and indexes |
 | GDS | Project evidence and compute personalized PageRank and target-neighborhood similarity |
-| Graph engine | Compute exact typed-path features and apply the saved model |
+| Graph engine | Compute exact typed-path features, apply the saved model and reconstruct selected-pair scores from its signed terms |
 | LangGraph | Orchestrate entity resolution, retrieval, comparison and explanation |
-| LLM provider | Interpret/explain structured evidence within the allowed tool boundary |
+| LLM provider | Parse the research request into a validated, typed investigation plan |
 | Evaluation script | Fix the split, fit preprocessing/model on permitted data and write measured metrics |
 
 ## Data flow and reproducibility
@@ -96,3 +96,16 @@ scores. Query identifiers and relationship choices pass explicit validation.
 Relationships are allowlisted, values parameterized, result sizes bounded and
 database execution timed out. An unavailable provider is visible in the response
 mode rather than disguised as a successful model invocation.
+
+A question can include a disease and a compound independently. A single explicit
+compound name overrides an old UI compound selection; multiple names require
+clarification. The focused compound determines the evidence paths and exact
+assessment. The accompanying candidate list remains the ordered top-K ranking,
+so explanatory focus never rewrites the ranked result.
+
+An assessment is computed directly from the graph engine's saved feature
+transformations, scaler and coefficients. Baseline and current contributions
+reconstruct their respective logits, and the sigmoid reconstructs their scores.
+Unsupported pairs retain a diagnostic assessment with no supported rank. The
+static exporter records these same assessment objects; it does not approximate
+or recompute them in browser JavaScript.

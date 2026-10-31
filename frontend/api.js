@@ -1,4 +1,4 @@
-import { diseaseMentions, exclusionKey, isUnsafeQuestion, makeChallenge } from './utils.js';
+import { compoundReferences, diseaseReferences, exclusionKey, isUnsafeQuestion, makeChallenge, requestedExclusions, requestsTopCandidate } from './utils.js';
 
 export class APIError extends Error {
   constructor(message, status = 0, details = null) {
@@ -59,7 +59,7 @@ export class AriadneAPI {
       this.mode = 'snapshot';
       this.healthData = {
         status: 'ok', graph_backend: 'published research snapshot', dataset_ready: true,
-        agent_mode: 'deterministic', version: '1.0.0', ...(this.manifest.health || {})
+        agent_mode: 'deterministic', version: '1.1.0', ...(this.manifest.health || {})
       };
       return this.healthData;
     } catch {
@@ -120,6 +120,15 @@ export class AriadneAPI {
     return response;
   }
 
+  async assessment(diseaseId, compoundId, excluded = []) {
+    const key = exclusionKey(excluded);
+    if (this.mode === 'live') return this.get(`/assessment/${encodeURIComponent(diseaseId)}/${encodeURIComponent(compoundId)}?exclude=${key}`);
+    const data = await this.loadCase(diseaseId);
+    const response = data.assessments?.[compoundId]?.[key];
+    if (!response) throw new APIError('This compound’s score assessment is not included in this published case. Choose a published candidate or run the full application.');
+    return response;
+  }
+
   async challenge(diseaseId, excluded, limit = 12) {
     const key = exclusionKey(excluded);
     if (this.mode === 'live') return this.post('/challenge', { disease_id: diseaseId, exclude: key.split(',').filter(Boolean), limit });
@@ -139,8 +148,8 @@ export class AriadneAPI {
     return data.algorithms || null;
   }
 
-  async agent(question, diseaseId, excluded = []) {
-    if (this.mode === 'live') return this.post('/agent', { question, disease_id: diseaseId, exclude: excluded });
+  async agent(question, diseaseId, excluded = [], compoundId = null) {
+    if (this.mode === 'live') return this.post('/agent', { question, disease_id: diseaseId, compound_id: compoundId, exclude: excluded });
     const disclaimer = 'Research hypotheses, not validated treatments or medical advice.';
     if (isUnsafeQuestion(question)) return {
       status: 'rejected', mode: 'deterministic',
@@ -148,38 +157,76 @@ export class AriadneAPI {
       candidates: [], citations: [], suggestions: ['Explain the current ranking', 'What changes without gene interactions?'],
       trace: [{ step: 1, tool: 'validate_request', status: 'rejected', summary: 'The request is outside the read-only research scope.' }], disclaimer
     };
-    const mentioned = diseaseMentions(this.manifest.diseases, question);
+    const diseaseIds = diseaseReferences(this.manifest.diseases, question);
+    if (diseaseIds.unknown.length) return {
+      status: 'clarification', mode: 'deterministic',
+      answer: `This published edition does not recognize ${diseaseIds.unknown.join(', ')}. Choose one available disease case; a different valid name does not resolve an unknown identifier.`,
+      candidates: [], citations: [], trace: [], suggestions: [], disclaimer
+    };
+    const mentioned = diseaseIds.matches;
     if (mentioned.length > 1) return {
       status: 'clarification', mode: 'deterministic', answer: 'Choose one disease in the investigation selector so the evidence has an unambiguous starting point.',
       candidates: [], citations: [], trace: [], suggestions: mentioned.map(item => item.name), disclaimer
     };
     const id = mentioned[0]?.id || diseaseId;
     if (!id) return { status: 'clarification', mode: 'deterministic', answer: 'Select a published disease case first.', candidates: [], citations: [], trace: [], suggestions: [], disclaimer };
-    if (!mentioned.length && !/\b(?:rank|ranking|top|compound|candidate|evidence|gene|genes|interaction|interactions|pathway|pathways|model|score|explain|why|support|supported|hypothesis|hypotheses|changes?)\b/i.test(question)) return {
+    const manifestReferences = compoundReferences(this.manifest.compounds || [], question);
+    if (this.manifest.compounds && manifestReferences.unknown.length) return {
+      status: 'clarification', mode: 'deterministic',
+      answer: `The requested compound identifier is not recognized: ${manifestReferences.unknown.join(', ')}. Choose one recorded compound; a different valid name does not resolve an unknown identifier.`,
+      candidates: [], citations: [], trace: [], suggestions: [], disclaimer
+    };
+    if (!mentioned.length && !manifestReferences.matches.length && !/\b(?:rank|ranking|top|compound|candidate|evidence|gene|genes|interaction|interactions|pathway|pathways|model|score|explain|why|support|supported|hypothesis|hypotheses|changes?)\b/i.test(question)) return {
       status: 'clarification', mode: 'deterministic',
       answer: 'This published research guide can explain the selected disease’s ranking and compare evidence exclusions. Ask about a candidate, its paths, or what changes without gene interactions.',
       candidates: [], citations: [], trace: [], suggestions: ['Explain the top candidate', 'What changes without gene interactions?'], disclaimer
     };
-    const removeInteractions = /(?:without|exclude|remove|ignore).{0,35}(?:gene |gene-)?interactions?/i.test(question);
-    const removePathways = /(?:without|exclude|remove|ignore).{0,35}(?:shared )?pathways?/i.test(question);
-    const effective = [...new Set([...excluded, ...(removeInteractions ? ['INTERACTS'] : []), ...(removePathways ? ['PARTICIPATES'] : [])])];
+    const data = await this.loadCase(id);
+    const availableCompounds = Object.values(data.assessments || {}).map(scenarios => Object.values(scenarios)[0]?.compound).filter(Boolean);
+    const identities = this.manifest.compounds || availableCompounds;
+    const references = this.manifest.compounds ? manifestReferences : compoundReferences(identities, question);
+    const namedCompounds = references.matches;
+    if (references.unknown.length) return {
+      status: 'clarification', mode: 'deterministic', answer: `This published edition does not recognize ${references.unknown.join(', ')}. Choose one recorded compound.`,
+      candidates: [], citations: [], trace: [], suggestions: [], disclaimer
+    };
+    if (namedCompounds.length > 1) return {
+      status: 'clarification', mode: 'deterministic',
+      answer: 'Name one compound so the score explanation and evidence refer to a single investigation.',
+      candidates: [], citations: [], trace: [], suggestions: namedCompounds.map(item => item.name), disclaimer
+    };
+    const explicitlyTop = requestsTopCandidate(question);
+    const changedDisease = mentioned.length === 1 && id !== diseaseId;
+    const selectedId = namedCompounds[0]?.id || (!explicitlyTop && !changedDisease ? compoundId : null);
+    if (selectedId && !data.assessments?.[selectedId]) return {
+      status: 'clarification', mode: 'deterministic', disease: data.disease,
+      answer: `${namedCompounds[0]?.name || 'The selected compound'} is not included in the published results for ${data.disease?.name || 'this disease'}. Choose a published candidate or run the full application to investigate it.`,
+      candidates: [], citations: [], trace: [], suggestions: ['Explain the top candidate'], disclaimer
+    };
+    const effective = requestedExclusions(question, excluded);
     const result = await this.rankings(id, effective, 3);
-    const first = result.candidates[0];
-    const evidence = first ? await this.evidence(id, first.id, effective, 6) : null;
-    const names = result.candidates.map((candidate, index) => `${index + 1}. ${candidate.name} (model score ${Number(candidate.score).toFixed(3)})`).join('\n');
-    const answer = first
-      ? `For ${result.disease.name}, the recorded model ranks:\n\n${names}\n\n${first.name} has ${evidence?.total_paths ?? first.evidence_count ?? 0} supporting graph paths under this evidence configuration. ${effective.length ? `Excluded evidence: ${effective.join(', ')}. The fitted model is unchanged. ` : ''}The ranking is a research hypothesis. It does not establish efficacy, safety, or causality.`
-      : 'No candidates are available under this evidence configuration.';
+    const focusId = selectedId || result.candidates[0]?.id;
+    const [assessment, evidence] = focusId ? await Promise.all([
+      this.assessment(id, focusId, effective), this.evidence(id, focusId, effective, 12)
+    ]) : [null, null];
+    const current = assessment?.current;
+    const baseline = assessment?.baseline;
+    const position = value => value.supported ? `rank #${value.rank}, model score ${Number(value.score).toFixed(3)}` : `no supported rank, diagnostic score ${Number(value.score).toFixed(3)}`;
+    const answer = assessment
+      ? `For ${result.disease.name}, this brief investigates ${assessment.compound.name}.\n\nCurrent evidence: ${position(current)}. ${current.evidence_count} complete supporting paths: ${current.features.direct} direct, ${current.features.interaction} interaction, and ${current.features.pathway} pathway.\n\n${effective.length ? `All-evidence baseline: ${position(baseline)}, with ${baseline.evidence_count} paths. Excluded evidence: ${exclusionKey(effective)}. The fitted model is unchanged.\n\n` : ''}${current.supported ? 'The exact score assessment records the feature values, fitted coefficients, and their contributions in logit space.' : 'No supporting paths remain. A finite model output is shown only for diagnosis; the compound is not included in the supported ranking.'}\n\nThe ranking is a research hypothesis. It does not establish efficacy, safety, or causality.`
+      : 'No supported candidates are available under this evidence configuration. Restore evidence families to investigate a candidate.';
     return {
       status: 'complete', mode: 'deterministic', answer, disease: result.disease,
+      compound: assessment?.compound || null, assessment, excluded: effective,
       candidates: result.candidates, evidence,
       citations: (evidence?.paths || []).slice(0, 3).map(path => ({ id: path.id, label: `${path.metapath || 'Evidence path'} · ${path.id}` })),
       trace: [
         { step: 1, tool: 'validate_request', status: 'complete', summary: 'Read-only research question accepted.' },
         { step: 2, tool: 'resolve_entity', status: 'complete', summary: result.disease.name },
         { step: 3, tool: 'load_recorded_ranking', status: 'complete', summary: `${effective.length ? effective.join(', ') + ' excluded' : 'All evidence families'} · fixed fitted model` },
-        { step: 4, tool: 'retrieve_recorded_paths', status: 'complete', summary: `${evidence?.paths?.length || 0} displayed evidence paths` },
-        { step: 5, tool: 'format_structured_brief', status: 'complete', summary: 'Deterministic summary of published results. No language model was called.' }
+        { step: 4, tool: 'load_recorded_assessment', status: 'complete', summary: assessment ? `${assessment.compound.name} · exact fitted-model terms · ${current.supported ? 'supported rank' : 'unsupported diagnostic'}` : 'No supported candidate selected' },
+        { step: 5, tool: 'retrieve_recorded_paths', status: 'complete', summary: `${evidence?.paths?.length || 0} displayed evidence paths` },
+        { step: 6, tool: 'format_structured_brief', status: 'complete', summary: 'Deterministic summary of published results. No language model was called.' }
       ], suggestions: ['What changes without gene interactions?', 'Explain the current ranking'], disclaimer
     };
   }

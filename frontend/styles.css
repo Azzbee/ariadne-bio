@@ -12,3 +12,114 @@
 /* A pinned hypothesis remains inspectable when an ablation moves it out of the shortlist. */
 .pinned-candidate{padding:13px 16px;background:#f4eddf;border-bottom:1px solid #e1d8c5;border-left:3px solid #bd805b}.pinned-candidate>span{display:block;font-family:var(--mono);font-size:7px;letter-spacing:.09em;color:#ac7d56;margin-bottom:5px}.pinned-candidate strong{display:block;font-size:11px;font-weight:500;color:#7d5c42}.pinned-candidate small{display:block;font-size:8px;color:#9c886d;line-height:1.6;margin-top:3px}.graph-node text{font-size:14px}.graph-node.endpoint text{font-size:16px}
 @media(max-width:690px){.graph-canvas.graph-vertical,.graph-vertical #evidence-graph{min-height:560px}.graph-vertical .graph-node text{font-size:16px}.graph-vertical .graph-node.endpoint text{font-size:19px}.graph-vertical .graph-node .node-subtitle{font-size:10px}.pinned-candidate{min-width:165px;padding:14px 12px;border-left:0;border-bottom:2px solid #bd805b}.pinned-candidate strong{font-size:10px}}
+
+/* A compound's identity stays fixed while its evidence and exact model terms change. */
+.assessment-section{margin-top:24px;border:1px solid var(--line);border-radius:8px;background:var(--panel);overflow:hidden}
+.assessment-heading{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:25px 28px 20px;border-bottom:1px solid var(--line-soft)}
+.assessment-heading .eyebrow{font-size:8px;color:var(--green-2)}
+.assessment-heading h2{font-family:var(--serif);font-size:29px;font-weight:400;margin:8px 0 0;line-height:1.2}
+.assessment-heading h2>span{display:block;font-family:var(--sans);font-size:11px;line-height:1.5;color:var(--muted);margin-top:5px}
+.assessment-context{font-family:var(--mono);font-size:9px;border:1px solid #cfdbc6;color:var(--green);border-radius:20px;padding:8px 12px;line-height:1.5;text-align:center}
+.assessment-context.unsupported{border-color:#dfc7b5;background:#f5ece0;color:#976540}
+.assessment-grid{display:grid;grid-template-columns:1fr 1.08fr;gap:0}
+.assessment-comparison,.assessment-explanation{padding:23px 28px}
+.assessment-explanation{border-left:1px solid var(--line-soft);background:#f8f9f2}
+.assessment-intro,.contribution-description{font-size:11px;line-height:1.8;color:var(--muted);margin:0 0 15px}
+.assessment-table{border-collapse:collapse;width:100%;font-size:12px;table-layout:fixed}
+.assessment-table th,.assessment-table td{padding:12px 8px;border-bottom:1px solid var(--line-soft);text-align:right;vertical-align:middle;font-variant-numeric:tabular-nums}
+.assessment-table thead th{font-family:var(--mono);font-size:8px;font-weight:400;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);padding-top:5px;padding-bottom:11px}
+.assessment-table th:first-child{text-align:left;width:31%;padding-left:0;font-weight:400}
+.assessment-table tbody th{font-size:11px}
+.assessment-table td:last-child{font-family:var(--mono);font-size:10px;padding-right:0;color:var(--green)}
+.assessment-table .path-total-row th,.assessment-table .path-total-row td{padding-top:18px;font-weight:600}
+.assessment-table .path-detail-row th,.assessment-table .path-detail-row td{font-size:10px;color:var(--muted);padding-top:8px;padding-bottom:8px}
+.assessment-table .path-detail-row th{padding-left:10px}
+.assessment-table .path-detail-row:last-child th,.assessment-table .path-detail-row:last-child td{border-bottom:0}
+.assessment-note{font-size:10px;line-height:1.8;color:var(--muted);margin:15px 0 0;padding-top:13px;border-top:1px solid var(--line-soft)}
+.unsupported-note{color:#916342;border-top-color:#dfc7b5}
+.contribution-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.contribution-heading .eyebrow{font-size:7px;color:var(--green-2)}
+.contribution-heading h3{font-family:var(--serif);font-size:24px;font-weight:400;margin:6px 0 0}
+.contribution-unit{font-family:var(--mono);font-size:9px;color:var(--muted)}
+.contribution-description{font-size:10px;margin-bottom:15px}
+.contribution-list{list-style:none;margin:0;padding:0}
+.contribution-row{display:grid;grid-template-columns:minmax(120px,1fr) minmax(85px,1.05fr) 59px;gap:11px;align-items:center;min-height:29px}
+.contribution-label{font-size:10px;line-height:1.35;color:#4d5d4c}
+.contribution-track{position:relative;height:14px;background:#e9edde;border-radius:2px}
+.contribution-zero{position:absolute;top:-3px;bottom:-3px;left:50%;width:1px;background:#b8c5aa;z-index:1}
+.contribution-bar{position:absolute;top:0;height:100%;min-width:0;border-radius:2px}
+.contribution-bar.positive{background:#547d65}
+.contribution-bar.negative{background:#bd8a69}
+.contribution-value{font-family:var(--mono);font-size:10px;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.logit-equation{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;border-top:1px solid var(--line);margin-top:16px;padding-top:12px;font-size:9px;color:var(--muted)}
+.logit-equation strong{font-family:var(--mono);font-size:10px;font-weight:400;line-height:1.6;color:var(--green);text-align:right;max-width:65%}
+.contribution-caption{font-size:9px;line-height:1.7;color:var(--muted);margin:10px 0 0}
+.assessment-details{border-top:1px solid var(--line-soft)}
+.assessment-details>summary{padding:17px 28px;font-size:11px;color:var(--green);cursor:pointer;line-height:1.6}
+.assessment-details>summary>span{float:right;color:var(--muted);font-family:var(--mono);font-size:8px;line-height:2}
+.assessment-details[open]>summary{background:#f1f4e9;border-bottom:1px solid var(--line-soft)}
+.assessment-formula{padding:19px 28px 12px}
+.assessment-formula code{display:block;font-family:var(--mono);font-size:11px;line-height:1.8;color:var(--green)}
+.assessment-formula p{font-size:10px;line-height:1.8;color:var(--muted);margin:9px 0 0}
+.assessment-detail-scroll{overflow-x:auto;margin:0 28px 15px}
+.assessment-terms-table{border-collapse:collapse;width:100%;min-width:950px;font-size:10px;font-variant-numeric:tabular-nums}
+.assessment-terms-table th,.assessment-terms-table td{padding:12px 10px;text-align:right;border-bottom:1px solid var(--line-soft);vertical-align:top}
+.assessment-terms-table thead th{font-family:var(--mono);font-size:8px;font-weight:400;white-space:nowrap;color:var(--muted)}
+.assessment-terms-table th:first-child{text-align:left;padding-left:0;max-width:260px;font-weight:400}
+.assessment-terms-table td{font-family:var(--mono);font-size:9px}
+.assessment-terms-table small{display:block;font-size:9px;line-height:1.7;margin-top:5px;color:var(--muted)}
+.assessment-interpretation,.assessment-export-note{font-size:10px;color:var(--muted);line-height:1.8;margin:0 28px 16px}
+.assessment-identity{display:grid;grid-template-columns:135px 1fr;gap:9px 18px;margin:0 28px 16px;padding:14px 0;border-top:1px solid var(--line-soft);font-size:10px}
+.assessment-identity dt{color:var(--muted)}
+.assessment-identity dd{margin:0;min-width:0}
+.assessment-identity code{font-family:var(--mono);font-size:9px;overflow-wrap:anywhere}
+.agent-scope{border-bottom:1px solid var(--line);padding:0 0 13px;margin:0 0 14px;font-size:11px;line-height:1.6;color:var(--green)}
+.agent-scope strong{font-weight:500}
+.agent-scope span{display:block;color:var(--muted);font-size:10px;margin-top:5px}
+.challenge-unavailable{font-size:11px;line-height:1.7;color:#956b4f}
+
+@media(max-width:1100px){
+  .assessment-comparison,.assessment-explanation{padding:21px}
+  .assessment-heading{padding:22px}
+  .assessment-table{font-size:11px}
+  .assessment-table th,.assessment-table td{padding-left:5px;padding-right:5px}
+  .contribution-row{grid-template-columns:minmax(100px,1fr) minmax(70px,1fr) 51px;gap:8px}
+  .contribution-label,.contribution-value{font-size:9px}
+}
+@media(max-width:800px){
+  .assessment-grid{grid-template-columns:1fr}
+  .assessment-explanation{border-left:0;border-top:1px solid var(--line-soft)}
+  .contribution-row{grid-template-columns:minmax(115px,1fr) minmax(100px,1.5fr) 61px;min-height:30px}
+  .contribution-label,.contribution-value{font-size:11px}
+  .assessment-table{font-size:12px}
+  .assessment-details>summary>span{display:block;float:none;margin-top:4px}
+}
+@media(max-width:690px){
+  .assessment-section{margin-top:17px}
+  .assessment-heading{padding:19px 16px;align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .assessment-heading .eyebrow{font-size:7px}
+  .assessment-heading h2{font-size:27px}
+  .assessment-heading h2>span{font-size:10px}
+  .assessment-context{font-size:8px;padding:6px 9px}
+  .assessment-comparison,.assessment-explanation{padding:19px 16px}
+  .assessment-intro{font-size:10px}
+  .assessment-table{font-size:11px}
+  .assessment-table th:first-child{width:28%}
+  .assessment-table tbody th{font-size:10px}
+  .assessment-table th,.assessment-table td{padding:11px 4px}
+  .assessment-table thead th{font-size:7px;letter-spacing:0}
+  .assessment-table td:last-child{font-size:9px}
+  .assessment-table .path-detail-row th{padding-left:5px;font-size:9px}
+  .contribution-heading h3{font-size:24px}
+  .contribution-row{grid-template-columns:minmax(95px,1fr) minmax(65px,1fr) 52px;gap:8px;min-height:32px}
+  .contribution-label,.contribution-value{font-size:10px}
+  .assessment-details>summary{font-size:10px;padding:15px 16px}
+  .assessment-formula{padding:16px 16px 12px}
+  .assessment-formula code{font-size:9px;overflow-wrap:anywhere}
+  .assessment-formula p{font-size:9px}
+  .assessment-detail-scroll{margin-left:16px;margin-right:16px}
+  .assessment-interpretation,.assessment-export-note{margin-left:16px;margin-right:16px;font-size:9px}
+  .assessment-identity{margin-left:16px;margin-right:16px;grid-template-columns:92px 1fr;font-size:9px;gap:8px 10px}
+  .assessment-identity code{font-size:8px}
+}
+@media print{.assessment-section{break-inside:avoid}.assessment-details{display:none}.assessment-grid{grid-template-columns:1fr 1fr}}

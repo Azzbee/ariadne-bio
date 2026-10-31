@@ -1,0 +1,280 @@
+TAP version 13
+# Subtest: uses the live API when its health endpoint is valid
+ok 1 - uses the live API when its health endpoint is valid
+  ---
+  duration_ms: 2.659914
+  type: 'test'
+  ...
+# Subtest: a static host serving HTML at /api does not masquerade as a live graph
+ok 2 - a static host serving HTML at /api does not masquerade as a live graph
+  ---
+  duration_ms: 0.360392
+  type: 'test'
+  ...
+# Subtest: snapshot case fetches are lazy and concurrent reads share one request
+ok 3 - snapshot case fetches are lazy and concurrent reads share one request
+  ---
+  duration_ms: 0.548385
+  type: 'test'
+  ...
+# Subtest: missing recorded evidence is reported instead of fabricated
+ok 4 - missing recorded evidence is reported instead of fabricated
+  ---
+  duration_ms: 0.680435
+  type: 'test'
+  ...
+# Subtest: snapshot agent exposes deterministic provenance and routes evidence exclusion
+ok 5 - snapshot agent exposes deterministic provenance and routes evidence exclusion
+  ---
+  duration_ms: 2.187152
+  type: 'test'
+  ...
+# Subtest: rejected snapshot requests do not retrieve a case
+ok 6 - rejected snapshot requests do not retrieve a case
+  ---
+  duration_ms: 0.343837
+  type: 'test'
+  ...
+# Subtest: out-of-scope snapshot questions request clarification
+ok 7 - out-of-scope snapshot questions request clarification
+  ---
+  duration_ms: 0.350207
+  type: 'test'
+  ...
+# Subtest: live endpoint encoding protects namespace IDs and validates response errors
+ok 8 - live endpoint encoding protects namespace IDs and validates response errors
+  ---
+  duration_ms: 0.218128
+  type: 'test'
+  ...
+# Subtest: live assessment lookup and guide requests preserve the selected compound identity
+ok 9 - live assessment lookup and guide requests preserve the selected compound identity
+  ---
+  duration_ms: 0.455996
+  type: 'test'
+  ...
+# Subtest: manifest case paths cannot traverse directories or load external origins
+ok 10 - manifest case paths cannot traverse directories or load external origins
+  ---
+  duration_ms: 0.309856
+  type: 'test'
+  ...
+# Subtest: service error details survive into a useful message
+ok 11 - service error details survive into a useful message
+  ---
+  duration_ms: 0.199841
+  type: 'test'
+  ...
+# Subtest: an explicitly named disease overrides a stale UI selection in snapshot questions
+ok 12 - an explicitly named disease overrides a stale UI selection in snapshot questions
+  ---
+  duration_ms: 0.539642
+  type: 'test'
+  ...
+# Subtest: multiple distinct explicit diseases require clarification despite a selected disease
+ok 13 - multiple distinct explicit diseases require clarification despite a selected disease
+  ---
+  duration_ms: 0.23914
+  type: 'test'
+  ...
+# Subtest: any unknown explicit disease or compound ID clarifies before retrieving a case
+ok 14 - any unknown explicit disease or compound ID clarifies before retrieving a case
+  ---
+  duration_ms: 0.436056
+  type: 'test'
+  ...
+# Subtest: layout uses exact path topology and leaves imported records untouched
+ok 15 - layout uses exact path topology and leaves imported records untouched
+  ---
+  duration_ms: 0.478079
+  type: 'test'
+  ...
+# Subtest: empty evidence leaves endpoints but never invents edges
+ok 16 - empty evidence leaves endpoints but never invents edges
+  ---
+  duration_ms: 0.171839
+  type: 'test'
+  ...
+# Subtest: layout is deterministic across rerenders
+ok 17 - layout is deterministic across rerenders
+  ---
+  duration_ms: 0.238349
+  type: 'test'
+  ...
+# Subtest: metapath families distinguish direct, interaction, and shared pathway evidence
+ok 18 - metapath families distinguish direct, interaction, and shared pathway evidence
+  ---
+  duration_ms: 0.09984
+  type: 'test'
+  ...
+# Subtest: a later guide request wins when answers arrive out of order
+ok 19 - a later guide request wins when answers arrive out of order
+  ---
+  duration_ms: 0.19266
+  type: 'test'
+  ...
+# Subtest: leaving and returning to the same case does not revive an old pagination request
+ok 20 - leaving and returning to the same case does not revive an old pagination request
+  ---
+  duration_ms: 0.083276
+  type: 'test'
+  ...
+# Subtest: candidate, disease, and evidence changes all invalidate a response context
+ok 21 - candidate, disease, and evidence changes all invalidate a response context
+  ---
+  duration_ms: 0.079129
+  type: 'test'
+  ...
+# Subtest: pagination checks its offset and scope and never appends duplicate candidates
+ok 22 - pagination checks its offset and scope and never appends duplicate candidates
+  ---
+  duration_ms: 0.175084
+  type: 'test'
+  ...
+# Subtest: an unsupported compound remains selected without receiving a fabricated rank
+ok 23 - an unsupported compound remains selected without receiving a fabricated rank
+  ---
+  duration_ms: 0.187572
+  type: 'test'
+  ...
+# Subtest: a mismatched assessment or evidence count cannot form an exportable investigation
+ok 24 - a mismatched assessment or evidence count cannot form an exportable investigation
+  ---
+  duration_ms: 0.356256
+  type: 'test'
+  ...
+# Subtest: case export rejects briefs about another compound, disease, or evidence configuration
+ok 25 - case export rejects briefs about another compound, disease, or evidence configuration
+  ---
+  duration_ms: 0.173672
+  type: 'test'
+  ...
+# Subtest: signed model terms preserve their units and do not display negative zero or unknown as zero
+ok 26 - signed model terms preserve their units and do not display negative zero or unknown as zero
+  ---
+  duration_ms: 0.116485
+  type: 'test'
+  ...
+# Subtest: published cases are consumable through the actual frontend adapter in every evidence configuration
+ok 27 - published cases are consumable through the actual frontend adapter in every evidence configuration
+  ---
+  duration_ms: 164.279547
+  type: 'test'
+  ...
+# Subtest: a shared off-list compound and an evidence restore retain the exact selected identity
+ok 28 - a shared off-list compound and an evidence restore retain the exact selected identity
+  ---
+  duration_ms: 20.762714
+  type: 'test'
+  ...
+# Subtest: snapshot assessments retain exact additive terms for every published candidate and scenario
+ok 29 - snapshot assessments retain exact additive terms for every published candidate and scenario
+  ---
+  duration_ms: 134.681822
+  type: 'test'
+  ...
+# Subtest: snapshot guide resolves explicit compounds, selected context, and top-candidate intent distinctly
+ok 30 - snapshot guide resolves explicit compounds, selected context, and top-candidate intent distinctly
+  ---
+  duration_ms: 90.325811
+  type: 'test'
+  ...
+# Subtest: exclusions are allowlisted, deduplicated, and canonically sorted
+ok 31 - exclusions are allowlisted, deduplicated, and canonically sorted
+  ---
+  duration_ms: 0.249856
+  type: 'test'
+  ...
+# Subtest: untrusted graph names cannot inject markup
+ok 32 - untrusted graph names cannot inject markup
+  ---
+  duration_ms: 0.191548
+  type: 'test'
+  ...
+# Subtest: only absolute web record links are allowed
+ok 33 - only absolute web record links are allowed
+  ---
+  duration_ms: 0.155143
+  type: 'test'
+  ...
+# Subtest: missing metrics are not displayed as measured zeroes
+ok 34 - missing metrics are not displayed as measured zeroes
+  ---
+  duration_ms: 0.204668
+  type: 'test'
+  ...
+# Subtest: metric normalization retains the model identity
+ok 35 - metric normalization retains the model identity
+  ---
+  duration_ms: 0.148974
+  type: 'test'
+  ...
+# Subtest: ablation comparison does not invent a rank for unpublished candidates
+ok 36 - ablation comparison does not invent a rank for unpublished candidates
+  ---
+  duration_ms: 0.223046
+  type: 'test'
+  ...
+# Subtest: read-only guardrail distinguishes evidence exclusion from destructive requests
+ok 37 - read-only guardrail distinguishes evidence exclusion from destructive requests
+  ---
+  duration_ms: 0.089104
+  type: 'test'
+  ...
+# Subtest: source names stay separate from validated source URLs
+ok 38 - source names stay separate from validated source URLs
+  ---
+  duration_ms: 0.162955
+  type: 'test'
+  ...
+# Subtest: a shared disease ID takes priority over suggested defaults
+ok 39 - a shared disease ID takes priority over suggested defaults
+  ---
+  duration_ms: 0.13256
+  type: 'test'
+  ...
+# Subtest: explicit disease matching keeps the longest overlapping name and whole words
+ok 40 - explicit disease matching keeps the longest overlapping name and whole words
+  ---
+  duration_ms: 0.187182
+  type: 'test'
+  ...
+# Subtest: disease matching normalizes apostrophes, punctuation, case, and spacing
+ok 41 - disease matching normalizes apostrophes, punctuation, case, and spacing
+  ---
+  duration_ms: 0.128223
+  type: 'test'
+  ...
+# Subtest: evidence caption describes the execution backend’s actual sampling order
+ok 42 - evidence caption describes the execution backend’s actual sampling order
+  ---
+  duration_ms: 0.152619
+  type: 'test'
+  ...
+# Subtest: qualified IDs resolve case-insensitively and unknown IDs survive beside valid names
+ok 43 - qualified IDs resolve case-insensitively and unknown IDs survive beside valid names
+  ---
+  duration_ms: 0.157166
+  type: 'test'
+  ...
+# Subtest: top-candidate intent includes scored, ranked, plural, and numbered requests
+ok 44 - top-candidate intent includes scored, ranked, plural, and numbered requests
+  ---
+  duration_ms: 0.084197
+  type: 'test'
+  ...
+# Subtest: snapshot evidence-removal parsing preserves selected settings and respects explicit negation
+ok 45 - snapshot evidence-removal parsing preserves selected settings and respects explicit negation
+  ---
+  duration_ms: 0.472932
+  type: 'test'
+  ...
+1..45
+# tests 45
+# suites 0
+# pass 45
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 458.598329

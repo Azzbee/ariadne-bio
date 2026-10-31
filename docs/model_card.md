@@ -25,6 +25,49 @@ No language-model output enters training, ranking, validation or test evaluation
 This prevents an LLM's memorized drug indications from masquerading as graph
 retrieval performance.
 
+## Exact selected-compound explanation
+
+Version 1.1 exposes an assessment for one compound–disease pair under the selected
+evidence exclusions. It returns the all-evidence baseline and current scenario,
+the saved model identity, raw path counts, transformed feature values, training
+means and scales, coefficients, and each signed contribution.
+
+For feature value $x_j$, training mean $\mu_j$, training scale $s_j$, coefficient
+$\beta_j$ and intercept $\beta_0$:
+
+$$
+c_j = \beta_j\frac{x_j-\mu_j}{s_j},\qquad
+z = \beta_0 + \sum_j c_j,\qquad
+\operatorname{score} = \frac{1}{1+e^{-z}}.
+$$
+
+This is an exact decomposition of the fitted logistic model, within floating-point
+precision. It uses the same eight features as training: three `log1p(path count)`
+terms, three `log1p(path count / degree divisor)` terms, and the `log1p` compound
+binding and disease association degrees. The degree divisor is
+`sqrt(max(compound_binding_degree * disease_association_degree, 1))`. Removing
+BINDS or ASSOCIATES also removes the corresponding endpoint degree. No alternate
+explainer model is fitted.
+
+The reference point is the **training-feature mean**, not an empty graph. An
+absent feature can therefore have a nonzero contribution. Signed terms add in
+logit space; their changes sum to the logit change. They do not sum to a change in
+clinical probability, and correlated features prevent treating the terms as
+independent biological causes. The sigmoid is nonlinear, so score changes are
+shown separately.
+
+A pair with zero surviving paths remains inspectable. Its finite model output is
+labeled `unsupported_diagnostic`, `supported` is false, and `rank` is null. It is
+excluded from the graph-supported explorer ranking; the finite diagnostic score
+is not presented as surviving evidence. This does not change the benchmark,
+which intentionally evaluates the full compound universe.
+
+The assessment's baseline always uses all evidence. Rank delta is
+`baseline rank - current rank`, so a positive value means an improved position.
+Score, logit and evidence-count deltas are `current - baseline`. If either state
+has no supported rank, rank delta is null. See the
+[API contract](api.md#selected-compound-assessment).
+
 ## Split and fitting protocol
 
 The 755 recorded positive compound–disease pairs are sorted, shuffled with seed
