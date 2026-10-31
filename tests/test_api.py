@@ -36,6 +36,7 @@ def test_health_and_openapi_are_real_and_report_execution_mode(client):
     assert response.headers["X-Content-Type-Options"] == "nosniff"
     spec = client.get("/openapi.json").json()
     assert "/api/evidence/{disease_id}/{compound_id}" in spec["paths"]
+    assert "/api/assessment/{disease_id}/{compound_id}" in spec["paths"]
     assert "ChallengeRequest" in spec["components"]["schemas"]
     assert client.get("/docs").status_code == 200
 
@@ -69,6 +70,42 @@ def test_ranking_evidence_and_challenge_form_consistent_workflow(client):
     assert all(row["features"]["interaction"] == 0 for row in result["after"])
 
 
+def test_assessment_exposes_exact_terms_and_full_rank_outside_a_top_one_result(client):
+    top = client.get("/api/rankings/Disease::D1?limit=1&exclude=INTERACTS").json()
+    response = client.get("/api/assessment/Disease::D1/Compound::C2?exclude=interacts")
+    assert response.status_code == 200
+    assessment = response.json()
+    assert top["candidates"][0]["id"] != assessment["compound"]["id"]
+    assert assessment["baseline"]["rank"] == 1
+    assert assessment["current"]["rank"] == 3
+    assert assessment["delta"]["rank"] == -2
+    assert assessment["excluded"] == ["INTERACTS"]
+    decomposition = assessment["decomposition"]
+    assert decomposition["reference"] == "training_mean"
+    assert decomposition["units"] == "logit"
+    assert len(decomposition["features"]) == 8
+    assert assessment["current"]["logit"] == pytest.approx(
+        decomposition["intercept"]
+        + sum(term["contribution_after"] for term in decomposition["features"])
+    )
+    assert assessment["delta"]["logit"] == pytest.approx(
+        sum(term["contribution_delta"] for term in decomposition["features"])
+    )
+
+
+def test_assessment_keeps_unsupported_diagnostics_distinct_from_supported_ranks(client):
+    response = client.get("/api/assessment/Disease::D1/Compound::C1?exclude=BINDS")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["known_treatment"] is True
+    assert data["current"]["supported"] is False
+    assert data["current"]["rank"] is None
+    assert data["current"]["score_status"] == "unsupported_diagnostic"
+    assert 0 <= data["current"]["score"] <= 1
+    assert data["current"]["evidence_count"] == 0
+    assert data["delta"]["rank"] is None
+
+
 @pytest.mark.parametrize(
     "path",
     [
@@ -80,6 +117,7 @@ def test_ranking_evidence_and_challenge_form_consistent_workflow(client):
         "/api/rankings/Disease::D1?exclude=TREATS",
         "/api/evidence/Disease::D1/Compound::C1?limit=31",
         "/api/evidence/Disease::D1/Compound::C1?exclude=INTERACTS,MATCH(n)",
+        "/api/assessment/Disease::D1/Compound::C1?exclude=TREATS",
         "/api/similar/Compound::C1?algorithm=delete",
     ],
 )
@@ -105,6 +143,8 @@ def test_unknown_entities_are_clear_not_empty_successes(client):
     assert response.status_code == 404
     assert "Unknown disease" in response.json()["detail"]
     assert client.get("/api/evidence/Disease::D1/Compound::unknown").status_code == 404
+    assert client.get("/api/assessment/Disease::D1/Compound::unknown").status_code == 404
+    assert client.get("/api/assessment/Compound::C1/Compound::C2").status_code == 404
     assert client.get("/api/algorithms/Compound::C1").status_code == 404
 
 
@@ -151,6 +191,30 @@ def test_agent_endpoint_uses_compiled_graph_and_enforces_input_schema(client):
     assert (
         client.post("/api/agent", json={"question": "Explain D1", "write": True}).status_code == 422
     )
+
+
+def test_agent_endpoint_preserves_compound_focus_and_assessment_contract(client):
+    response = client.post(
+        "/api/agent",
+        json={
+            "question": "Explain the selected compound",
+            "disease_id": "Disease::D1",
+            "compound_id": "Compound::C3",
+            "exclude": ["INTERACTS"],
+        },
+    )
+    assert response.status_code == 200
+    result = response.json()
+    assert result["compound"]["id"] == "Compound::C3"
+    assert result["assessment"]["compound"] == result["compound"]
+    assert result["evidence"]["compound"] == result["compound"]
+    assert result["assessment"]["excluded"] == ["INTERACTS"]
+    assert result["candidates"][0]["id"] != result["compound"]["id"]
+    for invalid in ({}, "x" * 181, "", "   "):
+        rejected = client.post(
+            "/api/agent", json={"question": "Explain D1", "compound_id": invalid}
+        )
+        assert rejected.status_code == 422
 
 
 def test_service_closes_injected_repository_and_uses_live_paths(service):
