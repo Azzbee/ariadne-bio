@@ -63,6 +63,7 @@ visualization and query results without clipping model features.
 | Neo4j | Store and query typed evidence with constraints and indexes |
 | GDS | Project evidence and compute personalized PageRank and target-neighborhood similarity |
 | Graph engine | Compute exact typed-path features, apply the saved model and reconstruct selected-pair scores from its signed terms |
+| Binding auditor | Enumerate local binding-deletion envelopes, allocate a global budget across focus and competitors, and return exact bounded ranking certificates |
 | LangGraph | Orchestrate entity resolution, retrieval, comparison and explanation |
 | LLM provider | Parse the research request into a validated, typed investigation plan |
 | Evaluation script | Fix the split, fit preprocessing/model on permitted data and write measured metrics |
@@ -109,3 +110,24 @@ reconstruct their respective logits, and the sigmoid reconstructs their scores.
 Unsupported pairs retain a diagnostic assessment with no supported rank. The
 static exporter records these same assessment objects; it does not approximate
 or recompute them in browser JavaScript.
+
+## Binding-audit computation
+
+The auditor snapshots the fitted model and evidence matrices when first needed.
+It validates binary binding records, preserves compound-ID tie ordering, and
+uses a dedicated fixed-order float64 scorer. This leaves the earlier vectorized
+ranking and assessment calculations unchanged.
+
+For a disease, a bounded cache holds local supported score minima/maxima at
+deletion counts zero, one and two. The selected compound's minimum score sets a
+threshold; each competitor's maximum envelope yields the least cost required to
+outrank it. Since binding edge sets are disjoint across compounds, choosing the
+cheapest competitor promotions within the remaining global budget is exact.
+Loss of support is a separate outcome. The [proof](binding_audit_proof.md) gives
+the conditions and attaining-witness construction.
+
+The API and offline verifier recompute the same-algorithm bound in a separate
+bounded cache, then independently replay witnesses using edited graph matrices.
+The static exporter stores certificates and export-time verification; JavaScript
+does not pretend to rerun the optimizer. The scientific tests compare the method
+with exhaustive global enumeration on independent tiny graphs.
