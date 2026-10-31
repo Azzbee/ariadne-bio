@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import math
 from pathlib import Path
 import time
 from urllib.parse import quote
@@ -20,9 +21,53 @@ def request(base_url: str, path: str, payload: dict | None = None) -> dict:
         return json.load(response)
 
 
+def verify_frontend_headers(base_url: str) -> dict:
+    """Check the served HTML and stylesheet, where Nginx inheritance can differ."""
+    expected = {
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "X-Frame-Options": "SAMEORIGIN",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    }
+    checked = {}
+    for path in ("/", "/styles.css"):
+        req = urllib.request.Request(base_url.rstrip("/") + path, method="HEAD")
+        with urllib.request.urlopen(req, timeout=15) as response:
+            actual = {name: response.headers.get(name) for name in expected}
+            assert actual == expected, {"path": path, "headers": actual}
+            assert "no-cache" in response.headers.get("Cache-Control", ""), path
+            checked[path] = actual
+    return checked
+
+
+def verify_assessment(assessment: dict) -> None:
+    """Reconstruct both logistic scores from the exact returned linear terms."""
+    decomposition = assessment["decomposition"]
+    assert decomposition["reference"] == "training_mean"
+    assert decomposition["units"] == "logit"
+    for state, suffix in (("baseline", "before"), ("current", "after")):
+        logit = decomposition["intercept"] + sum(
+            feature[f"contribution_{suffix}"] for feature in decomposition["features"]
+        )
+        assert math.isclose(logit, assessment[state]["logit"], abs_tol=1e-10)
+        score = (
+            1 / (1 + math.exp(-logit)) if logit >= 0 else math.exp(logit) / (1 + math.exp(logit))
+        )
+        assert math.isclose(score, assessment[state]["score"], abs_tol=1e-10)
+        if not assessment[state]["supported"]:
+            assert assessment[state]["rank"] is None
+            assert assessment[state]["score_status"] == "unsupported_diagnostic"
+    assert math.isclose(
+        sum(feature["contribution_delta"] for feature in decomposition["features"]),
+        assessment["delta"]["logit"],
+        abs_tol=1e-10,
+    )
+
+
 def run(base_url: str) -> dict:
     """Assert healthy data, real evidence, a changed exclusion and safe agent behavior."""
     started = time.perf_counter()
+    headers = verify_frontend_headers(base_url)
     health = request(base_url, "/api/health")
     assert health.get("dataset_ready"), health
     diseases = request(base_url, "/api/diseases?limit=100")
@@ -44,6 +89,15 @@ def run(base_url: str) -> dict:
         {"disease_id": disease["id"], "exclude": ["INTERACTS"], "limit": 5},
     )
     assert "INTERACTS" in challenge["excluded"], challenge
+    assessment_path = f"/api/assessment/{identifier}/{compound_identifier}"
+    assessment = request(base_url, assessment_path + "?exclude=INTERACTS")
+    verify_assessment(assessment)
+    assert assessment["compound"]["id"] == compound["id"]
+    assert assessment["current"]["features"]["interaction"] == 0
+    unsupported = request(base_url, assessment_path + "?exclude=BINDS")
+    verify_assessment(unsupported)
+    assert not unsupported["current"]["supported"]
+    assert unsupported["current"]["evidence_count"] == 0
     rejected = request(
         base_url,
         "/api/agent",
@@ -56,6 +110,13 @@ def run(base_url: str) -> dict:
         "status": "passed",
         "base_url": base_url,
         "health": health,
+        "frontend_security_headers": headers,
+        "assessment": {
+            "compound_id": assessment["compound"]["id"],
+            "fixed_model_sha256": assessment["model"]["model_sha256"],
+            "exact_score_reconstruction": "passed",
+            "unsupported_pair_retained": True,
+        },
         "disease": disease,
         "compound": {"id": compound["id"], "name": compound["name"]},
         "displayed_paths": len(evidence["paths"]),
