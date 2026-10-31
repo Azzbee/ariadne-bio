@@ -37,8 +37,11 @@ family measures sensitivity to the available graph, not a biological interventio
 from the release assets. Extract `ariadne-research-edition.zip`, run
 `python3 -m http.server 8080 --bind 127.0.0.1` inside it, and open
 http://localhost:8080. It needs no Docker, API key or model download. Its recorded
-results and deterministic guide are explicitly identified. The release also
-includes the narrated demonstration, captions, checksums and verification evidence.
+results and deterministic guide are explicitly identified. Version 1.2 includes
+the audit proof, executed notebook, replayable certificates, complete benchmark,
+checksums and verification evidence. Any accompanying narrated video and captions
+are explicitly labeled as the historical v1.1 walkthrough; the new audit interface
+is documented in the v1.2 screenshot, notebook and research edition.
 
 ## Run the complete application
 
