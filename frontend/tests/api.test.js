@@ -6,9 +6,17 @@ const disease = { id: 'Disease::D1', name: 'Example disease' };
 const compound = { id: 'Compound::C1', name: 'Example compound', rank: 1, score: .7, baseline_rank: 1, rank_delta: 0 };
 const evidence = { disease, compound, total_paths: 5, paths: [{ id: 'p1', metapath: 'C-G-D' }] };
 const ranking = { disease, candidates: [compound], total: 50 };
+const assessment = {
+  disease, compound, excluded: [], known_treatment: false,
+  baseline: { supported: true, rank: 1, score: .7, evidence_count: 5, features: { direct: 2, interaction: 1, pathway: 2 } },
+  current: { supported: true, rank: 1, score: .7, evidence_count: 5, features: { direct: 2, interaction: 1, pathway: 2 } },
+  delta: { score: 0, rank: 0, evidence_count: 0 }, decomposition: { features: [] }
+};
 const scenario = {
+  disease,
   rankings: { '': ranking, INTERACTS: { ...ranking, excluded: ['INTERACTS'] } },
   evidence: { [compound.id]: { '': evidence, INTERACTS: evidence } },
+  assessments: { [compound.id]: { '': assessment, INTERACTS: { ...assessment, excluded: ['INTERACTS'] } } },
   challenges: {}, algorithms: { backend: 'recorded' }
 };
 const manifest = {
@@ -61,6 +69,7 @@ test('missing recorded evidence is reported instead of fabricated', async () => 
   const api = new AriadneAPI({}, snapshotFetcher([]));
   await api.initialize(true);
   await assert.rejects(api.evidence(disease.id, 'missing'), /not included/);
+  await assert.rejects(api.assessment(disease.id, 'missing'), /not included/);
   await assert.rejects(api.rankings(disease.id, ['BINDS']), /not included/);
 });
 
@@ -100,6 +109,18 @@ test('live endpoint encoding protects namespace IDs and validates response error
   assert.equal(requested, '/api/rankings/Disease%3A%3Aa%2Fb%3Fx?exclude=INTERACTS&limit=12&offset=0');
 });
 
+test('live assessment lookup and guide requests preserve the selected compound identity', async () => {
+  const calls = [];
+  const api = new AriadneAPI({}, async (url, options) => { calls.push({ url, options }); return response(assessment); });
+  api.mode = 'live';
+  await api.assessment('Disease::a/b', 'Compound::c/d', ['PARTICIPATES', 'INTERACTS']);
+  assert.equal(calls[0].url, '/api/assessment/Disease%3A%3Aa%2Fb/Compound%3A%3Ac%2Fd?exclude=INTERACTS,PARTICIPATES');
+  await api.agent('Explain this compound', disease.id, ['INTERACTS'], compound.id);
+  assert.deepEqual(JSON.parse(calls[1].options.body), {
+    question: 'Explain this compound', disease_id: disease.id, compound_id: compound.id, exclude: ['INTERACTS']
+  });
+});
+
 test('manifest case paths cannot traverse directories or load external origins', async () => {
   const api = new AriadneAPI({}, async () => { throw new Error('Must not fetch'); });
   api.manifest = { cases: { d: { file: '../credentials.json' }, e: { file: 'https://evil.test/case' } } };
@@ -118,8 +139,10 @@ test('an explicitly named disease overrides a stale UI selection in snapshot que
   await api.initialize(true);
   api.manifest = { ...api.manifest, diseases: [disease, asthma] };
   api.cases.set(asthma.id, {
+    disease: asthma,
     rankings: { '': { ...ranking, disease: asthma } },
-    evidence: { [compound.id]: { '': { ...evidence, disease: asthma } } }
+    evidence: { [compound.id]: { '': { ...evidence, disease: asthma } } },
+    assessments: { [compound.id]: { '': { ...assessment, disease: asthma } } }
   });
   const result = await api.agent('Investigate asthma', disease.id);
   assert.equal(result.disease.id, asthma.id);
@@ -135,4 +158,24 @@ test('multiple distinct explicit diseases require clarification despite a select
   const result = await api.agent('Compare Example disease and asthma', disease.id);
   assert.equal(result.status, 'clarification');
   assert.equal(result.candidates.length, 0);
+});
+
+test('any unknown explicit disease or compound ID clarifies before retrieving a case', async () => {
+  const calls = [];
+  const api = new AriadneAPI({}, snapshotFetcher(calls));
+  await api.initialize(true);
+  api.manifest = { ...api.manifest, compounds: [compound] };
+  api.loadCase = async () => { throw new Error('Clarification must happen before case retrieval'); };
+  for (const question of [
+    'Investigate Disease::DOID:999999',
+    'Example disease and Disease::DOID:999999',
+    'Explain Compound::DB999999',
+    'Example compound and Compound::DB999999',
+    'Compound::C1 and Compound::DB999999'
+  ]) {
+    const result = await api.agent(question, disease.id, [], compound.id);
+    assert.equal(result.status, 'clarification', question);
+    assert.deepEqual(result.candidates, []);
+  }
+  assert.equal(calls.length, 1);
 });

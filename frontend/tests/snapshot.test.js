@@ -4,6 +4,7 @@ import { access, readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { AriadneAPI } from '../api.js';
+import { loadCandidateInvestigation } from '../investigation.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 let available = true;
@@ -45,4 +46,96 @@ test('published cases are consumable through the actual frontend adapter in ever
   const report = await api.evaluation();
   assert.ok(report.metrics.length >= 2);
   assert.ok(report.dataset_sha256);
+});
+
+async function snapshotAPI() {
+  const api = new AriadneAPI({}, async url => ({
+    ok: true, status: 200, headers: { get: () => 'application/json' },
+    json: async () => JSON.parse(await readFile(resolve(root, url.replace(/^\.\//, '')), 'utf8'))
+  }));
+  await api.initialize(true);
+  return api;
+}
+
+test('a shared off-list compound and an evidence restore retain the exact selected identity', { skip: !available }, async () => {
+  const api = await snapshotAPI();
+  const diseaseId = 'Disease::DOID:10652';
+  const link = new URL('https://example.test/?disease=Disease%3A%3ADOID%3A10652&compound=Compound%3A%3ADB00514&exclude=INTERACTS');
+  const excludedRanking = await api.rankings(diseaseId, ['INTERACTS']);
+  const shared = await loadCandidateInvestigation(api, link.searchParams.get('disease'), link.searchParams.get('compound'), link.searchParams.get('exclude').split(','), excludedRanking.candidates);
+  assert.equal(shared.candidate.name, 'Dextromethorphan');
+  assert.equal(shared.candidate.rank, 13);
+  assert.equal(shared.candidate.pinned, true);
+  const selected = await loadCandidateInvestigation(api, diseaseId, 'Compound::DB00677', ['INTERACTS'], excludedRanking.candidates);
+  assert.equal(selected.candidate.rank, 2);
+  const baselineRanking = await api.rankings(diseaseId);
+  const restored = await loadCandidateInvestigation(api, diseaseId, selected.candidate.id, [], baselineRanking.candidates);
+  assert.equal(restored.candidate.id, selected.candidate.id);
+  assert.equal(restored.candidate.name, 'Isoflurophate');
+  assert.equal(restored.candidate.rank, 31);
+  assert.equal(restored.candidate.pinned, true);
+  const unsupported = await loadCandidateInvestigation(api, diseaseId, selected.candidate.id, ['BINDS'], []);
+  assert.equal(unsupported.candidate.id, selected.candidate.id);
+  assert.equal(unsupported.candidate.rank, null);
+  assert.equal(unsupported.assessment.current.supported, false);
+  assert.equal(unsupported.evidence.total_paths, 0);
+  assert.ok(Number.isFinite(unsupported.assessment.current.score));
+});
+
+test('snapshot assessments retain exact additive terms for every published candidate and scenario', { skip: !available }, async () => {
+  const api = await snapshotAPI();
+  assert.equal(api.manifest.compounds.length, 1552);
+  for (const disease of api.manifest.diseases) {
+    const record = await api.loadCase(disease.id);
+    for (const [compoundId, scenarios] of Object.entries(record.assessments)) {
+      assert.equal(Object.keys(scenarios).length, 16);
+      for (const key of Object.keys(scenarios)) {
+        const assessment = await api.assessment(disease.id, compoundId, key.split(',').filter(Boolean));
+        const { baseline, current, decomposition } = assessment;
+        const terms = decomposition.features;
+        assert.equal(terms.length, 8);
+        assert.ok(Math.abs(decomposition.intercept + terms.reduce((sum, item) => sum + item.contribution_after, 0) - current.logit) < 1e-10);
+        assert.ok(Math.abs(terms.reduce((sum, item) => sum + item.contribution_delta, 0) - assessment.delta.logit) < 1e-10);
+        assert.ok(Math.abs(current.score - 1 / (1 + Math.exp(-current.logit))) < 1e-10);
+        assert.equal(assessment.model.dataset_sha256, api.manifest.dataset_sha256);
+        assert.equal(assessment.model.model_sha256, api.manifest.model_sha256);
+        if (!current.supported) assert.equal(current.rank, null);
+        assert.equal(baseline.supported, true);
+      }
+    }
+  }
+});
+
+test('snapshot guide resolves explicit compounds, selected context, and top-candidate intent distinctly', { skip: !available }, async () => {
+  const api = await snapshotAPI();
+  const diseaseId = 'Disease::DOID:10652';
+  const nicotine = 'Compound::DB00184', galantamine = 'Compound::DB00674';
+  const selected = await api.agent('Explain the selected compound', diseaseId, [], nicotine);
+  assert.equal(selected.compound.id, nicotine);
+  assert.equal(selected.candidates[0].id, galantamine, 'the ranked list remains context, not evidence focus');
+  const explicit = await api.agent('Nicotine', diseaseId, [], galantamine);
+  assert.equal(explicit.compound.id, nicotine);
+  const top = await api.agent('Explain the highest-ranked compound', diseaseId, [], nicotine);
+  assert.equal(top.compound.id, galantamine);
+  for (const question of ['Explain the highest scoring compound', 'Explain the highest-scoring compound']) {
+    const scored = await api.agent(question, diseaseId, [], nicotine);
+    assert.equal(scored.compound.id, galantamine);
+  }
+  const explicitIds = await api.agent('Explain compound::db00184 for disease::doid:10652', diseaseId, [], galantamine);
+  assert.equal(explicitIds.compound.id, nicotine);
+  const changedDisease = await api.agent('Investigate asthma', diseaseId, [], nicotine);
+  assert.equal(changedDisease.disease.id, 'Disease::DOID:2841');
+  assert.equal(changedDisease.compound.name, 'Captopril');
+  const ambiguous = await api.agent('Compare Nicotine and Galantamine', diseaseId, [], nicotine);
+  assert.equal(ambiguous.status, 'clarification');
+  const unsupported = await api.agent('Explain the selected compound', diseaseId, ['BINDS'], nicotine);
+  assert.equal(unsupported.compound.id, nicotine);
+  assert.equal(unsupported.assessment.current.rank, null);
+  assert.equal(unsupported.evidence.total_paths, 0);
+  assert.match(unsupported.answer, /diagnostic score/);
+  const record = await api.loadCase(diseaseId);
+  const unpublished = api.manifest.compounds.find(item => !record.assessments[item.id]);
+  const missing = await api.agent(`Explain ${unpublished.name}`, diseaseId, [], nicotine);
+  assert.equal(missing.status, 'clarification');
+  assert.match(missing.answer, /not included in the published results/);
 });
