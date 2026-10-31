@@ -8,6 +8,12 @@ import subprocess
 
 import pytest
 import yaml
+from fastapi.testclient import TestClient
+
+from app.config import Settings
+from app.main import create_app
+from app.service import EvidenceService
+from tests.test_graph_engine import create_fixture_engine
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -271,3 +277,75 @@ def test_assessment_smoke_verifier_rejects_an_inconsistent_linear_explanation():
     assessment["decomposition"]["features"][0]["contribution_after"] = 1
     with pytest.raises(AssertionError):
         smoke.verify_assessment(assessment)
+
+
+def test_audit_smoke_exercises_real_verification_and_rehashed_false_claim(tmp_path, monkeypatch):
+    """The deployed gate must test semantic verification, not just a checksum mismatch."""
+    smoke = load_module("smoke")
+    service = EvidenceService(Settings(), engine=create_fixture_engine(tmp_path))
+    with TestClient(create_app(Settings(), service=service)) as client:
+
+        def request(_base, path, payload=None):
+            result = client.post(path, json=payload)
+            assert result.status_code == 200, result.text
+            if path == "/api/audit":
+                browser = subprocess.run(
+                    [
+                        "node",
+                        "--input-type=module",
+                        "-e",
+                        "let data=''; for await (const part of process.stdin) data+=part; "
+                        "process.stdout.write(JSON.stringify(JSON.parse(data)));",
+                    ],
+                    input=result.text,
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                )
+                return json.loads(browser.stdout)
+            return result.json()
+
+        monkeypatch.setattr(smoke, "request", request)
+        report = smoke.verify_binding_audit("http://testserver", "Disease::D1", "Compound::C2")
+    assert report["verification"]["valid"] is True
+    rejected = report["rehashed_false_claim"]["verification"]
+    assert rejected["valid"] is False
+    assert "checksum matches" in rejected["checks"][0]
+    assert "recomputed" in rejected["errors"][0]
+
+
+def test_audit_smoke_hash_preserves_exact_numeric_meaning():
+    """Browser-equivalent number spellings match, but changed scores and booleans do not."""
+    smoke = load_module("smoke")
+    original = {"zero": -0.0, "count": 1.0, "score": 0.1, "supported": True}
+    equivalent = {"zero": 0, "count": 1, "score": 0.1, "supported": True}
+    assert smoke._certificate_hash(original) == smoke._certificate_hash(equivalent)
+    assert smoke._certificate_hash(original) != smoke._certificate_hash(
+        {**original, "score": 0.10000000000000002}
+    )
+    assert smoke._certificate_hash(original) != smoke._certificate_hash(
+        {**original, "supported": 1}
+    )
+
+
+@pytest.mark.parametrize("value", [2**53, float(2**53), float("nan"), float("inf")])
+def test_audit_smoke_hash_rejects_numbers_that_cannot_roundtrip_safely(value):
+    """A lossy integer conversion or nonfinite value must never create a usable seal."""
+    smoke = load_module("smoke")
+    with pytest.raises(ValueError):
+        smoke._certificate_hash({"value": value})
+
+
+def test_audit_smoke_fails_if_server_accepts_a_rehashed_false_claim(tmp_path, monkeypatch):
+    """A verifier that blindly trusts its caller cannot pass the HTTP smoke gate."""
+    smoke = load_module("smoke")
+    service = EvidenceService(Settings(), engine=create_fixture_engine(tmp_path))
+    certificate = service.auditor.audit("Disease::D1", "Compound::C2")
+    responses = [
+        certificate,
+        {"valid": True, "status": "verified", "errors": [], "replayed_witnesses": 1},
+        {"valid": True, "status": "verified", "errors": [], "replayed_witnesses": 1},
+    ]
+    monkeypatch.setattr(smoke, "request", lambda *_args: responses.pop(0))
+    with pytest.raises(AssertionError):
+        smoke.verify_binding_audit("http://testserver", "Disease::D1", "Compound::C2")
