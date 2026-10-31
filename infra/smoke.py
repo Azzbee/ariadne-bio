@@ -1,6 +1,7 @@
 """Exercise the main HTTP workflow against a real running ARIADNE stack."""
 
 import argparse
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -30,7 +31,7 @@ def verify_frontend_headers(base_url: str) -> dict:
         "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
     }
     checked = {}
-    for path in ("/", "/styles.css"):
+    for path in ("/", "/styles.css", "/audit.css", "/audit.js"):
         req = urllib.request.Request(base_url.rstrip("/") + path, method="HEAD")
         with urllib.request.urlopen(req, timeout=15) as response:
             actual = {name: response.headers.get(name) for name in expected}
@@ -62,6 +63,90 @@ def verify_assessment(assessment: dict) -> None:
         assessment["delta"]["logit"],
         abs_tol=1e-10,
     )
+
+
+def _canonical_numbers(value):
+    """Preserve JSON number meaning across a browser's binary64 round trip."""
+    if isinstance(value, (bool, str)) or value is None:
+        return value
+    if isinstance(value, int):
+        if abs(value) > 2**53 - 1:
+            raise ValueError("Certificate integers must be exactly representable in JSON clients")
+        return value
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise ValueError("Certificate numbers must be finite")
+        if value.is_integer():
+            return _canonical_numbers(int(value))
+        return value
+    if isinstance(value, dict):
+        if not all(isinstance(key, str) for key in value):
+            raise ValueError("Certificate object keys must be strings")
+        return {key: _canonical_numbers(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_canonical_numbers(item) for item in value]
+    raise ValueError("Certificate values must be JSON-compatible")
+
+
+def _certificate_hash(certificate: dict) -> str:
+    """Reproduce the public JSON hash without importing the scientific implementation."""
+    payload = {key: value for key, value in certificate.items() if key != "certificate_sha256"}
+    encoded = json.dumps(
+        _canonical_numbers(payload),
+        sort_keys=True,
+        separators=(",", ":"),
+        allow_nan=False,
+        ensure_ascii=True,
+    )
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
+def verify_binding_audit(base_url: str, disease_id: str, compound_id: str) -> dict:
+    """Exercise certification, full verification and rejection of a rehashed false claim."""
+    certificate = request(
+        base_url,
+        "/api/audit",
+        {"disease_id": disease_id, "compound_id": compound_id, "top_k": 10, "budget": 2},
+    )
+    assert certificate["disease"]["id"] == disease_id
+    assert certificate["compound"]["id"] == compound_id
+    assert certificate["method"] == "binding-envelope-v1"
+    assert certificate["identity"]["scorer"] == "float64-fixed-order-v1"
+    assert certificate["scope"]["universe"] == "all_recorded_BINDS_edges"
+    assert certificate["scope"]["includes_competitor_changes"] is True
+    assert certificate["certificate_sha256"] == _certificate_hash(certificate)
+    assert [row["budget"] for row in certificate["results"]] == [0, 1, 2]
+    assert certificate["baseline"]["supported"] is True
+    assert certificate["results"][0]["worst_supported_rank"] == certificate["baseline"]["rank"]
+    edge_count = certificate["scope"]["eligible_edges"]
+    assert certificate["proof"]["covered_global_states"] == sum(
+        math.comb(edge_count, size) for size in range(min(2, edge_count) + 1)
+    )
+    for result in certificate["results"]:
+        for field in ("rank_witness", "unsupported_witness"):
+            witness = result[field]
+            if witness is not None:
+                assert len(set(witness["removed_edge_ids"])) == witness["deletions_used"]
+                assert witness["deletions_used"] <= result["budget"]
+                assert all(record["type"] == "BINDS" for record in witness["removed_records"])
+    verification = request(base_url, "/api/audit/verify", {"certificate": certificate})
+    assert verification["valid"] is True and verification["status"] == "verified", verification
+    assert verification["errors"] == [] and verification["replayed_witnesses"] >= 1
+    altered = json.loads(json.dumps(certificate))
+    altered["results"][0]["worst_supported_rank"] += 1
+    altered["certificate_sha256"] = _certificate_hash(altered)
+    rejected = request(base_url, "/api/audit/verify", {"certificate": altered})
+    assert rejected["valid"] is False and rejected["status"] == "invalid", rejected
+    assert rejected["errors"], rejected
+    return {
+        "certificate": certificate,
+        "verification": verification,
+        "rehashed_false_claim": {
+            "changed_field": "results[0].worst_supported_rank",
+            "certificate_sha256": altered["certificate_sha256"],
+            "verification": rejected,
+        },
+    }
 
 
 def run(base_url: str) -> dict:
@@ -98,6 +183,7 @@ def run(base_url: str) -> dict:
     verify_assessment(unsupported)
     assert not unsupported["current"]["supported"]
     assert unsupported["current"]["evidence_count"] == 0
+    audit = verify_binding_audit(base_url, disease["id"], compound["id"])
     rejected = request(
         base_url,
         "/api/agent",
@@ -117,6 +203,7 @@ def run(base_url: str) -> dict:
             "exact_score_reconstruction": "passed",
             "unsupported_pair_retained": True,
         },
+        "binding_audit": audit,
         "disease": disease,
         "compound": {"id": compound["id"], "name": compound["name"]},
         "displayed_paths": len(evidence["paths"]),
