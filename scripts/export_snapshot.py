@@ -14,9 +14,12 @@ import json
 import math
 from pathlib import Path
 import re
+import tempfile
 import time
 
 from app import __version__
+from app.audit_schemas import AuditResponse
+from app.binding_audit import BindingAuditor, certificate_digest
 from app.graph_engine import DISCLAIMER, FAMILIES, FEATURE_NAMES, GraphEngine
 from scripts.prepare_data import write_json
 
@@ -27,7 +30,10 @@ DEFAULT_DISEASES = (
     "Disease::DOID:1459",  # hypothyroidism
     "Disease::DOID:9352",  # type 2 diabetes mellitus
     "Disease::DOID:7148",  # rheumatoid arthritis
+    "Disease::DOID:175",  # vascular cancer; disclosed post-benchmark rival-change example
 )
+AUDIT_TOP_K = (1, 5, 10)
+AUDIT_BUDGETS = (0, 1, 2)
 
 
 def exclusion_combinations() -> list[tuple[str, ...]]:
@@ -47,7 +53,9 @@ def case_filename(disease: dict) -> str:
     return f"cases/{slug}-{identifier}.json"
 
 
-def build_case(engine: GraphEngine, disease_id: str, top_k: int = 12) -> dict:
+def build_case(
+    engine: GraphEngine, disease_id: str, top_k: int = 12, auditor: BindingAuditor | None = None
+) -> dict:
     """Materialize every supported interaction for one published disease case."""
     rankings = {}
     challenges = {}
@@ -75,11 +83,31 @@ def build_case(engine: GraphEngine, disease_id: str, top_k: int = 12) -> dict:
         }
         for compound_id in sorted(compounds)
     }
+    audits, audit_verifications = _build_audits(
+        auditor or BindingAuditor(engine), disease_id, compounds
+    )
     return {
         "disease": rankings[""]["disease"],
         "rankings": rankings,
         "evidence": evidence,
         "assessments": assessments,
+        "audits": audits,
+        "audit_verifications": audit_verifications,
+        "audit_demonstration": (
+            {
+                "compound_id": "Compound::DB01115",
+                "top_k": 10,
+                "budget": 1,
+                "selection": (
+                    "Added after the complete 137-disease audit: the sole top-ten query "
+                    "where a one-record global withdrawal changes the robustness verdict "
+                    "relative to selected-compound-only auditing. This is an illustrative "
+                    "case, not a separately selected evaluation cohort."
+                ),
+            }
+            if disease_id == "Disease::DOID:175"
+            else None
+        ),
         "challenges": challenges,
         "algorithms": engine.algorithms(disease_id, limit=10),
         "similarities": {
@@ -91,6 +119,10 @@ def build_case(engine: GraphEngine, disease_id: str, top_k: int = 12) -> dict:
             "distinct_compounds": len(compounds),
             "evidence_path_limit": 12,
             "assessment_count": len(compounds) * len(combinations),
+            "audit_count": len(compounds) * len(AUDIT_TOP_K) * len(AUDIT_BUDGETS),
+            "audit_top_k": list(AUDIT_TOP_K),
+            "audit_budgets": list(AUDIT_BUDGETS),
+            "audit_scope": "Unmodified full graph; all recorded BINDS edges and all compounds",
             "selection_policy": (
                 "Exact ranked top-k for each configuration; evidence and exact score "
                 "assessments for their union under all configurations. Unsupported and "
@@ -98,6 +130,26 @@ def build_case(engine: GraphEngine, disease_id: str, top_k: int = 12) -> dict:
             ),
         },
     }
+
+
+def _build_audits(auditor: BindingAuditor, disease_id: str, compounds: set) -> tuple:
+    """Record only claims that pass recomputation and independent witness replay."""
+    audits, verifications = {}, {}
+    for compound_id in sorted(compounds):
+        audits[compound_id], verifications[compound_id] = {}, {}
+        for top_k, budget in itertools.product(AUDIT_TOP_K, AUDIT_BUDGETS):
+            key = f"{top_k}:{budget}"
+            certificate = auditor.audit(disease_id, compound_id, top_k=top_k, budget=budget)
+            verification = auditor.verify(certificate)
+            if not verification["valid"]:
+                raise ValueError("A recorded audit failed independent witness replay")
+            audits[compound_id][key] = certificate
+            verifications[compound_id][key] = {
+                **verification,
+                "certificate_sha256": certificate["certificate_sha256"],
+                "verification_execution": "recorded_at_export",
+            }
+    return audits, verifications
 
 
 def _validate_terms(terms: list[dict]) -> None:
@@ -227,12 +279,44 @@ def validate_case(case: dict) -> None:
             ):
                 raise ValueError("Assessment identity or exclusions do not match the case")
             _validate_assessment(assessment, variants[""], variants[key])
+    _validate_audits(case)
 
 
-def export_snapshot(
+def _validate_audits(case: dict) -> None:
+    """Bind every recorded verification to the precise selected pair and certificate."""
+    audits, verifications = case.get("audits", {}), case.get("audit_verifications", {})
+    if set(audits) != set(case["assessments"]) or set(verifications) != set(audits):
+        raise ValueError("A published candidate is missing its audit or verification")
+    expected = {
+        f"{top_k}:{budget}" for top_k, budget in itertools.product(AUDIT_TOP_K, AUDIT_BUDGETS)
+    }
+    for compound_id, variants in audits.items():
+        if set(variants) != expected or set(verifications[compound_id]) != expected:
+            raise ValueError("A published candidate is missing an audit configuration")
+        for key, certificate in variants.items():
+            AuditResponse.model_validate(certificate)
+            if (
+                certificate["disease"] != case["disease"]
+                or certificate["compound"]["id"] != compound_id
+                or f"{certificate['top_k']}:{certificate['budget']}" != key
+                or certificate_digest(certificate) != certificate["certificate_sha256"]
+            ):
+                raise ValueError("Audit identity, scope key, or content checksum does not match")
+            verification = verifications[compound_id][key]
+            if (
+                verification.get("valid") is not True
+                or verification.get("status") != "verified"
+                or verification.get("errors") != []
+                or verification.get("certificate_sha256") != certificate["certificate_sha256"]
+                or verification.get("verification_execution") != "recorded_at_export"
+            ):
+                raise ValueError("Recorded verification does not validate this exact certificate")
+
+
+def _write_snapshot(
     engine: GraphEngine, output: Path, disease_ids=DEFAULT_DISEASES, top_k: int = 12
 ) -> dict:
-    """Write verified cases and a manifest with their exact checksums."""
+    """Write a complete generation in an isolated staging directory."""
     started = time.perf_counter()
     if top_k < 1 or top_k > 100:
         raise ValueError("Snapshot top_k must be between 1 and 100")
@@ -242,8 +326,9 @@ def export_snapshot(
     output = Path(output)
     (output / "cases").mkdir(parents=True, exist_ok=True)
     cases, diseases, files = {}, [], []
+    auditor = BindingAuditor(engine)
     for disease_id in disease_ids:
-        case = build_case(engine, disease_id, top_k)
+        case = build_case(engine, disease_id, top_k, auditor=auditor)
         validate_case(case)
         filename = case_filename(case["disease"])
         path = output / filename
@@ -255,6 +340,7 @@ def export_snapshot(
             {"path": filename, "bytes": len(content), "sha256": hashlib.sha256(content).hexdigest()}
         )
         print(f"Exported {case['disease']['name']}: {len(content):,} bytes", flush=True)
+    graph_sha256 = hashlib.sha256((engine.data_dir / "graph.json").read_bytes()).hexdigest()
     manifest = {
         "mode": "snapshot",
         "schema_version": "1.0",
@@ -267,7 +353,7 @@ def export_snapshot(
             for identifier in engine.entities["Compound"]
         ],
         "cases": cases,
-        "stats": engine.stats(),
+        "stats": {**engine.stats(), "graph_sha256": graph_sha256},
         "provenance": engine.provenance(),
         "evaluation": engine.evaluation(),
         "health": {
@@ -278,7 +364,9 @@ def export_snapshot(
             "version": __version__,
         },
         "dataset_sha256": engine.manifest.get("dataset_sha256"),
-        "model_sha256": engine.model.get("model_sha256"),
+        "graph_sha256": graph_sha256,
+        "model_sha256": engine.model.get("model_sha256")
+        or hashlib.sha256(json.dumps(engine.model, sort_keys=True).encode()).hexdigest(),
         "files": files,
         "file_count": len(files),
         "case_count": len(cases),
@@ -286,21 +374,81 @@ def export_snapshot(
         "exclusion_configurations_per_case": 16,
         "full_application_disease_count": len(engine.entities["Disease"]),
         "scope": (
-            "Published, recorded results for six research cases. All sixteen family "
+            f"Published, recorded results for {len(cases)} research cases. All sixteen family "
             "exclusion configurations are included. The full Docker application queries "
             "Neo4j and can investigate every disease in the dataset."
-            if len(cases) == 6
-            else "Published, recorded research cases with all sixteen evidence configurations."
         ),
         "agent_disclosure": (
             "The hosted snapshot formats retrieved records deterministically. No live LLM "
             "or live database executes in this static edition. The full application exposes "
             "the LangGraph workflow and configured LLM provider."
         ),
+        "audit_disclosure": (
+            "Global BINDS-withdrawal certificates and their successful verification were "
+            "computed at export. The hosted edition retrieves these recorded results; it "
+            "does not execute the solver or independently replay graph edits in the browser."
+        ),
         "disclaimer": DISCLAIMER,
         "runtime_seconds": round(time.perf_counter() - started, 3),
     }
     write_json(output / "manifest.json", manifest)
+    return manifest
+
+
+def _check_destination(output: Path, data_dir: Path) -> None:
+    """Only replace a generated snapshot, never source inputs or unrelated files."""
+    if output.is_symlink() or data_dir.resolve().is_relative_to(output.resolve()):
+        raise ValueError("Snapshot output must not replace the source data or its ancestors")
+    if not output.exists():
+        return
+    if not output.is_dir():
+        raise ValueError("Snapshot output must be a directory")
+    if not any(output.iterdir()):
+        return
+    manifest_path = output / "manifest.json"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as error:
+        raise ValueError(
+            "Existing output is not a generated snapshot; use an empty directory"
+        ) from error
+    if not isinstance(manifest, dict) or manifest.get("mode") != "snapshot":
+        raise ValueError("Existing output is not a generated snapshot; use an empty directory")
+    recorded = {"manifest.json"} | {
+        item["path"]
+        for item in manifest.get("files", [])
+        if isinstance(item, dict) and isinstance(item.get("path"), str)
+    }
+    if any(
+        path.relative_to(output).as_posix() not in recorded
+        for path in output.rglob("*")
+        if path.is_file()
+    ):
+        raise ValueError("Snapshot output contains unrecognized files; use an empty directory")
+
+
+def export_snapshot(
+    engine: GraphEngine, output: Path, disease_ids=DEFAULT_DISEASES, top_k: int = 12
+) -> dict:
+    """Publish only a complete generation; a failed build preserves the previous bytes."""
+    output = Path(output)
+    _check_destination(output, engine.data_dir)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(
+        prefix=f".{output.name}-build-", dir=output.parent
+    ) as directory:
+        stage = Path(directory) / "snapshot"
+        manifest = _write_snapshot(engine, stage, disease_ids, top_k)
+        previous = Path(directory) / "previous"
+        if output.exists():
+            output.rename(previous)
+        try:
+            stage.rename(output)
+        except BaseException:
+            # Restore the complete prior generation even if publication is interrupted.
+            if previous.exists():
+                previous.rename(output)
+            raise
     return manifest
 
 
