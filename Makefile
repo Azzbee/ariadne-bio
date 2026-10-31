@@ -2,7 +2,7 @@
 PYTHON ?= .venv/bin/python
 COMPOSE ?= docker compose
 
-.PHONY: help init install data evaluate ingest run docker-run docker-core docker-stop docker-logs test test-integration lint format notebook snapshot smoke clean
+.PHONY: help init install data evaluate ingest run docker-run docker-core docker-stop docker-logs test test-integration test-llm lint format notebook snapshot verify-scores smoke clean
 
 help: ## List reproducible project commands
 	@awk 'BEGIN {FS = ":.*##"; printf "ARIADNE — trace evidence, challenge hypotheses\n\n"} /^[a-zA-Z_-]+:.*?##/ {printf "  %-19s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -29,7 +29,8 @@ run: init ## Run the API locally on http://localhost:8000 using local configurat
 
 docker-run: init ## Build and launch Neo4j, API, web UI and a local language model
 	$(COMPOSE) --profile llm up --build --detach --wait --wait-timeout 1800 neo4j ollama
-	$(COMPOSE) --profile llm run --rm ollama-init
+	@mkdir -p reports
+	$(COMPOSE) --profile llm run --rm ollama-init > reports/ollama-model.json
 	$(COMPOSE) --profile llm up --build --detach --wait --wait-timeout 1800 api frontend
 	@echo "Open http://localhost:8080 and http://localhost:8080/docs"
 
@@ -48,7 +49,7 @@ test: ## Run unit/API tests and enforce at least 60% branch coverage
 	node --test frontend/tests/*.test.js
 
 test-integration: ## Run genuine Neo4j/GDS integration tests against configured service
-	$(PYTHON) -m pytest -m integration -v
+	$(PYTHON) -m pytest -m integration -v --junitxml=reports/neo4j-junit.xml
 
 test-llm: ## Verify actual LLM inference, sensitivity routing and rejection over HTTP
 	$(PYTHON) -m pytest -m llm -v --junitxml=reports/llm-junit.xml
@@ -65,6 +66,9 @@ notebook: ## Execute the complete exploration notebook and save its outputs
 
 snapshot: ## Export the frozen research edition for browser-only hosting
 	$(PYTHON) -m scripts.export_snapshot
+
+verify-scores: ## Compare every score with v1.0.0; requires that commit in local Git history
+	$(PYTHON) -m scripts.verify_assessments
 
 smoke: ## Exercise health, ranking, evidence, challenge and agent rejection over HTTP
 	$(PYTHON) infra/smoke.py --base-url http://localhost:8080

@@ -35,3 +35,11 @@ reports/lint.txt
 reports/container-logs.txt
 reports/compose-resolved.yml
 dist/
+
+reports/ollama-model.json
+reports/ci-quality.json
+reports/ci-integration.json
+reports/llm-compound.json
+reports/runner-resources.txt
+reports/docker-disk-usage.txt
+reports/container-status.json
