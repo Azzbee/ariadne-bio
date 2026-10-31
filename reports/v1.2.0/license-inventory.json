@@ -1,0 +1,1361 @@
+{
+  "application_version": "1.2.0",
+  "collections": {
+    "edges": {
+      "licenses": {
+        "CC BY 3.0": 12652,
+        "CC BY 4.0": 68899,
+        "CC BY-NC 4.0": 8780,
+        "CC BY-SA 3.0": 1711,
+        "CC0 1.0": 8154,
+        "ODbL 1.0": 5940
+      },
+      "missing_license_records": 149594,
+      "missing_source_records": 0,
+      "records": 255730,
+      "review_flags": {
+        "attribution_text": 97982,
+        "database_license_text": 5940,
+        "missing_license_metadata": 149594,
+        "noncommercial_text": 8780,
+        "public_domain_dedication_text": 8154,
+        "share_alike_text": 7651
+      }
+    },
+    "nodes": {
+      "licenses": {
+        "CC BY 3.0": 431,
+        "CC BY 4.0": 1308,
+        "CC BY-NC 4.0": 1552,
+        "CC0 1.0": 21165
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "records": 24456,
+      "review_flags": {
+        "attribution_text": 3291,
+        "noncommercial_text": 1552,
+        "public_domain_dedication_text": 21165
+      }
+    },
+    "treatments": {
+      "licenses": {
+        "CC0 1.0": 755
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "records": 755,
+      "review_flags": {
+        "public_domain_dedication_text": 755
+      }
+    }
+  },
+  "input": {
+    "dataset": "Hetionet",
+    "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+    "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
+    "upstream_commit": "8a6cc0c5604d0e2908786e4de38af67b8e46ee4a",
+    "version": "1.0"
+  },
+  "legal_clearance": {
+    "commercial_permission": null,
+    "reason": "This inventory records supplied metadata only. It does not determine rights, license compatibility, contractual permission, exceptions, or commercial eligibility. The MIT source-code license does not relicense constituent data.",
+    "status": "not_assessed"
+  },
+  "license_markers": {
+    "CC BY 3.0": {
+      "markers": [
+        "attribution_text"
+      ],
+      "reference": "https://creativecommons.org/licenses/by/3.0/"
+    },
+    "CC BY 4.0": {
+      "markers": [
+        "attribution_text"
+      ],
+      "reference": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "CC BY-NC 4.0": {
+      "markers": [
+        "attribution_text",
+        "noncommercial_text"
+      ],
+      "reference": "https://creativecommons.org/licenses/by-nc/4.0/"
+    },
+    "CC BY-SA 3.0": {
+      "markers": [
+        "attribution_text",
+        "share_alike_text"
+      ],
+      "reference": "https://creativecommons.org/licenses/by-sa/3.0/"
+    },
+    "CC0 1.0": {
+      "markers": [
+        "public_domain_dedication_text"
+      ],
+      "reference": "https://creativecommons.org/publicdomain/zero/1.0/"
+    },
+    "ODbL 1.0": {
+      "markers": [
+        "attribution_text",
+        "share_alike_text",
+        "database_license_text"
+      ],
+      "reference": "https://opendatacommons.org/licenses/odbl/1-0/"
+    }
+  },
+  "record_types": {
+    "edges:ASSOCIATES": {
+      "licenses": {
+        "CC BY 4.0": 4439,
+        "ODbL 1.0": 5940
+      },
+      "missing_license_records": 2244,
+      "missing_source_records": 0,
+      "records": 12623,
+      "review_flags": {
+        "attribution_text": 10379,
+        "database_license_text": 5940,
+        "missing_license_metadata": 2244,
+        "share_alike_text": 5940
+      }
+    },
+    "edges:BINDS": {
+      "licenses": {
+        "CC BY 3.0": 65,
+        "CC BY 4.0": 829,
+        "CC BY-NC 4.0": 8780,
+        "CC BY-SA 3.0": 1711
+      },
+      "missing_license_records": 186,
+      "missing_source_records": 0,
+      "records": 11571,
+      "review_flags": {
+        "attribution_text": 11385,
+        "missing_license_metadata": 186,
+        "noncommercial_text": 8780,
+        "share_alike_text": 1711
+      }
+    },
+    "edges:INTERACTS": {
+      "licenses": {},
+      "missing_license_records": 147164,
+      "missing_source_records": 0,
+      "records": 147164,
+      "review_flags": {
+        "missing_license_metadata": 147164
+      }
+    },
+    "edges:PARTICIPATES": {
+      "licenses": {
+        "CC BY 3.0": 12587,
+        "CC BY 4.0": 63631,
+        "CC0 1.0": 8154
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "records": 84372,
+      "review_flags": {
+        "attribution_text": 76218,
+        "public_domain_dedication_text": 8154
+      }
+    },
+    "nodes:Compound": {
+      "licenses": {
+        "CC BY-NC 4.0": 1552
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "records": 1552,
+      "review_flags": {
+        "attribution_text": 1552,
+        "noncommercial_text": 1552
+      }
+    },
+    "nodes:Disease": {
+      "licenses": {
+        "CC BY 3.0": 137
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "records": 137,
+      "review_flags": {
+        "attribution_text": 137
+      }
+    },
+    "nodes:Gene": {
+      "licenses": {
+        "CC0 1.0": 20945
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "records": 20945,
+      "review_flags": {
+        "public_domain_dedication_text": 20945
+      }
+    },
+    "nodes:Pathway": {
+      "licenses": {
+        "CC BY 3.0": 294,
+        "CC BY 4.0": 1308,
+        "CC0 1.0": 220
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "records": 1822,
+      "review_flags": {
+        "attribution_text": 1602,
+        "public_domain_dedication_text": 220
+      }
+    },
+    "treatments:TREATS": {
+      "licenses": {
+        "CC0 1.0": 755
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "records": 755,
+      "review_flags": {
+        "public_domain_dedication_text": 755
+      }
+    }
+  },
+  "schema_version": "1.0",
+  "scope": {
+    "collections": [
+      "nodes",
+      "edges",
+      "treatments"
+    ],
+    "count_unit": "One retained node, evidence edge, or separate treatment-label record",
+    "license_unit": "Distinct nonempty declaration per record, not a legal conclusion",
+    "missing_metadata": "Missing text is not permission; unknown text remains unknown",
+    "source_license_caveat": "A consolidated edge license is not assigned as the license of every named source. Inspect upstream terms and the original record before making a use decision.",
+    "source_unit": "Source/record co-occurrence; multisource records are counted for each source"
+  },
+  "sources": [
+    {
+      "collections": {
+        "edges": 209
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_0178b6c49983a04545bf69b8",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0417d4421682ab981d3dc5a6",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0573c886ab49136c1c645dfe",
+          "type": "BINDS"
+        }
+      ],
+      "licenses": {
+        "CC BY 3.0": 65,
+        "CC BY-NC 4.0": 28,
+        "CC BY-SA 3.0": 116
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "BindingDB",
+      "records": 209,
+      "review_flags": {
+        "attribution_text": 209,
+        "noncommercial_text": 28,
+        "share_alike_text": 116
+      }
+    },
+    {
+      "collections": {
+        "edges": 1711
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_002e2c86b7062fe1dde41e83",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_004f86e96aa7061fcb83931c",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_00541ce4f0d4d00af7298240",
+          "type": "BINDS"
+        }
+      ],
+      "licenses": {
+        "CC BY-SA 3.0": 1711
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "ChEMBL",
+      "records": 1711,
+      "review_flags": {
+        "attribution_text": 1711,
+        "share_alike_text": 1711
+      }
+    },
+    {
+      "collections": {
+        "edges": 4990
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_000bdc8fa02bdc4daf0046af",
+          "type": "ASSOCIATES"
+        },
+        {
+          "collection": "edges",
+          "id": "e_002db3dcd31c0ba8d22d4b27",
+          "type": "ASSOCIATES"
+        },
+        {
+          "collection": "edges",
+          "id": "e_00349d1d587eba9055819365",
+          "type": "ASSOCIATES"
+        }
+      ],
+      "licenses": {
+        "CC BY 4.0": 3635
+      },
+      "missing_license_records": 1355,
+      "missing_source_records": 0,
+      "name": "DISEASES",
+      "records": 4990,
+      "review_flags": {
+        "attribution_text": 3635,
+        "missing_license_metadata": 1355
+      }
+    },
+    {
+      "collections": {
+        "edges": 1649
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_00364a655714984db47e45b0",
+          "type": "ASSOCIATES"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0036593c46727f18ef1ddcf9",
+          "type": "ASSOCIATES"
+        },
+        {
+          "collection": "edges",
+          "id": "e_00603a4ce68d846a6cefa7e0",
+          "type": "ASSOCIATES"
+        }
+      ],
+      "licenses": {
+        "CC BY 4.0": 387,
+        "ODbL 1.0": 175
+      },
+      "missing_license_records": 1087,
+      "missing_source_records": 0,
+      "name": "DOAF",
+      "records": 1649,
+      "review_flags": {
+        "attribution_text": 562,
+        "database_license_text": 175,
+        "missing_license_metadata": 1087,
+        "share_alike_text": 175
+      }
+    },
+    {
+      "collections": {
+        "edges": 7552
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_00029e05c854087347a75c4e",
+          "type": "ASSOCIATES"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0002ff5074bdaf1155d870c8",
+          "type": "ASSOCIATES"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0004f01b734a3c2a3a569d2d",
+          "type": "ASSOCIATES"
+        }
+      ],
+      "licenses": {
+        "ODbL 1.0": 5940
+      },
+      "missing_license_records": 1612,
+      "missing_source_records": 0,
+      "name": "DisGeNET",
+      "records": 7552,
+      "review_flags": {
+        "attribution_text": 5940,
+        "database_license_text": 5940,
+        "missing_license_metadata": 1612,
+        "share_alike_text": 5940
+      }
+    },
+    {
+      "collections": {
+        "nodes": 137
+      },
+      "examples": [
+        {
+          "collection": "nodes",
+          "id": "Disease::DOID:0050156",
+          "type": "Disease"
+        },
+        {
+          "collection": "nodes",
+          "id": "Disease::DOID:0050425",
+          "type": "Disease"
+        },
+        {
+          "collection": "nodes",
+          "id": "Disease::DOID:0050741",
+          "type": "Disease"
+        }
+      ],
+      "licenses": {
+        "CC BY 3.0": 137
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "Disease Ontology",
+      "records": 137,
+      "review_flags": {
+        "attribution_text": 137
+      }
+    },
+    {
+      "collections": {
+        "nodes": 1552
+      },
+      "examples": [
+        {
+          "collection": "nodes",
+          "id": "Compound::DB00014",
+          "type": "Compound"
+        },
+        {
+          "collection": "nodes",
+          "id": "Compound::DB00035",
+          "type": "Compound"
+        },
+        {
+          "collection": "nodes",
+          "id": "Compound::DB00050",
+          "type": "Compound"
+        }
+      ],
+      "licenses": {
+        "CC BY-NC 4.0": 1552
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "DrugBank",
+      "records": 1552,
+      "review_flags": {
+        "attribution_text": 1552,
+        "noncommercial_text": 1552
+      }
+    },
+    {
+      "collections": {
+        "edges": 217
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_0069c9f3a1971e60944a1c2e",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0394740395a39b3c8bb8c9eb",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_03c2f2f0b71dc29335d29848",
+          "type": "BINDS"
+        }
+      ],
+      "licenses": {
+        "CC BY-NC 4.0": 211,
+        "CC BY-SA 3.0": 6
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "DrugBank (carrier)",
+      "records": 217,
+      "review_flags": {
+        "attribution_text": 217,
+        "noncommercial_text": 211,
+        "share_alike_text": 6
+      }
+    },
+    {
+      "collections": {
+        "edges": 3216
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_000f807ce05228d5c2315ce4",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_007e9359541f70246f874c0f",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_009a4128da035005f064b446",
+          "type": "BINDS"
+        }
+      ],
+      "licenses": {
+        "CC BY-NC 4.0": 3163,
+        "CC BY-SA 3.0": 53
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "DrugBank (enzyme)",
+      "records": 3216,
+      "review_flags": {
+        "attribution_text": 3216,
+        "noncommercial_text": 3163,
+        "share_alike_text": 53
+      }
+    },
+    {
+      "collections": {
+        "edges": 4603
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_00011282d2ea524a9f3f6669",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0006ebfaf38657dc7326a635",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_000c6ce53072269adaf126c8",
+          "type": "BINDS"
+        }
+      ],
+      "licenses": {
+        "CC BY-NC 4.0": 3964,
+        "CC BY-SA 3.0": 639
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "DrugBank (target)",
+      "records": 4603,
+      "review_flags": {
+        "attribution_text": 4603,
+        "noncommercial_text": 3964,
+        "share_alike_text": 639
+      }
+    },
+    {
+      "collections": {
+        "edges": 1517
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_000b5c738c6eacd22f695a95",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_002e714b53929b30a98ecf1f",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_004205a3b538d17f147b7d51",
+          "type": "BINDS"
+        }
+      ],
+      "licenses": {
+        "CC BY-NC 4.0": 1486,
+        "CC BY-SA 3.0": 31
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "DrugBank (transporter)",
+      "records": 1517,
+      "review_flags": {
+        "attribution_text": 1517,
+        "noncommercial_text": 1486,
+        "share_alike_text": 31
+      }
+    },
+    {
+      "collections": {
+        "edges": 1836
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_0006ebfaf38657dc7326a635",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_000b9f5e930bb1a5d04ba224",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_004f86e96aa7061fcb83931c",
+          "type": "BINDS"
+        }
+      ],
+      "licenses": {
+        "CC BY 3.0": 1,
+        "CC BY 4.0": 710,
+        "CC BY-NC 4.0": 766,
+        "CC BY-SA 3.0": 359
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "DrugCentral (ChEMBL)",
+      "records": 1836,
+      "review_flags": {
+        "attribution_text": 1836,
+        "noncommercial_text": 766,
+        "share_alike_text": 359
+      }
+    },
+    {
+      "collections": {
+        "edges": 56
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_0178b6c49983a04545bf69b8",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_038cbf5420acdf3c1bef3913",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_08287260966c986ad7f5d4d9",
+          "type": "BINDS"
+        }
+      ],
+      "licenses": {
+        "CC BY 4.0": 4,
+        "CC BY-NC 4.0": 35,
+        "CC BY-SA 3.0": 17
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "DrugCentral (IUPHAR)",
+      "records": 56,
+      "review_flags": {
+        "attribution_text": 56,
+        "noncommercial_text": 35,
+        "share_alike_text": 17
+      }
+    },
+    {
+      "collections": {
+        "edges": 25
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_101ebc4d8ede58a955a79819",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_1af0363c2d047d7ab82ad05c",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_3928a844fbbe7aefd588ca2a",
+          "type": "BINDS"
+        }
+      ],
+      "licenses": {
+        "CC BY 4.0": 2,
+        "CC BY-NC 4.0": 21,
+        "CC BY-SA 3.0": 2
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "DrugCentral (KEGG DRUG)",
+      "records": 25,
+      "review_flags": {
+        "attribution_text": 25,
+        "noncommercial_text": 21,
+        "share_alike_text": 2
+      }
+    },
+    {
+      "collections": {
+        "edges": 68
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_056bbd10e24f4dad16e5dd58",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_06d99f90b02f25dd69b5b938",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0db0f61572121b1ebe36529a",
+          "type": "BINDS"
+        }
+      ],
+      "licenses": {
+        "CC BY 4.0": 17,
+        "CC BY-NC 4.0": 26,
+        "CC BY-SA 3.0": 25
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "DrugCentral (label)",
+      "records": 68,
+      "review_flags": {
+        "attribution_text": 68,
+        "noncommercial_text": 26,
+        "share_alike_text": 25
+      }
+    },
+    {
+      "collections": {
+        "edges": 182
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_006545bf05b377bcf515674a",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_01c8928884f724a6ed596308",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0490b8a6f4ec6f9a78c41fac",
+          "type": "BINDS"
+        }
+      ],
+      "licenses": {
+        "CC BY 4.0": 97,
+        "CC BY-NC 4.0": 62,
+        "CC BY-SA 3.0": 23
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "DrugCentral (literature)",
+      "records": 182,
+      "review_flags": {
+        "attribution_text": 182,
+        "noncommercial_text": 62,
+        "share_alike_text": 23
+      }
+    },
+    {
+      "collections": {
+        "nodes": 20945
+      },
+      "examples": [
+        {
+          "collection": "nodes",
+          "id": "Gene::1",
+          "type": "Gene"
+        },
+        {
+          "collection": "nodes",
+          "id": "Gene::10",
+          "type": "Gene"
+        },
+        {
+          "collection": "nodes",
+          "id": "Gene::100",
+          "type": "Gene"
+        }
+      ],
+      "licenses": {
+        "CC0 1.0": 20945
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "Entrez Gene",
+      "records": 20945,
+      "review_flags": {
+        "public_domain_dedication_text": 20945
+      }
+    },
+    {
+      "collections": {
+        "edges": 1284
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_0014ebf85c94d21ff046396e",
+          "type": "ASSOCIATES"
+        },
+        {
+          "collection": "edges",
+          "id": "e_002d1d2c249c225294889453",
+          "type": "ASSOCIATES"
+        },
+        {
+          "collection": "edges",
+          "id": "e_00784c67b773bdf7af1930e6",
+          "type": "ASSOCIATES"
+        }
+      ],
+      "licenses": {
+        "CC BY 4.0": 875
+      },
+      "missing_license_records": 409,
+      "missing_source_records": 0,
+      "name": "GWAS Catalog",
+      "records": 1284,
+      "review_flags": {
+        "attribution_text": 875,
+        "missing_license_metadata": 409
+      }
+    },
+    {
+      "collections": {
+        "edges": 2545
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_0004cc1e7eb18c8b40fd9e9b",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_000e5162d944f86527c98037",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0020f6d4a9e9752539fc75f3",
+          "type": "INTERACTS"
+        }
+      ],
+      "licenses": {},
+      "missing_license_records": 2545,
+      "missing_source_records": 0,
+      "name": "HI-I-05",
+      "records": 2545,
+      "review_flags": {
+        "missing_license_metadata": 2545
+      }
+    },
+    {
+      "collections": {
+        "edges": 13033
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_0005ac31c44cf3d54c5a1544",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0009c4cee3de50b4b0e9c99e",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_000bf84ac1d75cc124a6eef3",
+          "type": "INTERACTS"
+        }
+      ],
+      "licenses": {},
+      "missing_license_records": 13033,
+      "missing_source_records": 0,
+      "name": "HI-II-14",
+      "records": 13033,
+      "review_flags": {
+        "missing_license_metadata": 13033
+      }
+    },
+    {
+      "collections": {
+        "edges": 27216
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_000131d44f6c7d6377fd004e",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0004cc1e7eb18c8b40fd9e9b",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0005ac31c44cf3d54c5a1544",
+          "type": "INTERACTS"
+        }
+      ],
+      "licenses": {},
+      "missing_license_records": 27216,
+      "missing_source_records": 0,
+      "name": "II_binary",
+      "records": 27216,
+      "review_flags": {
+        "missing_license_metadata": 27216
+      }
+    },
+    {
+      "collections": {
+        "edges": 84862
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_00002572d388f3ba9755cee8",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_00008a4c5446d0f6803d70f6",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_000131d44f6c7d6377fd004e",
+          "type": "INTERACTS"
+        }
+      ],
+      "licenses": {},
+      "missing_license_records": 84862,
+      "missing_source_records": 0,
+      "name": "II_literature",
+      "records": 84862,
+      "review_flags": {
+        "missing_license_metadata": 84862
+      }
+    },
+    {
+      "collections": {
+        "edges": 10140
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_000891a5afe22ab2feb6e133",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_000c7bdce93620f029b1717b",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_000cbd7f6246f9c2e1a57c9a",
+          "type": "INTERACTS"
+        }
+      ],
+      "licenses": {},
+      "missing_license_records": 10140,
+      "missing_source_records": 0,
+      "name": "Lit-BM-13",
+      "records": 10140,
+      "review_flags": {
+        "missing_license_metadata": 10140
+      }
+    },
+    {
+      "collections": {
+        "edges": 521
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_015c3ec6faeb584656fc64b1",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_01fd200ca452c4390400f49e",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_02340ff0907a747a367c0ea8",
+          "type": "BINDS"
+        }
+      ],
+      "licenses": {
+        "CC BY 4.0": 5,
+        "CC BY-NC 4.0": 196,
+        "CC BY-SA 3.0": 167
+      },
+      "missing_license_records": 153,
+      "missing_source_records": 0,
+      "name": "PDSP Ki",
+      "records": 521,
+      "review_flags": {
+        "attribution_text": 368,
+        "missing_license_metadata": 153,
+        "noncommercial_text": 196,
+        "share_alike_text": 167
+      }
+    },
+    {
+      "collections": {
+        "edges": 8154,
+        "nodes": 220
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_0000c8f5bd49b00b42d97889",
+          "type": "PARTICIPATES"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0005c2034272543f6e30e90c",
+          "type": "PARTICIPATES"
+        },
+        {
+          "collection": "edges",
+          "id": "e_000a95ccd47bf085b63d775e",
+          "type": "PARTICIPATES"
+        }
+      ],
+      "licenses": {
+        "CC0 1.0": 8374
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "PID via Pathway Commons",
+      "records": 8374,
+      "review_flags": {
+        "public_domain_dedication_text": 8374
+      }
+    },
+    {
+      "collections": {
+        "treatments": 755
+      },
+      "examples": [
+        {
+          "collection": "treatments",
+          "id": "e_01043ca20d3f138dae2da801",
+          "type": "TREATS"
+        },
+        {
+          "collection": "treatments",
+          "id": "e_01121f5c52cf198d5e034eda",
+          "type": "TREATS"
+        },
+        {
+          "collection": "treatments",
+          "id": "e_01859f15f1de014609fca6ac",
+          "type": "TREATS"
+        }
+      ],
+      "licenses": {
+        "CC0 1.0": 755
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "PharmacotherapyDB",
+      "records": 755,
+      "review_flags": {
+        "public_domain_dedication_text": 755
+      }
+    },
+    {
+      "collections": {
+        "edges": 137
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_011c5ea2f6f8613e80baea39",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_023bb585162e57ab493382de",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_03dc2cdd34754a5c1c393bbd",
+          "type": "BINDS"
+        }
+      ],
+      "licenses": {
+        "CC BY-SA 3.0": 111
+      },
+      "missing_license_records": 26,
+      "missing_source_records": 0,
+      "name": "PubChem",
+      "records": 137,
+      "review_flags": {
+        "attribution_text": 111,
+        "missing_license_metadata": 26,
+        "share_alike_text": 111
+      }
+    },
+    {
+      "collections": {
+        "edges": 63631,
+        "nodes": 1308
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_00048f0b24c6720483213535",
+          "type": "PARTICIPATES"
+        },
+        {
+          "collection": "edges",
+          "id": "e_00052999f8aa3db6b5b2e34a",
+          "type": "PARTICIPATES"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0005c361bcf9f75b4234d886",
+          "type": "PARTICIPATES"
+        }
+      ],
+      "licenses": {
+        "CC BY 4.0": 64939
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "Reactome via Pathway Commons",
+      "records": 64939,
+      "review_flags": {
+        "attribution_text": 64939
+      }
+    },
+    {
+      "collections": {
+        "edges": 23
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_0063b495f41b3e352021bdea",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_09a4eaaad31b4c1c8a020bdb",
+          "type": "BINDS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_1f338997d16272a5c7b3289f",
+          "type": "BINDS"
+        }
+      ],
+      "licenses": {
+        "CC BY-NC 4.0": 1,
+        "CC BY-SA 3.0": 15
+      },
+      "missing_license_records": 7,
+      "missing_source_records": 0,
+      "name": "US Patent",
+      "records": 23,
+      "review_flags": {
+        "attribution_text": 16,
+        "missing_license_metadata": 7,
+        "noncommercial_text": 1,
+        "share_alike_text": 15
+      }
+    },
+    {
+      "collections": {
+        "edges": 232
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_0236c92429f6f3119a8a55f0",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_02b1c936bc3177b6a7bbeffe",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_045e772fa8dda48284b01d32",
+          "type": "INTERACTS"
+        }
+      ],
+      "licenses": {},
+      "missing_license_records": 232,
+      "missing_source_records": 0,
+      "name": "Venkatesan-09",
+      "records": 232,
+      "review_flags": {
+        "missing_license_metadata": 232
+      }
+    },
+    {
+      "collections": {
+        "edges": 12587,
+        "nodes": 294
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_0003ad5d0f9015a2b16f8aa3",
+          "type": "PARTICIPATES"
+        },
+        {
+          "collection": "edges",
+          "id": "e_00113fce131985dff33f19ab",
+          "type": "PARTICIPATES"
+        },
+        {
+          "collection": "edges",
+          "id": "e_001479e78e58be0b24e6d1dc",
+          "type": "PARTICIPATES"
+        }
+      ],
+      "licenses": {
+        "CC BY 3.0": 12881
+      },
+      "missing_license_records": 0,
+      "missing_source_records": 0,
+      "name": "WikiPathways",
+      "records": 12881,
+      "review_flags": {
+        "attribution_text": 12881
+      }
+    },
+    {
+      "collections": {
+        "edges": 1106
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_004693d7345638300c65c19a",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_00d939ccfbe7a08c33f0ff47",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_00fb295020926440a4f2eb07",
+          "type": "INTERACTS"
+        }
+      ],
+      "licenses": {},
+      "missing_license_records": 1106,
+      "missing_source_records": 0,
+      "name": "Yu-11",
+      "records": 1106,
+      "review_flags": {
+        "missing_license_metadata": 1106
+      }
+    },
+    {
+      "collections": {
+        "edges": 96237
+      },
+      "examples": [
+        {
+          "collection": "edges",
+          "id": "e_00002572d388f3ba9755cee8",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_0000b72fae87a14a3b7bc094",
+          "type": "INTERACTS"
+        },
+        {
+          "collection": "edges",
+          "id": "e_000131d44f6c7d6377fd004e",
+          "type": "INTERACTS"
+        }
+      ],
+      "licenses": {},
+      "missing_license_records": 96237,
+      "missing_source_records": 0,
+      "name": "hetio-dag",
+      "records": 96237,
+      "review_flags": {
+        "missing_license_metadata": 96237
+      }
+    }
+  ],
+  "summary": {
+    "licenses": {
+      "CC BY 3.0": 13083,
+      "CC BY 4.0": 70207,
+      "CC BY-NC 4.0": 10332,
+      "CC BY-SA 3.0": 1711,
+      "CC0 1.0": 30074,
+      "ODbL 1.0": 5940
+    },
+    "missing_license_records": 149594,
+    "missing_source_records": 0,
+    "records": 280941,
+    "review_flags": {
+      "attribution_text": 101273,
+      "database_license_text": 5940,
+      "missing_license_metadata": 149594,
+      "noncommercial_text": 10332,
+      "public_domain_dedication_text": 30074,
+      "share_alike_text": 7651
+    }
+  }
+}

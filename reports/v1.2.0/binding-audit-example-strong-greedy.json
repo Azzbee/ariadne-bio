@@ -1,0 +1,269 @@
+{
+  "schema_version": "1.0",
+  "method": "binding-envelope-v1",
+  "disease": {
+    "id": "Disease::DOID:11476",
+    "name": "osteoporosis"
+  },
+  "compound": {
+    "id": "Compound::DB00858",
+    "name": "Drostanolone"
+  },
+  "top_k": 10,
+  "budget": 2,
+  "scope": {
+    "relationship": "BINDS",
+    "operation": "delete_record",
+    "universe": "all_recorded_BINDS_edges",
+    "eligible_edges": 11571,
+    "candidate_count": 1552,
+    "includes_competitor_changes": true
+  },
+  "identity": {
+    "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+    "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
+    "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
+    "scorer": "float64-fixed-order-v1"
+  },
+  "baseline": {
+    "supported": true,
+    "rank": 9,
+    "score": 0.9099332212716854,
+    "logit": 2.3128198325352862,
+    "counts": {
+      "direct": 2,
+      "interaction": 6,
+      "pathway": 95
+    },
+    "evidence_count": 103,
+    "legacy_score": 0.9099332212716854,
+    "legacy_rank": 9,
+    "score_difference": 0.0,
+    "rank_agrees_with_legacy": true
+  },
+  "results": [
+    {
+      "budget": 0,
+      "worst_supported_rank": 9,
+      "unsupported_attainable": false,
+      "top_k_robust": true,
+      "focus_only_worst_rank": 9,
+      "focus_only_unsupported_attainable": false,
+      "competitor_rank_gap": 0,
+      "rank_witness": {
+        "removed_edge_ids": [],
+        "removed_records": [],
+        "deletions_used": 0,
+        "focus": {
+          "supported": true,
+          "rank": 9,
+          "score": 0.9099332212716854,
+          "logit": 2.3128198325352862,
+          "counts": {
+            "direct": 2,
+            "interaction": 6,
+            "pathway": 95
+          },
+          "evidence_count": 103
+        },
+        "changed_compounds": []
+      },
+      "unsupported_witness": null
+    },
+    {
+      "budget": 1,
+      "worst_supported_rank": 35,
+      "unsupported_attainable": false,
+      "top_k_robust": false,
+      "focus_only_worst_rank": 35,
+      "focus_only_unsupported_attainable": false,
+      "competitor_rank_gap": 0,
+      "rank_witness": {
+        "removed_edge_ids": [
+          "e_f435f99d7a115875d923cc43"
+        ],
+        "removed_records": [
+          {
+            "id": "e_f435f99d7a115875d923cc43",
+            "source": "Compound::DB00858",
+            "target": "Gene::6462",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (carrier)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "17016423",
+                "17139284"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (carrier)"
+              ],
+              "unbiased": false
+            },
+            "source_name": "Drostanolone",
+            "target_name": "SHBG"
+          }
+        ],
+        "deletions_used": 1,
+        "focus": {
+          "supported": true,
+          "rank": 35,
+          "score": 0.7613937112891396,
+          "logit": 1.1603357184835543,
+          "counts": {
+            "direct": 1,
+            "interaction": 4,
+            "pathway": 95
+          },
+          "evidence_count": 100
+        },
+        "changed_compounds": [
+          {
+            "id": "Compound::DB00858",
+            "name": "Drostanolone",
+            "role": "focus",
+            "before": {
+              "supported": true,
+              "rank": 9,
+              "score": 0.9099332212716854
+            },
+            "after": {
+              "supported": true,
+              "rank": 35,
+              "score": 0.7613937112891396
+            },
+            "removed_edge_ids": [
+              "e_f435f99d7a115875d923cc43"
+            ]
+          }
+        ]
+      },
+      "unsupported_witness": null
+    },
+    {
+      "budget": 2,
+      "worst_supported_rank": 1353,
+      "unsupported_attainable": false,
+      "top_k_robust": false,
+      "focus_only_worst_rank": 1353,
+      "focus_only_unsupported_attainable": false,
+      "competitor_rank_gap": 0,
+      "rank_witness": {
+        "removed_edge_ids": [
+          "e_1f1e2af72ecf20f83ac4e7d2",
+          "e_bb6064806857c5759cfb0756"
+        ],
+        "removed_records": [
+          {
+            "id": "e_1f1e2af72ecf20f83ac4e7d2",
+            "source": "Compound::DB00858",
+            "target": "Gene::367",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (target)",
+              "DrugCentral (ChEMBL)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "11752352",
+                "15351799",
+                "3758193"
+              ],
+              "urls": [
+                "https://www.ebi.ac.uk/chembl/compound/inspect/CHEMBL1201048"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (target)",
+                "DrugCentral (ChEMBL)"
+              ],
+              "actions": [
+                "agonist"
+              ],
+              "unbiased": false
+            },
+            "source_name": "Drostanolone",
+            "target_name": "AR"
+          },
+          {
+            "id": "e_bb6064806857c5759cfb0756",
+            "source": "Compound::DB00858",
+            "target": "Gene::1588",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (enzyme)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "18983844"
+              ],
+              "actions": [
+                "inhibitor"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (enzyme)"
+              ],
+              "unbiased": false
+            },
+            "source_name": "Drostanolone",
+            "target_name": "CYP19A1"
+          }
+        ],
+        "deletions_used": 2,
+        "focus": {
+          "supported": true,
+          "rank": 1353,
+          "score": 0.19687294645055936,
+          "logit": -1.405954346230856,
+          "counts": {
+            "direct": 1,
+            "interaction": 2,
+            "pathway": 0
+          },
+          "evidence_count": 3
+        },
+        "changed_compounds": [
+          {
+            "id": "Compound::DB00858",
+            "name": "Drostanolone",
+            "role": "focus",
+            "before": {
+              "supported": true,
+              "rank": 9,
+              "score": 0.9099332212716854
+            },
+            "after": {
+              "supported": true,
+              "rank": 1353,
+              "score": 0.19687294645055936
+            },
+            "removed_edge_ids": [
+              "e_1f1e2af72ecf20f83ac4e7d2",
+              "e_bb6064806857c5759cfb0756"
+            ]
+          }
+        ]
+      },
+      "unsupported_witness": null
+    }
+  ],
+  "minimum_failure_budget": 1,
+  "robust_through_budget": 0,
+  "proof": {
+    "local_states_evaluated": 117147,
+    "covered_global_states": 66949807,
+    "envelope_bounds_sha256": "e57c56872a60801c52e0b2f6808b431604e628672be918820f4cb40ca54f8136",
+    "search_budget": 2
+  },
+  "interpretation": "This is an exact finite-budget audit of this fixed model under withdrawal of any recorded BINDS edges, including edges of competing compounds. It is not a biological intervention or a probability of efficacy. Source labels are not independent studies. The audit uses its declared fixed-order float64 scorer and score/compound-ID ties; legacy BLAS scores can differ in the last floating-point bits. Exactness is relative to this binary64 numerical runtime; transcendental functions can differ across runtimes, and verification rejects numerical mismatches. A null worst supported rank means no supported scenario exists. Unsupported outcomes are reported separately. The guarantee does not cover other edge families, correlated source-group failures, new edges, model refitting, or deletion budgets above the requested limit.",
+  "certificate_sha256": "28bfce576ebe9a00f87ce7733bd70b633df2bf317c0c2e79a1b4ce29b1500280"
+}

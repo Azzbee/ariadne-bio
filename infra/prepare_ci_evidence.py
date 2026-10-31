@@ -33,6 +33,13 @@ QUALITY_OUTPUTS = (
     "reports/v1.1.0/score-regression.json",
     "reports/v1.1.0/assessment-nicotine-interacts.json",
     "reports/v1.1.0/assessment-galantamine-interacts.json",
+    "reports/v1.2.0/license-inventory.json",
+    "reports/v1.2.0/binding-audit-benchmark.json",
+    "reports/v1.2.0/binding-audit-summary.json",
+    "reports/v1.2.0/binding-audit-example-competitor.json",
+    "reports/v1.2.0/binding-audit-example-greedy.json",
+    "reports/v1.2.0/binding-audit-example-strong-greedy.json",
+    "reports/v1.2.0/binding-audit-example-scope.json",
 )
 
 

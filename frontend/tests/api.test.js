@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { AriadneAPI, APIError } from '../api.js';
 
 const disease = { id: 'Disease::D1', name: 'Example disease' };
@@ -21,10 +22,13 @@ const scenario = {
 };
 const manifest = {
   diseases: [disease], cases: { [disease.id]: { file: 'cases/example.json' } },
-  stats: { nodes: 123 }, evaluation: { metrics: [] }, provenance: { dataset: 'Hetionet' }
+  stats: { nodes: 123, graph_sha256: 'b'.repeat(64) }, evaluation: { metrics: [] }, provenance: { dataset: 'Hetionet' },
+  dataset_sha256: 'a'.repeat(64), model_sha256: 'c'.repeat(64),
+  files: [{ path: 'cases/example.json', bytes: Buffer.byteLength(JSON.stringify(scenario)), sha256: createHash('sha256').update(JSON.stringify(scenario)).digest('hex') }]
 };
 function response(data, status = 200, type = 'application/json') {
-  return { ok: status >= 200 && status < 300, status, headers: { get: () => type }, json: async () => data };
+  const bytes = new TextEncoder().encode(JSON.stringify(data));
+  return { ok: status >= 200 && status < 300, status, headers: { get: () => type }, json: async () => data, arrayBuffer: async () => bytes.buffer };
 }
 function snapshotFetcher(calls) {
   return async (url, options = {}) => {

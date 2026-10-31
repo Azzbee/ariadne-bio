@@ -1,0 +1,244 @@
+{
+  "schema_version": "1.0",
+  "method": "binding-envelope-v1",
+  "disease": {
+    "id": "Disease::DOID:175",
+    "name": "vascular cancer"
+  },
+  "compound": {
+    "id": "Compound::DB01115",
+    "name": "Nifedipine"
+  },
+  "top_k": 10,
+  "budget": 2,
+  "scope": {
+    "relationship": "BINDS",
+    "operation": "delete_record",
+    "universe": "all_recorded_BINDS_edges",
+    "eligible_edges": 11571,
+    "candidate_count": 1552,
+    "includes_competitor_changes": true
+  },
+  "identity": {
+    "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+    "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
+    "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
+    "scorer": "float64-fixed-order-v1"
+  },
+  "baseline": {
+    "supported": true,
+    "rank": 10,
+    "score": 0.7458716933074748,
+    "logit": 1.076714308591081,
+    "counts": {
+      "direct": 0,
+      "interaction": 6,
+      "pathway": 124
+    },
+    "evidence_count": 130,
+    "legacy_score": 0.7458716933074747,
+    "legacy_rank": 10,
+    "score_difference": 1.1102230246251565e-16,
+    "rank_agrees_with_legacy": true
+  },
+  "results": [
+    {
+      "budget": 0,
+      "worst_supported_rank": 10,
+      "unsupported_attainable": false,
+      "top_k_robust": true,
+      "focus_only_worst_rank": 10,
+      "focus_only_unsupported_attainable": false,
+      "competitor_rank_gap": 0,
+      "rank_witness": {
+        "removed_edge_ids": [],
+        "removed_records": [],
+        "deletions_used": 0,
+        "focus": {
+          "supported": true,
+          "rank": 10,
+          "score": 0.7458716933074748,
+          "logit": 1.076714308591081,
+          "counts": {
+            "direct": 0,
+            "interaction": 6,
+            "pathway": 124
+          },
+          "evidence_count": 130
+        },
+        "changed_compounds": []
+      },
+      "unsupported_witness": null
+    },
+    {
+      "budget": 1,
+      "worst_supported_rank": 11,
+      "unsupported_attainable": false,
+      "top_k_robust": false,
+      "focus_only_worst_rank": 10,
+      "focus_only_unsupported_attainable": false,
+      "competitor_rank_gap": 1,
+      "rank_witness": {
+        "removed_edge_ids": [
+          "e_7bee3cb6116bbe4734d5a450"
+        ],
+        "removed_records": [
+          {
+            "id": "e_7bee3cb6116bbe4734d5a450",
+            "source": "Compound::DB01100",
+            "target": "Gene::801",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (target)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "1965307",
+                "2120879",
+                "2386945",
+                "3134891",
+                "6146939"
+              ],
+              "actions": [
+                "inhibitor"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (target)"
+              ],
+              "unbiased": false
+            },
+            "source_name": "Pimozide",
+            "target_name": "CALM1"
+          }
+        ],
+        "deletions_used": 1,
+        "focus": {
+          "supported": true,
+          "rank": 11,
+          "score": 0.7458716933074748,
+          "logit": 1.076714308591081,
+          "counts": {
+            "direct": 0,
+            "interaction": 6,
+            "pathway": 124
+          },
+          "evidence_count": 130
+        },
+        "changed_compounds": [
+          {
+            "id": "Compound::DB01100",
+            "name": "Pimozide",
+            "role": "competitor",
+            "before": {
+              "supported": true,
+              "rank": 11,
+              "score": 0.7393407351618441
+            },
+            "after": {
+              "supported": true,
+              "rank": 9,
+              "score": 0.746599461131895
+            },
+            "removed_edge_ids": [
+              "e_7bee3cb6116bbe4734d5a450"
+            ]
+          }
+        ]
+      },
+      "unsupported_witness": null
+    },
+    {
+      "budget": 2,
+      "worst_supported_rank": 11,
+      "unsupported_attainable": false,
+      "top_k_robust": false,
+      "focus_only_worst_rank": 11,
+      "focus_only_unsupported_attainable": false,
+      "competitor_rank_gap": 0,
+      "rank_witness": {
+        "removed_edge_ids": [
+          "e_7bee3cb6116bbe4734d5a450"
+        ],
+        "removed_records": [
+          {
+            "id": "e_7bee3cb6116bbe4734d5a450",
+            "source": "Compound::DB01100",
+            "target": "Gene::801",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (target)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "1965307",
+                "2120879",
+                "2386945",
+                "3134891",
+                "6146939"
+              ],
+              "actions": [
+                "inhibitor"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (target)"
+              ],
+              "unbiased": false
+            },
+            "source_name": "Pimozide",
+            "target_name": "CALM1"
+          }
+        ],
+        "deletions_used": 1,
+        "focus": {
+          "supported": true,
+          "rank": 11,
+          "score": 0.7458716933074748,
+          "logit": 1.076714308591081,
+          "counts": {
+            "direct": 0,
+            "interaction": 6,
+            "pathway": 124
+          },
+          "evidence_count": 130
+        },
+        "changed_compounds": [
+          {
+            "id": "Compound::DB01100",
+            "name": "Pimozide",
+            "role": "competitor",
+            "before": {
+              "supported": true,
+              "rank": 11,
+              "score": 0.7393407351618441
+            },
+            "after": {
+              "supported": true,
+              "rank": 9,
+              "score": 0.746599461131895
+            },
+            "removed_edge_ids": [
+              "e_7bee3cb6116bbe4734d5a450"
+            ]
+          }
+        ]
+      },
+      "unsupported_witness": null
+    }
+  ],
+  "minimum_failure_budget": 1,
+  "robust_through_budget": 0,
+  "proof": {
+    "local_states_evaluated": 117147,
+    "covered_global_states": 66949807,
+    "envelope_bounds_sha256": "83dff8b9acd5e065b28aa76a4ea4a622291dd23eb7565cade06f87525f5d7385",
+    "search_budget": 2
+  },
+  "interpretation": "This is an exact finite-budget audit of this fixed model under withdrawal of any recorded BINDS edges, including edges of competing compounds. It is not a biological intervention or a probability of efficacy. Source labels are not independent studies. The audit uses its declared fixed-order float64 scorer and score/compound-ID ties; legacy BLAS scores can differ in the last floating-point bits. Exactness is relative to this binary64 numerical runtime; transcendental functions can differ across runtimes, and verification rejects numerical mismatches. A null worst supported rank means no supported scenario exists. Unsupported outcomes are reported separately. The guarantee does not cover other edge families, correlated source-group failures, new edges, model refitting, or deletion budgets above the requested limit.",
+  "certificate_sha256": "4333608dea730b0007af343c0ddbc9470e6116cbee6788a2e5033d7a9ab865a3"
+}

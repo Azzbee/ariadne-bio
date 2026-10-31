@@ -1,0 +1,217 @@
+{
+  "schema_version": "1.0",
+  "method": "binding-envelope-v1",
+  "disease": {
+    "id": "Disease::DOID:5408",
+    "name": "Paget's disease of bone"
+  },
+  "compound": {
+    "id": "Compound::DB01143",
+    "name": "Amifostine"
+  },
+  "top_k": 10,
+  "budget": 2,
+  "scope": {
+    "relationship": "BINDS",
+    "operation": "delete_record",
+    "universe": "all_recorded_BINDS_edges",
+    "eligible_edges": 11571,
+    "candidate_count": 1552,
+    "includes_competitor_changes": true
+  },
+  "identity": {
+    "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+    "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
+    "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
+    "scorer": "float64-fixed-order-v1"
+  },
+  "baseline": {
+    "supported": true,
+    "rank": 1,
+    "score": 0.9907880450557162,
+    "logit": 4.6779985406258175,
+    "counts": {
+      "direct": 2,
+      "interaction": 2,
+      "pathway": 7
+    },
+    "evidence_count": 11,
+    "legacy_score": 0.9907880450557162,
+    "legacy_rank": 1,
+    "score_difference": 0.0,
+    "rank_agrees_with_legacy": true
+  },
+  "results": [
+    {
+      "budget": 0,
+      "worst_supported_rank": 1,
+      "unsupported_attainable": false,
+      "top_k_robust": true,
+      "focus_only_worst_rank": 1,
+      "focus_only_unsupported_attainable": false,
+      "competitor_rank_gap": 0,
+      "rank_witness": {
+        "removed_edge_ids": [],
+        "removed_records": [],
+        "deletions_used": 0,
+        "focus": {
+          "supported": true,
+          "rank": 1,
+          "score": 0.9907880450557162,
+          "logit": 4.6779985406258175,
+          "counts": {
+            "direct": 2,
+            "interaction": 2,
+            "pathway": 7
+          },
+          "evidence_count": 11
+        },
+        "changed_compounds": []
+      },
+      "unsupported_witness": null
+    },
+    {
+      "budget": 1,
+      "worst_supported_rank": 1,
+      "unsupported_attainable": false,
+      "top_k_robust": true,
+      "focus_only_worst_rank": 1,
+      "focus_only_unsupported_attainable": false,
+      "competitor_rank_gap": 0,
+      "rank_witness": {
+        "removed_edge_ids": [],
+        "removed_records": [],
+        "deletions_used": 0,
+        "focus": {
+          "supported": true,
+          "rank": 1,
+          "score": 0.9907880450557162,
+          "logit": 4.6779985406258175,
+          "counts": {
+            "direct": 2,
+            "interaction": 2,
+            "pathway": 7
+          },
+          "evidence_count": 11
+        },
+        "changed_compounds": []
+      },
+      "unsupported_witness": null
+    },
+    {
+      "budget": 2,
+      "worst_supported_rank": 1106,
+      "unsupported_attainable": false,
+      "top_k_robust": false,
+      "focus_only_worst_rank": 1106,
+      "focus_only_unsupported_attainable": false,
+      "competitor_rank_gap": 0,
+      "rank_witness": {
+        "removed_edge_ids": [
+          "e_0a7a96016300d6454bfb617d",
+          "e_7d08ccb648fea5e49bfefbc4"
+        ],
+        "removed_records": [
+          {
+            "id": "e_0a7a96016300d6454bfb617d",
+            "source": "Compound::DB01143",
+            "target": "Gene::251",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (target)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "10348255",
+                "10523712",
+                "10553165",
+                "10628381",
+                "10995012"
+              ],
+              "actions": [
+                "inducer"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (target)"
+              ],
+              "unbiased": false
+            },
+            "source_name": "Amifostine",
+            "target_name": "ALPPL2"
+          },
+          {
+            "id": "e_7d08ccb648fea5e49bfefbc4",
+            "source": "Compound::DB01143",
+            "target": "Gene::249",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (enzyme)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "8783662"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (enzyme)"
+              ],
+              "unbiased": false
+            },
+            "source_name": "Amifostine",
+            "target_name": "ALPL"
+          }
+        ],
+        "deletions_used": 2,
+        "focus": {
+          "supported": true,
+          "rank": 1106,
+          "score": 0.48903903184060676,
+          "logit": -0.0438508980322454,
+          "counts": {
+            "direct": 0,
+            "interaction": 1,
+            "pathway": 6
+          },
+          "evidence_count": 7
+        },
+        "changed_compounds": [
+          {
+            "id": "Compound::DB01143",
+            "name": "Amifostine",
+            "role": "focus",
+            "before": {
+              "supported": true,
+              "rank": 1,
+              "score": 0.9907880450557162
+            },
+            "after": {
+              "supported": true,
+              "rank": 1106,
+              "score": 0.48903903184060676
+            },
+            "removed_edge_ids": [
+              "e_0a7a96016300d6454bfb617d",
+              "e_7d08ccb648fea5e49bfefbc4"
+            ]
+          }
+        ]
+      },
+      "unsupported_witness": null
+    }
+  ],
+  "minimum_failure_budget": 2,
+  "robust_through_budget": 1,
+  "proof": {
+    "local_states_evaluated": 117147,
+    "covered_global_states": 66949807,
+    "envelope_bounds_sha256": "d0dd0ad0e9e3f5c707d1b067d9fe494121ceada8089c89cf26dcce6490c9edd9",
+    "search_budget": 2
+  },
+  "interpretation": "This is an exact finite-budget audit of this fixed model under withdrawal of any recorded BINDS edges, including edges of competing compounds. It is not a biological intervention or a probability of efficacy. Source labels are not independent studies. The audit uses its declared fixed-order float64 scorer and score/compound-ID ties; legacy BLAS scores can differ in the last floating-point bits. Exactness is relative to this binary64 numerical runtime; transcendental functions can differ across runtimes, and verification rejects numerical mismatches. A null worst supported rank means no supported scenario exists. Unsupported outcomes are reported separately. The guarantee does not cover other edge families, correlated source-group failures, new edges, model refitting, or deletion budgets above the requested limit.",
+  "certificate_sha256": "b0fe8cf4169a41ecbf8cdac10d9a9995a13f5fb947d9487122757375dd54f578"
+}

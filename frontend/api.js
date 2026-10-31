@@ -1,4 +1,6 @@
 import { compoundReferences, diseaseReferences, exclusionKey, isUnsafeQuestion, makeChallenge, requestedExclusions, requestsTopCandidate } from './utils.js';
+import { auditKey, copyJSON, stableJSON, validateAudit } from './audit-model.js';
+import { snapshotFileRecord, validateSnapshotCase, verifySnapshotBytes } from './integrity.js';
 
 export class APIError extends Error {
   constructor(message, status = 0, details = null) {
@@ -22,7 +24,7 @@ export class AriadneAPI {
     this.pendingCases = new Map();
   }
 
-  async json(url, options = {}, timeout = 30000) {
+  async json(url, options = {}, timeout = 30000, integrity = null) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);
     try {
@@ -30,8 +32,15 @@ export class AriadneAPI {
       const type = response.headers?.get?.('content-type') || '';
       if (type && !type.includes('json')) throw new APIError('The server returned a page instead of graph data.', response.status);
       let data;
-      try { data = await response.json(); }
-      catch { throw new APIError('The server returned unreadable data.', response.status); }
+      if (integrity && response.ok) {
+        const bytes = new Uint8Array(await response.arrayBuffer());
+        await verifySnapshotBytes(bytes, integrity);
+        try { data = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)); }
+        catch { throw new APIError('The verified research case contains unreadable JSON or invalid UTF-8.', response.status); }
+      } else {
+        try { data = await response.json(); }
+        catch { throw new APIError('The server returned unreadable data.', response.status); }
+      }
       if (!response.ok) {
         const detail = data.detail || data.message || 'The request could not be completed.';
         throw new APIError(typeof detail === 'string' ? detail : JSON.stringify(detail), response.status, data);
@@ -56,10 +65,12 @@ export class AriadneAPI {
     try {
       this.manifest = await this.json(this.manifestPath);
       if (!this.manifest.cases || !Array.isArray(this.manifest.diseases)) throw new APIError('The published data manifest is incomplete.');
+      this.cases.clear();
+      this.pendingCases.clear();
       this.mode = 'snapshot';
       this.healthData = {
         status: 'ok', graph_backend: 'published research snapshot', dataset_ready: true,
-        agent_mode: 'deterministic', version: '1.1.0', ...(this.manifest.health || {})
+        agent_mode: 'deterministic', version: '1.2.0', ...(this.manifest.health || {})
       };
       return this.healthData;
     } catch {
@@ -77,17 +88,20 @@ export class AriadneAPI {
   async loadCase(diseaseId) {
     if (this.cases.has(diseaseId)) return this.cases.get(diseaseId);
     if (this.pendingCases.has(diseaseId)) return this.pendingCases.get(diseaseId);
-    const descriptor = this.manifest.cases[diseaseId];
+    const manifest = this.manifest;
+    const descriptor = manifest.cases[diseaseId];
     if (!descriptor) throw new APIError('This disease is not included in the published research edition. Run the full application to investigate all diseases.');
-    if (descriptor.rankings) { this.cases.set(diseaseId, descriptor); return descriptor; }
+    if (descriptor.rankings) throw new APIError('Inline research cases cannot be byte-verified. Publish a case file with SHA-256 and byte-count metadata.');
     const file = typeof descriptor === 'string' ? descriptor : descriptor.file;
     if (!file || file.includes('..') || /^(?:https?:|\/\/)/i.test(file)) throw new APIError('Invalid research case location.');
+    const integrity = snapshotFileRecord(manifest, file);
     const root = this.manifestPath.slice(0, this.manifestPath.lastIndexOf('/') + 1);
-    const promise = this.json(`${root}${file}`).then(data => {
+    const promise = this.json(`${root}${file}`, {}, 30000, integrity).then(data => {
+      validateSnapshotCase(data, manifest, diseaseId);
+      if (this.manifest !== manifest) throw new APIError('The research snapshot changed while this case was loading. Retry to use the current publication.');
       this.cases.set(diseaseId, data);
-      this.pendingCases.delete(diseaseId);
       return data;
-    }).catch(error => { this.pendingCases.delete(diseaseId); throw error; });
+    }).finally(() => { if (this.pendingCases.get(diseaseId) === promise) this.pendingCases.delete(diseaseId); });
     this.pendingCases.set(diseaseId, promise);
     return promise;
   }
@@ -134,6 +148,34 @@ export class AriadneAPI {
     if (this.mode === 'live') return this.post('/challenge', { disease_id: diseaseId, exclude: key.split(',').filter(Boolean), limit });
     const data = await this.loadCase(diseaseId);
     return data.challenges?.[key] || makeChallenge(await this.rankings(diseaseId, [], limit), await this.rankings(diseaseId, excluded, limit), excluded);
+  }
+
+  async audit(diseaseId, compoundId, topK = 10, budget = 2) {
+    const key = auditKey(topK, budget);
+    if (this.mode === 'live') return this.post('/audit', {
+      disease_id: diseaseId, compound_id: compoundId, top_k: topK, budget
+    });
+    const data = await this.loadCase(diseaseId);
+    const certificate = data.audits?.[compoundId]?.[key];
+    if (!certificate) throw new APIError('This shortlist audit is not included in the published case. Choose a recorded configuration or run the full application for a fresh audit.');
+    return copyJSON(validateAudit(certificate, diseaseId, compoundId, topK, budget));
+  }
+
+  async verifyAudit(certificate) {
+    if (this.mode === 'live') return this.post('/audit/verify', { certificate });
+    const diseaseId = certificate?.disease?.id, compoundId = certificate?.compound?.id;
+    const key = auditKey(certificate?.top_k, certificate?.budget);
+    const data = await this.loadCase(diseaseId);
+    const recorded = data.audits?.[compoundId]?.[key];
+    if (!recorded || stableJSON(certificate) !== stableJSON(recorded)) return {
+      status: 'invalid', valid: false, checks: [],
+      errors: ['This envelope does not exactly match a published certificate. Recorded verification cannot validate an altered or unpublished result.'],
+      verification_method: 'Exact comparison with the published certificate envelope',
+      verification_execution: 'recorded_snapshot'
+    };
+    const verification = data.audit_verifications?.[compoundId]?.[key];
+    if (!verification) throw new APIError('No recorded verification is available for this certificate. Run the full application to replay it.');
+    return { ...copyJSON(verification), verification_execution: 'recorded_snapshot' };
   }
 
   async similar(compoundId, diseaseId, limit = 10) {

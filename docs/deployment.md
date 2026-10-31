@@ -116,7 +116,7 @@ published local port. For the standard Compose application use the internal
 
 ## Verification commands
 
-`make snapshot` first exports the complete six-case research edition. Then
+`make snapshot` first exports the complete seven-case research edition. Then
 `make test` runs unit and API checks plus the frontend module tests. The coverage
 gate is 60% with branch measurement enabled. `make lint` enforces a Pylint score
 of at least 9.5 and checks Black formatting. `make notebook` executes every
@@ -132,8 +132,41 @@ expected LLM success falls back to deterministic execution.
 
 The HTTP smoke check verifies the frontend's actual response headers, reconstructs
 both assessment scores, and confirms that a compound remains inspectable after
-all of its evidence is removed. Invoke `python infra/smoke.py --base-url URL`
+all of its evidence is removed. It also requests a global binding audit, verifies
+the certificate through the live endpoint, and submits a false rank claim with a
+recomputed valid content hash. The false claim must still be rejected. The smoke
+report retains the full original certificate and verification/rejection results.
+Invoke `python infra/smoke.py --base-url URL`
 through the Nginx address when ports are customized.
+
+### Exact audit and data-rights inventory
+
+```bash
+make audit-licenses
+make benchmark-audits
+make verify-scores
+```
+
+The first target inventories the actual prepared data's license text and missing
+metadata; successful execution never means legal clearance. The second runs the
+binding-audit workload across every disease's canonical baseline top ten at
+budgets zero, one and two, with every compound eligible as a competitor. The third
+preserves legacy score parity with the checksum-verified historical implementation
+and requires a full Git clone containing that commit. A source ZIP has no Git
+history; obtain the normal clone before running that historical regression gate.
+
+The API loads the auditor lazily and keeps a bounded disease-envelope cache.
+The first request for a disease computes its local deletion states; subsequent
+requests can reuse them. Verification recomputes optimality with the same proven
+algorithm in a separate bounded cache and independently replays witnesses with
+edited graph matrices. It is not a second independent optimality algorithm.
+The scientific tests provide exhaustive global enumeration on small graphs.
+
+Audit input is restricted to `top_k=1..100`, `budget=0..2`, and exact disease and
+compound IDs. It always uses the complete graph, independently of any selected
+family exclusion. A fitted model is required. No additional database, model
+download, API key or container is needed. The canonical audit scorer is separate
+from the unchanged legacy ranking scorer; see the [numerical contract](binding_audit_proof.md).
 
 ## Images and CI
 
@@ -144,7 +177,9 @@ publication waits for both quality and integration jobs. Immediately after check
 `infra/prepare_ci_evidence.py --job quality|integration` and records its checkout
 SHA and Actions identifiers separately. Quality removes only the outputs it will
 rebuild, including generated model/evaluation metadata; integration removes only
-operational reports and preserves the prepared scientific artifacts. This
+operational reports and preserves the prepared scientific artifacts. Quality
+also removes the prior v1.2 benchmark and licensing inventory before regenerating
+them. This
 prevents an early failure from uploading a committed success from an older run.
 The source graph, notebook and historical reference reports are preserved.
 
@@ -167,6 +202,18 @@ present candidate rankings, evidence and precomputed exclusion scenarios.
 It has no embedded provider credential. A frozen research edition is useful for
 review and sharing, while the full Compose stack is the live database and
 agent implementation used for the technical demonstration.
+
+Binding audits in this edition are frozen records for the exported compounds,
+`top_k` values 1, 5 and 10, and budgets zero, one and two. Their export-time
+verification status is recorded. A browser checksum check does not recompute
+optimality or edit a live graph. Use the live API to independently reverify an
+exported certificate against its matching model and graph identities.
+
+Before using a case file, the client verifies its raw byte count and SHA-256
+against the manifest, then checks each audit's dataset/model/graph identities.
+A local SHA-256 implementation covers environments without WebCrypto. This binds
+data to the served manifest; it does not authenticate an independent publisher
+or replace live/offline certificate verification.
 
 ## Troubleshooting
 

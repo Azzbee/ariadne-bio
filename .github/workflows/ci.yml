@@ -34,6 +34,10 @@ jobs:
         run: python -m pip install -r requirements-dev.txt
       - name: Prepare checksummed data and reproduce evaluation
         run: make data PYTHON=python
+      - name: Inventory observed data licenses without automatic legal clearance
+        run: make audit-licenses PYTHON=python
+      - name: Benchmark exact global binding-deletion audits on all diseases
+        run: make benchmark-audits PYTHON=python
       - name: Export and verify complete frozen research edition
         run: make snapshot PYTHON=python
       - name: Compare every score with the checksum-verified v1.0 implementation
@@ -55,6 +59,13 @@ jobs:
             reports/v1.1.0/score-regression.json
             reports/v1.1.0/assessment-nicotine-interacts.json
             reports/v1.1.0/assessment-galantamine-interacts.json
+            reports/v1.2.0/license-inventory.json
+            reports/v1.2.0/binding-audit-benchmark.json
+            reports/v1.2.0/binding-audit-summary.json
+            reports/v1.2.0/binding-audit-example-competitor.json
+            reports/v1.2.0/binding-audit-example-greedy.json
+            reports/v1.2.0/binding-audit-example-strong-greedy.json
+            reports/v1.2.0/binding-audit-example-scope.json
             coverage.xml
             reports/junit.xml
             data/processed/evaluation.json
@@ -97,7 +108,7 @@ jobs:
           assert report["requested_model"] == DEFAULT_MODEL, report
           assert report["digest"] == DEFAULT_MODEL_DIGEST, report
           PYMODEL
-      - name: Verify HTTP workflow and rejected agent request
+      - name: Verify HTTP workflow, exact audit replay, tamper rejection and agent guard
         run: make smoke PYTHON=python
       - name: Verify real Cypher, idempotent import and GDS algorithms
         run: |

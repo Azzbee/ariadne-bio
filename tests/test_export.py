@@ -7,6 +7,7 @@ import json
 import pytest
 
 from app import __version__
+from app.binding_audit import BindingAuditor
 from scripts.export_snapshot import (
     build_case,
     case_filename,
@@ -163,3 +164,97 @@ def test_invalid_export_selection_fails_clearly(tmp_path):
         case_filename({"id": "Disease::D1", "name": "A disease / ../?"})
         == "cases/a-disease-disease-d1.json"
     )
+
+
+def test_recorded_audits_cover_every_inspectable_pair_and_preserve_full_graph_scope(tmp_path):
+    """Even an off-shortlist selected compound has nine fully verified audit choices."""
+    case = build_case(create_fixture_engine(tmp_path), "Disease::D1", top_k=1)
+    expected = {f"{top_k}:{budget}" for top_k in (1, 5, 10) for budget in (0, 1, 2)}
+    assert set(case["audits"]) == set(case["assessments"])
+    assert case["coverage"]["audit_count"] == len(case["audits"]) * 9
+    for compound_id, variants in case["audits"].items():
+        assert set(variants) == expected
+        for key, certificate in variants.items():
+            recorded = case["audit_verifications"][compound_id][key]
+            assert recorded["verification_execution"] == "recorded_at_export"
+            assert recorded["certificate_sha256"] == certificate["certificate_sha256"]
+            assert recorded["valid"] is True
+            assert certificate["scope"]["universe"] == "all_recorded_BINDS_edges"
+
+
+@pytest.mark.parametrize("damage", ["pair", "configuration", "hash", "verification", "identity"])
+def test_missing_or_misbound_audits_fail_snapshot_validation(tmp_path, damage):
+    """Static results cannot silently interpolate missing choices or reuse other proofs."""
+    case = build_case(create_fixture_engine(tmp_path), "Disease::D1", top_k=1)
+    if damage == "pair":
+        del case["audits"]["Compound::C2"]
+    elif damage == "configuration":
+        del case["audits"]["Compound::C2"]["10:2"]
+    elif damage == "hash":
+        case["audits"]["Compound::C2"]["10:2"]["baseline"]["score"] = 0.5
+    elif damage == "verification":
+        case["audit_verifications"]["Compound::C2"]["10:2"]["certificate_sha256"] = "0" * 64
+    else:
+        case["audits"]["Compound::C2"]["10:2"]["compound"]["id"] = "Compound::C1"
+    with pytest.raises(ValueError):
+        validate_case(case)
+
+
+def test_export_stops_if_an_actual_certificate_cannot_be_verified(tmp_path, monkeypatch):
+    """A failed graph replay must prevent publishing a plausible-looking audit."""
+    monkeypatch.setattr(BindingAuditor, "verify", lambda *_args: {"valid": False})
+    with pytest.raises(ValueError, match="failed independent witness replay"):
+        build_case(create_fixture_engine(tmp_path), "Disease::D1")
+
+
+def test_failed_generation_preserves_every_previous_snapshot_byte(tmp_path):
+    """A late case failure cannot combine a stale manifest with newly overwritten cases."""
+    engine = create_fixture_engine(tmp_path)
+    output = tmp_path / "browser"
+    export_snapshot(engine, output, ["Disease::D1", "Disease::D2"], top_k=1)
+    before = {
+        path.relative_to(output): path.read_bytes() for path in output.rglob("*") if path.is_file()
+    }
+    with pytest.raises(KeyError):
+        export_snapshot(engine, output, ["Disease::D1", "Disease::missing"], top_k=2)
+    after = {
+        path.relative_to(output): path.read_bytes() for path in output.rglob("*") if path.is_file()
+    }
+    assert before == after
+
+
+def test_failed_directory_publication_restores_the_previous_generation(tmp_path, monkeypatch):
+    """A rename failure after moving the old directory rolls back before propagating."""
+    from pathlib import Path  # Keep the monkeypatch local to this filesystem test.
+
+    engine = create_fixture_engine(tmp_path)
+    output = tmp_path / "browser"
+    export_snapshot(engine, output, ["Disease::D1"], top_k=1)
+    before = (output / "manifest.json").read_bytes()
+    original = Path.rename
+
+    def fail_new_snapshot(self, target):
+        if self.name == "snapshot":
+            raise OSError("simulated publication failure")
+        return original(self, target)
+
+    monkeypatch.setattr(Path, "rename", fail_new_snapshot)
+    with pytest.raises(OSError, match="publication failure"):
+        export_snapshot(engine, output, ["Disease::D2"], top_k=1)
+    assert (output / "manifest.json").read_bytes() == before
+
+
+def test_snapshot_cannot_replace_scientific_inputs_or_unrelated_files(tmp_path):
+    """The generated-directory contract does not authorize replacing arbitrary folders."""
+    engine = create_fixture_engine(tmp_path)
+    original = (tmp_path / "graph.json").read_bytes()
+    with pytest.raises(ValueError, match="source data"):
+        export_snapshot(engine, tmp_path, ["Disease::D1"])
+    assert (tmp_path / "graph.json").read_bytes() == original
+    output = tmp_path / "browser"
+    export_snapshot(engine, output, ["Disease::D1"])
+    note = output / "personal-notes.txt"
+    note.write_text("keep me")
+    with pytest.raises(ValueError, match="unrecognized files"):
+        export_snapshot(engine, output, ["Disease::D2"])
+    assert note.read_text() == "keep me"

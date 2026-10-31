@@ -2,7 +2,7 @@
 PYTHON ?= .venv/bin/python
 COMPOSE ?= docker compose
 
-.PHONY: help init install data evaluate ingest run docker-run docker-core docker-stop docker-logs test test-integration test-llm lint format notebook snapshot verify-scores smoke clean
+.PHONY: help init install data evaluate ingest run docker-run docker-core docker-stop docker-logs test test-integration test-llm lint format notebook snapshot verify-scores audit-licenses benchmark-audits smoke clean
 
 help: ## List reproducible project commands
 	@awk 'BEGIN {FS = ":.*##"; printf "ARIADNE — trace evidence, challenge hypotheses\n\n"} /^[a-zA-Z_-]+:.*?##/ {printf "  %-19s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -70,7 +70,13 @@ snapshot: ## Export the frozen research edition for browser-only hosting
 verify-scores: ## Compare every score with v1.0.0; requires that commit in local Git history
 	$(PYTHON) -m scripts.verify_assessments
 
-smoke: ## Exercise health, ranking, evidence, challenge and agent rejection over HTTP
+audit-licenses: ## Inventory observed data-license text; never grants commercial clearance
+	$(PYTHON) -m scripts.audit_licenses
+
+benchmark-audits: ## Audit all diseases' top ten against global binding-deletion budgets 0..2
+	$(PYTHON) -m scripts.benchmark_audits --data-dir data/processed --output reports/v1.2.0/binding-audit-benchmark.json
+
+smoke: ## Verify live HTTP evidence, audit certificates, tamper rejection and agent guard
 	$(PYTHON) infra/smoke.py --base-url http://localhost:8080
 
 clean: ## Remove reproducible caches and test outputs; preserve source and data

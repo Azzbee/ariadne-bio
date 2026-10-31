@@ -139,6 +139,40 @@ An unchanged aggregate Recall@10 can coexist with changed candidate ranks and
 MRR. Removing evidence is a robustness probe on this representation. It is not
 a gene knockout, causal treatment effect or simulation of a patient.
 
+## Exact binding-deletion ranking audit
+
+V1.2 adds a separate audit of the frozen model under withdrawal of any zero, one
+or two BINDS records across the full graph, including competitors. The graph
+factorizes by compound for this operation: only the source compound's path counts
+and binding degree change. Enumerated local minimum/maximum score envelopes and
+an exact disjoint budget allocation produce an attainable worst supported rank.
+Possible loss of all paths is reported separately and prevents a robust-top-k
+claim, even when surviving supported scenarios have favorable ranks.
+
+The audit uses an explicit fixed-order float64 scorer with the same saved
+features, scaler and coefficients. The legacy ranking/assessment scorer is
+unchanged. Audit responses report the canonical baseline and legacy score/rank
+comparison. The certificate is relative to this numerical function and its
+recorded identities, not an idealized real-arithmetic predictor.
+
+A score can increase after deleting binding evidence because normalized features
+and signed coefficients change. Auditing only the selected compound can therefore
+miss worse ranks caused by competitor promotion. All 1,552 compounds remain
+eligible competitors; display truncation is irrelevant to the bound.
+
+The [formal proof](binding_audit_proof.md) states the conditions and count
+distinctions. `make benchmark-audits` measures the full-disease workload. The
+certificate does not cover other relation families, new edges, retraining,
+correlated source failures, unknown missing evidence or clinical outcomes.
+Stable ranking is not a clinical efficacy estimate, and a witness is not proof
+that a recorded binding is false. See [prior art and contribution](research_contribution.md).
+
+The [full audit benchmark](audit_benchmark.md) compares exact global bounds with
+focus-only auditing and two global greedy searches. The stronger greedy search
+finds all top-ten failures on this workload, although 19 supported worst-rank
+results are suboptimal at budget two. Exact certification is the demonstrated
+distinction; extra failure discovery over that comparator is not demonstrated.
+
 ## Material limitations
 
 - The graph reflects historical source coverage and curation bias. Highly studied

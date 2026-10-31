@@ -1,0 +1,190 @@
+{
+  "schema_version": "1.0",
+  "disease": {
+    "id": "Disease::DOID:10652",
+    "name": "Alzheimer's disease"
+  },
+  "compound": {
+    "id": "Compound::DB00674",
+    "name": "Galantamine"
+  },
+  "known_treatment": true,
+  "excluded": [
+    "INTERACTS"
+  ],
+  "model": {
+    "name": "Typed-path logistic retrieval",
+    "version": "1.0",
+    "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
+    "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19"
+  },
+  "baseline": {
+    "supported": true,
+    "rank": 1,
+    "score": 0.932772698441492,
+    "score_status": "supported_retrieval",
+    "logit": 2.630082108558693,
+    "evidence_count": 1254,
+    "features": {
+      "direct": 6,
+      "interaction": 11,
+      "pathway": 1237
+    }
+  },
+  "current": {
+    "supported": true,
+    "rank": 1,
+    "score": 0.7509460388944176,
+    "score_status": "supported_retrieval",
+    "logit": 1.1036642125913592,
+    "evidence_count": 1243,
+    "features": {
+      "direct": 6,
+      "interaction": 0,
+      "pathway": 1237
+    }
+  },
+  "delta": {
+    "score": -0.18182665954707444,
+    "logit": -1.5264178959673338,
+    "rank": 0,
+    "evidence_count": -11
+  },
+  "decomposition": {
+    "reference": "training_mean",
+    "units": "logit",
+    "intercept": -0.5903294074627099,
+    "degree_divisor": "sqrt(max(compound_binding_degree * disease_association_degree, 1))",
+    "features": [
+      {
+        "name": "log_direct",
+        "label": "Direct paths",
+        "group": "direct",
+        "definition": "log1p(direct_path_count)",
+        "value_before": 1.9459101490553132,
+        "value_after": 1.9459101490553132,
+        "mean": 0.29633369852200747,
+        "scale": 0.5160971623752143,
+        "coefficient": 0.3228075516663724,
+        "standardized_before": 3.19625173473445,
+        "standardized_after": 3.19625173473445,
+        "contribution_before": 1.0317741969990235,
+        "contribution_after": 1.0317741969990235,
+        "contribution_delta": 0.0
+      },
+      {
+        "name": "log_interaction",
+        "label": "Interaction paths",
+        "group": "interaction",
+        "definition": "log1p(interaction_path_count)",
+        "value_before": 2.4849066497880004,
+        "value_after": 0.0,
+        "mean": 1.0139479738011008,
+        "scale": 1.1811835841241562,
+        "coefficient": 0.8868421691157965,
+        "standardized_before": 1.2453260405558468,
+        "standardized_after": -0.8584169196297626,
+        "contribution_before": 1.1044076470629336,
+        "contribution_after": -0.761280323010159,
+        "contribution_delta": -1.8656879700730926
+      },
+      {
+        "name": "log_pathway",
+        "label": "Shared-pathway paths",
+        "group": "pathway",
+        "definition": "log1p(pathway_path_count)",
+        "value_before": 7.121252453244542,
+        "value_after": 7.121252453244542,
+        "mean": 4.89283005021538,
+        "scale": 2.3639134330057314,
+        "coefficient": 4.028486079269715,
+        "standardized_before": 0.9426835906574242,
+        "standardized_after": 0.9426835906574242,
+        "contribution_before": 3.7975877221194243,
+        "contribution_after": 3.7975877221194243,
+        "contribution_delta": 0.0
+      },
+      {
+        "name": "normalized_direct",
+        "label": "Normalized direct paths",
+        "group": "direct",
+        "definition": "log1p(direct_path_count / degree_divisor)",
+        "value_before": 0.08940363679808107,
+        "value_after": 0.08940363679808107,
+        "mean": 0.011665114262097119,
+        "scale": 0.02195736026985026,
+        "coefficient": 0.3168737900138326,
+        "standardized_before": 3.540431162061272,
+        "standardized_after": 3.540431162061272,
+        "contribution_before": 1.1218698406054328,
+        "contribution_after": 1.1218698406054328,
+        "contribution_delta": 0.0
+      },
+      {
+        "name": "normalized_interaction",
+        "label": "Normalized interaction paths",
+        "group": "interaction",
+        "definition": "log1p(interaction_path_count / degree_divisor)",
+        "value_before": 0.15824819959269049,
+        "value_after": 0.0,
+        "mean": 0.09592414403867225,
+        "scale": 0.16144380687506094,
+        "coefficient": -0.34612117207902693,
+        "standardized_before": 0.38604178605779493,
+        "standardized_after": -0.5941642847464974,
+        "contribution_before": -0.13361723546180493,
+        "contribution_after": 0.2056528386439544,
+        "contribution_delta": 0.3392700741057593
+      },
+      {
+        "name": "normalized_pathway",
+        "label": "Normalized pathway paths",
+        "group": "pathway",
+        "definition": "log1p(pathway_path_count / degree_divisor)",
+        "value_before": 3.00968987651529,
+        "value_after": 3.00968987651529,
+        "mean": 2.0614783502002973,
+        "scale": 1.1629784513257757,
+        "coefficient": -2.6699919249037065,
+        "standardized_before": 0.8153302627697423,
+        "standardized_after": 0.8153302627697423,
+        "contribution_before": -2.176925217724829,
+        "contribution_after": -2.176925217724829,
+        "contribution_delta": 0.0
+      },
+      {
+        "name": "log_compound_degree",
+        "label": "Compound binding degree",
+        "group": "compound_degree",
+        "definition": "log1p(compound_binding_degree)",
+        "value_before": 3.091042453358316,
+        "value_after": 3.091042453358316,
+        "mean": 1.7342632989095008,
+        "scale": 0.9576089201068587,
+        "coefficient": -0.8184159672334073,
+        "standardized_before": 1.4168405556387398,
+        "standardized_after": 1.4168405556387398,
+        "contribution_before": -1.1595649337585974,
+        "contribution_after": -1.1595649337585974,
+        "contribution_delta": 0.0
+      },
+      {
+        "name": "log_disease_degree",
+        "label": "Disease association degree",
+        "group": "disease_degree",
+        "definition": "log1p(disease_association_degree)",
+        "value_before": 5.2832037287379885,
+        "value_after": 5.2832037287379885,
+        "mean": 5.01064288854549,
+        "scale": 1.030146314281978,
+        "coefficient": -1.3799764522794016,
+        "standardized_before": 0.26458458998853546,
+        "standardized_after": 0.26458458998853546,
+        "contribution_before": -0.36512050382017924,
+        "contribution_after": -0.36512050382017924,
+        "contribution_delta": 0.0
+      }
+    ]
+  },
+  "interpretation": "The all-evidence baseline and selected scenario use the same fitted model. The intercept plus signed contributions equals the logit; applying the sigmoid gives the retrieval score, within floating-point precision. Contributions are relative to the training-feature means, so an absent feature can have a nonzero contribution. Contribution changes add in logit space, not score or probability space. A score without supporting paths is diagnostic only and has no supported rank. This is model sensitivity, not causal biological evidence or a probability of clinical efficacy."
+}

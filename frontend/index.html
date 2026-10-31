@@ -8,6 +8,7 @@
   <title>ARIADNE — Follow the evidence</title>
   <link rel="icon" type="image/svg+xml" href="./assets/mark.svg">
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./audit.css">
   <script src="./config.js"></script>
   <script type="module" src="./app.js"></script>
 </head>
@@ -88,6 +89,7 @@
         </div>
         <div id="disease-context" class="disease-context"><span class="skeleton-line"></span></div>
         <div class="workspace-actions">
+          <button id="open-audit" class="button button-outline" disabled aria-controls="audit-section"><svg class="icon"><use href="#i-shield"/></svg><span>Shortlist audit</span></button>
           <button id="share-case" class="button button-quiet" disabled><svg class="icon"><use href="#i-link"/></svg><span>Share case</span></button>
           <button id="export-case" class="button button-outline" disabled><svg class="icon"><use href="#i-download"/></svg><span>Export evidence</span></button>
         </div>
@@ -136,10 +138,11 @@
       </div>
 
       <p id="investigation-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+      <section id="audit-section" class="audit-section" aria-labelledby="audit-title"></section>
       <section id="assessment-section" class="assessment-section" aria-labelledby="assessment-title" hidden></section>
 
       <section class="challenge-section" aria-labelledby="challenge-title">
-        <div class="challenge-intro"><span class="eyebrow">04 / PUT THE HYPOTHESIS UNDER PRESSURE</span><h2 id="challenge-title">What if the evidence changes?</h2><p>Switch off a relationship family. Recompute the graph features.<br>The scoring model stays fixed.</p></div>
+        <div class="challenge-intro"><span class="eyebrow">05 / CHALLENGE AN EVIDENCE FAMILY</span><h2 id="challenge-title">What if the evidence changes?</h2><p>Switch off a relationship family. Recompute the graph features.<br>The scoring model stays fixed.</p></div>
         <div class="evidence-switches" id="evidence-switches">
           <label class="evidence-switch"><input type="checkbox" value="INTERACTS" checked><span class="switch-ui"></span><span><strong>Gene interactions</strong><small>Gene → gene connections</small></span><span class="family-count" data-family-count="INTERACTS">—</span></label>
           <label class="evidence-switch"><input type="checkbox" value="PARTICIPATES" checked><span class="switch-ui"></span><span><strong>Shared pathways</strong><small>Genes participating in a pathway</small></span><span class="family-count" data-family-count="PARTICIPATES">—</span></label>
@@ -171,6 +174,7 @@
         <article class="method-card"><span class="method-number">03</span><h2>Challenge the evidence.<br>Keep the model fixed.</h2><p>Excluding a relationship family changes the available paths and recomputes graph features. The same fitted model scores the revised evidence.</p><p>This is an evidence sensitivity analysis. Removing an edge from the graph does not reproduce a knockout experiment or an intervention in a patient.</p></article>
         <article class="method-card"><span class="method-number">04</span><h2>Useful answers.<br>Visible boundaries.</h2><p>The live agent follows a bounded LangGraph workflow and read-only tools. It resolves the question, retrieves rankings and paths, and produces an evidence-grounded brief.</p><p>The published research edition uses recorded results and a deterministic guide. The interface always identifies which edition is running.</p></article>
       </div>
+      <section id="audit-method" class="audit-method" aria-labelledby="audit-method-title"><div><span class="eyebrow">CERTIFIED WITHIN A DECLARED SCOPE</span><h2 id="audit-method-title" tabindex="-1">Challenge the ranking.<br>Keep the proof.</h2><p>A shortlist audit asks how far a selected compound’s supported rank can fall when up to two recorded binding edges are withdrawn anywhere in the graph.</p><div class="audit-method-example"><span class="eyebrow">ONE RECORD · A RIVAL’S SCORE</span><a id="audit-example-link" class="text-link" href="?disease=Disease%3A%3ADOID%3A175&amp;compound=Compound%3A%3ADB01115&amp;audit_k=10&amp;audit_budget=1#audit-section">Inspect the rival-change example ↗</a><p>Vascular cancer / Nifedipine. Selected after the full benchmark to illustrate why rival records matter; this is an illustration, not a separate validation set.</p></div></div><div><p>The audit starts with the unmodified graph, includes every compound and competing score, and keeps the fitted model fixed. Its exact envelope distinguishes a worse supported rank from losing every supporting path. A witness identifies the actual imported records that attain each bound.</p><p>Certificates identify the data, graph, model and canonical float64 scorer. Live replay rechecks the bound and separately recomputes witness states. In the research snapshot, certificates and verification results are recorded artifacts; no server replay runs in the browser.</p><p>These are finite, conditional model guarantees. The audit does not establish biological truth, clinical efficacy, source independence, or robustness beyond its stated operation and budget.</p><a id="audit-proof-link" class="text-link" href="https://github.com/Azzbee/ariadne-bio/blob/main/docs/binding_audit_proof.md" target="_blank" rel="noopener noreferrer">Read the proof & numerical contract ↗</a><a id="audit-research-link" class="text-link" href="https://github.com/Azzbee/ariadne-bio/blob/main/docs/research_contribution.md" target="_blank" rel="noopener noreferrer">Prior art & research scope ↗</a></div></section>
       <div class="provenance-section"><div><span class="eyebrow">CHAIN OF CUSTODY</span><h2>Sources & reproducibility</h2><p>Inspect the dataset identity and licensing information. Individual graph records expose the provenance actually present in the source.</p><a class="text-link repo-link" href="https://github.com/Azzbee/ariadne-bio" target="_blank" rel="noopener noreferrer">Explore the code & full documentation <svg class="icon"><use href="#i-external"/></svg></a></div><div id="provenance-content"><div class="loading-block"><span class="spinner"></span><span>Loading source manifest</span></div></div></div>
       <aside class="limits-box"><svg class="icon"><use href="#i-shield"/></svg><div><h3>Interpretation comes first.</h3><p>The graph is incomplete and reflects historical research priorities. Unobserved treatment links are not proven negatives. Source agreement, graph proximity, or a high model rank cannot establish that a compound is effective or safe. ARIADNE is a research and teaching application.</p></div></aside>
     </section>
