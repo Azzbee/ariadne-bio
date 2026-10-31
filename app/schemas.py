@@ -3,7 +3,7 @@
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, FiniteFloat, field_validator
 
 
 class Relation(str, Enum):
@@ -71,6 +71,71 @@ class EvidenceResponse(ExtensibleResponse):
     excluded: list[str]
 
 
+class AssessmentState(ExtensibleResponse):
+    """A fixed-model score is distinct from an evidence-supported rank."""
+
+    supported: bool
+    rank: int | None = Field(default=None, ge=1)
+    score: FiniteFloat = Field(ge=0, le=1)
+    score_status: Literal["supported_retrieval", "unsupported_diagnostic"]
+    logit: FiniteFloat
+    evidence_count: int = Field(ge=0)
+    features: Features
+
+
+class FeatureContribution(ExtensibleResponse):
+    """An exact standardized linear term, not a causal or efficacy attribution."""
+
+    name: str
+    label: str
+    group: str
+    definition: str
+    value_before: FiniteFloat
+    value_after: FiniteFloat
+    mean: FiniteFloat
+    scale: FiniteFloat = Field(gt=0)
+    coefficient: FiniteFloat
+    standardized_before: FiniteFloat
+    standardized_after: FiniteFloat
+    contribution_before: FiniteFloat
+    contribution_after: FiniteFloat
+    contribution_delta: FiniteFloat
+
+
+class ScoreDecomposition(ExtensibleResponse):
+    """Saved intercept plus feature terms reconstruct the model's exact logit."""
+
+    reference: Literal["training_mean"]
+    units: Literal["logit"]
+    intercept: FiniteFloat
+    features: list[FeatureContribution]
+
+
+class AssessmentDelta(ExtensibleResponse):
+    """After minus before for scores/counts; positive rank delta is an improvement."""
+
+    score: FiniteFloat
+    logit: FiniteFloat
+    rank: int | None
+    evidence_count: int
+
+
+class AssessmentResponse(ExtensibleResponse):
+    """A selected pair stays inspectable outside a displayed top-k ranking."""
+
+    schema_version: str
+    disease: Entity
+    compound: Entity
+    known_treatment: bool
+    excluded: list[Relation]
+    model: dict[str, Any]
+    baseline: AssessmentState
+    current: AssessmentState
+    delta: AssessmentDelta
+    decomposition: ScoreDecomposition
+    interpretation: str
+
+
 class ChallengeRequest(BaseModel):
     """Recompute features after removing specific evidence families."""
 
@@ -100,9 +165,10 @@ class ChallengeResponse(ExtensibleResponse):
 class AgentRequest(BaseModel):
     """Bounded natural-language investigation request."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     question: str = Field(min_length=3, max_length=2000)
-    disease_id: str | None = Field(default=None, max_length=180)
+    disease_id: str | None = Field(default=None, min_length=1, max_length=180)
+    compound_id: str | None = Field(default=None, min_length=1, max_length=180)
     exclude: list[Relation] = Field(default_factory=list, max_length=4)
 
 
@@ -112,6 +178,8 @@ class AgentResponse(ExtensibleResponse):
     status: Literal["complete", "rejected", "clarification"]
     answer: str
     mode: Literal["llm", "deterministic"]
+    compound: Entity | None = None
+    assessment: AssessmentResponse | None = None
     candidates: list[dict[str, Any]] = Field(default_factory=list)
     citations: list[dict[str, Any]] = Field(default_factory=list)
     trace: list[dict[str, str]] = Field(default_factory=list)

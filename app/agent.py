@@ -30,6 +30,11 @@ CLINICAL_PATTERN = re.compile(
     r"treat\s+my|cure\s+me|my\s+medication)\b",
     re.IGNORECASE,
 )
+TOP_CANDIDATE_PATTERN = re.compile(
+    r"\b(?:(?:top|leading|highest[-\s]+(?:ranked|scoring))\s+(?:\d+\s+)?"
+    r"(?:compounds?|candidates?|hypotheses)|(?:which|what)\s+(?:compounds|candidates))\b",
+    re.IGNORECASE,
+)
 
 
 class ToolPlan(BaseModel):
@@ -46,10 +51,13 @@ class AgentState(TypedDict, total=False):
 
     question: str
     disease_id: str | None
+    compound_id: str | None
     exclude: list[str]
     status: str
     answer: str
     disease: dict
+    compound: dict
+    assessment: dict
     candidates: list[dict]
     evidence: dict
     challenge: dict
@@ -125,25 +133,111 @@ def _trace(state: AgentState, step: str, tool: str, summary: str, status="comple
     ]
 
 
-def _disease_mentions(diseases: list[dict], question: str) -> list[dict]:
-    """Resolve explicit whole-name mentions, keeping overlapping specific names."""
+def _entity_mentions(entities: list[dict], question: str) -> list[dict]:
+    """Resolve recorded names or qualified IDs, retaining specific overlapping names."""
     normalized = " ".join(re.findall(r"[a-z0-9]+", question.lower()))
     occurrences = []
-    for disease in diseases:
-        name = " ".join(re.findall(r"[a-z0-9]+", disease["name"].lower()))
-        if not name:
-            continue
-        for match in re.finditer(r"(?<!\w)" + re.escape(name) + r"(?!\w)", normalized):
-            occurrences.append((match.start(), match.end(), disease))
+    for entity in entities:
+        aliases = {
+            " ".join(re.findall(r"[a-z0-9]+", entity[key].lower())) for key in ("name", "id")
+        }
+        for name in sorted(aliases):
+            if not name or name not in normalized:
+                continue
+            for match in re.finditer(r"(?<!\w)" + re.escape(name) + r"(?!\w)", normalized):
+                occurrences.append((match.start(), match.end(), entity))
     resolved = {}
-    for start, end, disease in occurrences:
+    for start, end, entity in occurrences:
         contained = any(
             other_start <= start and end <= other_end and other_end - other_start > end - start
             for other_start, other_end, _ in occurrences
         )
         if not contained:
-            resolved[disease["id"]] = disease
+            resolved[entity["id"]] = entity
     return list(resolved.values())
+
+
+def _unknown_qualified_ids(entities: list[dict], question: str, kind: str) -> list[str]:
+    """An invalid explicit ID must never be replaced by a valid UI or name match."""
+    known = {entity["id"].lower() for entity in entities}
+    requested = re.findall(r"\b" + re.escape(kind) + r"::[\w:-]+", question, re.I)
+    return sorted({identifier for identifier in requested if identifier.lower() not in known})
+
+
+def _compound_focus(compounds: list[dict], state: AgentState, disease: dict) -> dict:
+    """Explicit compound names outrank selection; a new disease resets stale focus."""
+    matches = _entity_mentions(compounds, state["question"])
+    invalid_identifier = bool(_unknown_qualified_ids(compounds, state["question"], "Compound"))
+    if (
+        not matches
+        and not invalid_identifier
+        and not TOP_CANDIDATE_PATTERN.search(state["question"])
+    ):
+        identifier = state.get("compound_id")
+        disease_changed = bool(state.get("disease_id") and state["disease_id"] != disease["id"])
+        if identifier and not disease_changed:
+            matches = [compound for compound in compounds if compound["id"] == identifier]
+            invalid_identifier = not matches
+    if len(matches) > 1 or invalid_identifier:
+        return {
+            "status": "clarification",
+            "suggestions": matches[:8] or compounds[:8],
+            "answer": "Choose one recorded compound for this investigation. "
+            "The requested compound is ambiguous or is not present in this graph.",
+        }
+    return {"compound_id": matches[0]["id"] if matches else None}
+
+
+def _assessment_brief(assessment: dict) -> str:
+    """Render a selected pair and its exact arithmetic without model-authored claims."""
+    current = assessment["current"]
+    compound, disease = assessment["compound"]["name"], assessment["disease"]["name"]
+    if current["supported"]:
+        answer = (
+            f"For {disease}, {compound} ranks #{current['rank']} in this graph-based "
+            f"research screen, with a model score of {current['score']:.3f}. "
+        )
+    else:
+        answer = (
+            f"For {disease}, {compound} has no evidence-supported rank under this "
+            f"configuration. Its diagnostic model score is {current['score']:.3f}, "
+            "but the score alone does not supply graph support. "
+        )
+    counts = current["features"]
+    answer += (
+        f"Its evidence contains {counts['direct']:,} direct, "
+        f"{counts['interaction']:,} interaction, and {counts['pathway']:,} shared-pathway paths. "
+    )
+    if assessment["excluded"]:
+        baseline = assessment["baseline"]
+        before_rank = f"#{baseline['rank']}" if baseline["supported"] else "unsupported"
+        after_rank = f"#{current['rank']}" if current["supported"] else "unsupported"
+        answer += (
+            "Excluded evidence: " + ", ".join(assessment["excluded"]) + ". "
+            f"Compared with all evidence, rank changes {before_rank} to {after_rank}, "
+            f"model score {baseline['score']:.3f} to {current['score']:.3f}, and supporting "
+            f"paths {baseline['evidence_count']:,} to {current['evidence_count']:,}. "
+            "The fitted coefficients and training scaler are unchanged. "
+        )
+    terms = assessment["decomposition"]["features"]
+    field = "contribution_delta" if assessment["excluded"] else "contribution_after"
+    largest = max(terms, key=lambda term: abs(term[field]), default=None)
+    if largest and abs(largest[field]) > 1e-12:
+        description = "change in a feature term" if assessment["excluded"] else "feature term"
+        answer += (
+            f"The largest absolute {description} is {largest['label']} "
+            f"({largest[field]:+.3f} logit units relative to the saved training means). "
+        )
+    answer += (
+        "Hetionet also records this compound–disease pair as a treatment label. "
+        if assessment["known_treatment"]
+        else "This pair has no recorded treatment label in the imported label set. "
+        "Absence is not evidence of ineffectiveness. "
+    )
+    return answer + (
+        "These connections and model terms do not establish therapeutic benefit, safety, "
+        "or causality. Source databases may consolidate multiple reports into one relationship."
+    )
 
 
 def _requested_exclusions(question: str, selected=()) -> list[str]:
@@ -232,10 +326,11 @@ class EvidenceAgent:  # pylint: disable=too-few-public-methods
                 break
             diseases.extend(page["items"])
         identifier = state.get("disease_id")
-        matches = _disease_mentions(diseases, state["question"])
+        matches = _entity_mentions(diseases, state["question"])
+        unknown_ids = _unknown_qualified_ids(diseases, state["question"], "Disease")
         if not matches and identifier:
             matches = [disease for disease in diseases if disease["id"] == identifier]
-        if len(matches) != 1:
+        if len(matches) != 1 or unknown_ids:
             return {
                 "status": "clarification",
                 "suggestions": matches[:8] or diseases[:8],
@@ -245,11 +340,25 @@ class EvidenceAgent:  # pylint: disable=too-few-public-methods
                     state,
                     "Resolve disease",
                     "resolve_entity",
-                    f"Resolved {len(matches)} matches; one is required.",
+                    f"Resolved {len(matches)} matches and {len(unknown_ids)} unknown explicit "
+                    "IDs; one valid disease is required.",
                     "clarification",
                 ),
             }
+        compounds = [
+            {"id": identifier, "name": self.service.engine.nodes[identifier]["name"]}
+            for identifier in self.service.engine.entities["Compound"]
+        ]
+        focus = _compound_focus(compounds, state, matches[0])
+        if focus.get("status") == "clarification":
+            return {
+                **focus,
+                "trace": _trace(
+                    state, "Resolve compound", "resolve_entity", focus["answer"], "clarification"
+                ),
+            }
         return {
+            **focus,
             "disease": matches[0],
             "disease_id": matches[0]["id"],
             "trace": _trace(
@@ -336,7 +445,7 @@ class EvidenceAgent:  # pylint: disable=too-few-public-methods
         result = self.service.engine.rankings(
             state["disease_id"], exclude=plan["exclude"], limit=plan["limit"]
         )
-        return {
+        result_state = {
             "candidates": result["candidates"],
             "trace": _trace(
                 state,
@@ -345,10 +454,30 @@ class EvidenceAgent:  # pylint: disable=too-few-public-methods
                 f"Scored {result['total']} compounds with the fixed fitted graph model.",
             ),
         }
+        compound_id = state.get("compound_id") or (
+            result["candidates"][0]["id"] if result["candidates"] else None
+        )
+        if compound_id:
+            assessment = self.service.engine.assessment(
+                state["disease_id"], compound_id, exclude=plan["exclude"]
+            )
+            result_state.update(
+                compound_id=compound_id,
+                compound=assessment["compound"],
+                assessment=assessment,
+                trace=_trace(
+                    {**state, **result_state},
+                    "Assess selected compound",
+                    "assess_pair",
+                    f"Computed exact score terms and complete supported rank for "
+                    f"{assessment['compound']['name']}, independently of the displayed top list.",
+                ),
+            )
+        return result_state
 
     def _paths(self, state: AgentState) -> dict:
-        candidates = state["candidates"]
-        if not candidates:
+        compound_id = state.get("compound_id")
+        if not compound_id:
             return {
                 "evidence": {},
                 "trace": _trace(
@@ -356,7 +485,7 @@ class EvidenceAgent:  # pylint: disable=too-few-public-methods
                 ),
             }
         evidence = self.service.evidence(
-            state["disease_id"], candidates[0]["id"], exclude=state["plan"]["exclude"], limit=9
+            state["disease_id"], compound_id, exclude=state["plan"]["exclude"], limit=9
         )
         return {
             "evidence": evidence,
@@ -384,30 +513,12 @@ class EvidenceAgent:  # pylint: disable=too-few-public-methods
         }
 
     def _explain(self, state: AgentState) -> dict:
-        candidates = state["candidates"]
         evidence = state.get("evidence", {})
-        if not candidates:
-            answer = "No candidate compounds were returned for this investigation."
-        else:
-            top = candidates[0]
-            answer = (
-                f"For {state['disease']['name']}, {top['name']} ranks first in this graph-based "
-                f"research screen. Its evidence contains {top['features']['direct']:,} direct, "
-                f"{top['features']['interaction']:,} interaction, and "
-                f"{top['features']['pathway']:,} shared-pathway paths. "
-            )
-            answer += (
-                "Hetionet also records this compound–disease pair as a treatment label. "
-                if top["known_treatment"]
-                else "This pair has no recorded treatment label in the imported label set. "
-                "Absence is not evidence of ineffectiveness. "
-            )
-            if state["plan"]["exclude"]:
-                answer += "Excluded evidence: " + ", ".join(state["plan"]["exclude"]) + ". "
-            answer += (
-                "These connections do not establish therapeutic benefit or safety. "
-                "Source databases may consolidate multiple reports into a single relationship."
-            )
+        answer = (
+            _assessment_brief(state["assessment"])
+            if state.get("assessment")
+            else "No candidate compounds were returned for this investigation."
+        )
         citations = [
             {"id": path["id"], "label": path["metapath"], "edge_ids": path["edge_ids"]}
             for path in evidence.get("paths", [])
@@ -424,12 +535,13 @@ class EvidenceAgent:  # pylint: disable=too-few-public-methods
             ),
         }
 
-    def investigate(self, question: str, disease_id=None, exclude=()) -> dict:
+    def investigate(self, question: str, disease_id=None, exclude=(), compound_id=None) -> dict:
         """Execute the compiled LangGraph workflow and expose its real tool trace."""
         state = self.workflow.invoke(
             {
                 "question": question,
                 "disease_id": disease_id,
+                "compound_id": compound_id,
                 "exclude": list(exclude),
                 "trace": [],
                 "candidates": [],

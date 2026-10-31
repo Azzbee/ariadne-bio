@@ -15,6 +15,7 @@ from app.config import Settings
 from app.schemas import (
     AgentRequest,
     AgentResponse,
+    AssessmentResponse,
     ChallengeRequest,
     ChallengeResponse,
     DiseaseResponse,
@@ -124,6 +125,17 @@ def create_app(settings=None, service=None, agent=None) -> FastAPI:
         )
 
     @application.get(
+        "/api/assessment/{disease_id}/{compound_id}",
+        response_model=AssessmentResponse,
+        tags=["Evidence"],
+    )
+    def assessment(request: Request, disease_id: str, compound_id: str, exclude: str = ""):
+        """Explain one pair with exact model terms and complete supported ranks."""
+        return current(request).engine.assessment(
+            disease_id, compound_id, parse_exclusions(exclude)
+        )
+
+    @application.get(
         "/api/evidence/{disease_id}/{compound_id}",
         response_model=EvidenceResponse,
         tags=["Evidence"],
@@ -175,7 +187,10 @@ def create_app(settings=None, service=None, agent=None) -> FastAPI:
     @application.post("/api/agent", response_model=AgentResponse, tags=["Agent"])
     def investigate(request: Request, payload: AgentRequest):
         return request.app.state.agent.investigate(
-            payload.question, payload.disease_id, [item.value for item in payload.exclude]
+            payload.question,
+            payload.disease_id,
+            [item.value for item in payload.exclude],
+            compound_id=payload.compound_id,
         )
 
     frontend = Path(__file__).resolve().parents[1] / "frontend"

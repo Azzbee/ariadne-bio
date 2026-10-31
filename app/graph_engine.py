@@ -31,6 +31,20 @@ FEATURE_NAMES = [
     "log_compound_degree",
     "log_disease_degree",
 ]
+FEATURE_DETAILS = (
+    ("Direct paths", "direct", "log1p(direct_path_count)"),
+    ("Interaction paths", "interaction", "log1p(interaction_path_count)"),
+    ("Shared-pathway paths", "pathway", "log1p(pathway_path_count)"),
+    ("Normalized direct paths", "direct", "log1p(direct_path_count / degree_divisor)"),
+    (
+        "Normalized interaction paths",
+        "interaction",
+        "log1p(interaction_path_count / degree_divisor)",
+    ),
+    ("Normalized pathway paths", "pathway", "log1p(pathway_path_count / degree_divisor)"),
+    ("Compound binding degree", "compound_degree", "log1p(compound_binding_degree)"),
+    ("Disease association degree", "disease_degree", "log1p(disease_association_degree)"),
+)
 DISCLAIMER = (
     "Research hypotheses from a historical knowledge graph. Rankings are not "
     "validated treatments, clinical recommendations, or probabilities of efficacy."
@@ -50,6 +64,36 @@ def validate_exclusions(exclude=()) -> tuple[str, ...]:
 def _read_json(path: Path, default=None):
     """Read an artifact if present, retaining an explicit untrained state otherwise."""
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else default
+
+
+def _masked_counts(values: np.ndarray, excluded: tuple[str, ...]) -> np.ndarray:
+    """Apply one exclusion definition to a complete tensor, disease or single pair."""
+    counts = values.copy()
+    if "BINDS" in excluded or "ASSOCIATES" in excluded:
+        counts[:] = 0
+    if "INTERACTS" in excluded:
+        counts[..., 1] = 0
+    if "PARTICIPATES" in excluded:
+        counts[..., 2] = 0
+    return counts
+
+
+def _transform_features(counts, compound_degree, disease_degree) -> np.ndarray:
+    """Share the exact training feature transformations with scalar explanations."""
+    counts = np.asarray(counts, dtype=float)
+    compound_degree, disease_degree = np.broadcast_arrays(
+        np.asarray(compound_degree, dtype=float), np.asarray(disease_degree, dtype=float)
+    )
+    divisor = np.sqrt(np.maximum(compound_degree * disease_degree, 1))
+    return np.concatenate(
+        [
+            np.log1p(counts),
+            np.log1p(counts / divisor[..., None]),
+            np.log1p(compound_degree)[..., None],
+            np.log1p(disease_degree)[..., None],
+        ],
+        axis=-1,
+    )
 
 
 class GraphEngine:
@@ -76,6 +120,10 @@ class GraphEngine:
         }
         self.edge_lookup = self._index_edges()
         self.matrices = self._build_matrices()
+        self.endpoint_degrees = {
+            "Compound": np.asarray(self.matrices["BINDS"].sum(axis=1)).ravel().astype(float),
+            "Disease": np.asarray(self.matrices["ASSOCIATES"].sum(axis=1)).ravel().astype(float),
+        }
         self.path_counts = self._compute_path_counts()
         self.model = _read_json(self.data_dir / "model.json")
         self.report = _read_json(self.data_dir / "evaluation.json")
@@ -177,47 +225,28 @@ class GraphEngine:
 
     def counts(self, exclude=()) -> np.ndarray:
         """Return exact full path counts after removing whole relationship families."""
-        excluded = validate_exclusions(exclude)
-        counts = self.path_counts.copy()
-        if "BINDS" in excluded or "ASSOCIATES" in excluded:
-            counts[:] = 0
-        if "INTERACTS" in excluded:
-            counts[..., 1] = 0
-        if "PARTICIPATES" in excluded:
-            counts[..., 2] = 0
-        return counts
+        return _masked_counts(self.path_counts, validate_exclusions(exclude))
 
     def feature_matrix(self, exclude=()) -> np.ndarray:
         """Compute fixed feature definitions with ablated degrees recomputed exactly."""
         excluded = validate_exclusions(exclude)
-        counts = self.counts(excluded).astype(float)
-        compound_degree = np.asarray(self.matrices["BINDS"].sum(axis=1)).ravel().astype(float)
-        disease_degree = np.asarray(self.matrices["ASSOCIATES"].sum(axis=1)).ravel().astype(float)
-        if "BINDS" in excluded:
-            compound_degree[:] = 0
-        if "ASSOCIATES" in excluded:
-            disease_degree[:] = 0
-        divisor = np.sqrt(np.maximum(compound_degree[:, None] * disease_degree[None, :], 1))
-        dimensions = counts.shape[:2]
-        return np.concatenate(
-            [
-                np.log1p(counts),
-                np.log1p(counts / divisor[..., None]),
-                np.broadcast_to(np.log1p(compound_degree)[:, None], dimensions)[..., None],
-                np.broadcast_to(np.log1p(disease_degree)[None, :], dimensions)[..., None],
-            ],
-            axis=-1,
+        compound_degree = self.endpoint_degrees["Compound"] * ("BINDS" not in excluded)
+        disease_degree = self.endpoint_degrees["Disease"] * ("ASSOCIATES" not in excluded)
+        return _transform_features(
+            self.counts(excluded), compound_degree[:, None], disease_degree[None, :]
         )
+
+    def _linear_prediction(self, values: np.ndarray) -> np.ndarray:
+        """Apply the unchanged scaler and linear model to either scalar or bulk features."""
+        if self.model is None:
+            raise RuntimeError("model.json is missing; run python -m scripts.evaluate")
+        standardized = (values - np.asarray(self.model["mean"])) / np.asarray(self.model["scale"])
+        return standardized @ np.asarray(self.model["coefficients"]) + self.model["intercept"]
 
     @lru_cache(maxsize=16)
     def _scores(self, excluded: tuple[str, ...]) -> np.ndarray:
         """Apply the saved scaler and coefficients, unchanged for every ablation."""
-        if self.model is None:
-            raise RuntimeError("model.json is missing; run python -m scripts.evaluate")
-        matrix = self.feature_matrix(excluded)
-        standardized = (matrix - np.asarray(self.model["mean"])) / np.asarray(self.model["scale"])
-        logit = standardized @ np.asarray(self.model["coefficients"]) + self.model["intercept"]
-        return expit(logit)
+        return expit(self._linear_prediction(self.feature_matrix(excluded)))
 
     def stats(self) -> dict:
         """Return verifiable graph size and model identity."""
@@ -246,22 +275,27 @@ class GraphEngine:
         items.sort(key=lambda item: (item["name"].casefold(), item["id"]))
         return {"items": items[offset : offset + limit], "total": len(items)}
 
-    def _ranking_rows(self, disease_id: str, excluded: tuple[str, ...]) -> list[dict]:
-        """Rank supported compounds and retain deterministic baseline rank positions."""
-        disease_index = self.positions["Disease"][disease_id]
-        counts = self.counts(excluded)[:, disease_index]
+    @lru_cache(maxsize=128)
+    def _rank_positions(self, disease_index: int, excluded: tuple[str, ...]) -> np.ndarray:
+        """Cache full supported ranks; zero denotes an unsupported compound, not a tie."""
+        counts = _masked_counts(self.path_counts[:, disease_index], excluded)
         scores = self._scores(excluded)[:, disease_index]
-        baseline_scores = self._scores(())[:, disease_index]
-        baseline_supported = self.path_counts[:, disease_index].sum(axis=1) > 0
-        baseline_order = sorted(
-            np.where(baseline_supported)[0],
-            key=lambda index: (-baseline_scores[index], self.entities["Compound"][index]),
-        )
-        baseline_ranks = {int(index): rank for rank, index in enumerate(baseline_order, start=1)}
         order = sorted(
             np.where(counts.sum(axis=1) > 0)[0],
             key=lambda index: (-scores[index], self.entities["Compound"][index]),
         )
+        ranks = np.zeros(len(self.entities["Compound"]), dtype=np.int64)
+        ranks[order] = np.arange(1, len(order) + 1)
+        return ranks
+
+    def _ranking_rows(self, disease_id: str, excluded: tuple[str, ...]) -> list[dict]:
+        """Rank supported compounds and retain deterministic baseline rank positions."""
+        disease_index = self.positions["Disease"][disease_id]
+        counts = _masked_counts(self.path_counts[:, disease_index], excluded)
+        scores = self._scores(excluded)[:, disease_index]
+        baseline_ranks = self._rank_positions(disease_index, ())
+        current_ranks = self._rank_positions(disease_index, excluded)
+        order = sorted(np.flatnonzero(current_ranks), key=lambda index: current_ranks[index])
         rows = []
         for rank, index in enumerate(order, start=1):
             identifier = self.entities["Compound"][index]
@@ -271,14 +305,114 @@ class GraphEngine:
                     **self._entity(identifier, "Compound"),
                     "rank": rank,
                     "score": round(float(scores[index]), 8),
-                    "baseline_rank": baseline_ranks[int(index)],
-                    "rank_delta": baseline_ranks[int(index)] - rank,
+                    "baseline_rank": int(baseline_ranks[index]),
+                    "rank_delta": int(baseline_ranks[index]) - rank,
                     "known_treatment": (identifier, disease_id) in self.known_treatments,
                     "features": features,
                     "evidence_count": int(counts[index].sum()),
                 }
             )
         return rows
+
+    def _assessment_state(self, compound_index: int, disease_index: int, excluded: tuple):
+        """Resolve one pair without building another full compound-by-disease tensor."""
+        counts = _masked_counts(self.path_counts[compound_index, disease_index], excluded)
+        values = _transform_features(
+            counts,
+            self.endpoint_degrees["Compound"][compound_index] * ("BINDS" not in excluded),
+            self.endpoint_degrees["Disease"][disease_index] * ("ASSOCIATES" not in excluded),
+        )
+        logit = float(self._linear_prediction(values))
+        rank = int(self._rank_positions(disease_index, excluded)[compound_index]) or None
+        return {
+            "supported": rank is not None,
+            "rank": rank,
+            "score": float(self._scores(excluded)[compound_index, disease_index]),
+            "score_status": "supported_retrieval" if rank is not None else "unsupported_diagnostic",
+            "logit": logit,
+            "evidence_count": int(counts.sum()),
+            "features": dict(zip(("direct", "interaction", "pathway"), map(int, counts))),
+        }, values
+
+    def _decomposition(self, before: np.ndarray, after: np.ndarray) -> dict:
+        """Explain additive logit terms relative to the saved training-feature means."""
+        means = np.asarray(self.model["mean"])
+        scales = np.asarray(self.model["scale"])
+        coefficients = np.asarray(self.model["coefficients"])
+        before_scaled, after_scaled = (before - means) / scales, (after - means) / scales
+        before_terms, after_terms = coefficients * before_scaled, coefficients * after_scaled
+        return {
+            "reference": "training_mean",
+            "units": "logit",
+            "intercept": float(self.model["intercept"]),
+            "degree_divisor": "sqrt(max(compound_binding_degree * disease_association_degree, 1))",
+            "features": [
+                {
+                    "name": name,
+                    "label": FEATURE_DETAILS[index][0],
+                    "group": FEATURE_DETAILS[index][1],
+                    "definition": FEATURE_DETAILS[index][2],
+                    "value_before": float(before[index]),
+                    "value_after": float(after[index]),
+                    "mean": float(means[index]),
+                    "scale": float(scales[index]),
+                    "coefficient": float(coefficients[index]),
+                    "standardized_before": float(before_scaled[index]),
+                    "standardized_after": float(after_scaled[index]),
+                    "contribution_before": float(before_terms[index]),
+                    "contribution_after": float(after_terms[index]),
+                    "contribution_delta": float(after_terms[index] - before_terms[index]),
+                }
+                for index, name in enumerate(FEATURE_NAMES)
+            ],
+        }
+
+    def assessment(self, disease_id: str, compound_id: str, exclude=()) -> dict:
+        """Explain any valid pair, preserving diagnostic scores when evidence disappears."""
+        disease = self._entity(disease_id, "Disease")
+        compound = self._entity(compound_id, "Compound")
+        excluded = validate_exclusions(exclude)
+        compound_index = self.positions["Compound"][compound_id]
+        disease_index = self.positions["Disease"][disease_id]
+        baseline, before_values = self._assessment_state(compound_index, disease_index, ())
+        current, after_values = self._assessment_state(compound_index, disease_index, excluded)
+        return {
+            "schema_version": "1.0",
+            "disease": disease,
+            "compound": compound,
+            "known_treatment": (compound_id, disease_id) in self.known_treatments,
+            "excluded": list(excluded),
+            "model": {
+                "name": self.model["name"],
+                "version": self.model.get("version"),
+                "model_sha256": self.model.get("model_sha256")
+                or hashlib.sha256(json.dumps(self.model, sort_keys=True).encode()).hexdigest(),
+                "dataset_sha256": self.manifest.get("dataset_sha256"),
+            },
+            "baseline": baseline,
+            "current": current,
+            "delta": {
+                "score": current["score"] - baseline["score"],
+                "logit": current["logit"] - baseline["logit"],
+                "rank": (
+                    baseline["rank"] - current["rank"]
+                    if baseline["supported"] and current["supported"]
+                    else None
+                ),
+                "evidence_count": current["evidence_count"] - baseline["evidence_count"],
+            },
+            "decomposition": self._decomposition(before_values, after_values),
+            "interpretation": (
+                "The all-evidence baseline and selected scenario use the same fitted model. "
+                "The intercept plus signed contributions equals the logit; applying the "
+                "sigmoid gives the retrieval score, within floating-point precision. "
+                "Contributions are relative to the training-feature means, so an absent "
+                "feature can have a nonzero contribution. Contribution changes add in logit "
+                "space, not score or probability space. A score without supporting paths is "
+                "diagnostic only and has no supported rank. This is model sensitivity, not "
+                "causal biological evidence or a probability of clinical efficacy."
+            ),
+        }
 
     def rankings(self, disease_id: str, exclude=(), limit: int = 20, offset: int = 0) -> dict:
         """Return graph-supported hypotheses with exact feature counts."""
