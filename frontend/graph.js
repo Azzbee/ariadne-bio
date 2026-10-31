@@ -83,18 +83,28 @@ export class EvidenceGraph {
     this.data = null;
     this.paths = [];
     this.activePath = null;
+    this.filter = 'all';
+    this.viewport = typeof window !== 'undefined' ? window.matchMedia('(max-width: 690px)') : null;
+    this.viewport?.addEventListener('change', () => {
+      if (!this.data) return;
+      const active = this.activePath;
+      this.render(this.data, this.filter);
+      this.highlight(active);
+    });
     this.svg.addEventListener('pointerleave', () => { this.tooltip.hidden = true; });
   }
 
   render(data, filter = 'all') {
     this.data = data;
+    this.filter = filter;
     this.paths = (data.paths || []).filter(path => filter === 'all' || pathFamily(path) === filter);
     this.svg.replaceChildren();
-    const mobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 690px)').matches;
+    const mobile = this.viewport?.matches || false;
     this.svg.setAttribute('viewBox', mobile ? '0 0 540 900' : '0 0 900 540');
     this.svg.parentElement.classList.toggle('graph-vertical', mobile);
     this.svg.setAttribute('aria-label', `Evidence graph from ${data.compound?.name || 'compound'} to ${data.disease?.name || 'disease'}, showing ${this.paths.length} paths. Click nodes to inspect source records.`);
     const { nodes, edges, positions } = layoutGraph(data, this.paths);
+    const names = new Map(nodes.map(node => [node.id, node.name]));
     if (mobile) {
       for (const node of nodes) {
         const x = node.y, y = node.x;
@@ -113,7 +123,9 @@ export class EvidenceGraph {
       const family = edge.type === 'INTERACTS' ? 'interaction' : edge.type === 'PARTICIPATES' ? 'pathway' : edge.type === 'ASSOCIATES' ? 'disease-edge' : '';
       const d = edgePath(a, b);
       const visible = element('path', { d, class: `graph-edge ${family}`, 'data-edge-id': edge.id });
-      const hit = element('path', { d, class: 'graph-edge-hit', tabindex: '0', role: 'button', 'aria-label': `${edge.type} relationship. Inspect its sources.`, 'data-edge-id': edge.id });
+      const hit = element('path', { d, class: 'graph-edge-hit', tabindex: '0', role: 'button', 'aria-label': `${names.get(edge.source) || edge.source} to ${names.get(edge.target) || edge.target}: ${edge.type}. Inspect source record.`, 'data-edge-id': edge.id });
+      hit.addEventListener('focus', () => { visible.classList.add('highlighted'); });
+      hit.addEventListener('blur', () => { this.highlight(this.activePath); });
       hit.addEventListener('pointerenter', event => {
         visible.classList.add('highlighted');
         this.showTooltip(event, edge.type, 'Inspect source record');
@@ -172,6 +184,15 @@ export class EvidenceGraph {
 
   reset() {
     this.highlight(null);
+  }
+
+  clear() {
+    this.data = null;
+    this.paths = [];
+    this.activePath = null;
+    this.svg.replaceChildren();
+    this.svg.setAttribute('aria-label', 'No evidence graph is currently displayed.');
+    this.tooltip.hidden = true;
   }
 
   showTooltip(event, title, subtitle) {

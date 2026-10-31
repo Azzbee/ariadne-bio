@@ -140,6 +140,44 @@ export function diseaseMentions(items, question) {
   return [...resolved.values()];
 }
 
+/** Any unknown explicit ID requires clarification, even beside a recognized name. */
+function entityReferences(items, question, namespace) {
+  const names = diseaseMentions(items, question);
+  const byId = new Map(items.map(item => [item.id.toLowerCase(), item]));
+  const matches = new Map(names.map(item => [item.id, item]));
+  const unknown = new Set();
+  const pattern = new RegExp(`\\b${namespace}::[^\\s,;!?()[\\]{}"'<>]*`, 'gi');
+  for (const match of String(question).matchAll(pattern)) {
+    const id = match[0].replace(/[.]+$/, '');
+    const item = byId.get(id.toLowerCase());
+    if (item) matches.set(item.id, item);
+    else unknown.add(id);
+  }
+  return { matches: [...matches.values()], unknown: [...unknown] };
+}
+
+export function compoundReferences(items, question) { return entityReferences(items, question, 'compound'); }
+export function diseaseReferences(items, question) { return entityReferences(items, question, 'disease'); }
+
+export function requestsTopCandidate(question) {
+  return /\b(?:(?:top(?:[- ]ranked)?|leading|highest[-\s]+(?:ranked|scoring)|first[-\s]+ranked)\s+(?:\d+\s+)?(?:compounds?|candidates?|hypotheses)|(?:which|what)\s+(?:compounds|candidates))\b/i.test(question);
+}
+
+export function requestedExclusions(question, selected = []) {
+  const excluded = new Set(selected);
+  const patterns = {
+    INTERACTS: /\b(?:interacts|interactions?|interacting)\b/i,
+    PARTICIPATES: /\b(?:participates|pathways?|pathway membership)\b/i,
+    BINDS: /\b(?:binds|binding|compound targets?)\b/i,
+    ASSOCIATES: /\b(?:associates|associations?|disease genes?)\b/i
+  };
+  for (const match of String(question).matchAll(/\b(?:remove|exclude|disable|without)\b([^.!?;\n]*)/gi)) {
+    if (/(?:do not|don['’]t|never)\s*$/i.test(String(question).slice(0, match.index))) continue;
+    for (const [family, pattern] of Object.entries(patterns)) if (pattern.test(match[1])) excluded.add(family);
+  }
+  return exclusionKey([...excluded]).split(',').filter(Boolean);
+}
+
 export function evidenceSelection(evidence) {
   if (!evidence.truncated) return 'All available paths are shown.';
   const selection = typeof evidence.selection === 'string' ? evidence.selection.trim().replace(/[.]+$/, '') : '';
