@@ -1,0 +1,430 @@
+{
+  "schema_version": "1.0",
+  "method": "binding-envelope-v1",
+  "disease": {
+    "id": "Disease::DOID:10976",
+    "name": "membranous glomerulonephritis"
+  },
+  "compound": {
+    "id": "Compound::DB00137",
+    "name": "Xanthophyll"
+  },
+  "top_k": 10,
+  "budget": 2,
+  "scope": {
+    "relationship": "BINDS",
+    "operation": "delete_record",
+    "universe": "all_recorded_BINDS_edges",
+    "eligible_edges": 11571,
+    "candidate_count": 1552,
+    "includes_competitor_changes": true
+  },
+  "identity": {
+    "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+    "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
+    "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
+    "scorer": "float64-fixed-order-v1"
+  },
+  "baseline": {
+    "supported": true,
+    "rank": 7,
+    "score": 0.8942578322414146,
+    "logit": 2.1349903851130483,
+    "counts": {
+      "direct": 1,
+      "interaction": 5,
+      "pathway": 56
+    },
+    "evidence_count": 62,
+    "legacy_score": 0.8942578322414146,
+    "legacy_rank": 7,
+    "score_difference": 0.0,
+    "rank_agrees_with_legacy": true
+  },
+  "results": [
+    {
+      "budget": 0,
+      "worst_supported_rank": 7,
+      "unsupported_attainable": false,
+      "top_k_robust": true,
+      "focus_only_worst_rank": 7,
+      "focus_only_unsupported_attainable": false,
+      "competitor_rank_gap": 0,
+      "rank_witness": {
+        "removed_edge_ids": [],
+        "removed_records": [],
+        "deletions_used": 0,
+        "focus": {
+          "supported": true,
+          "rank": 7,
+          "score": 0.8942578322414146,
+          "logit": 2.1349903851130483,
+          "counts": {
+            "direct": 1,
+            "interaction": 5,
+            "pathway": 56
+          },
+          "evidence_count": 62
+        },
+        "changed_compounds": []
+      },
+      "unsupported_witness": null
+    },
+    {
+      "budget": 1,
+      "worst_supported_rank": 8,
+      "unsupported_attainable": true,
+      "top_k_robust": false,
+      "focus_only_worst_rank": 7,
+      "focus_only_unsupported_attainable": true,
+      "competitor_rank_gap": 1,
+      "rank_witness": {
+        "removed_edge_ids": [
+          "e_90d2f9fd3b35122d6aa7e2b0"
+        ],
+        "removed_records": [
+          {
+            "id": "e_90d2f9fd3b35122d6aa7e2b0",
+            "source": "Compound::DB00513",
+            "target": "Gene::5327",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (target)",
+              "DrugCentral (ChEMBL)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "2502209",
+                "3146348",
+                "7962113",
+                "8073394"
+              ],
+              "urls": [
+                "https://www.ebi.ac.uk/chembl/compound/inspect/CHEMBL1046"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (target)",
+                "DrugCentral (ChEMBL)"
+              ],
+              "actions": [
+                "antagonist",
+                "inhibitor"
+              ],
+              "unbiased": false
+            },
+            "source_name": "Aminocaproic Acid",
+            "target_name": "PLAT"
+          }
+        ],
+        "deletions_used": 1,
+        "focus": {
+          "supported": true,
+          "rank": 8,
+          "score": 0.8942578322414146,
+          "logit": 2.1349903851130483,
+          "counts": {
+            "direct": 1,
+            "interaction": 5,
+            "pathway": 56
+          },
+          "evidence_count": 62
+        },
+        "changed_compounds": [
+          {
+            "id": "Compound::DB00513",
+            "name": "Aminocaproic Acid",
+            "role": "competitor",
+            "before": {
+              "supported": true,
+              "rank": 62,
+              "score": 0.8651662027803767
+            },
+            "after": {
+              "supported": true,
+              "rank": 7,
+              "score": 0.8958009358060165
+            },
+            "removed_edge_ids": [
+              "e_90d2f9fd3b35122d6aa7e2b0"
+            ]
+          }
+        ]
+      },
+      "unsupported_witness": {
+        "removed_edge_ids": [
+          "e_2b4217858d188b005c311faf"
+        ],
+        "removed_records": [
+          {
+            "id": "e_2b4217858d188b005c311faf",
+            "source": "Compound::DB00137",
+            "target": "Gene::213",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (carrier)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "11273666",
+                "16678417"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (carrier)"
+              ],
+              "unbiased": false
+            },
+            "source_name": "Xanthophyll",
+            "target_name": "ALB"
+          }
+        ],
+        "deletions_used": 1,
+        "focus": {
+          "supported": false,
+          "rank": null,
+          "score": 0.20190628838318214,
+          "logit": -1.3744223527964605,
+          "counts": {
+            "direct": 0,
+            "interaction": 0,
+            "pathway": 0
+          },
+          "evidence_count": 0
+        },
+        "changed_compounds": [
+          {
+            "id": "Compound::DB00137",
+            "name": "Xanthophyll",
+            "role": "focus",
+            "before": {
+              "supported": true,
+              "rank": 7,
+              "score": 0.8942578322414146
+            },
+            "after": {
+              "supported": false,
+              "rank": null,
+              "score": 0.20190628838318214
+            },
+            "removed_edge_ids": [
+              "e_2b4217858d188b005c311faf"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "budget": 2,
+      "worst_supported_rank": 9,
+      "unsupported_attainable": true,
+      "top_k_robust": false,
+      "focus_only_worst_rank": 7,
+      "focus_only_unsupported_attainable": true,
+      "competitor_rank_gap": 2,
+      "rank_witness": {
+        "removed_edge_ids": [
+          "e_6ced5910e516bba0e1b2313b",
+          "e_90d2f9fd3b35122d6aa7e2b0"
+        ],
+        "removed_records": [
+          {
+            "id": "e_6ced5910e516bba0e1b2313b",
+            "source": "Compound::DB01207",
+            "target": "Gene::6915",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (target)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "10522750",
+                "11752352",
+                "8289199",
+                "8697470",
+                "8831771",
+                "9272380"
+              ],
+              "actions": [
+                "antagonist"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (target)"
+              ],
+              "unbiased": false
+            },
+            "source_name": "Ridogrel",
+            "target_name": "TBXA2R"
+          },
+          {
+            "id": "e_90d2f9fd3b35122d6aa7e2b0",
+            "source": "Compound::DB00513",
+            "target": "Gene::5327",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (target)",
+              "DrugCentral (ChEMBL)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "2502209",
+                "3146348",
+                "7962113",
+                "8073394"
+              ],
+              "urls": [
+                "https://www.ebi.ac.uk/chembl/compound/inspect/CHEMBL1046"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (target)",
+                "DrugCentral (ChEMBL)"
+              ],
+              "actions": [
+                "antagonist",
+                "inhibitor"
+              ],
+              "unbiased": false
+            },
+            "source_name": "Aminocaproic Acid",
+            "target_name": "PLAT"
+          }
+        ],
+        "deletions_used": 2,
+        "focus": {
+          "supported": true,
+          "rank": 9,
+          "score": 0.8942578322414146,
+          "logit": 2.1349903851130483,
+          "counts": {
+            "direct": 1,
+            "interaction": 5,
+            "pathway": 56
+          },
+          "evidence_count": 62
+        },
+        "changed_compounds": [
+          {
+            "id": "Compound::DB00513",
+            "name": "Aminocaproic Acid",
+            "role": "competitor",
+            "before": {
+              "supported": true,
+              "rank": 62,
+              "score": 0.8651662027803767
+            },
+            "after": {
+              "supported": true,
+              "rank": 8,
+              "score": 0.8958009358060165
+            },
+            "removed_edge_ids": [
+              "e_90d2f9fd3b35122d6aa7e2b0"
+            ]
+          },
+          {
+            "id": "Compound::DB01207",
+            "name": "Ridogrel",
+            "role": "competitor",
+            "before": {
+              "supported": true,
+              "rank": 29,
+              "score": 0.8835620185238191
+            },
+            "after": {
+              "supported": true,
+              "rank": 2,
+              "score": 0.9327868814601926
+            },
+            "removed_edge_ids": [
+              "e_6ced5910e516bba0e1b2313b"
+            ]
+          }
+        ]
+      },
+      "unsupported_witness": {
+        "removed_edge_ids": [
+          "e_2b4217858d188b005c311faf"
+        ],
+        "removed_records": [
+          {
+            "id": "e_2b4217858d188b005c311faf",
+            "source": "Compound::DB00137",
+            "target": "Gene::213",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (carrier)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "11273666",
+                "16678417"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (carrier)"
+              ],
+              "unbiased": false
+            },
+            "source_name": "Xanthophyll",
+            "target_name": "ALB"
+          }
+        ],
+        "deletions_used": 1,
+        "focus": {
+          "supported": false,
+          "rank": null,
+          "score": 0.20190628838318214,
+          "logit": -1.3744223527964605,
+          "counts": {
+            "direct": 0,
+            "interaction": 0,
+            "pathway": 0
+          },
+          "evidence_count": 0
+        },
+        "changed_compounds": [
+          {
+            "id": "Compound::DB00137",
+            "name": "Xanthophyll",
+            "role": "focus",
+            "before": {
+              "supported": true,
+              "rank": 7,
+              "score": 0.8942578322414146
+            },
+            "after": {
+              "supported": false,
+              "rank": null,
+              "score": 0.20190628838318214
+            },
+            "removed_edge_ids": [
+              "e_2b4217858d188b005c311faf"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "minimum_failure_budget": 1,
+  "robust_through_budget": 0,
+  "proof": {
+    "local_states_evaluated": 117147,
+    "covered_global_states": 66949807,
+    "envelope_bounds_sha256": "910890510f2e69c7c554a93dc08727c9e60282ab68a3f726750237710eba7ae5",
+    "search_budget": 2
+  },
+  "interpretation": "This is an exact finite-budget audit of this fixed model under withdrawal of any recorded BINDS edges, including edges of competing compounds. It is not a biological intervention or a probability of efficacy. Source labels are not independent studies. The audit uses its declared fixed-order float64 scorer and score/compound-ID ties; legacy BLAS scores can differ in the last floating-point bits. Exactness is relative to this binary64 numerical runtime; transcendental functions can differ across runtimes, and verification rejects numerical mismatches. A null worst supported rank means no supported scenario exists. Unsupported outcomes are reported separately. The guarantee does not cover other edge families, correlated source-group failures, new edges, model refitting, or deletion budgets above the requested limit.",
+  "certificate_sha256": "405747e15ea80f85319457d840154f516d2294413602b1793bcab6382f980263"
+}

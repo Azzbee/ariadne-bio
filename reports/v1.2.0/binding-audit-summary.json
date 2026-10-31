@@ -1,0 +1,191 @@
+{
+  "schema_version": "1.0",
+  "title": "Global bounded BINDS evidence audit benchmark",
+  "executed_at": "2026-10-31T19:06:15.818661+00:00",
+  "status": "passed",
+  "source": {
+    "git_revision": "d82c346c6c4b92a79fa5d12e3643c9ed788555cb",
+    "working_tree_dirty": true,
+    "file_sha256": {
+      "app/binding_audit.py": "e2e662cffff5be1f36f91850a4b176db906c14efcc820e7b18d04021a5ce4e0b",
+      "app/graph_engine.py": "80c18947f85dfaea71f32fd0b7608d5977b11be2d1f01fcdf2cc6e292910b81c",
+      "scripts/benchmark_audits.py": "81a58446944074c52fb824d37f930fb6d8d9ea8e1aa29fedfdc70531c3cbc772"
+    }
+  },
+  "identity": {
+    "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+    "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
+    "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
+    "scorer": "float64-fixed-order-v1"
+  },
+  "protocol": {
+    "population": "Every graph disease and its first ten supported candidates under the audit baseline scorer",
+    "top_k": 10,
+    "budgets": [
+      0,
+      1,
+      2
+    ],
+    "selection": "No sampling or manual disease/candidate selection; IDs and score ties deterministic",
+    "model": "Same saved model and scaler, no fitting; legacy scorer remains unchanged",
+    "candidate_universe": 1552,
+    "failure_scope": "Any recorded BINDS edge anywhere in the graph; total edge deletions bounded by budget",
+    "greedy": "Every available next global edge evaluated; maximize current supported rank, unsupported preferred; lexicographic edge-ID ties; retain best prefix",
+    "strong_greedy": "Same exhaustive next-edge search, maximizing current rank after preferring unsupported; ties minimize focus score minus kth highest supported rival score, then focus score, then edge-ID. The rival threshold is recomputed after each edit. No kth rival means an infinite positive margin.",
+    "verification": "All certificates receive same-algorithm optimality recheck and independent full-matrix witness replay; all greedy witnesses also replayed",
+    "maximality_oracle": "Independent literal-path exhaustive global-subset enumeration in tests/test_binding_audit.py, not full real-graph global enumeration",
+    "examples": "Largest observed competitor/greedy gap; first ID-ordered query wins ties; all results retained",
+    "clinical_interpretation": "Model fragility and algorithm correctness only; not clinical efficacy or experimental success"
+  },
+  "coverage": {
+    "diseases_total": 137,
+    "diseases_processed": 137,
+    "diseases_without_supported_candidates": 3,
+    "candidate_queries": 1330,
+    "budget_results": 3990,
+    "certificates_verified": 1330,
+    "certificate_witness_replay_checks": 3990,
+    "greedy_witness_replay_checks": 3789,
+    "strong_greedy_witness_replay_checks": 3818,
+    "failed_checks": 0
+  },
+  "summary": [
+    {
+      "budget": 0,
+      "candidate_queries": 1330,
+      "globally_fragile": 0,
+      "globally_robust": 1330,
+      "unsupported_attainable": 0,
+      "focus_only_fragile": 0,
+      "focus_only_false_robust_conclusions": 0,
+      "global_rank_exceeds_focus_only": 0,
+      "maximum_competitor_rank_gap": 0,
+      "greedy_failures_found": 0,
+      "greedy_missed_failures": 0,
+      "greedy_supported_rank_suboptimal": 0,
+      "strong_greedy_failures_found": 0,
+      "strong_greedy_missed_failures": 0,
+      "strong_greedy_supported_rank_suboptimal": 0
+    },
+    {
+      "budget": 1,
+      "candidate_queries": 1330,
+      "globally_fragile": 1074,
+      "globally_robust": 256,
+      "unsupported_attainable": 79,
+      "focus_only_fragile": 1073,
+      "focus_only_false_robust_conclusions": 1,
+      "global_rank_exceeds_focus_only": 35,
+      "maximum_competitor_rank_gap": 1,
+      "greedy_failures_found": 1074,
+      "greedy_missed_failures": 0,
+      "greedy_supported_rank_suboptimal": 0,
+      "strong_greedy_failures_found": 1074,
+      "strong_greedy_missed_failures": 0,
+      "strong_greedy_supported_rank_suboptimal": 0
+    },
+    {
+      "budget": 2,
+      "candidate_queries": 1330,
+      "globally_fragile": 1226,
+      "globally_robust": 104,
+      "unsupported_attainable": 136,
+      "focus_only_fragile": 1226,
+      "focus_only_false_robust_conclusions": 0,
+      "global_rank_exceeds_focus_only": 128,
+      "maximum_competitor_rank_gap": 2,
+      "greedy_failures_found": 1215,
+      "greedy_missed_failures": 11,
+      "greedy_supported_rank_suboptimal": 86,
+      "strong_greedy_failures_found": 1226,
+      "strong_greedy_missed_failures": 0,
+      "strong_greedy_supported_rank_suboptimal": 19
+    }
+  ],
+  "minimum_failure_budget_counts": {
+    "1": 1074,
+    "None": 104,
+    "2": 152
+  },
+  "numerical_comparison": {
+    "pairs_compared": 212624,
+    "max_absolute_score_difference": 9.992007221626409e-16,
+    "nonidentical_score_pairs": 126860,
+    "supported_rank_position_differences": 0,
+    "legacy_model_and_scorer_changed": false,
+    "interpretation": "Audit scores use explicit fixed-order binary64 arithmetic. Legacy scores use BLAS; small last-bit differences are disclosed, not hidden with display rounding."
+  },
+  "runtime_seconds": 185.31796483299695,
+  "environment": {
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39"
+  },
+  "full_report": {
+    "file": "binding-audit-benchmark.json",
+    "sha256": "8dae3dc22dd3eb01b7193865b38d2f101e8998a9be526e458c65490ed057901e"
+  },
+  "examples": {
+    "largest_competitor_rank_gap": {
+      "selection_status": "positive_gap_observed",
+      "selection_value": 2,
+      "disease": {
+        "id": "Disease::DOID:10976",
+        "name": "membranous glomerulonephritis"
+      },
+      "compound": {
+        "id": "Compound::DB00137",
+        "name": "Xanthophyll"
+      },
+      "file": "binding-audit-example-competitor.json",
+      "file_sha256": "9784737561b233f069ce683b1359f61ec31ad6ebea2c951a375e833bfabc2de8",
+      "certificate_sha256": "405747e15ea80f85319457d840154f516d2294413602b1793bcab6382f980263"
+    },
+    "largest_greedy_supported_rank_gap": {
+      "selection_status": "positive_gap_observed",
+      "selection_value": 1105,
+      "disease": {
+        "id": "Disease::DOID:5408",
+        "name": "Paget's disease of bone"
+      },
+      "compound": {
+        "id": "Compound::DB01143",
+        "name": "Amifostine"
+      },
+      "file": "binding-audit-example-greedy.json",
+      "file_sha256": "b61332be1b6b4d2f2966e56416726c105f4405cfd40b9473ae25fbef09f41ae6",
+      "certificate_sha256": "b0fe8cf4169a41ecbf8cdac10d9a9995a13f5fb947d9487122757375dd54f578"
+    },
+    "largest_strong_greedy_supported_rank_gap": {
+      "selection_status": "positive_gap_observed",
+      "selection_value": 786,
+      "disease": {
+        "id": "Disease::DOID:11476",
+        "name": "osteoporosis"
+      },
+      "compound": {
+        "id": "Compound::DB00858",
+        "name": "Drostanolone"
+      },
+      "file": "binding-audit-example-strong-greedy.json",
+      "file_sha256": "6c5e5d077a410ebdebf2db57a49a90d9dff8e2c19b66ac5c62f58618ba3cb670",
+      "certificate_sha256": "28bfce576ebe9a00f87ce7733bd70b633df2bf317c0c2e79a1b4ce29b1500280"
+    },
+    "scope_verdict_difference": {
+      "selection_status": "positive_gap_observed",
+      "selection_value": 1,
+      "disease": {
+        "id": "Disease::DOID:175",
+        "name": "vascular cancer"
+      },
+      "compound": {
+        "id": "Compound::DB01115",
+        "name": "Nifedipine"
+      },
+      "file": "binding-audit-example-scope.json",
+      "file_sha256": "1903d9c05229a37edba228cfb9094dcc6a7ef846d4e00cd47f6b73ce00fd1da7",
+      "certificate_sha256": "4333608dea730b0007af343c0ddbc9470e6116cbee6788a2e5033d7a9ab865a3"
+    }
+  }
+}
