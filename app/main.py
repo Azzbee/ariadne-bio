@@ -11,6 +11,7 @@ from neo4j.exceptions import Neo4jError, ServiceUnavailable
 
 from app import __version__
 from app.agent import EvidenceAgent
+from app.audit_routes import router as audit_router
 from app.config import Settings
 from app.schemas import (
     AgentRequest,
@@ -192,6 +193,8 @@ def create_app(settings=None, service=None, agent=None) -> FastAPI:
             [item.value for item in payload.exclude],
             compound_id=payload.compound_id,
         )
+
+    application.include_router(audit_router)
 
     frontend = Path(__file__).resolve().parents[1] / "frontend"
     if (frontend / "index.html").exists():
