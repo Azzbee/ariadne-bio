@@ -27,6 +27,8 @@ def release_input(tmp_path):
         "pyproject.toml": '[project]\nversion = "1.3.0"\n',
         "LICENSE": "Explicit test fixture license\n",
         "docs/provenance_audit.md": "Test fixture documentation\n",
+        "frontend/assets/mark.svg": '<svg xmlns="http://www.w3.org/2000/svg"><title>Committed mark</title></svg>\n',
+        "reports/v1.3.0/provenance-review-marimastat.html": "<!doctype html><title>Committed review</title>\n",
         "executable.sh": "#!/bin/sh\nexit 0\n",
     }
     for name in package.RUNTIME_FILES:
@@ -116,6 +118,20 @@ def test_archives_are_repeatable_and_use_immutable_source_blobs(release_input):
     for line in sums:
         digest, name = line.split("  ")
         assert sha256((root / "first" / name).read_bytes()).hexdigest() == digest
+
+
+def test_committed_assets_and_html_reviews_survive_dirty_working_tree(release_input):
+    """The complete research UI and review example use exact committed dependency bytes."""
+    repo, snapshot, root = release_input
+    asset = repo / "frontend/assets/mark.svg"
+    review = repo / "reports/v1.3.0/provenance-review-marimastat.html"
+    expected_asset, expected_review = asset.read_bytes(), review.read_bytes()
+    asset.write_text("uncommitted asset must not override the released mark")
+    review.write_text("uncommitted report must not override the released review")
+    package.build(repo, "HEAD", snapshot, root / "output")
+    with zipfile.ZipFile(root / "output/ariadne-research-edition.zip") as archive:
+        assert archive.read("assets/mark.svg") == expected_asset
+        assert archive.read("reports/v1.3.0/provenance-review-marimastat.html") == expected_review
 
 
 @pytest.mark.parametrize("key", ["model_sha256", "graph_sha256", "dataset_sha256"])
