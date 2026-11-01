@@ -36,7 +36,7 @@ and do not pass through the local Ollama initializer.
 
 | Address | Service |
 | --- | --- |
-| http://localhost:8080 | Research workbench |
+| http://localhost:8080 | Overview and research workbench |
 | http://localhost:8080/docs | Interactive Swagger documentation |
 | http://localhost:8000/api/health | Direct API health and execution mode |
 | http://localhost:7474 | Neo4j Browser |
@@ -132,10 +132,12 @@ expected LLM success falls back to deterministic execution.
 
 The HTTP smoke check verifies the frontend's actual response headers, reconstructs
 both assessment scores, and confirms that a compound remains inspectable after
-all of its evidence is removed. It also requests a global binding audit, verifies
-the certificate through the live endpoint, and submits a false rank claim with a
-recomputed valid content hash. The false claim must still be rejected. The smoke
-report retains the full original certificate and verification/rejection results.
+all of its evidence is removed. It requests binding, source-group, selected-PubMed,
+conditional-protection and joint group/record certificates. Each is verified
+through its live endpoint; a correctly rehashed false claim must still be
+rejected. The smoke report retains the complete certificates and actual
+verification/rejection results, including the joint audit's independent matrix
+witness replays.
 Invoke `python infra/smoke.py --base-url URL`
 through the Nginx address when ports are customized.
 
@@ -144,52 +146,103 @@ through the Nginx address when ports are customized.
 ```bash
 make audit-licenses
 make benchmark-audits
+make benchmark-provenance
+make benchmark-mixed
+make provenance-controls
 make verify-scores
 ```
 
-The first target inventories the actual prepared data's license text and missing
-metadata; successful execution never means legal clearance. The second runs the
-binding-audit workload across every disease's canonical baseline top ten at
-budgets zero, one and two, with every compound eligible as a competitor. The third
-preserves legacy score parity with the checksum-verified historical implementation
-and requires a full Git clone containing that commit. A source ZIP has no Git
-history; obtain the normal clone before running that historical regression gate.
+The license target inventories the actual prepared data's license text and
+missing metadata; successful execution never means legal clearance. Each audit
+benchmark covers every disease's canonical baseline top ten with all compounds
+eligible as competitors. The binding and provenance workloads cover budgets zero,
+one and two in their respective units. The joint workload covers all four cells
+of a source-group budget of zero or one and a surviving-record budget of zero or
+one; group and record budgets remain separate. `provenance-controls` reproduces
+the disclosed, size-matched random controls for two postselected examples.
 
-The API loads the auditor lazily and keeps a bounded disease-envelope cache.
-The first request for a disease computes its local deletion states; subsequent
+`verify-scores` preserves legacy score parity with the checksum-verified
+historical implementation and requires a full Git clone containing that commit.
+A source ZIP has no Git history; obtain the normal clone before running that
+historical regression gate. The [release guide](releasing.md) explains how to
+replay the retained CI certificates using their original fitted model, including
+the separate joint-research job's artifacts.
+
+The API loads auditors lazily and keeps bounded caches. The first request for a
+disease computes the relevant local states or group scenarios; subsequent
 requests can reuse them. Verification recomputes optimality with the same proven
-algorithm in a separate bounded cache and independently replays witnesses with
+algorithm in separate bounded caches and independently replays witnesses with
 edited graph matrices. It is not a second independent optimality algorithm.
-The scientific tests provide exhaustive global enumeration on small graphs.
+The scientific tests compare the claimed bounds with exhaustive global
+enumeration on small graphs, including overlapping groups and residual records.
 
-Audit input is restricted to `top_k=1..100`, `budget=0..2`, and exact disease and
-compound IDs. It always uses the complete graph, independently of any selected
-family exclusion. A fitted model is required. No additional database, model
-download, API key or container is needed. The canonical audit scorer is separate
-from the unchanged legacy ranking scorer; see the [numerical contract](binding_audit_proof.md).
+Audit input is restricted to `top_k=1..100` and exact disease and compound IDs.
+Binding and provenance use `budget=0..2`; the joint API accepts separate
+`group_budget=0..1` and `edge_budget=0..1`. Explicit annotation-group selections
+contain 1..16 distinct IDs; source groups are the default and PubMed groups
+require a selection. All audits start from the complete graph, independently of
+any selected family exclusion. A fitted model is required. No additional
+database, model download, API key or container is needed. The canonical audit
+scorer is separate from the unchanged legacy ranking scorer; see the
+[numerical contract](binding_audit_proof.md) and [API contract](api.md).
+
+### Synthetic timing comparison
+
+```bash
+make benchmark-mixed-scaling
+```
+
+This separate workload compares the joint envelope solver with complete-world
+sparse recomputation on 24 generated graphs: 8, 16, 32 or 64 compounds; four or
+eight source groups; and three fixed seeds. Each graph uses the same canonical
+top-three cohort for both methods, with three matched trials and cold arithmetic
+caches. Shared graph loading and cohort selection, solver setup, solving and
+certificate verification have separate timing fields. These synthetic results
+do not establish a production speedup or performance on a larger real graph.
+
+The target writes `reports/v1.4.0/scaling/`. Keep that complete output directory,
+including both JSON reports and all generated
+`inputs/` directories. The [protocol](mixed_scaling.md) explains the independent
+enumeration and paired timing summaries. For a reference execution that requires
+a clean Git checkpoint, add `--require-clean` and choose an absolute output
+directory outside the checkout when invoking the CLI directly:
+
+```bash
+.venv/bin/python -m scripts.benchmark_mixed_scaling \
+  --require-clean --output-dir /tmp/ariadne-mixed-scaling
+```
+
+A normal development run records its actual
+dirty state and scientific file hashes; running `make data` first can change
+tracked model/evaluation files and therefore cannot establish a clean checkout.
 
 ## Images and CI
 
 The GitHub workflow pins third-party actions to verified commit SHAs. It
 installs pinned Python dependencies, downloads checksummed data, runs tests,
 executes the notebook, builds the full stack and exercises the API. Image
-publication waits for both quality and integration jobs. Immediately after checkout, each CI job runs
-`infra/prepare_ci_evidence.py --job quality|integration` and records its checkout
-SHA and Actions identifiers separately. Quality removes only the outputs it will
-rebuild, including generated model/evaluation metadata; integration removes only
-operational reports and preserves the prepared scientific artifacts. Quality
-also removes the prior v1.2 benchmark and licensing inventory before regenerating
-them. This
-prevents an early failure from uploading a committed success from an older run.
-The source graph, notebook and historical reference reports are preserved.
+publication waits for quality, integration and joint research to succeed for the
+same source revision. Immediately after checkout, each CI job runs
+`infra/prepare_ci_evidence.py --job quality|integration|mixed` and records its
+checkout SHA and Actions identifiers separately. Quality removes only its
+generated model/evaluation metadata, benchmark outputs and operational reports;
+the joint job separately clears its fit and v1.4 reports; integration removes
+its operational reports before creating a fresh Compose deployment. Each job
+retains its own model and evidence. This prevents an early failure from
+uploading a committed success in a slot that should describe the new run.
+The source graph, notebook and reference reports outside each job's declared
+outputs are preserved.
 
 After the live HTTP smoke check, CI copies `model.json`, `manifest.json` and
 `evaluation.json` directly from the API container into `reports/live-*.json`.
 The live-artifact gate checks the model's parameter self-hash and binds every
-binding/provider/conditional/PubMed smoke certificate to the copied model and
+binding/provider/conditional/PubMed/joint smoke certificate to the copied model and
 prepared graph. These files allow offline replay of the actual live certificates.
-The quality job's separately fitted model and the committed research-snapshot
-model remain separate origins; neither is relabelled as the container fit.
+The quality fit, joint-research fit, committed research-snapshot model and
+container fit remain separate origins. Matching seeds or retrieval ranks do not
+establish identical fitted parameters. The three artifacts are named
+`quality-evidence`, `mixed-evidence` and `integration-evidence`; use the matching
+`infra.replay_ci_certificates --kind` value described in the release guide.
 
 Images are tagged with both `latest` and the source commit SHA:
 
@@ -207,6 +260,9 @@ claiming that the public-registry rubric item is complete.
 `make snapshot` exports the checked graph/model results for a static hosted
 interface. This edition identifies its dataset and model snapshot and can
 present candidate rankings, evidence and precomputed exclusion scenarios.
+The Overview is static introductory content; it loads a research case only when
+the visitor enters the workbench. Existing case and audit deep links still open
+their selected investigation directly.
 It has no embedded provider credential. A frozen research edition is useful for
 review and sharing, while the full Compose stack is the live database and
 agent implementation used for the technical demonstration.
@@ -216,6 +272,13 @@ Binding audits in this edition are frozen records for the exported compounds,
 verification status is recorded. A browser checksum check does not recompute
 optimality or edit a live graph. Use the live API to independently reverify an
 exported certificate against its matching model and graph identities.
+
+Provenance presets cover top ten with group budgets one and two. Joint presets
+cover top ten with one source group and one surviving record, retaining all four
+budget cells and their witnesses. Custom PubMed selections, protected-group
+assumptions and other unexported scopes require the live API. Missing presets
+remain explicitly unavailable; separate record and group certificates cannot
+be combined in the browser to manufacture a joint guarantee.
 
 Before using a case file, the client verifies its raw byte count and SHA-256
 against the manifest, then checks each audit's dataset/model/graph identities.

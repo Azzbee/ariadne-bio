@@ -25,6 +25,8 @@ exclusions are drawn only from `BINDS`, `ASSOCIATES`, `INTERACTS` and `PARTICIPA
 | `GET /api/provenance/groups?kind=source&q=&limit=30&offset=0` | Imported binding-record source or PubMed groups, membership digests and annotation coverage |
 | `POST /api/provenance/audit` | Exact correlated group withdrawals, original shortlist and minimum conditional protection sets |
 | `POST /api/provenance/audit/verify` | Recompute the complete group certificate and independently replay its matrix witnesses |
+| `POST /api/mixed/audit` | Exact frontier for up to one provenance group plus one additional surviving binding record, including all competitors |
+| `POST /api/mixed/audit/verify` | Recompute the joint frontier and independently replay the complete group-and-record union |
 
 Ranking and algorithm limits are bounded to 100, evidence display to 30, and
 challenge results to 50. Disease pagination allows at most 137 per request.
@@ -196,12 +198,93 @@ witness replays. Correctly rehashing a fabricated result does not make it valid.
 The HTTP verification response distinguishes a completed invalid verdict from
 transport errors. The CLI exits zero only for a verified certificate.
 
-Both verifiers require the exact matching graph and fitted model. Docker can fit
+All audit verifiers require the exact matching graph and fitted model. Docker can fit
 a separate model from the frozen research edition; retained live-container
 artifacts identify the model used for its certificates. See the
 [group-audit guide](provenance_audit.md), [proof](provenance_audit_proof.md) and
 [deployment instructions](deployment.md). Scientific validity and clinical
 efficacy remain outside these finite model guarantees.
+
+## Joint source-group and individual-record audit
+
+```bash
+curl -X POST 'http://localhost:8080/api/mixed/audit' \
+  -H 'Content-Type: application/json' \
+  -d '{"disease_id":"Disease::DOID:7148","compound_id":"Compound::DB00786","top_k":10,"group_budget":1,"edge_budget":1}' \
+  --output joint-audit.json
+
+python -c 'import json,sys; print(json.dumps({"certificate": json.load(sys.stdin)}))' \
+  < joint-audit.json | curl -X POST 'http://localhost:8080/api/mixed/audit/verify' \
+  -H 'Content-Type: application/json' --data-binary @-
+
+python -m scripts.verify_audit joint-audit.json --data-dir data/processed
+```
+
+The source group withdraws every BINDS record carrying its selected annotation.
+The additional record must survive that withdrawal. Overlapping membership
+never removes a record twice, and the remaining record can belong to the focus
+or any competitor. Unannotated records and records with unselected annotations
+remain eligible for the individual-record operation. All paths and ranks are
+computed from the unmodified full graph followed by those declared changes;
+the explorer's evidence-family switches do not alter the audit scope.
+
+| Request field | Contract |
+| --- | --- |
+| `disease_id`, `compound_id` | Exact typed entity IDs, each at most 180 characters |
+| `top_k` | Strict integer 1..100; default 10 |
+| `group_budget` | Strict integer 0 or 1; default 1 |
+| `edge_budget` | Strict integer 0 or 1; default 1 |
+| `group_kind` | `source` or `pubmed`; default `source` |
+| `group_ids` | 1..16 unique, matching-kind group IDs; omitted/null selects all observed source labels |
+
+PubMed requests require an explicit group selection. Unknown groups, duplicate
+IDs, booleans or strings in place of integer budgets, family exclusions,
+protection assumptions and other extra request fields are rejected with HTTP
+422. Missing entities receive 404 and a missing fitted model receives 503.
+Use `/api/provenance/groups` to discover the available imported annotations.
+
+The response declares `method="mixed-group-edge-envelope-v1"`,
+`schema_version="1.0"` and `identity.scorer="decimal80-binary64-v1"`.
+`results` contains every budget cell from `(0,0)` through the requested rectangle,
+ordered first by group budget and then by edge budget. The default returns
+`(0,0)`, `(0,1)`, `(1,0)`, `(1,1)`. Each cell covers **at most** its two budgets.
+The units remain separate: one group can contain thousands of records.
+
+| Certificate field | Meaning |
+| --- | --- |
+| `scope.group_ids`, `scope.groups` | Selected group universe and exact membership metadata |
+| `scope.eligible_edge_count`, `scope.candidate_count` | Global record and compound universes |
+| `identity` | Exact dataset, graph, fitted model, group map and scorer identities |
+| `baseline` | Unmodified canonical audit score, supported status, rank and path counts |
+| `results[].group_budget`, `results[].edge_budget` | The two limits for this frontier cell |
+| `results[].worst_supported_rank` | Largest attainable supported rank; null if no supported state exists |
+| `results[].unsupported_attainable` | Whether some permitted joint edit removes every supporting path |
+| `results[].robust` | Every allowed state remains supported and within the requested top-k |
+| `results[].rank_witness`, `unsupported_witness` | An attaining group/record action, or null when inapplicable |
+| `proof.conditional_slice_count` | Number of constructed group-conditioned cases |
+| `proof.local_states_evaluated` | Compound-local score states constructed across those cases |
+| `proof.covered_action_representations` | Covered group/residual-record action representations; different actions can produce the same edited graph |
+| `proof.envelope_table_sha256`, `proof.conditional_slices` | Complete conditional-envelope identity and per-case accounting |
+| `certificate_sha256` | Deterministic digest of the full certificate excluding this field |
+
+Each witness contains `group_ids`, `residual_edge_ids`, the complete removed-union
+count and digest, the affected-compound count, at most six actual record previews,
+an explicit truncation flag, and the focus state before and after the edit.
+The preview is not the complete withdrawn record list. Replay reconstructs the
+union from the identified graph and group map, then applies the residual deletion.
+
+Verification accepts the complete certificate in the standard
+`{"certificate": ...}` envelope, with the same 256 KiB finite-JSON bound. It
+recomputes the entire frontier and separately replays distinct witnesses with
+edited matrices. Unknown arithmetic identities and correctly rehashed false
+claims are rejected. A completed invalid verdict is HTTP 200 with `valid=false`;
+malformed or oversized request envelopes are transport validation errors.
+
+Passing the two separate axes does not establish joint robustness. Conversely,
+observing a joint failure is a property of this finite fixed-model stress test,
+not biological synergy, a source-error probability or a clinical prediction.
+See the [user guide](mixed_audit.md), [proof](mixed_audit_proof.md) and
+[research comparison](research_atlas.md).
 
 ## Compound-aware agent
 
@@ -246,6 +329,15 @@ The static interface can inspect those objects and check their recorded identity
 it cannot recompute graph optimality in the browser. A matching live API can
 reverify an exported certificate. Unsupported parameter combinations require the
 live application rather than a fabricated static result.
+
+V1.3 adds source-group presets at top ten and group budgets one and two. V1.4
+adds joint source/record presets at top ten with both budgets one, retaining
+the complete four-cell frontier for every exported compound. A recorded
+verification must identify the exact certificate and graph/model snapshot.
+Explicit PubMed selections, custom protection assumptions and unexported scopes
+require the live API; a pair of separate-axis certificates cannot stand in for
+a joint certificate. The landing page's three-step illustration remains an
+explicitly versioned v1.3 recorded example.
 
 The static client checks raw case bytes against the manifest's length/SHA-256
 descriptors before parsing and caching, and requires matching certificate
