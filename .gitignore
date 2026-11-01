@@ -27,6 +27,10 @@ frontend/data/
 *.webm
 *.zip
 *.tar.gz
+!reports/v1.4.0/reference-source-3f14898.tar.gz
+!reports/v1.4.0/scaling/scaling-source-54da143.tar.gz
+!reports/v1.4.0/scaling/mixed-scaling-replay-inputs.zip
+reports/v1.4.0/scaling/inputs/
 .ipynb_checkpoints/
 demo.executed.ipynb
 reports/coverage/
@@ -39,6 +43,7 @@ dist/
 reports/ollama-model.json
 reports/ci-quality.json
 reports/ci-integration.json
+reports/ci-mixed.json
 reports/llm-compound.json
 reports/runner-resources.txt
 reports/docker-disk-usage.txt

@@ -1,35 +1,46 @@
 # ARIADNE
 
-**Trace the evidence. Challenge the hypothesis.**
+<img src="frontend/assets/mark.svg" width="64" height="64" alt="ARIADNE's open threaded A mark">
+
+**Follow the evidence. Find what holds.**
 
 [![CI](https://github.com/Azzbee/ariadne-bio/actions/workflows/ci.yml/badge.svg)](https://github.com/Azzbee/ariadne-bio/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/code-MIT-153f39.svg)](LICENSE)
 
-ARIADNE is a biomedical evidence workbench. Choose a disease, inspect ranked
-compound hypotheses, follow exact biological paths, then remove an evidence
-family and see how the same model's ranking changes. An agent resolves questions,
-calls bounded graph tools, and explains the returned records with an auditable
-trace.
+ARIADNE helps researchers explore medicines that might be worth investigating
+for another disease, inspect the biological evidence behind each suggestion,
+and test which suggestions survive changes to that evidence. Its workbench
+combines a knowledge graph, a fixed ranking model, a bounded research agent and
+exact, replayable evidence audits.
 
-**Version 1.3 adds correlated provenance audits and conditional protection plans.**
-Quarantine all binding records mentioning one or two selected providers or
-imported PubMed identifiers, including overlapping records and simultaneous
-changes to competitors. The engine enumerates the complete bounded scenario
-space and finds the smallest additional group-protection assumptions that block
-every failing scenario. This is exact for the declared model and catalogue;
-protection is an explicit assumption, not a claim that a review proves evidence
-true. See the [user guide](docs/provenance_audit.md),
-[proof](docs/provenance_audit_proof.md) and [prior art](docs/research_contribution.md).
+**Version 1.4 adds an evidence-atlas landing page and a joint evidence audit.**
+The new threaded logo, animated conceptual map and interactive recorded example
+introduce the research question before opening the full workbench. The landing
+page loads without fetching the graph dataset; existing case links still open
+their selected investigation directly. See the [design notes](docs/design.md).
 
-**Version 1.2 adds an exact ranking audit:** can this compound leave the top ten
-if any one or two recorded binding edges are withdrawn anywhere in the graph,
-including competitors' edges? The result gives the worst supported rank, loss-of-support
-possibility and replayable witnesses, with a separately callable verifier. The
-guarantee is about the fixed model and the declared edge-deletion budget; it does
-not certify a treatment, a biological intervention or source-level independence.
-See the [method and proof](docs/binding_audit_proof.md) and
-[measured audit results](docs/audit_benchmark.md), with
-[closest prior art](docs/research_contribution.md).
+The research addition closes a logical gap: surviving a source-group test and
+an individual-record test separately does not establish survival when both
+changes occur together. The joint auditor conditions on each selected group
+withdrawal, then computes the exact effect of one additional surviving binding
+record anywhere in the graph, including a competitor's. Its four-cell frontier
+separates worse supported ranks from complete loss of support. See the
+[joint-audit guide](docs/mixed_audit.md), [proof](docs/mixed_audit_proof.md), and
+[research position and prior art](docs/research_atlas.md).
+
+| Audit | Declared withdrawal space | Result |
+| --- | --- | --- |
+| Individual records | Any zero, one or two BINDS records across all compounds | Exact worst supported rank, support loss and attaining witnesses |
+| Shared provenance | Any zero, one or two selected source or PubMed annotation groups | Exact joint reranking, shared dependencies and minimum conditional protection sets |
+| Joint evidence | Up to one selected annotation group plus one additional surviving BINDS record | Exact two-axis frontier and witnesses for simultaneous changes |
+
+Group budgets and record budgets count different units. All three methods keep
+the fitted model fixed, include every competing compound, state their finite
+scope, and provide separately callable verification. These guarantees concern
+the specified ranking function; they do not establish clinical efficacy,
+biological causality or source independence. A protection set is an explicit
+assumption about unavailable withdrawals, not evidence that a review proves
+records true.
 
 The prepared Hetionet subset contains **24,456 nodes, 255,730 evidence edges,
 137 diseases and 1,552 compounds**. A separate set of 755 recorded treatment
@@ -39,7 +50,7 @@ links supports retrospective evaluation. See the checksummed
 Research hypotheses are not treatment recommendations. Removing an evidence
 family measures sensitivity to the available graph, not a biological intervention.
 
-![ARIADNE evidence workbench with actual Hetionet records](docs/screenshots/workbench.jpg)
+![ARIADNE v1.4 Overview with its threaded mark and conceptual evidence map](docs/screenshots/landing-v1.4.jpg)
 
 ## Inspect the published research edition
 
@@ -47,9 +58,10 @@ family measures sensitivity to the available graph, not a biological interventio
 from the release assets. Extract `ariadne-research-edition.zip`, run
 `python3 -m http.server 8080 --bind 127.0.0.1` inside it, and open
 http://localhost:8080. It needs no Docker, API key or model download. Its recorded
-results and deterministic guide are explicitly identified. Version 1.3 includes
-both audit methods, conditional protection plans, complete certificates, printable
-review dossiers, proofs, the executed notebook, measured benchmarks and checksums.
+results and deterministic guide are explicitly identified. The v1.4 source
+packages all three audit methods, conditional protection plans, complete
+certificates, printable group-review dossiers, proofs, the executed notebook,
+measured benchmarks and checksums.
 The separate verification archive retains the actual run identities and replay
 evidence. Any accompanying narrated video and captions are explicitly labeled as
 the historical v1.1 walkthrough; they do not demonstrate the newer audit features.
@@ -96,7 +108,8 @@ and can call a live language model. [Deployment details](docs/deployment.md).
 4. Ask the agent to explain the investigation. Inspect its tool trace and citations.
 5. Run the binding audit, inspect a worst-case witness and verify its certificate.
 6. Audit provider or citation groups, inspect shared records and compare conditional protection sets.
-7. Open Evaluation to compare the model with baselines and inspect an actual failure.
+7. Open the joint audit to compare the baseline, each separate operation, and their combination.
+8. Open Benchmark to compare the model with baselines and inspect an actual failure.
 
 Version 1.1 keeps the selected compound visible when evidence changes, even when
 it falls outside the displayed ranking or loses every supporting path. Its
@@ -151,6 +164,45 @@ not a treatment claim or evidence that the source is unreliable.
 
 ![Executed retrospective benchmark and its explicit evaluation protocol](docs/screenshots/benchmark.jpg)
 
+### Measured joint-audit results
+
+The completed [v1.4 reference workload](reports/v1.4.0/mixed-audit-summary.json)
+covers **1,330 baseline top-ten queries
+across all 137 diseases**; three diseases have no supported candidates. Every
+query keeps the same fitted model and reranks all 1,552 compounds. The group
+scope contains all 14 observed source labels, with at most one withdrawn group
+and one additional surviving binding record.
+
+| Group budget | Additional-record budget | Top-ten robust / 1,330 | Support loss attainable / 1,330 |
+| ---: | ---: | ---: | ---: |
+| 0 | 0 | 1,330 | 0 |
+| 0 | 1 | 256 | 79 |
+| 1 | 0 | 39 | 205 |
+| 1 | 1 | **0** | 375 |
+
+**Thirty queries pass both separate audits, and all thirty fail the joint audit.**
+Separate passes therefore do not establish joint robustness. The strongest
+result from both greedy operation orders finds 1,326 of the 1,330 failures;
+the exact audit finds the remaining **four**. That greedy comparator
+underestimates the worst supported rank in **54 of 966** supported outcomes,
+with a maximum gap of 867 positions. The other 364 outcomes have no support and are
+excluded from that rank-gap denominator.
+
+All 1,330 certificates verified, with 5,560 certificate witness replays and
+2,455 greedy witness replays and no failed checks. These findings concern one
+graph, one fitted model and the declared withdrawal space. The
+[complete results](docs/mixed_audit_results.md) and
+[full report](reports/v1.4.0/mixed-audit-benchmark.json) retain the scope,
+comparators, postselected illustration and actual execution identities.
+
+A separate **24-graph synthetic study** ran 72 matched trials with cold
+arithmetic caches. Across its eight size/group settings, the literal exhaustive
+reference took **10.9–71.0×** as long as the envelope method for setup and solving
+(median paired ratios per setting). These are measured times on a
+small synthetic family and one runtime; they do not establish Hetionet-scale
+latency. The [scaling protocol and results](docs/mixed_scaling.md) retain every
+trial, generated input and comparison boundary.
+
 ## Retrospective retrieval benchmark
 
 Fixed seed 42, 528 training, 113 validation and **114 held-out treatment links**.
@@ -187,6 +239,8 @@ make snapshot         # Export every recorded scenario for frontend verification
 make audit-licenses   # Inventory actual source-license text and missing metadata
 make benchmark-audits # All diseases, top ten, global binding budgets zero to two
 make benchmark-provenance # All diseases, correlated source groups and protection sets
+make benchmark-mixed  # All diseases, joint source/record frontier and both greedy orders
+make benchmark-mixed-scaling # Matched synthetic timing against exhaustive recomputation
 make provenance-controls # Disclosed size-matched controls for two selected examples
 make test             # Unit/API tests, branch coverage gate and frontend tests
 make lint             # Pylint >=9.5 and Black formatting
@@ -223,7 +277,9 @@ the full-dataset binding audit, rejected rehashed certificate claims, and a live
 LLM request that overrides stale compound selection. It deletes old
 operational reports before collecting fresh evidence for the actual checkout,
 records the default model identity, and publishes API and frontend images only
-after quality and full-stack integration pass. Release proof is tied to the
+after quality, full-stack integration and the separate joint-audit research job
+pass for the same revision. Each job retains its own fitted model; identical
+seeds do not justify substituting one job's parameters for another's. Release proof is tied to the
 verified source commit; [release instructions](docs/releasing.md) describe it.
 The workflow badge above reports its actual status. Registry locations:
 [API image](https://github.com/Azzbee/ariadne-bio/pkgs/container/ariadne-bio-api)
@@ -252,7 +308,7 @@ and compound target similarity as separate analysis tools. The agent explains
 structured tool results. The language model never determines benchmark labels or
 model scores; those come from the recorded data and deterministic graph pipeline.
 
-For an exported binding or provenance certificate, the offline verifier needs no running API,
+For an exported binding, provenance or joint certificate, the offline verifier needs no running API,
 Neo4j or language model:
 
 ```bash
@@ -287,13 +343,17 @@ curl -X POST 'http://localhost:8080/api/agent' \
 | What is the new research claim, and what already exists? | [Contribution and prior art](docs/research_contribution.md) |
 | What exactly does the ranking certificate prove? | [Binding-audit proof and numerical contract](docs/binding_audit_proof.md) |
 | How do shared-source withdrawals and conditional protection work? | [Provenance audit guide](docs/provenance_audit.md) and [proof](docs/provenance_audit_proof.md) |
+| What happens when source and individual-record changes occur together? | [Joint-audit guide](docs/mixed_audit.md), [proof](docs/mixed_audit_proof.md) and [research position](docs/research_atlas.md) |
+| How is the solver's runtime compared fairly? | [Synthetic scaling protocol and measured-time conventions](docs/mixed_scaling.md) |
 | How are certificate calculations reproduced across machines? | [Declared numerical contract](docs/audit_numerical_contract.md) |
-| What did the complete audit and stronger baseline actually find? | [Audit benchmark and limitations](docs/audit_benchmark.md) |
+| What did the individual-record audit and stronger baseline find? | [Audit benchmark and limitations](docs/audit_benchmark.md) |
+| What did the complete joint audit and greedy comparisons find? | [Measured joint-audit results](docs/mixed_audit_results.md) |
 | How are leakage, candidates and failure cases handled? | [Model card](docs/model_card.md) |
 | Where did the data come from, and under what terms? | [Data sources and licenses](docs/data_sources.md) |
 | Which license restrictions and gaps are actually recorded? | [Observed license inventory](docs/licensing_audit.md) |
 | How would commercial value be tested? | [Prospective pilot protocol](docs/commercial_pilot.md) |
 | What does each API response mean? | [API contract and examples](docs/api.md) |
+| How does the interface introduce the research question? | [Brand, interaction and accessibility notes](docs/design.md) |
 | How do I release a tested source revision? | [Release verification](docs/releasing.md) |
 | How do I run, configure and troubleshoot it? | [Deployment](docs/deployment.md) |
 | What does each grading criterion map to? | [Rubric evidence matrix](docs/rubric.md) |

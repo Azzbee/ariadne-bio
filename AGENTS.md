@@ -81,7 +81,24 @@ IDs are namespace-qualified strings, e.g. `Disease::DOID:...`.
   scenario. This is a conditional assumption, never an optimal review or experiment.
 - POST `/provenance/audit/verify` accepts a complete group certificate and separately
   reconstructs the scenario table, protection optimum and matrix witnesses. The
-  shared offline `scripts.verify_audit` CLI dispatches both certificate methods.
+  shared offline `scripts.verify_audit` CLI dispatches the binding, provenance
+  and joint certificate methods.
+- POST `/mixed/audit` body `{disease_id,compound_id,top_k:10,group_budget:1,
+  edge_budget:1,group_kind:"source",group_ids:null}` => exact joint frontier for
+  up to one selected provenance group plus one surviving individual BINDS record.
+  Both budgets are strict integers in 0..1; `top_k` is 1..100. Explicit group
+  selections contain 1..16 unique IDs; PubMed requires an explicit selection.
+  Default scope contains every observed source label. A residual record must
+  survive the group withdrawal; all competitors change and overlap is counted
+  once. Record and group budgets have distinct units. Result rows cover every
+  `(group_budget,edge_budget)` pair within the requested rectangle, ordered by
+  group budget then edge budget. Unsupported outcomes remain separate from
+  worst supported ranks. No group protection assumptions are accepted.
+- POST `/mixed/audit/verify` accepts a complete certificate, recomputes the
+  conditional envelopes and independently replays the union of each witness's
+  source-group records and residual record. Method `mixed-group-edge-envelope-v1`
+  uses only `decimal80-binary64-v1`. The offline verifier dispatches all three
+  methods. Separate audit success does not establish joint robustness.
 
 ## Data engine interface
 
