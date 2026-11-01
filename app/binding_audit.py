@@ -1,6 +1,6 @@
 """Exact rank bounds under globally budgeted binding-record withdrawal.
 
-The audit has its own declared, shape-independent float64 scorer. The legacy
+The audit has its own declared, reproducible finite arithmetic scorer. The legacy
 GraphEngine and saved model are untouched. A binding edit affects only the
 compound at its source, enabling exact local score envelopes and a globally
 optimal allocation of the remaining deletion budget to competitor promotions.
@@ -22,14 +22,14 @@ import numpy as np
 # SciPy exposes this compiled ufunc dynamically; pylint cannot inspect it.
 from scipy.special import expit  # pylint: disable=no-name-in-module
 
+from app.audit_numerics import SCORER, LEGACY_SCORER, SUPPORTED_SCORERS, canonical_scores
 from app.graph_engine import FEATURE_NAMES
 
 MAX_BUDGET = 2
 MAX_SAFE_INTEGER = 2**53 - 1
-SCORER = "float64-fixed-order-v1"
 METHOD = "binding-envelope-v1"
 COUNT_NAMES = ("direct", "interaction", "pathway")
-INTERPRETATION = (
+LEGACY_INTERPRETATION = (
     "This is an exact finite-budget audit of this fixed model under withdrawal of any "
     "recorded BINDS edges, including edges of competing compounds. It is not a biological "
     "intervention or a probability of efficacy. Source labels are not independent studies. "
@@ -40,6 +40,18 @@ INTERPRETATION = (
     "rank means no supported scenario exists. Unsupported outcomes are reported separately. "
     "The guarantee does not cover other edge families, correlated source-group failures, "
     "new edges, model refitting, or deletion budgets above the requested limit."
+)
+INTERPRETATION = (
+    "This is an exact finite-budget audit of this fixed model under withdrawal of any "
+    "recorded BINDS edges, including edges of competing compounds. It is not a biological "
+    "intervention or a probability of efficacy. Source labels are not independent studies. "
+    "The declared decimal80-binary64-v1 scorer uses fixed Decimal transforms and ordered "
+    "nearest-even IEEE-754 binary64 arithmetic, with score/compound-ID ties. Exactness is "
+    "relative to that finite arithmetic contract; strict verification rejects every "
+    "numerical mismatch. Legacy GraphEngine scores remain separate and unchanged. "
+    "A null worst supported rank means no supported scenario exists. Unsupported outcomes "
+    "are reported separately. The guarantee does not cover other edge families, correlated "
+    "source-group failures, new edges, model refitting, or larger deletion budgets."
 )
 
 
@@ -98,8 +110,20 @@ def certificate_digest(certificate) -> str:
     )
 
 
-def canonical_scores(counts, compound_degree, disease_degree, model) -> tuple:
-    """Return scores/logits with exactly the same eight operations for every row.
+def certificate_scorer(certificate, expected_identity):
+    """Select a known scorer only after every frozen input identity matches."""
+    identity = certificate.get("identity")
+    if not isinstance(identity, dict) or identity.get("scorer") not in SUPPORTED_SCORERS:
+        raise ValueError("Unsupported audit scorer identity")
+    if {key: value for key, value in identity.items() if key != "scorer"} != {
+        key: value for key, value in expected_identity.items() if key != "scorer"
+    }:
+        raise ValueError("Certificate graph, model or provenance identity does not match")
+    return identity["scorer"]
+
+
+def legacy_canonical_scores(counts, compound_degree, disease_degree, model) -> tuple:
+    """Preserve the historical float64-fixed-order-v1 scorer for old certificates.
 
     Each term is evaluated separately in feature order. There is no BLAS dot
     product, fused multiply-add, or shape-dependent reduction over features.
@@ -161,43 +185,84 @@ class _Bound:
     focus_rank: int | None
 
 
+@dataclass(frozen=True)
+class FrozenAuditInputs:
+    """Copy lookup/diagnostic inputs so engine cache mutations cannot change seals."""
+
+    nodes: dict
+    disease_positions: dict
+    path_counts: np.ndarray
+    legacy_scores: np.ndarray | None
+
+    @classmethod
+    def capture(cls, engine, scorer):
+        """Retain only entity fields used by certificates, plus original path counts."""
+        return cls(
+            {
+                key: {field: deepcopy(node[field]) for field in ("id", "name", "label")}
+                for key, node in engine.nodes.items()
+            },
+            dict(engine.positions["Disease"]),
+            engine.path_counts.copy(),
+            (
+                engine.score_matrix().copy()
+                if engine.model is not None and scorer == LEGACY_SCORER
+                else None
+            ),
+        )
+
+
 class BindingAuditor:
     """Immutable scientific audit with bounded, lock-protected disease caches."""
 
-    def __init__(self, engine, cache_size: int = 4):
+    def __init__(self, engine, cache_size: int = 4, *, scorer=SCORER):
         if isinstance(cache_size, bool) or not isinstance(cache_size, int) or cache_size < 1:
             raise ValueError("Audit cache size must be a positive integer")
+        if scorer not in SUPPORTED_SCORERS:
+            raise ValueError("Unsupported audit scorer identity")
         self.engine = engine
+        self._scorer = scorer
+        self._score = canonical_scores if scorer == SCORER else legacy_canonical_scores
+        self._compatible_verifiers = {}
         self._lock = RLock()
         self._cache_size = cache_size
         self._cache = OrderedDict()
         self._verification_cache = OrderedDict()
         self._replay_cache = OrderedDict()
         self._model = self._validate_model(engine.model)
+        self._inputs = FrozenAuditInputs.capture(engine, scorer)
         self._matrices = {name: value.copy() for name, value in engine.matrices.items()}
         self._compounds = tuple(engine.entities["Compound"])
         self._compound_positions = dict(engine.positions["Compound"])
         self._compound_degrees = np.asarray(self._matrices["BINDS"].sum(axis=1)).ravel()
         self._pathway_degrees = np.asarray(self._matrices["PARTICIPATES"].sum(axis=1)).ravel()
-        self._records, self._bindings = self._validate_bindings()
+        graph_bytes = (engine.data_dir / "graph.json").read_bytes()
+        graph_sha256 = hashlib.sha256(graph_bytes).hexdigest()
+        if engine.manifest.get("graph_sha256", graph_sha256) != graph_sha256:
+            raise ValueError("Graph checksum changed after the engine was loaded")
+        self._records, self._bindings = self._validate_bindings(json.loads(graph_bytes))
         self._edge_coordinates = {
             edge_id: (compound, gene)
             for compound, records in enumerate(self._bindings)
             for edge_id, gene in records
         }
-        graph_bytes = (engine.data_dir / "graph.json").read_bytes()
         self._identity = {
             "dataset_sha256": engine.manifest.get("dataset_sha256"),
-            "graph_sha256": hashlib.sha256(graph_bytes).hexdigest(),
+            "graph_sha256": graph_sha256,
             "model_sha256": engine.model.get("model_sha256")
             or hashlib.sha256(json.dumps(engine.model, sort_keys=True).encode()).hexdigest(),
-            "scorer": SCORER,
+            "scorer": scorer,
         }
 
     @staticmethod
     def _validate_model(model):
         if model is None:
             raise RuntimeError("A fitted model is required for binding audits; run evaluate")
+        if model.get("model_sha256"):
+            unsigned = {key: value for key, value in model.items() if key != "model_sha256"}
+            actual = hashlib.sha256(json.dumps(unsigned, sort_keys=True).encode()).hexdigest()
+            if actual != model["model_sha256"]:
+                raise ValueError("Model checksum changed after the engine was loaded")
         if model.get("feature_names", FEATURE_NAMES) != FEATURE_NAMES:
             raise ValueError("Unsupported audit model feature definitions")
         result = {}
@@ -222,9 +287,15 @@ class BindingAuditor:
             raise ValueError("Invalid audit model intercept")
         return result
 
-    def _validate_bindings(self):
+    def _validate_bindings(self, graph):
         """Reject duplicate records even if GraphEngine's binary CSR collapsed them."""
-        graph = json.loads((self.engine.data_dir / "graph.json").read_text(encoding="utf-8"))
+        node_ids = [node["id"] for node in graph["nodes"]]
+        if (
+            len(node_ids) != len(set(node_ids))
+            or set(node_ids) != self.engine.nodes.keys()
+            or any(node != self.engine.nodes.get(node["id"]) for node in graph["nodes"])
+        ):
+            raise ValueError("Graph node identities changed after the engine was loaded")
         records, coordinates = {}, set()
         bindings = [[] for _ in self._compounds]
         all_ids = set()
@@ -251,12 +322,14 @@ class BindingAuditor:
                 raise ValueError("BINDS endpoints do not match the graph matrix")
         if len(records) != self._matrices["BINDS"].nnz:
             raise ValueError("BINDS records do not match the binary graph matrix")
+        if all_ids != self.engine.edges.keys():
+            raise ValueError("Graph edge identities changed after the engine was loaded")
         return records, tuple(tuple(sorted(rows)) for rows in bindings)
 
     def _resolve(self, disease_id, compound_id):
         resolved = []
         for identifier, label in ((disease_id, "Disease"), (compound_id, "Compound")):
-            node = self.engine.nodes.get(identifier)
+            node = self._inputs.nodes.get(identifier)
             if node is None or node["label"] != label:
                 raise KeyError(f"Unknown {label.lower()}: {identifier}")
             resolved.append({"id": identifier, "name": node["name"]})
@@ -270,7 +343,7 @@ class BindingAuditor:
             raise ValueError("Audit deletion budget must be an integer from 0 through 2")
 
     def _state(self, counts, degrees, disease_degree):
-        scores, logits = canonical_scores(counts, degrees, disease_degree, self._model)
+        scores, logits = self._score(counts, degrees, disease_degree, self._model)
         return _State(counts, scores, logits, _ranks(scores, counts))
 
     def _local_layer(self, records, contributions, disease_degree, size):
@@ -279,7 +352,7 @@ class BindingAuditor:
         subsets = list(itertools.combinations(range(len(records)), size))
         positions = np.asarray(subsets, dtype=np.int64).reshape(len(subsets), size)
         counts = contributions[targets].sum(axis=0) - contributions[targets[positions]].sum(axis=1)
-        scores, _ = canonical_scores(counts, len(records) - size, disease_degree, self._model)
+        scores, _ = self._score(counts, len(records) - size, disease_degree, self._model)
         present = counts.sum(axis=1) > 0
         valid, missing = np.flatnonzero(present), np.flatnonzero(~present)
 
@@ -312,7 +385,7 @@ class BindingAuditor:
         return minimum, maximum, tuple(low), tuple(high), tuple(unsupported), evaluated
 
     def _build_envelopes(self, disease_id):
-        disease_index = self.engine.positions["Disease"][disease_id]
+        disease_index = self._inputs.disease_positions[disease_id]
         associations = self._matrices["ASSOCIATES"].getrow(disease_index).toarray().ravel()
         pathways = self._matrices["PARTICIPATES"]
         contributions = np.column_stack(
@@ -325,7 +398,7 @@ class BindingAuditor:
         if np.any(contributions < 0):
             raise ValueError("Negative simple-path contributions violate audit assumptions")
         baseline_counts = np.asarray(self._matrices["BINDS"] @ contributions, dtype=np.int64)
-        if not np.array_equal(baseline_counts, self.engine.path_counts[:, disease_index]):
+        if not np.array_equal(baseline_counts, self._inputs.path_counts[:, disease_index]):
             raise ValueError("Audit contribution counts disagree with the original graph")
         baseline = self._state(baseline_counts, self._compound_degrees, associations.sum())
         minimum, maximum = np.full((len(self._compounds), 3), np.nan), np.full(
@@ -451,8 +524,8 @@ class BindingAuditor:
         records = []
         for edge_id in removed:
             edge = deepcopy(self._records[edge_id])
-            edge["source_name"] = self.engine.nodes[edge["source"]]["name"]
-            edge["target_name"] = self.engine.nodes[edge["target"]]["name"]
+            edge["source_name"] = self._inputs.nodes[edge["source"]]["name"]
+            edge["target_name"] = self._inputs.nodes[edge["target"]]["name"]
             records.append(edge)
         return {
             "removed_edge_ids": list(removed),
@@ -462,7 +535,7 @@ class BindingAuditor:
             "changed_compounds": [
                 {
                     "id": self._compounds[index],
-                    "name": self.engine.nodes[self._compounds[index]]["name"],
+                    "name": self._inputs.nodes[self._compounds[index]]["name"],
                     "role": "focus" if index == focus else "competitor",
                     "before": self._summary(envelopes.baseline, index),
                     "after": self._summary(state, index),
@@ -478,14 +551,15 @@ class BindingAuditor:
 
     def _certificate(self, disease, compound, focus, top_k, budget, envelopes):
         baseline = self._summary(envelopes.baseline, focus, full=True)
-        legacy_scores = self.engine.score_matrix()[:, envelopes.disease_index]
-        legacy_ranks = _ranks(legacy_scores, envelopes.baseline.counts)
-        baseline.update(
-            legacy_score=float(legacy_scores[focus]),
-            legacy_rank=int(legacy_ranks[focus]) or None,
-            score_difference=float(baseline["score"] - legacy_scores[focus]),
-            rank_agrees_with_legacy=baseline["rank"] == (int(legacy_ranks[focus]) or None),
-        )
+        if self._scorer == LEGACY_SCORER:
+            legacy_scores = self._inputs.legacy_scores[:, envelopes.disease_index]
+            legacy_ranks = _ranks(legacy_scores, envelopes.baseline.counts)
+            baseline.update(
+                legacy_score=float(legacy_scores[focus]),
+                legacy_rank=int(legacy_ranks[focus]) or None,
+                score_difference=float(baseline["score"] - legacy_scores[focus]),
+                rank_agrees_with_legacy=baseline["rank"] == (int(legacy_ranks[focus]) or None),
+            )
         results = []
         for limit in range(budget + 1):
             bound = self._bound(envelopes, focus, limit)
@@ -540,7 +614,9 @@ class BindingAuditor:
                 "envelope_bounds_sha256": envelopes.bounds_sha256,
                 "search_budget": MAX_BUDGET,
             },
-            "interpretation": INTERPRETATION,
+            "interpretation": (
+                LEGACY_INTERPRETATION if self._scorer == LEGACY_SCORER else INTERPRETATION
+            ),
         }
         result["certificate_sha256"] = certificate_digest(result)
         return result
@@ -556,7 +632,7 @@ class BindingAuditor:
     def baseline_candidates(self, disease_id, limit=10):
         """Expose the audit scorer's supported baseline for complete benchmarking."""
         self._validate_limits(limit, 0)
-        disease = self.engine.nodes.get(disease_id)
+        disease = self._inputs.nodes.get(disease_id)
         if disease is None or disease["label"] != "Disease":
             raise KeyError(f"Unknown disease: {disease_id}")
         baseline = self._envelopes(disease_id).baseline
@@ -564,7 +640,7 @@ class BindingAuditor:
         return [
             {
                 "id": self._compounds[index],
-                "name": self.engine.nodes[self._compounds[index]]["name"],
+                "name": self._inputs.nodes[self._compounds[index]]["name"],
                 **self._summary(baseline, index, full=True),
             }
             for index in order[:limit]
@@ -602,7 +678,7 @@ class BindingAuditor:
         for edge_id in removed:
             degrees[self._edge_coordinates[edge_id][0]] -= 1
         disease_degree = self._matrices["ASSOCIATES"].getrow(envelopes.disease_index).sum()
-        scores, _ = canonical_scores(counts, degrees[owners] - 1, disease_degree, self._model)
+        scores, _ = self._score(counts, degrees[owners] - 1, disease_degree, self._model)
         return owners, scores, counts.sum(axis=1) > 0
 
     def _next_ranks(self, state, focus, owners, scores, supported):
@@ -694,7 +770,7 @@ class BindingAuditor:
             bindings[compound, gene] = 0
         bindings = bindings.tocsr()
         bindings.eliminate_zeros()
-        disease_index = self.engine.positions["Disease"][disease_id]
+        disease_index = self._inputs.disease_positions[disease_id]
         associations = self._matrices["ASSOCIATES"].getrow(disease_index).T
         pathways = self._matrices["PARTICIPATES"]
         direct = (bindings @ associations).toarray().ravel()
@@ -724,6 +800,14 @@ class BindingAuditor:
             "verification_method": "edited CSR matrices and full sparse path products",
         }
 
+    def _alternate_verifier(self, scorer):
+        with self._lock:
+            if scorer not in self._compatible_verifiers:
+                self._compatible_verifiers[scorer] = BindingAuditor(
+                    self.engine, self._cache_size, scorer=scorer
+                )
+            return self._compatible_verifiers[scorer]
+
     def verify(self, certificate):
         """Check all fields, recompute bounds, and independently replay every witness.
 
@@ -738,6 +822,10 @@ class BindingAuditor:
             if certificate.get("certificate_sha256") != certificate_digest(certificate):
                 raise ValueError("Certificate checksum does not match its contents")
             checks.append("Certificate content checksum matches")
+            if certificate_scorer(certificate, self._identity) != self._scorer:
+                return self._alternate_verifier(certificate["identity"]["scorer"]).verify(
+                    certificate
+                )
             disease_id = certificate["disease"]["id"]
             compound_id = certificate["compound"]["id"]
             top_k, budget = certificate["top_k"], certificate["budget"]
@@ -756,7 +844,7 @@ class BindingAuditor:
             checks.append("All fields and identities match recomputed global and focus-only bounds")
             replayed = self._replay_certificate(disease_id, compound_id, certificate["results"])
             checks.append("Every distinct witness matches independent full-matrix replay")
-        except (KeyError, TypeError, ValueError, OverflowError, IndexError) as error:
+        except (KeyError, TypeError, ValueError, RuntimeError, OverflowError, IndexError) as error:
             errors.append(str(error))
         return {
             "status": "invalid" if errors else "verified",

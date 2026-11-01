@@ -43,3 +43,7 @@ reports/llm-compound.json
 reports/runner-resources.txt
 reports/docker-disk-usage.txt
 reports/container-status.json
+reports/live-model.json
+reports/live-manifest.json
+reports/live-evaluation.json
+reports/live-artifacts-verification.json

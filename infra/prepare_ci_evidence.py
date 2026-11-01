@@ -9,6 +9,10 @@ import subprocess
 
 RUN_REPORTS = (
     "http_smoke.json",
+    "live-model.json",
+    "live-manifest.json",
+    "live-evaluation.json",
+    "live-artifacts-verification.json",
     "neo4j-junit.xml",
     "llm-junit.xml",
     "llm-investigate.json",
@@ -40,6 +44,12 @@ QUALITY_OUTPUTS = (
     "reports/v1.2.0/binding-audit-example-greedy.json",
     "reports/v1.2.0/binding-audit-example-strong-greedy.json",
     "reports/v1.2.0/binding-audit-example-scope.json",
+    "reports/v1.3.0/provenance-audit-benchmark.json",
+    "reports/v1.3.0/provenance-audit-summary.json",
+    "reports/v1.3.0/provenance-audit-example-source.json",
+    "reports/v1.3.0/provenance-audit-example-pubmed.json",
+    "reports/v1.3.0/provenance-catalog.json",
+    "reports/v1.3.0/provenance-size-matched-controls.json",
 )
 
 

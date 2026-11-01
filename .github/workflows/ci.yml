@@ -16,7 +16,8 @@ concurrency:
 jobs:
   quality:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    # Exact Decimal-defined audit arithmetic also runs in the complete benchmarks.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -36,8 +37,10 @@ jobs:
         run: make data PYTHON=python
       - name: Inventory observed data licenses without automatic legal clearance
         run: make audit-licenses PYTHON=python
-      - name: Benchmark exact global binding-deletion audits on all diseases
-        run: make benchmark-audits PYTHON=python
+      - name: Benchmark independent binding and provenance audit workloads
+        run: make -j2 benchmark-audits benchmark-provenance PYTHON=python
+      - name: Reproduce size-matched random controls for disclosed illustrative cases
+        run: make provenance-controls PYTHON=python
       - name: Export and verify complete frozen research edition
         run: make snapshot PYTHON=python
       - name: Compare every score with the checksum-verified v1.0 implementation
@@ -66,6 +69,7 @@ jobs:
             reports/v1.2.0/binding-audit-example-greedy.json
             reports/v1.2.0/binding-audit-example-strong-greedy.json
             reports/v1.2.0/binding-audit-example-scope.json
+            reports/v1.3.0/*.json
             coverage.xml
             reports/junit.xml
             data/processed/evaluation.json
@@ -74,7 +78,7 @@ jobs:
             demo.executed.ipynb
 
   integration:
-    needs: quality
+    # Independent checkout, data fit and retained model; publication requires both jobs.
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
@@ -110,6 +114,12 @@ jobs:
           PYMODEL
       - name: Verify HTTP workflow, exact audit replay, tamper rejection and agent guard
         run: make smoke PYTHON=python
+      - name: Preserve the exact live-container model and bind every smoke certificate
+        run: |
+          docker compose cp api:/app/data/processed/model.json reports/live-model.json
+          docker compose cp api:/app/data/processed/manifest.json reports/live-manifest.json
+          docker compose cp api:/app/data/processed/evaluation.json reports/live-evaluation.json
+          python -m infra.verify_live_artifacts
       - name: Verify real Cypher, idempotent import and GDS algorithms
         run: |
           set -a
@@ -138,6 +148,10 @@ jobs:
           path: |
             reports/ci-integration.json
             reports/http_smoke.json
+            reports/live-model.json
+            reports/live-manifest.json
+            reports/live-evaluation.json
+            reports/live-artifacts-verification.json
             reports/ollama-model.json
             reports/neo4j-junit.xml
             reports/container-status.json

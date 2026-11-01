@@ -1,22 +1,23 @@
 {
   "schema_version": "1.0",
   "title": "Global bounded BINDS evidence audit benchmark",
-  "executed_at": "2026-10-31T19:06:15.818661+00:00",
+  "executed_at": "2026-11-01T13:07:30.559686+00:00",
   "status": "passed",
   "source": {
-    "git_revision": "d82c346c6c4b92a79fa5d12e3643c9ed788555cb",
-    "working_tree_dirty": true,
+    "git_revision": "27f5557dfeaacc6b6a19c17e0253b8d7de506c62",
+    "working_tree_dirty": false,
     "file_sha256": {
-      "app/binding_audit.py": "e2e662cffff5be1f36f91850a4b176db906c14efcc820e7b18d04021a5ce4e0b",
+      "app/audit_numerics.py": "80527c14035edc0f448825e8b981d68bb7126ff9f65f6e0381d8a71c415d53c7",
+      "app/binding_audit.py": "4356019800543e89e4658d89926b998993b9ddc1d9d0db312cc1770a6e509ffa",
       "app/graph_engine.py": "80c18947f85dfaea71f32fd0b7608d5977b11be2d1f01fcdf2cc6e292910b81c",
-      "scripts/benchmark_audits.py": "81a58446944074c52fb824d37f930fb6d8d9ea8e1aa29fedfdc70531c3cbc772"
+      "scripts/benchmark_audits.py": "1e2fed3b7827970d3656dc776a3a2c6016a013459a85c6bb01f6089355bf0665"
     }
   },
   "identity": {
     "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
     "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
     "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
-    "scorer": "float64-fixed-order-v1"
+    "scorer": "decimal80-binary64-v1"
   },
   "protocol": {
     "population": "Every graph disease and its first ten supported candidates under the audit baseline scorer",
@@ -110,12 +111,12 @@
   "numerical_comparison": {
     "pairs_compared": 212624,
     "max_absolute_score_difference": 9.992007221626409e-16,
-    "nonidentical_score_pairs": 126860,
+    "nonidentical_score_pairs": 151811,
     "supported_rank_position_differences": 0,
     "legacy_model_and_scorer_changed": false,
     "interpretation": "Audit scores use explicit fixed-order binary64 arithmetic. Legacy scores use BLAS; small last-bit differences are disclosed, not hidden with display rounding."
   },
-  "runtime_seconds": 185.31796483299695,
+  "runtime_seconds": 1528.2382101490002,
   "environment": {
     "python": "3.12.14",
     "numpy": "2.3.5",
@@ -124,7 +125,7 @@
   },
   "full_report": {
     "file": "binding-audit-benchmark.json",
-    "sha256": "8dae3dc22dd3eb01b7193865b38d2f101e8998a9be526e458c65490ed057901e"
+    "sha256": "eb05e57c86bd8d4b83cf0d021e56a1d2f2c605a68a20d2f45e223db2c94b7458"
   },
   "examples": {
     "largest_competitor_rank_gap": {
@@ -139,8 +140,8 @@
         "name": "Xanthophyll"
       },
       "file": "binding-audit-example-competitor.json",
-      "file_sha256": "9784737561b233f069ce683b1359f61ec31ad6ebea2c951a375e833bfabc2de8",
-      "certificate_sha256": "405747e15ea80f85319457d840154f516d2294413602b1793bcab6382f980263"
+      "file_sha256": "329aa8fa4907ee1f80709aabc6f8da863736b127ebeacffa07d94bbee82c7daf",
+      "certificate_sha256": "a0408f0ca7c002d0ac8c90d7c40b1d0a2f2f76c2d27f823e729e1deb7e42305c"
     },
     "largest_greedy_supported_rank_gap": {
       "selection_status": "positive_gap_observed",
@@ -154,8 +155,8 @@
         "name": "Amifostine"
       },
       "file": "binding-audit-example-greedy.json",
-      "file_sha256": "b61332be1b6b4d2f2966e56416726c105f4405cfd40b9473ae25fbef09f41ae6",
-      "certificate_sha256": "b0fe8cf4169a41ecbf8cdac10d9a9995a13f5fb947d9487122757375dd54f578"
+      "file_sha256": "c60b7b5795c388f73b7692cf85ffa13173d4c363ce159cf7183fd4e17f807ab4",
+      "certificate_sha256": "abf350c4e383e0832e5a372f6118845852183638ea4320614bbcc10a21bc03fe"
     },
     "largest_strong_greedy_supported_rank_gap": {
       "selection_status": "positive_gap_observed",
@@ -169,8 +170,8 @@
         "name": "Drostanolone"
       },
       "file": "binding-audit-example-strong-greedy.json",
-      "file_sha256": "6c5e5d077a410ebdebf2db57a49a90d9dff8e2c19b66ac5c62f58618ba3cb670",
-      "certificate_sha256": "28bfce576ebe9a00f87ce7733bd70b633df2bf317c0c2e79a1b4ce29b1500280"
+      "file_sha256": "97cefd84baa5bc854bb26df7bf3271bc2cf7a5df7963babda596309d48661e2e",
+      "certificate_sha256": "ccaeedfa386f1818933b872ee59824dd07ad7c6cc3ab4ba261c8b452d0df9b9a"
     },
     "scope_verdict_difference": {
       "selection_status": "positive_gap_observed",
@@ -184,8 +185,8 @@
         "name": "Nifedipine"
       },
       "file": "binding-audit-example-scope.json",
-      "file_sha256": "1903d9c05229a37edba228cfb9094dcc6a7ef846d4e00cd47f6b73ce00fd1da7",
-      "certificate_sha256": "4333608dea730b0007af343c0ddbc9470e6116cbee6788a2e5033d7a9ab865a3"
+      "file_sha256": "970a0c0e9ffb9048c2d11209d808ca1872452159c562108d63117fee4b9ea872",
+      "certificate_sha256": "094eb47f77dd12ef2b565ec829b69c9c06755970fdfe8296f0df4057af390dae"
     }
   }
 }

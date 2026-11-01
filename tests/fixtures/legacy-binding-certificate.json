@@ -1,0 +1,248 @@
+{
+  "baseline": {
+    "counts": {
+      "direct": 0,
+      "interaction": 2,
+      "pathway": 2
+    },
+    "evidence_count": 4,
+    "legacy_rank": 2,
+    "legacy_score": 0.5,
+    "logit": 0.0,
+    "rank": 2,
+    "rank_agrees_with_legacy": true,
+    "score": 0.5,
+    "score_difference": 0.0,
+    "supported": true
+  },
+  "budget": 2,
+  "certificate_sha256": "a1672abef5ebee37fc8be09c0a9a2ab93e3c91e5d3dd07b887e7af88fcca3ec0",
+  "compound": {
+    "id": "Compound::C2",
+    "name": "C2"
+  },
+  "disease": {
+    "id": "Disease::D1",
+    "name": "D1"
+  },
+  "identity": {
+    "dataset_sha256": "fixture",
+    "graph_sha256": "19d8d18fd27eef7f4a87ec311ee30f754407ce667f1a619e6cfeb5b8ff1bc69b",
+    "model_sha256": "22eeac582e9a2e291b4e8b1ad244e6317f2f5fd67e38021572ed5bae99d2d01d",
+    "scorer": "float64-fixed-order-v1"
+  },
+  "interpretation": "This is an exact finite-budget audit of this fixed model under withdrawal of any recorded BINDS edges, including edges of competing compounds. It is not a biological intervention or a probability of efficacy. Source labels are not independent studies. The audit uses its declared fixed-order float64 scorer and score/compound-ID ties; legacy BLAS scores can differ in the last floating-point bits. Exactness is relative to this binary64 numerical runtime; transcendental functions can differ across runtimes, and verification rejects numerical mismatches. A null worst supported rank means no supported scenario exists. Unsupported outcomes are reported separately. The guarantee does not cover other edge families, correlated source-group failures, new edges, model refitting, or deletion budgets above the requested limit.",
+  "method": "binding-envelope-v1",
+  "minimum_failure_budget": 0,
+  "proof": {
+    "covered_global_states": 7,
+    "envelope_bounds_sha256": "70592358c7151e50500c7bc9b9361bc2debf0000a8d21522b3d1f9e450b9253e",
+    "local_states_evaluated": 7,
+    "search_budget": 2
+  },
+  "results": [
+    {
+      "budget": 0,
+      "competitor_rank_gap": 0,
+      "focus_only_unsupported_attainable": false,
+      "focus_only_worst_rank": 2,
+      "rank_witness": {
+        "changed_compounds": [],
+        "deletions_used": 0,
+        "focus": {
+          "counts": {
+            "direct": 0,
+            "interaction": 2,
+            "pathway": 2
+          },
+          "evidence_count": 4,
+          "logit": 0.0,
+          "rank": 2,
+          "score": 0.5,
+          "supported": true
+        },
+        "removed_edge_ids": [],
+        "removed_records": []
+      },
+      "top_k_robust": false,
+      "unsupported_attainable": false,
+      "unsupported_witness": null,
+      "worst_supported_rank": 2
+    },
+    {
+      "budget": 1,
+      "competitor_rank_gap": 0,
+      "focus_only_unsupported_attainable": true,
+      "focus_only_worst_rank": 2,
+      "rank_witness": {
+        "changed_compounds": [],
+        "deletions_used": 0,
+        "focus": {
+          "counts": {
+            "direct": 0,
+            "interaction": 2,
+            "pathway": 2
+          },
+          "evidence_count": 4,
+          "logit": 0.0,
+          "rank": 2,
+          "score": 0.5,
+          "supported": true
+        },
+        "removed_edge_ids": [],
+        "removed_records": []
+      },
+      "top_k_robust": false,
+      "unsupported_attainable": true,
+      "unsupported_witness": {
+        "changed_compounds": [
+          {
+            "after": {
+              "rank": null,
+              "score": 0.5,
+              "supported": false
+            },
+            "before": {
+              "rank": 2,
+              "score": 0.5,
+              "supported": true
+            },
+            "id": "Compound::C2",
+            "name": "C2",
+            "removed_edge_ids": [
+              "e2"
+            ],
+            "role": "focus"
+          }
+        ],
+        "deletions_used": 1,
+        "focus": {
+          "counts": {
+            "direct": 0,
+            "interaction": 0,
+            "pathway": 0
+          },
+          "evidence_count": 0,
+          "logit": 0.0,
+          "rank": null,
+          "score": 0.5,
+          "supported": false
+        },
+        "removed_edge_ids": [
+          "e2"
+        ],
+        "removed_records": [
+          {
+            "data": {
+              "source": "Hand-counted fixture"
+            },
+            "id": "e2",
+            "license": "CC0",
+            "source": "Compound::C2",
+            "source_name": "C2",
+            "sources": [
+              "Hand-counted fixture"
+            ],
+            "target": "Gene::G2",
+            "target_name": "G2",
+            "type": "BINDS"
+          }
+        ]
+      },
+      "worst_supported_rank": 2
+    },
+    {
+      "budget": 2,
+      "competitor_rank_gap": 0,
+      "focus_only_unsupported_attainable": true,
+      "focus_only_worst_rank": 2,
+      "rank_witness": {
+        "changed_compounds": [],
+        "deletions_used": 0,
+        "focus": {
+          "counts": {
+            "direct": 0,
+            "interaction": 2,
+            "pathway": 2
+          },
+          "evidence_count": 4,
+          "logit": 0.0,
+          "rank": 2,
+          "score": 0.5,
+          "supported": true
+        },
+        "removed_edge_ids": [],
+        "removed_records": []
+      },
+      "top_k_robust": false,
+      "unsupported_attainable": true,
+      "unsupported_witness": {
+        "changed_compounds": [
+          {
+            "after": {
+              "rank": null,
+              "score": 0.5,
+              "supported": false
+            },
+            "before": {
+              "rank": 2,
+              "score": 0.5,
+              "supported": true
+            },
+            "id": "Compound::C2",
+            "name": "C2",
+            "removed_edge_ids": [
+              "e2"
+            ],
+            "role": "focus"
+          }
+        ],
+        "deletions_used": 1,
+        "focus": {
+          "counts": {
+            "direct": 0,
+            "interaction": 0,
+            "pathway": 0
+          },
+          "evidence_count": 0,
+          "logit": 0.0,
+          "rank": null,
+          "score": 0.5,
+          "supported": false
+        },
+        "removed_edge_ids": [
+          "e2"
+        ],
+        "removed_records": [
+          {
+            "data": {
+              "source": "Hand-counted fixture"
+            },
+            "id": "e2",
+            "license": "CC0",
+            "source": "Compound::C2",
+            "source_name": "C2",
+            "sources": [
+              "Hand-counted fixture"
+            ],
+            "target": "Gene::G2",
+            "target_name": "G2",
+            "type": "BINDS"
+          }
+        ]
+      },
+      "worst_supported_rank": 2
+    }
+  ],
+  "robust_through_budget": null,
+  "schema_version": "1.0",
+  "scope": {
+    "candidate_count": 4,
+    "eligible_edges": 3,
+    "includes_competitor_changes": true,
+    "operation": "delete_record",
+    "relationship": "BINDS",
+    "universe": "all_recorded_BINDS_edges"
+  },
+  "top_k": 1
+}

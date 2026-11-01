@@ -2,6 +2,7 @@
 
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
+from decimal import Context, Decimal, ROUND_HALF_EVEN, localcontext
 import itertools
 import json
 import math
@@ -10,7 +11,6 @@ import subprocess
 
 import numpy as np
 import pytest
-from scipy.special import expit
 
 from app.binding_audit import BindingAuditor, canonical_scores, certificate_digest
 from app.graph_engine import GraphEngine
@@ -87,24 +87,27 @@ def _oracle(graph, model, disease, removed):
             left != right and (left, middle) in participation and (right, middle) in participation
             for left, right, middle in itertools.product(targets, associations, pathways)
         )
-        counts = np.asarray([direct, interaction, pathway], dtype=np.float64)
-        divisor = np.sqrt(np.float64(max(len(targets) * len(associations), 1)))
-        features = [np.log1p(count) for count in counts]
-        features.extend(np.log1p(count / divisor) for count in counts)
-        features.extend(
-            (np.log1p(np.float64(len(targets))), np.log1p(np.float64(len(associations))))
-        )
-        logit = np.float64(model["intercept"])
+        counts = [direct, interaction, pathway]
+        # Independent scalar arithmetic: no production transform, binary64
+        # converter, vector kernel or score-cache implementation is reused.
+        with localcontext(Context(prec=80, rounding=ROUND_HALF_EVEN, Emin=-999999, Emax=999999)):
+            divisor = float(Decimal(max(float(len(targets)) * len(associations), 1)).sqrt())
+            arguments = [*map(float, counts), *(count / divisor for count in counts)]
+            arguments.extend((float(len(targets)), float(len(associations))))
+            features = [float((1 + Decimal.from_float(value)).ln()) for value in arguments]
+        logit = float(model["intercept"])
         for index in range(8):
-            term = np.float64(model["coefficients"][index]) * (
-                (features[index] - np.float64(model["mean"][index]))
-                / np.float64(model["scale"][index])
+            term = float(model["coefficients"][index]) * (
+                (features[index] - float(model["mean"][index])) / float(model["scale"][index])
             )
-            logit = np.float64(logit + term)
+            logit = float(logit + term)
+        with localcontext(Context(prec=80, rounding=ROUND_HALF_EVEN, Emin=-999999, Emax=999999)):
+            exponential = Decimal.from_float(-abs(logit)).exp()
+            score = float((Decimal(1) if logit >= 0 else exponential) / (1 + exponential))
         states[compound] = {
             "supported": bool(sum(counts)),
             "rank": None,
-            "score": float(expit(logit)),
+            "score": score,
             "logit": float(logit),
             "counts": dict(zip(("direct", "interaction", "pathway"), map(int, counts))),
             "evidence_count": int(sum(counts)),
@@ -541,8 +544,8 @@ def test_certificate_survives_browser_json_numeric_roundtrip_with_provenance(tmp
     auditor = BindingAuditor(create_fixture_engine(tmp_path, graph))
     original = auditor.audit("Disease::D1", "Compound::C2", top_k=1)
     transported = _node_roundtrip(original)
-    assert type(transported["baseline"]["score_difference"]) is int
-    assert type(original["baseline"]["score_difference"]) is float
+    assert "score_difference" not in transported["baseline"]
+    assert "legacy_score" not in original["baseline"]
     assert certificate_digest(original) == certificate_digest(transported)
     assert auditor.verify(transported)["valid"]
     transported["baseline"]["score"] = np.nextafter(transported["baseline"]["score"], 1.0)

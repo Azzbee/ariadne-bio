@@ -1,6 +1,7 @@
 """Real Neo4j/GDS checks against the pinned public dataset, never a mocked driver."""
 
 import json
+from hashlib import sha256
 import math
 from pathlib import Path
 
@@ -24,7 +25,7 @@ def real_graph():
         pytest.skip("Set NEO4J_PASSWORD and run make docker-core before integration tests")
     repository = Neo4jRepository(settings)
     engine = GraphEngine(settings.data_dir)
-    repository.verify(engine.manifest["dataset_sha256"])
+    repository.verify(engine.manifest["dataset_sha256"], engine.manifest["graph_sha256"])
     yield repository, engine
     repository.close()
 
@@ -39,6 +40,22 @@ def test_import_is_idempotent_and_labels_never_enter_evidence(real_graph):
     types = repository.run("MATCH ()-[r]->() RETURN type(r) AS type,count(r) AS count")
     assert {row["type"]: row["count"] for row in types} == engine.manifest["edge_counts"]
     assert not {"TREATS", "PALLIATES"} & {row["type"] for row in types}
+
+
+def test_changed_prepared_graph_is_rejected_without_mutating_database(real_graph, tmp_path):
+    """The same source archive cannot authorize a different graph in an existing volume."""
+    repository, engine = real_graph
+    before = repository.verify(engine.manifest["dataset_sha256"], engine.manifest["graph_sha256"])
+    graph = json.loads((engine.data_dir / "graph.json").read_text())
+    graph["edges"].pop()
+    raw = json.dumps(graph).encode()
+    (tmp_path / "graph.json").write_bytes(raw)
+    manifest = {**engine.manifest, "graph_sha256": sha256(raw).hexdigest()}
+    (tmp_path / "manifest.json").write_text(json.dumps(manifest))
+    with pytest.raises(ValueError, match="prepared graph identity mismatch"):
+        repository.ingest(tmp_path)
+    after = repository.verify(engine.manifest["dataset_sha256"], engine.manifest["graph_sha256"])
+    assert after == before
 
 
 @pytest.mark.parametrize(

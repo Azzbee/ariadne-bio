@@ -31,7 +31,14 @@ def verify_frontend_headers(base_url: str) -> dict:
         "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
     }
     checked = {}
-    for path in ("/", "/styles.css", "/audit.css", "/audit.js"):
+    for path in (
+        "/",
+        "/styles.css",
+        "/audit.css",
+        "/audit.js",
+        "/provenance.css",
+        "/provenance.js",
+    ):
         req = urllib.request.Request(base_url.rstrip("/") + path, method="HEAD")
         with urllib.request.urlopen(req, timeout=15) as response:
             actual = {name: response.headers.get(name) for name in expected}
@@ -111,7 +118,7 @@ def verify_binding_audit(base_url: str, disease_id: str, compound_id: str) -> di
     assert certificate["disease"]["id"] == disease_id
     assert certificate["compound"]["id"] == compound_id
     assert certificate["method"] == "binding-envelope-v1"
-    assert certificate["identity"]["scorer"] == "float64-fixed-order-v1"
+    assert certificate["identity"]["scorer"] == "decimal80-binary64-v1"
     assert certificate["scope"]["universe"] == "all_recorded_BINDS_edges"
     assert certificate["scope"]["includes_competitor_changes"] is True
     assert certificate["certificate_sha256"] == _certificate_hash(certificate)
@@ -146,6 +153,81 @@ def verify_binding_audit(base_url: str, disease_id: str, compound_id: str) -> di
             "certificate_sha256": altered["certificate_sha256"],
             "verification": rejected,
         },
+    }
+
+
+def verify_provenance_audit(base_url: str, disease_id: str, compound_id: str) -> dict:
+    """Exercise shared-group scope, exact protection, replay and checksum-valid forgery."""
+    catalogue = request(base_url, "/api/provenance/groups?kind=source&limit=100")
+    selected = sorted(group["group_id"] for group in catalogue["items"])
+    assert catalogue["total"] == len(selected) <= 16
+    assert catalogue["coverage"]["binding_edges"] > 0
+    parameters = {
+        "disease_id": disease_id,
+        "compound_id": compound_id,
+        "top_k": 10,
+        "budget": 2,
+    }
+    certificate = request(base_url, "/api/provenance/audit", parameters)
+    assert certificate["method"] == "provenance-group-exhaustive-v1"
+    assert certificate["identity"]["scorer"] == "decimal80-binary64-v1"
+    assert certificate["scope"]["operation"] == "withdraw_records_mentioning_any_selected_group"
+    assert certificate["scope"]["group_ids"] == selected
+    assert certificate["scope"]["includes_competitor_changes"] is True
+    assert certificate["identity"]["group_map_sha256"] == catalogue["identity"]["group_map_sha256"]
+    assert certificate["certificate_sha256"] == _certificate_hash(certificate)
+    assert [row["budget"] for row in certificate["results"]] == [0, 1, 2]
+    assert certificate["proof"]["covered_scenarios"] == sum(
+        math.comb(len(selected), size) for size in range(min(2, len(selected)) + 1)
+    )
+    verified = request(base_url, "/api/provenance/audit/verify", {"certificate": certificate})
+    assert verified["valid"] is True and verified["replayed_witnesses"] >= 1, verified
+
+    altered = json.loads(json.dumps(certificate))
+    plan = altered["protection_plan"]
+    plan["minimum_additional_groups"] = (plan["minimum_additional_groups"] or 0) + 1
+    altered["certificate_sha256"] = _certificate_hash(altered)
+    rejected = request(base_url, "/api/provenance/audit/verify", {"certificate": altered})
+    assert rejected["valid"] is False and rejected["errors"], rejected
+    assert "Certificate content checksum matches" in rejected["checks"], rejected
+
+    protected = certificate["protection_plan"]["representative"]
+    assert certificate["protection_plan"]["status"] != "impossible_baseline"
+    conditional = request(
+        base_url,
+        "/api/provenance/audit",
+        {**parameters, "group_ids": selected, "protected_group_ids": protected},
+    )
+    assert conditional["results"][-1]["robust"] is True
+    assert conditional["protection_plan"]["status"] == "already_robust"
+    conditional_verified = request(
+        base_url, "/api/provenance/audit/verify", {"certificate": conditional}
+    )
+    assert conditional_verified["valid"] is True, conditional_verified
+
+    citations = request(base_url, "/api/provenance/groups?kind=pubmed&limit=1")
+    assert citations["items"], citations
+    citation = request(
+        base_url,
+        "/api/provenance/audit",
+        {
+            **parameters,
+            "group_kind": "pubmed",
+            "group_ids": [citations["items"][0]["group_id"]],
+            "budget": 1,
+        },
+    )
+    assert citation["proof"]["covered_scenarios"] == 2
+    citation_verified = request(base_url, "/api/provenance/audit/verify", {"certificate": citation})
+    assert citation_verified["valid"] is True, citation_verified
+    return {
+        "certificate": certificate,
+        "verification": verified,
+        "rehashed_false_protection_claim": rejected,
+        "conditional_certificate": conditional,
+        "conditional_verification": conditional_verified,
+        "selected_pubmed_certificate": citation,
+        "selected_pubmed_verification": citation_verified,
     }
 
 
@@ -184,6 +266,7 @@ def run(base_url: str) -> dict:
     assert not unsupported["current"]["supported"]
     assert unsupported["current"]["evidence_count"] == 0
     audit = verify_binding_audit(base_url, disease["id"], compound["id"])
+    provenance_audit = verify_provenance_audit(base_url, disease["id"], compound["id"])
     rejected = request(
         base_url,
         "/api/agent",
@@ -204,6 +287,7 @@ def run(base_url: str) -> dict:
             "unsupported_pair_retained": True,
         },
         "binding_audit": audit,
+        "provenance_audit": provenance_audit,
         "disease": disease,
         "compound": {"id": compound["id"], "name": compound["name"]},
         "displayed_paths": len(evidence["paths"]),

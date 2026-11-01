@@ -8,6 +8,7 @@ import pytest
 
 from app import __version__
 from app.binding_audit import BindingAuditor
+from app.provenance_audit import ProvenanceAuditor
 from scripts.export_snapshot import (
     build_case,
     case_filename,
@@ -16,6 +17,53 @@ from scripts.export_snapshot import (
     validate_case,
 )
 from tests.test_graph_engine import create_fixture_engine
+
+
+def test_provenance_snapshots_cover_inspectable_pairs_and_record_actual_verification(tmp_path):
+    """Every selected compound retains both source-group budgets with matching proofs."""
+    case = build_case(create_fixture_engine(tmp_path), "Disease::D1", top_k=1)
+    assert set(case["provenance_audits"]) == set(case["assessments"])
+    assert case["coverage"]["provenance_audit_count"] == len(case["assessments"]) * 2
+    for compound_id, variants in case["provenance_audits"].items():
+        assert set(variants) == {"10:1", "10:2"}
+        for key, certificate in variants.items():
+            assert certificate["scope"]["group_kind"] == "source"
+            assert certificate["scope"]["group_ids"] == ["source:Hand-counted fixture"]
+            assert certificate["scope"]["protected_group_ids"] == []
+            verification = case["provenance_verifications"][compound_id][key]
+            assert verification["valid"] is True
+            assert verification["replayed_witnesses"] >= 1
+            assert verification["verification_execution"] == "recorded_at_export"
+            assert verification["certificate_sha256"] == certificate["certificate_sha256"]
+
+
+@pytest.mark.parametrize(
+    "damage",
+    ["missing_candidate", "missing_budget", "false_bound", "wrong_compound", "stale_verifier"],
+)
+def test_provenance_snapshot_inconsistency_fails_closed(tmp_path, damage):
+    """Missing, modified or misbound group results cannot be published as verified."""
+    case = build_case(create_fixture_engine(tmp_path), "Disease::D1", top_k=1)
+    variants = case["provenance_audits"]["Compound::C2"]
+    if damage == "missing_candidate":
+        del case["provenance_audits"]["Compound::C2"]
+    elif damage == "missing_budget":
+        del variants["10:1"]
+    elif damage == "false_bound":
+        variants["10:2"]["results"][1]["worst_supported_rank"] = 999
+    elif damage == "wrong_compound":
+        variants["10:2"]["compound"]["id"] = "Compound::C1"
+    else:
+        case["provenance_verifications"]["Compound::C2"]["10:2"]["certificate_sha256"] = "0" * 64
+    with pytest.raises(ValueError, match="[Pp]rovenance"):
+        validate_case(case)
+
+
+def test_failed_provenance_replay_aborts_export(tmp_path, monkeypatch):
+    """A failed scientific verifier is a publication failure, not a recorded success."""
+    monkeypatch.setattr(ProvenanceAuditor, "verify", lambda *_: {"valid": False})
+    with pytest.raises(ValueError, match="provenance audit failed verification"):
+        build_case(create_fixture_engine(tmp_path), "Disease::D1", top_k=1)
 
 
 def test_all_sixteen_configurations_have_canonical_keys():

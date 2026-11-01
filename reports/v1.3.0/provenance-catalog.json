@@ -1,0 +1,939 @@
+{
+  "source": {
+    "kind": "source",
+    "items": [
+      {
+        "group_id": "source:BindingDB",
+        "label": "BindingDB",
+        "edge_count": 209,
+        "compound_count": 84,
+        "edge_ids_sha256": "fc1779d596c36bedf531401f03c8b63f5fd08dfb32dfb4bfb36f74966e301c8d"
+      },
+      {
+        "group_id": "source:ChEMBL",
+        "label": "ChEMBL",
+        "edge_count": 1711,
+        "compound_count": 470,
+        "edge_ids_sha256": "4aa4eb32cc34f9d6b0f0d0d5b8c89d44e2ccee5383e2481de5adca6292a8a29d"
+      },
+      {
+        "group_id": "source:DrugBank (carrier)",
+        "label": "DrugBank (carrier)",
+        "edge_count": 217,
+        "compound_count": 172,
+        "edge_ids_sha256": "4be65958a81d53c8737b7084d72644ad01cd7a8a2b1f3d0893639213d4c0f27c"
+      },
+      {
+        "group_id": "source:DrugBank (enzyme)",
+        "label": "DrugBank (enzyme)",
+        "edge_count": 3216,
+        "compound_count": 877,
+        "edge_ids_sha256": "56e1283d5a515d28201f763576c8e63c94c226eb1383350c82b613a16e10989b"
+      },
+      {
+        "group_id": "source:DrugBank (target)",
+        "label": "DrugBank (target)",
+        "edge_count": 4603,
+        "compound_count": 1182,
+        "edge_ids_sha256": "2df76bbe4afdb45fa354889a21ce20ed6946827e643423749499e1e7fc3e0db0"
+      },
+      {
+        "group_id": "source:DrugBank (transporter)",
+        "label": "DrugBank (transporter)",
+        "edge_count": 1517,
+        "compound_count": 522,
+        "edge_ids_sha256": "525ef5544babafc7afc58b6429cd3fb5a81e814d01b723205d8f08414d8db0f8"
+      },
+      {
+        "group_id": "source:DrugCentral (ChEMBL)",
+        "label": "DrugCentral (ChEMBL)",
+        "edge_count": 1836,
+        "compound_count": 792,
+        "edge_ids_sha256": "8a2c057a3761eb3547cd4e26585280bacaaef23c65496db8b5bc2b29ad928c2d"
+      },
+      {
+        "group_id": "source:DrugCentral (IUPHAR)",
+        "label": "DrugCentral (IUPHAR)",
+        "edge_count": 56,
+        "compound_count": 39,
+        "edge_ids_sha256": "71343f32fbee7d6f8762039e53171d86487f647049c476d9ebb86653f63c8c2a"
+      },
+      {
+        "group_id": "source:DrugCentral (KEGG DRUG)",
+        "label": "DrugCentral (KEGG DRUG)",
+        "edge_count": 25,
+        "compound_count": 8,
+        "edge_ids_sha256": "4d8ed69bca09de9807bd1ed4155498ae00ad07234478a4c32b88915b827b5e6a"
+      },
+      {
+        "group_id": "source:DrugCentral (label)",
+        "label": "DrugCentral (label)",
+        "edge_count": 68,
+        "compound_count": 35,
+        "edge_ids_sha256": "c9172eb96ef1acad92ffd32fbae9a63ab53c055f52453af65f092eb17ec6e0cf"
+      },
+      {
+        "group_id": "source:DrugCentral (literature)",
+        "label": "DrugCentral (literature)",
+        "edge_count": 182,
+        "compound_count": 81,
+        "edge_ids_sha256": "6c8849de0048c807454f9b32443bc718d1516b22176f90732ff4d32006fdd6bf"
+      },
+      {
+        "group_id": "source:PDSP Ki",
+        "label": "PDSP Ki",
+        "edge_count": 521,
+        "compound_count": 186,
+        "edge_ids_sha256": "f3e00692f34497cc466ad9469f5c526b27cc871046b82353a08bb9d830eaa4ab"
+      },
+      {
+        "group_id": "source:PubChem",
+        "label": "PubChem",
+        "edge_count": 137,
+        "compound_count": 32,
+        "edge_ids_sha256": "22284a82ec78765640fe1830e7aa9def80d70ca930095b18a2a345858a28d221"
+      },
+      {
+        "group_id": "source:US Patent",
+        "label": "US Patent",
+        "edge_count": 23,
+        "compound_count": 9,
+        "edge_ids_sha256": "9d269508ab9c60d88eec29d07d93ad223d990fe5e5762eb6557b59a610ddb382"
+      }
+    ],
+    "total": 14,
+    "offset": 0,
+    "limit": 100,
+    "identity": {
+      "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+      "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
+      "group_map_sha256": "e428edd4119421bff3406c8897ca39416e4e64535730e1c8fe4de27a9d2e997d"
+    },
+    "coverage": {
+      "binding_edges": 11571,
+      "annotated_binding_edges": 11571,
+      "unannotated_binding_edges": 0
+    },
+    "semantics": "Exact for this fixed model and the selected provenance-group withdrawal space. Withdrawing a group removes every recorded BINDS edge mentioning that provider label or imported PubMed identifier, including records with other annotations. Overlapping groups remove a record once. An annotation is not proof of independent corroboration, and a PubMed group is not necessarily one experiment. This is a conservative record-quarantine stress scenario, not a factual retraction, clinical effect, or probability of error. All competing compounds change jointly. Protected groups are assumed unavailable for withdrawal; protection does not mean a review or experiment has established that assumption. Exactness is relative to the declared decimal80-binary64-v1 finite arithmetic contract; strict verification rejects numerical mismatches. Legacy GraphEngine scores are separate and unchanged. Other relation families, new records, refitting and unselected groups are outside scope."
+  },
+  "pubmed": {
+    "kind": "pubmed",
+    "items": [
+      {
+        "group_id": "pubmed:0689791",
+        "label": "PubMed 0689791",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "afc9a2be3ea758cd897349df5b7d044fc7f18cbe7cea28e62f8793f2d084a331",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/0689791/"
+      },
+      {
+        "group_id": "pubmed:10024094",
+        "label": "PubMed 10024094",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "1df281018ed410ec1ff634b50c4b99280d0f61bee437d854595cc516c80c3de6",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10024094/"
+      },
+      {
+        "group_id": "pubmed:10024515",
+        "label": "PubMed 10024515",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "1ccdadcdaa2345cad07b1665dce71528c58d1f0e45d390d1d8c49ca174713485",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10024515/"
+      },
+      {
+        "group_id": "pubmed:10024872",
+        "label": "PubMed 10024872",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "8972118d7db6cb575f3f183153de9f26f23af8ace2a86e40fa4d922e0be5dcd2",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10024872/"
+      },
+      {
+        "group_id": "pubmed:10025684",
+        "label": "PubMed 10025684",
+        "edge_count": 2,
+        "compound_count": 2,
+        "edge_ids_sha256": "c65e8b6953226baa873c93add2e81654ad3ee16d8047e4f802fec0bfd4973894",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10025684/"
+      },
+      {
+        "group_id": "pubmed:10025828",
+        "label": "PubMed 10025828",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "b6373aa4e9605441318ae9e1a8ded26519ba79cafb64a904f47411314a705f65",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10025828/"
+      },
+      {
+        "group_id": "pubmed:10026252",
+        "label": "PubMed 10026252",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "05e6d3bf2d49a3201f11ca793481eb4a3678e0ee8f0b7110616d325ccf40c653",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10026252/"
+      },
+      {
+        "group_id": "pubmed:10026282",
+        "label": "PubMed 10026282",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "13a83c0fdc78e2f9139e77a4f9e832761c90310f21103ca582a6efb07f5b2884",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10026282/"
+      },
+      {
+        "group_id": "pubmed:10027088",
+        "label": "PubMed 10027088",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "bd2ce1c085c44fb26eba51084b501f8488bb5e615cf8d58990e9abe997f7d7ba",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10027088/"
+      },
+      {
+        "group_id": "pubmed:10027835",
+        "label": "PubMed 10027835",
+        "edge_count": 2,
+        "compound_count": 1,
+        "edge_ids_sha256": "d8589e9110cc910bb4fc7026c562b19299e53bb9989b04f5f630b6afc78ac8ad",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10027835/"
+      },
+      {
+        "group_id": "pubmed:10027842",
+        "label": "PubMed 10027842",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "a9b1263f10f279a89921c0c0f5feb0310cb44b8556d684ca36f6c1c274ee5339",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10027842/"
+      },
+      {
+        "group_id": "pubmed:10027850",
+        "label": "PubMed 10027850",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "42e55c9619b0d7b3e753e18aae7b8809c4c4620e92ebf01f3f098b40e9ba4c69",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10027850/"
+      },
+      {
+        "group_id": "pubmed:10027858",
+        "label": "PubMed 10027858",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "419f309620edacde59f5bfe06383986c092db99cadbc0f9c9ba68b47bb473ff8",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10027858/"
+      },
+      {
+        "group_id": "pubmed:10028377",
+        "label": "PubMed 10028377",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "7cf82ea3bd20042dfa614c14baaa1d53ccc73e6a407170dcd16b2bf3a7ec2db5",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10028377/"
+      },
+      {
+        "group_id": "pubmed:10028924",
+        "label": "PubMed 10028924",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "6216f9780a96f0176586a743f7d6119c772bbe2a6493f2dcd8b8702a654a726b",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10028924/"
+      },
+      {
+        "group_id": "pubmed:10037500",
+        "label": "PubMed 10037500",
+        "edge_count": 2,
+        "compound_count": 2,
+        "edge_ids_sha256": "c65e8b6953226baa873c93add2e81654ad3ee16d8047e4f802fec0bfd4973894",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10037500/"
+      },
+      {
+        "group_id": "pubmed:10047461",
+        "label": "PubMed 10047461",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "056c95936b30353745ccbdfa5888cd9f064409ffabbf15c8ba44c24d975399fb",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10047461/"
+      },
+      {
+        "group_id": "pubmed:10048009",
+        "label": "PubMed 10048009",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "8b17a5695f174810de6159d3a721b025f5fda0000ae813e269e4a4fcc0398450",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10048009/"
+      },
+      {
+        "group_id": "pubmed:10048600",
+        "label": "PubMed 10048600",
+        "edge_count": 2,
+        "compound_count": 1,
+        "edge_ids_sha256": "685d7e0b299ec5e98e49d8432e417443e31c33636d3bcf32cf64db2a313ef303",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10048600/"
+      },
+      {
+        "group_id": "pubmed:10049739",
+        "label": "PubMed 10049739",
+        "edge_count": 6,
+        "compound_count": 6,
+        "edge_ids_sha256": "d8b95cfe0774c9cc09fd789c323a42257a43622a67eb865315a10e4f41e70186",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10049739/"
+      },
+      {
+        "group_id": "pubmed:10050713",
+        "label": "PubMed 10050713",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "05e6d3bf2d49a3201f11ca793481eb4a3678e0ee8f0b7110616d325ccf40c653",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10050713/"
+      },
+      {
+        "group_id": "pubmed:10051426",
+        "label": "PubMed 10051426",
+        "edge_count": 2,
+        "compound_count": 1,
+        "edge_ids_sha256": "4e5a98ce7373d602bfe2711de2dcc65483e316230b34d3df86dbdbe807899a25",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10051426/"
+      },
+      {
+        "group_id": "pubmed:10052453",
+        "label": "PubMed 10052453",
+        "edge_count": 2,
+        "compound_count": 2,
+        "edge_ids_sha256": "768616f5d14ed04c507b817992c9de65dd2d7342d1125a221f54f58e0ce5371c",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10052453/"
+      },
+      {
+        "group_id": "pubmed:10052979",
+        "label": "PubMed 10052979",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "fa122567bc60eef68bf0f47ee64bec443ed0b21cb1feac8d5b23c7e1e147cefc",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10052979/"
+      },
+      {
+        "group_id": "pubmed:10052980",
+        "label": "PubMed 10052980",
+        "edge_count": 2,
+        "compound_count": 1,
+        "edge_ids_sha256": "1f4a1922efd66ab1a9771961643e62b45168c260643eb1797c57bffb8d8999dd",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10052980/"
+      },
+      {
+        "group_id": "pubmed:10052994",
+        "label": "PubMed 10052994",
+        "edge_count": 6,
+        "compound_count": 6,
+        "edge_ids_sha256": "aa435046a991d6d9d08d91035db4911678bfd93a884fb8235b17e0ece95d9776",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10052994/"
+      },
+      {
+        "group_id": "pubmed:10063489",
+        "label": "PubMed 10063489",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "e7ce4963288857626e044dc30910b918dc176e224cec0a8ddacce0e271d2e937",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10063489/"
+      },
+      {
+        "group_id": "pubmed:10064569",
+        "label": "PubMed 10064569",
+        "edge_count": 2,
+        "compound_count": 2,
+        "edge_ids_sha256": "7cfe7f28041cf806cd0d641c3eb0d26a481234afbcb9c83432b1295b30582ea9",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10064569/"
+      },
+      {
+        "group_id": "pubmed:10064574",
+        "label": "PubMed 10064574",
+        "edge_count": 3,
+        "compound_count": 1,
+        "edge_ids_sha256": "4796cb036b23a6b46a4f6e9b56cc975e8335d07c776e6a6dda755a13d0361952",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10064574/"
+      },
+      {
+        "group_id": "pubmed:10064829",
+        "label": "PubMed 10064829",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "42e55c9619b0d7b3e753e18aae7b8809c4c4620e92ebf01f3f098b40e9ba4c69",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10064829/"
+      },
+      {
+        "group_id": "pubmed:10064839",
+        "label": "PubMed 10064839",
+        "edge_count": 2,
+        "compound_count": 1,
+        "edge_ids_sha256": "24aa96518a28b26486d062ab50e99cd944628bd461dc9c8d23df5c1187b37804",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10064839/"
+      },
+      {
+        "group_id": "pubmed:10065930",
+        "label": "PubMed 10065930",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "d301eba61e26818af0087729c6361c8257a32b1413d521b3a1c4074db694e0dd",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10065930/"
+      },
+      {
+        "group_id": "pubmed:10066903",
+        "label": "PubMed 10066903",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "48cdb7e8b2f80ec286e1eb1c49122bc83d5e445bf1b9772937a43585ae7998b0",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10066903/"
+      },
+      {
+        "group_id": "pubmed:10067800",
+        "label": "PubMed 10067800",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "719407391e1300a1a214b4812f29e97b3c468ac525f932b40fc635735ff9b543",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10067800/"
+      },
+      {
+        "group_id": "pubmed:10068418",
+        "label": "PubMed 10068418",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "c9879859214992d96b379c0ccc612f01776bc6c38ee5d43ae108502a3d1b19cb",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10068418/"
+      },
+      {
+        "group_id": "pubmed:10068594",
+        "label": "PubMed 10068594",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "0769c0fd3133dbbc981c770cbd8ba99f7136a80c15dcb8c204885a4059b2af34",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10068594/"
+      },
+      {
+        "group_id": "pubmed:10069682",
+        "label": "PubMed 10069682",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "e2aabfbfcb4758830adc09449584187b8fd80e39b148b1b44c3eb876fa0394ec",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10069682/"
+      },
+      {
+        "group_id": "pubmed:10070941",
+        "label": "PubMed 10070941",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "be1d2a65c669777b65bec55e497d86dfa7c95582423b04cfafe5d1b0b7d73404",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10070941/"
+      },
+      {
+        "group_id": "pubmed:10071758",
+        "label": "PubMed 10071758",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "3ac1e447fe3b182973102fc0c753c702ecf39f0ada9b8a524b5031f24e489b94",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10071758/"
+      },
+      {
+        "group_id": "pubmed:10072476",
+        "label": "PubMed 10072476",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "dc3f31c9c6951e1ff9bd59a3a73685335f11448530ce0839a97f2e67d75e80dc",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10072476/"
+      },
+      {
+        "group_id": "pubmed:10073743",
+        "label": "PubMed 10073743",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "8712b4e170ef6cbefdc8cae28a9d4ebcaca8c2e52572ac61994a6105f1e032e7",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10073743/"
+      },
+      {
+        "group_id": "pubmed:10075051",
+        "label": "PubMed 10075051",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "2d06e18728a71e8ecc4f16cea829724083be33e67c443f37fabf7a3f1b4d3b54",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10075051/"
+      },
+      {
+        "group_id": "pubmed:10075381",
+        "label": "PubMed 10075381",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "e2aabfbfcb4758830adc09449584187b8fd80e39b148b1b44c3eb876fa0394ec",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10075381/"
+      },
+      {
+        "group_id": "pubmed:10075731",
+        "label": "PubMed 10075731",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "8a7b7802e860bd4521b7526f34aed176f43fab244d054a4372366ebe14996830",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10075731/"
+      },
+      {
+        "group_id": "pubmed:10075817",
+        "label": "PubMed 10075817",
+        "edge_count": 2,
+        "compound_count": 2,
+        "edge_ids_sha256": "35f8ebe4178bc5b99e82b72181d131cb989fad6fb3d4908b01e3530b7309bd59",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10075817/"
+      },
+      {
+        "group_id": "pubmed:10075867",
+        "label": "PubMed 10075867",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "539ac9a3ff19657d0e1d4e5a5d82aa0a3bb83bf4a6b78d846552b3e0a0d50ace",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10075867/"
+      },
+      {
+        "group_id": "pubmed:10076535",
+        "label": "PubMed 10076535",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "c1f6759c3e71b24ba2311dd1de6eeb87f8ba01e420d799464fee6a49d96b076b",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10076535/"
+      },
+      {
+        "group_id": "pubmed:10077001",
+        "label": "PubMed 10077001",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "689fa13e7175c9347b490fa7ae471515fd0a1f14c6dfbab18cf4c6dc72f9e3d0",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10077001/"
+      },
+      {
+        "group_id": "pubmed:10078990",
+        "label": "PubMed 10078990",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "12ccd53e839bd0be08349ef113ae05c218970c23747f25962aad2f9da30f8a83",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10078990/"
+      },
+      {
+        "group_id": "pubmed:10080233",
+        "label": "PubMed 10080233",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "bcaab9973bb2ddb3bf8e7c5178ec451d8460ba536337702e7adfa0a0356ba393",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10080233/"
+      },
+      {
+        "group_id": "pubmed:10080340",
+        "label": "PubMed 10080340",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "c2e4eb1a8a0b85d5f1255a0a706837c6400e964f89a66115302c1774544af99e",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10080340/"
+      },
+      {
+        "group_id": "pubmed:10082498",
+        "label": "PubMed 10082498",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "e2aabfbfcb4758830adc09449584187b8fd80e39b148b1b44c3eb876fa0394ec",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10082498/"
+      },
+      {
+        "group_id": "pubmed:10082798",
+        "label": "PubMed 10082798",
+        "edge_count": 6,
+        "compound_count": 4,
+        "edge_ids_sha256": "b098fd01f2aa1d4eb228e3a51c2adad060ac25f260f0c9bb21cf9914efde4587",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10082798/"
+      },
+      {
+        "group_id": "pubmed:10082805",
+        "label": "PubMed 10082805",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "14f8130a79e40ae68ea337fd5ffc75fd63cd5a14fa6588d518bfe0f760a6cda4",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10082805/"
+      },
+      {
+        "group_id": "pubmed:10084415",
+        "label": "PubMed 10084415",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "7c4c5ef56a0cab302d8772267eaba96a363bcbac15b875b05c6f82edb260ec99",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10084415/"
+      },
+      {
+        "group_id": "pubmed:10085232",
+        "label": "PubMed 10085232",
+        "edge_count": 2,
+        "compound_count": 1,
+        "edge_ids_sha256": "833440847c1346ac560591583d0067477656daeccdcaa098dfab21ee74f0d3cd",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10085232/"
+      },
+      {
+        "group_id": "pubmed:10087037",
+        "label": "PubMed 10087037",
+        "edge_count": 5,
+        "compound_count": 5,
+        "edge_ids_sha256": "2d6d28d98ca54b375be6855f4ceb1c55ef5f913d7f62b40a92aeb4b5ad1ae0b9",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10087037/"
+      },
+      {
+        "group_id": "pubmed:10087042",
+        "label": "PubMed 10087042",
+        "edge_count": 2,
+        "compound_count": 1,
+        "edge_ids_sha256": "d2ae0c1c5881804e5cfe3bfd1e1615cfd3677191319d1b45a25aa35aea9fe23a",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10087042/"
+      },
+      {
+        "group_id": "pubmed:10087141",
+        "label": "PubMed 10087141",
+        "edge_count": 4,
+        "compound_count": 4,
+        "edge_ids_sha256": "121d5acc23740df3a2008a78499411d9915618fbbfd8e14db9828d4676a9ba85",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10087141/"
+      },
+      {
+        "group_id": "pubmed:10088139",
+        "label": "PubMed 10088139",
+        "edge_count": 2,
+        "compound_count": 2,
+        "edge_ids_sha256": "4d77bfaa96345f18b3888c044804d4c568f8b11a37dc65d08b48f30084b1148e",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10088139/"
+      },
+      {
+        "group_id": "pubmed:10089284",
+        "label": "PubMed 10089284",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "c095c0aba87384c5f5e5ca682f750edffda711bc18b704bb7a87adf27fe9235e",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10089284/"
+      },
+      {
+        "group_id": "pubmed:10089512",
+        "label": "PubMed 10089512",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "b51a559de5dd9452a52c021f64fd3ff4f9a22a42bd907f6046be02ea7bcc1a55",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10089512/"
+      },
+      {
+        "group_id": "pubmed:10089819",
+        "label": "PubMed 10089819",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "9d82d3fabfcc0b1b8b1549b6f7072535097974fc9b25ad40a15c4bf894a9eaa9",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10089819/"
+      },
+      {
+        "group_id": "pubmed:10090784",
+        "label": "PubMed 10090784",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "571100f9c9aff45f6e616c2a58a484d553e3c20f19c1e4ffac30a4eba805a2c5",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10090784/"
+      },
+      {
+        "group_id": "pubmed:10091649",
+        "label": "PubMed 10091649",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "40b4067136ae92a7f015cef54aa0488f5d043bc4d087b388da5d542483783bb7",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10091649/"
+      },
+      {
+        "group_id": "pubmed:10091674",
+        "label": "PubMed 10091674",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "87d47406b7ffcd97518cbcecad2de68c9391f6d8719fef9440becb951bd770a4",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10091674/"
+      },
+      {
+        "group_id": "pubmed:10094428",
+        "label": "PubMed 10094428",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "db41ab5cac94935fcfbb6cab21bf26aa54b08c4d820148cd8524c20130d442ac",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10094428/"
+      },
+      {
+        "group_id": "pubmed:10095983",
+        "label": "PubMed 10095983",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "d671869ff8058223e72f6c83803ee2e6d989fef8dffd96ebdce5b3a0d6281c35",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10095983/"
+      },
+      {
+        "group_id": "pubmed:10098666",
+        "label": "PubMed 10098666",
+        "edge_count": 9,
+        "compound_count": 3,
+        "edge_ids_sha256": "fc593b7b11136254abc246dac1f9f7c57daf607091b74b8f41f96efae212bd8f",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10098666/"
+      },
+      {
+        "group_id": "pubmed:10098670",
+        "label": "PubMed 10098670",
+        "edge_count": 18,
+        "compound_count": 3,
+        "edge_ids_sha256": "4945c4e28cfca674a024beae35789b0cdb3a75199a5cf56efe8d667346e59324",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10098670/"
+      },
+      {
+        "group_id": "pubmed:10101238",
+        "label": "PubMed 10101238",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "944d246c0b76111d4996b60766603d01c806973f65288c8c09e3520e5891adcd",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10101238/"
+      },
+      {
+        "group_id": "pubmed:10101301",
+        "label": "PubMed 10101301",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "e9b9092296e0723abc69d9de852416806a3f5debe91cdaa3ddce110ac26285aa",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10101301/"
+      },
+      {
+        "group_id": "pubmed:10102370",
+        "label": "PubMed 10102370",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "57c053c9c4fd2d9071e7c5b4ca8bba769ebf75dd65f15e33b1ec2ac429eda245",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10102370/"
+      },
+      {
+        "group_id": "pubmed:10102460",
+        "label": "PubMed 10102460",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "cc369d878ba2756e89a82fbd18b6fa0c66f79dc5a58b8341d8e478107bcde661",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10102460/"
+      },
+      {
+        "group_id": "pubmed:10103097",
+        "label": "PubMed 10103097",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "b51a559de5dd9452a52c021f64fd3ff4f9a22a42bd907f6046be02ea7bcc1a55",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10103097/"
+      },
+      {
+        "group_id": "pubmed:10188639",
+        "label": "PubMed 10188639",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "e7ce4963288857626e044dc30910b918dc176e224cec0a8ddacce0e271d2e937",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10188639/"
+      },
+      {
+        "group_id": "pubmed:10188785",
+        "label": "PubMed 10188785",
+        "edge_count": 3,
+        "compound_count": 1,
+        "edge_ids_sha256": "4b5e967f71d7beddc9df0a11182d0eb8fd69d09b7e8071a6654c0dd69fdb8843",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10188785/"
+      },
+      {
+        "group_id": "pubmed:10188968",
+        "label": "PubMed 10188968",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "dbf7f92d988fa759e7fed92b6da829157ed87c8ed1bc4b9368c715af759c4e70",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10188968/"
+      },
+      {
+        "group_id": "pubmed:10188979",
+        "label": "PubMed 10188979",
+        "edge_count": 2,
+        "compound_count": 2,
+        "edge_ids_sha256": "8c73b62088563b2158f2f2804ef3d267c539e5f7134a89cdc954e8fce1b07ceb",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10188979/"
+      },
+      {
+        "group_id": "pubmed:10189264",
+        "label": "PubMed 10189264",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "609990496bb0ae95a65f710494a239f522174f6018304a54d4283b38fb7d7e7f",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10189264/"
+      },
+      {
+        "group_id": "pubmed:10190578",
+        "label": "PubMed 10190578",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "ebb9ef1f5b8c5a1d6ed1e35a0b0b90d81e0e061fcbf1e358879c218c49ec80cd",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10190578/"
+      },
+      {
+        "group_id": "pubmed:10191259",
+        "label": "PubMed 10191259",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "23d6077a2cf5cf699957f3de2552713240c223e385e861a380513cea48038993",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10191259/"
+      },
+      {
+        "group_id": "pubmed:10192412",
+        "label": "PubMed 10192412",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "19bbb10853dc8cafd6c8244c00a62e85d23b7007a22479c11ffa581dcb7d9106",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10192412/"
+      },
+      {
+        "group_id": "pubmed:10192828",
+        "label": "PubMed 10192828",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "acf50eb26af05d9bf71db741c16a290f77d9760a539245e2c6bd0312dc4566aa",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10192828/"
+      },
+      {
+        "group_id": "pubmed:10193663",
+        "label": "PubMed 10193663",
+        "edge_count": 5,
+        "compound_count": 2,
+        "edge_ids_sha256": "fb26df6159e8aad23bb50b4f8874a41544f1898283e543351e02b5708a5f01e0",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10193663/"
+      },
+      {
+        "group_id": "pubmed:10193665",
+        "label": "PubMed 10193665",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "c42c70867c313ac0e8b2a1a9f3577198ef8f063ae22ff97d974ffa68c5cda2d5",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10193665/"
+      },
+      {
+        "group_id": "pubmed:10194547",
+        "label": "PubMed 10194547",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "2f99f19c7534736b63ffc4053ad09aedfcb3d1bf6956505e720f142aac051ecc",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10194547/"
+      },
+      {
+        "group_id": "pubmed:10195585",
+        "label": "PubMed 10195585",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "338d8b1e88a4cf4eac6c92e8932945c92e46758ba7977ecd3b3a704027ee78c9",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10195585/"
+      },
+      {
+        "group_id": "pubmed:10196521",
+        "label": "PubMed 10196521",
+        "edge_count": 4,
+        "compound_count": 4,
+        "edge_ids_sha256": "89e97b92f702ce5f5e9d042655ff76dae43ebbfe3f673686d344f82971f3e2c2",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10196521/"
+      },
+      {
+        "group_id": "pubmed:10196703",
+        "label": "PubMed 10196703",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "1df281018ed410ec1ff634b50c4b99280d0f61bee437d854595cc516c80c3de6",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10196703/"
+      },
+      {
+        "group_id": "pubmed:10197775",
+        "label": "PubMed 10197775",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "30709c3e36c55cbb5270f634ea39ead11dec47f9b0c9e63a1742fb2036080ccb",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10197775/"
+      },
+      {
+        "group_id": "pubmed:10197967",
+        "label": "PubMed 10197967",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "6ad43e52f4ad15438567921e59a45fa1eeb49da13829a93ecabe6aeeb74df624",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10197967/"
+      },
+      {
+        "group_id": "pubmed:10198227",
+        "label": "PubMed 10198227",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "e6581cd513a71a13c9b399cf8d98602a32b748c592e51948687477d18c16f012",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10198227/"
+      },
+      {
+        "group_id": "pubmed:10198348",
+        "label": "PubMed 10198348",
+        "edge_count": 2,
+        "compound_count": 2,
+        "edge_ids_sha256": "b1bc037785c5d0af4dde9ac5d099fe48aa9585e2c427a4fab986340e650d5f1e",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10198348/"
+      },
+      {
+        "group_id": "pubmed:10198642",
+        "label": "PubMed 10198642",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "bb266f08dc28ae8c612d1902a4b79f49d2b826d5a9e082e9ff497584fdeab45f",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10198642/"
+      },
+      {
+        "group_id": "pubmed:10199854",
+        "label": "PubMed 10199854",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "637f884088828bd1749266f7c5c2a948e45e82f2eb0c7928ec7d564b5c51214e",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10199854/"
+      },
+      {
+        "group_id": "pubmed:10199939",
+        "label": "PubMed 10199939",
+        "edge_count": 4,
+        "compound_count": 2,
+        "edge_ids_sha256": "6f6269f361753d88e506db9b210720e701879ce30716f66d233bdc4780044918",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10199939/"
+      },
+      {
+        "group_id": "pubmed:10200007",
+        "label": "PubMed 10200007",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "78f8de39af9574d3e604f36a1d80eccf6e91395ff742390d6f26c20b86174ee9",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10200007/"
+      },
+      {
+        "group_id": "pubmed:10200235",
+        "label": "PubMed 10200235",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "dce046e0730e9b237587d6811b79f3d9811b552dbd960f4d539657057c73544d",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10200235/"
+      },
+      {
+        "group_id": "pubmed:10202212",
+        "label": "PubMed 10202212",
+        "edge_count": 1,
+        "compound_count": 1,
+        "edge_ids_sha256": "359e0fa6d78c2dce26b3b3bb1c36e5579d5aa63f8b3d2f7adc59a3813913256c",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/10202212/"
+      }
+    ],
+    "total": 10646,
+    "offset": 0,
+    "limit": 100,
+    "identity": {
+      "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+      "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
+      "group_map_sha256": "e428edd4119421bff3406c8897ca39416e4e64535730e1c8fe4de27a9d2e997d"
+    },
+    "coverage": {
+      "binding_edges": 11571,
+      "annotated_binding_edges": 10282,
+      "unannotated_binding_edges": 1289
+    },
+    "semantics": "Exact for this fixed model and the selected provenance-group withdrawal space. Withdrawing a group removes every recorded BINDS edge mentioning that provider label or imported PubMed identifier, including records with other annotations. Overlapping groups remove a record once. An annotation is not proof of independent corroboration, and a PubMed group is not necessarily one experiment. This is a conservative record-quarantine stress scenario, not a factual retraction, clinical effect, or probability of error. All competing compounds change jointly. Protected groups are assumed unavailable for withdrawal; protection does not mean a review or experiment has established that assumption. Exactness is relative to the declared decimal80-binary64-v1 finite arithmetic contract; strict verification rejects numerical mismatches. Legacy GraphEngine scores are separate and unchanged. Other relation families, new records, refitting and unselected groups are outside scope."
+  },
+  "pubmed_items_truncated": true
+}

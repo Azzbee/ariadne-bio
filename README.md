@@ -11,6 +11,16 @@ family and see how the same model's ranking changes. An agent resolves questions
 calls bounded graph tools, and explains the returned records with an auditable
 trace.
 
+**Version 1.3 adds correlated provenance audits and conditional protection plans.**
+Quarantine all binding records mentioning one or two selected providers or
+imported PubMed identifiers, including overlapping records and simultaneous
+changes to competitors. The engine enumerates the complete bounded scenario
+space and finds the smallest additional group-protection assumptions that block
+every failing scenario. This is exact for the declared model and catalogue;
+protection is an explicit assumption, not a claim that a review proves evidence
+true. See the [user guide](docs/provenance_audit.md),
+[proof](docs/provenance_audit_proof.md) and [prior art](docs/research_contribution.md).
+
 **Version 1.2 adds an exact ranking audit:** can this compound leave the top ten
 if any one or two recorded binding edges are withdrawn anywhere in the graph,
 including competitors' edges? The result gives the worst supported rank, loss-of-support
@@ -37,11 +47,12 @@ family measures sensitivity to the available graph, not a biological interventio
 from the release assets. Extract `ariadne-research-edition.zip`, run
 `python3 -m http.server 8080 --bind 127.0.0.1` inside it, and open
 http://localhost:8080. It needs no Docker, API key or model download. Its recorded
-results and deterministic guide are explicitly identified. Version 1.2 includes
-the audit proof, executed notebook, replayable certificates, complete benchmark,
-checksums and verification evidence. Any accompanying narrated video and captions
-are explicitly labeled as the historical v1.1 walkthrough; the new audit interface
-is documented in the v1.2 screenshot, notebook and research edition.
+results and deterministic guide are explicitly identified. Version 1.3 includes
+both audit methods, conditional protection plans, complete certificates, printable
+review dossiers, proofs, the executed notebook, measured benchmarks and checksums.
+The separate verification archive retains the actual run identities and replay
+evidence. Any accompanying narrated video and captions are explicitly labeled as
+the historical v1.1 walkthrough; they do not demonstrate the newer audit features.
 
 ## Run the complete application
 
@@ -57,6 +68,11 @@ git clone https://github.com/Azzbee/ariadne-bio.git
 cd ariadne-bio
 make docker-run
 ```
+
+For an existing v1.2 volume, stop the old project with `make docker-stop`, then
+run `make docker-run COMPOSE='docker compose -p ariadne-v13'`. Version 1.3 requires
+a completed prepared-graph identity; the new project preserves the old volumes
+and creates an isolated import. [Upgrade details](docs/deployment.md#prepared-graph-identity-and-existing-volumes).
 
 Open **http://localhost:8080**. Interactive API documentation is at
 **http://localhost:8080/docs**, and Neo4j Browser is at **http://localhost:7474**.
@@ -79,7 +95,8 @@ and can call a live language model. [Deployment details](docs/deployment.md).
 3. Exclude gene interactions or pathway membership. Compare ranks, scores and lost paths.
 4. Ask the agent to explain the investigation. Inspect its tool trace and citations.
 5. Run the binding audit, inspect a worst-case witness and verify its certificate.
-6. Open Evaluation to compare the model with baselines and inspect an actual failure.
+6. Audit provider or citation groups, inspect shared records and compare conditional protection sets.
+7. Open Evaluation to compare the model with baselines and inspect an actual failure.
 
 Version 1.1 keeps the selected compound visible when evidence changes, even when
 it falls outside the displayed ranking or loses every supporting path. Its
@@ -96,9 +113,12 @@ count uses the full permitted graph; displayed paths are bounded and truncation
 is reported. See the [model card](docs/model_card.md) and [API contract](docs/api.md).
 
 The binding audit always starts from the complete graph, independently of the
-family-exclusion controls. Its canonical float64 scorer uses the same fitted
-parameters with an explicit operation order; existing ranking scores remain
-unchanged, and the audit reports its baseline difference from the legacy scorer.
+family-exclusion controls. New certificates declare `decimal80-binary64-v1`,
+which applies the same fitted parameters through a specified decimal/binary64
+arithmetic contract. The explorer retains its existing scorer. Historical
+`float64-fixed-order-v1` certificates retain their original identity and any
+recorded explorer comparisons; new certificates omit those runtime-dependent
+comparison fields. Exact verification always uses the certificate's declared scorer.
 It considers all 1,552 compounds as competitors. At budget two, 117,147 local
 states cover 66,949,807 possible global deletion subsets by a separability proof;
 these are state counts, not a measured runtime speedup. A witness proves that a
@@ -112,6 +132,22 @@ underestimates 19 worst supported ranks. The result supports exact certification
 it does not show extra top-ten failure discovery over that stronger heuristic.
 The [complete protocol and results](docs/audit_benchmark.md) retain both greedy
 comparators, scope differences, numerical identities and actual replay checks.
+
+### A dependency that individual-record tests cannot expose
+
+In the frozen research example, **Marimastat / rheumatoid arthritis stays first
+under any two individual binding-record withdrawals**. Quarantining all records
+annotated with the DrugBank target source group permits **rank 1,096**. That single
+group removes 4,603 binding records across 1,182 compounds, so every affected rival
+must be rescored too. The two guarantees cover different withdrawal spaces.
+
+The group audit shows the attaining records, the original shortlist's changed
+ranks and the smallest additional group-protection assumptions that block every
+failure. Its [complete certificate](reports/v1.3.0/provenance-audit-example-source.json)
+can be recomputed independently. This is a postselected sensitivity illustration,
+not a treatment claim or evidence that the source is unreliable.
+
+![Shared source dependency audit with its exact declared scope](reports/v1.3.0/provenance-audit.jpg)
 
 ![Executed retrospective benchmark and its explicit evaluation protocol](docs/screenshots/benchmark.jpg)
 
@@ -150,6 +186,8 @@ make data             # Download, checksum, prepare, train and evaluate
 make snapshot         # Export every recorded scenario for frontend verification
 make audit-licenses   # Inventory actual source-license text and missing metadata
 make benchmark-audits # All diseases, top ten, global binding budgets zero to two
+make benchmark-provenance # All diseases, correlated source groups and protection sets
+make provenance-controls # Disclosed size-matched controls for two selected examples
 make test             # Unit/API tests, branch coverage gate and frontend tests
 make lint             # Pylint >=9.5 and Black formatting
 make notebook         # Execute every notebook cell with the active interpreter
@@ -214,7 +252,7 @@ and compound target similarity as separate analysis tools. The agent explains
 structured tool results. The language model never determines benchmark labels or
 model scores; those come from the recorded data and deterministic graph pipeline.
 
-For an exported binding certificate, the offline verifier needs no running API,
+For an exported binding or provenance certificate, the offline verifier needs no running API,
 Neo4j or language model:
 
 ```bash
@@ -248,6 +286,8 @@ curl -X POST 'http://localhost:8080/api/agent' \
 | Why these choices instead of a generic generated graph? | [Anti-genericity appendix](docs/anti_genericity.md) |
 | What is the new research claim, and what already exists? | [Contribution and prior art](docs/research_contribution.md) |
 | What exactly does the ranking certificate prove? | [Binding-audit proof and numerical contract](docs/binding_audit_proof.md) |
+| How do shared-source withdrawals and conditional protection work? | [Provenance audit guide](docs/provenance_audit.md) and [proof](docs/provenance_audit_proof.md) |
+| How are certificate calculations reproduced across machines? | [Declared numerical contract](docs/audit_numerical_contract.md) |
 | What did the complete audit and stronger baseline actually find? | [Audit benchmark and limitations](docs/audit_benchmark.md) |
 | How are leakage, candidates and failure cases handled? | [Model card](docs/model_card.md) |
 | Where did the data come from, and under what terms? | [Data sources and licenses](docs/data_sources.md) |

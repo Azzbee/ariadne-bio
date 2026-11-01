@@ -1,6 +1,6 @@
 """Bounded Neo4j queries and genuine GDS execution on an evidence-only graph."""
 
-from collections import defaultdict
+from collections import Counter, defaultdict
 from hashlib import sha256
 import json
 from pathlib import Path
@@ -14,6 +14,12 @@ from app.config import Settings
 
 RELATIONS = {"BINDS", "ASSOCIATES", "INTERACTS", "PARTICIPATES"}
 LABELS = {"Compound", "Gene", "Disease", "Pathway"}
+DATASET_ID = "hetionet-v1.0"
+ISOLATED_DATABASE_GUIDANCE = (
+    "Use an explicitly isolated empty database/Compose project for this graph; "
+    "the existing database is preserved and is never cleared automatically. "
+    "See docs/deployment.md#prepared-graph-identity-and-existing-volumes."
+)
 
 PATH_QUERIES = {
     "direct": (
@@ -64,7 +70,9 @@ def _load_verified_graph(data_dir: Path) -> tuple[dict, dict]:
     with graph_path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
-    if manifest.get("graph_sha256") and digest.hexdigest() != manifest["graph_sha256"]:
+    if not manifest.get("graph_sha256"):
+        raise ValueError("Dataset manifest must contain the prepared graph SHA256")
+    if digest.hexdigest() != manifest["graph_sha256"]:
         raise ValueError("Processed graph checksum mismatch; import refused")
     graph = json.loads(graph_path.read_text())
     if any(node["label"] not in LABELS for node in graph["nodes"]):
@@ -103,22 +111,80 @@ class Neo4jRepository:
         ) as session:
             return session.run(query, params or {}).data()
 
-    def verify(self, expected_sha256: str | None = None) -> dict:
-        """Verify connectivity and optionally bind cached features to this dataset."""
-        self.driver.verify_connectivity()
-        rows = self.run(
-            "MATCH (d:Dataset {id:'hetionet-v1.0'}) "
-            "RETURN d.sha256 AS sha256, d.nodes AS nodes, d.edges AS edges"
+    def _dataset_markers(self) -> list[dict]:
+        """Read every dataset marker before deciding whether writes are permitted."""
+        return self.run(
+            "MATCH (d:Dataset) RETURN d.id AS id,d.sha256 AS sha256,"
+            "d.graph_sha256 AS graph_sha256,d.import_status AS import_status,"
+            "d.nodes AS nodes,d.edges AS edges"
         )
-        if not rows:
-            raise ValueError("Neo4j is empty. Run make ingest to load the evidence graph.")
-        if expected_sha256 and rows[0]["sha256"] != expected_sha256:
+
+    def _inventory(self) -> dict:
+        """Count the complete database inventory, including unexpected records."""
+        nodes = self.run("MATCH (n) WHERE NOT n:Dataset RETURN count(n) AS nodes")[0]["nodes"]
+        relationships = self.run("MATCH ()-[r]->() RETURN type(r) AS type,count(r) AS count")
+        counts = {row["type"]: row["count"] for row in relationships}
+        return {"nodes": nodes, "edges": sum(counts.values()), "edge_counts": counts}
+
+    def _guard_import(self, manifest: dict) -> None:
+        """Refuse changed or unidentifiable nonempty volumes before any mutation."""
+        markers = self._dataset_markers()
+        inventory = self._inventory()
+        if not markers and not inventory["nodes"] and not inventory["edges"]:
+            return
+        if len(markers) != 1 or markers[0]["id"] != DATASET_ID:
+            raise ValueError(
+                "Neo4j has no unique compatible dataset marker. " + ISOLATED_DATABASE_GUIDANCE
+            )
+        marker = markers[0]
+        if not marker["graph_sha256"] or marker["import_status"] != "complete":
+            raise ValueError(
+                "Neo4j lacks a completed prepared-graph identity (including legacy imports). "
+                + ISOLATED_DATABASE_GUIDANCE
+            )
+        if (
+            marker["sha256"] != manifest["dataset_sha256"]
+            or marker["graph_sha256"] != manifest["graph_sha256"]
+        ):
+            raise ValueError(
+                "Neo4j prepared graph identity mismatch; import refused. "
+                + ISOLATED_DATABASE_GUIDANCE
+            )
+        if inventory["nodes"] != marker["nodes"] or inventory["edges"] != marker["edges"]:
+            raise ValueError(
+                "Neo4j inventory differs from its completed import. " + ISOLATED_DATABASE_GUIDANCE
+            )
+
+    def verify(
+        self, expected_sha256: str | None = None, expected_graph_sha256: str | None = None
+    ) -> dict:
+        """Verify a completed import and bind feature artifacts to prepared graph bytes."""
+        self.driver.verify_connectivity()
+        rows = self._dataset_markers()
+        if len(rows) != 1 or rows[0]["id"] != DATASET_ID:
+            raise ValueError(
+                "Neo4j has no complete evidence graph. Run make ingest on an empty database."
+            )
+        marker = rows[0]
+        if not marker["graph_sha256"] or marker["import_status"] != "complete":
+            raise ValueError(
+                "Neo4j lacks a completed prepared-graph identity. " + ISOLATED_DATABASE_GUIDANCE
+            )
+        if expected_sha256 and marker["sha256"] != expected_sha256:
             raise ValueError("Neo4j dataset checksum does not match the feature artifacts")
-        return rows[0]
+        if expected_graph_sha256 and marker["graph_sha256"] != expected_graph_sha256:
+            raise ValueError("Neo4j prepared graph checksum does not match the feature artifacts")
+        inventory = self._inventory()
+        if inventory["nodes"] != marker["nodes"] or inventory["edges"] != marker["edges"]:
+            raise ValueError(
+                "Neo4j inventory differs from its completed import. " + ISOLATED_DATABASE_GUIDANCE
+            )
+        return marker
 
     def ingest(self, data_dir: Path, batch_size: int = 1000) -> dict:
         """Idempotently ingest typed evidence; treatment labels stay outside Neo4j."""
         graph, manifest = _load_verified_graph(data_dir)
+        self._guard_import(manifest)
         for label in ["Entity", "Compound", "Gene", "Disease", "Pathway", "Dataset"]:
             self.run(
                 f"CREATE CONSTRAINT {label.lower()}_id IF NOT EXISTS "
@@ -158,15 +224,29 @@ class Neo4jRepository:
                     {"rows": records[start : start + batch_size]},
                     write=True,
                 )
+        self.run("CALL db.awaitIndexes(120)", write=True)
+        actual = self._inventory()
+        expected_counts = dict(Counter(edge["type"] for edge in graph["edges"]))
+        if actual["nodes"] != len(graph["nodes"]) or actual["edge_counts"] != expected_counts:
+            raise ValueError(
+                "Neo4j import inventory does not match the prepared graph; "
+                "no completed graph identity was written. " + ISOLATED_DATABASE_GUIDANCE
+            )
         checksum = manifest["dataset_sha256"]
         self.run(
-            "MERGE (d:Dataset {id:'hetionet-v1.0'}) "
-            "SET d.sha256=$checksum,d.nodes=$nodes,d.edges=$edges",
-            {"checksum": checksum, "nodes": len(graph["nodes"]), "edges": len(graph["edges"])},
+            "MERGE (d:Dataset {id:$dataset_id}) "
+            "SET d.sha256=$checksum,d.graph_sha256=$graph_sha256,"
+            "d.import_status='complete',d.nodes=$nodes,d.edges=$edges",
+            {
+                "dataset_id": DATASET_ID,
+                "checksum": checksum,
+                "graph_sha256": manifest["graph_sha256"],
+                "nodes": len(graph["nodes"]),
+                "edges": len(graph["edges"]),
+            },
             write=True,
         )
-        self.run("CALL db.awaitIndexes(120)", write=True)
-        return self.verify(checksum)
+        return self.verify(checksum, manifest["graph_sha256"])
 
     def evidence(self, disease_id: str, compound_id: str, exclude=(), limit=12) -> dict:
         """Return representative actual Neo4j paths, sharing the display budget fairly."""

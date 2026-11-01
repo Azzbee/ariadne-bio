@@ -2,21 +2,37 @@
 
 ## The claim this release makes
 
-ARIADNE v1.2 implements an exact audit of a fixed compound ranking under a bounded
+ARIADNE v1.3 adds an exact, bounded audit of correlated provider/citation-group
+withdrawals and a minimum-cardinality conditional protection plan. Every selected
+group quarantines all BINDS records mentioning its imported annotation, including
+overlaps and simultaneous competitor changes. All permitted group subsets are
+enumerated. The protection problem is the ordinary finite hitting-set problem
+on the failing scenario family; the implementation does not claim to invent that
+optimizer or the concept of provenance. See the
+[group-audit proof](provenance_audit_proof.md) and
+[annotation semantics](provenance_audit.md).
+
+The preserved v1.2 method implements an exact audit of a fixed compound ranking under a bounded
 number of individual BINDS-edge deletions anywhere in the graph. The method uses
 compound separability, exact local score envelopes and disjoint budget allocation.
 It includes a competitor whose score improves when evidence is removed. A
 certificate includes replayable witnesses and is checked by recomputation.
 
-The contribution is this precisely specified method and its reproducible
-evaluation on the prepared Hetionet workload. The [proof](binding_audit_proof.md)
-states the conditions. This is a research contribution to assess against prior
+The contribution is the precisely specified combination of individual-record and
+correlated-group audits, conditional protection sets, replayable certificates and
+reproducible evaluation on the prepared Hetionet workload. The
+[individual-record proof](binding_audit_proof.md) states its separate conditions.
+This is a research contribution to assess against prior
 art, not a claim of being the first certified ranking method, a new biological
 discovery, or demonstrated commercial demand.
 
 Existing v1.1 scores, fixed-model assessments and family-exclusion behavior remain
-separate. The audit's canonical float64 scorer makes its numerical function
-explicit and reports any baseline difference from the legacy scorer.
+separate. New audits use the explicit
+[`decimal80-binary64-v1` numerical contract](audit_numerical_contract.md): fixed
+Decimal transforms, exact integer rounding to binary64, and ordered basic
+arithmetic. Legacy explorer outputs are not sealed into new certificates.
+Historical scorer identities retain their original strict verification; they
+are not silently relabeled as portable.
 
 ## Scientific prior art
 
@@ -31,6 +47,11 @@ explicit and reports any baseline difference from the legacy scorer.
 | [CAS, October 2026 preprint](https://arxiv.org/html/2610.14996v1) | Exact top-k selection under scenario uncertainty, decision certificates and adaptive information acquisition | Certified ranking itself is established. ARIADNE uses the separable structure of its nonlinear path score and a global graph-deletion budget. CAS's guarantees do not transfer automatically to this information model. |
 | [Counterfactual Fragility Certificates, 2026 preprint](https://arxiv.org/abs/2609.00366) | Recomputable protocol-level evidence-failure trajectories and greedy fragility measures, explicitly distinguished from formal robustness certificates | ARIADNE claims exact bounds only for its small, specified deletion space; it does not claim to invent evidence-failure audit objects. |
 | [Mo et al., Cleaning Uncertain Data for Top-k Queries, ICDE 2013](https://www.cs.hku.hk/~ckcheng/papers/icde13-uncertain.pdf) | Budgeted, potentially unsuccessful information gathering to improve uncertain top-k answers | A future evidence-review planner would need to compare against this literature. This release does not implement or claim an optimal human-review policy. |
+| [Schreiber and Amsterdamer, Query-Guided Analysis and Mitigation of Data Verification Errors, ICDE 2026](https://arxiv.org/abs/2603.08612) | Worst-case query uncertainty, risky input tuples and selection of external verifications to reduce uncertainty | ARIADNE does not invent query-guided verification or model review errors, costs and uncertain outcomes. Its protection output is an exact conditional hitting set for a declared finite group-withdrawal catalogue. |
+| [Meliou et al., Causality and Provenance in Databases, TaPP 2011](https://www.usenix.org/legacy/event/tapp11/tech/final_files/Meliou.pdf) | Database causality, contingency sets and distinctions between endogenous and exogenous facts | Protected groups are explicit scenario exclusions. ARIADNE does not invent provenance, causal attribution or the idea of limiting which facts can change. |
+| [Freire et al., The Complexity of Resilience and Responsibility for Self-Join-Free Conjunctive Queries, PVLDB 2015](https://www.vldb.org/pvldb/vol9/p180-freire.pdf) | Resilience and responsibility through tuple deletions that change query answers | Bounded record/group deletion and hitting-set reasoning have established database precedents. ARIADNE applies finite enumeration to its frozen nonlinear ranked-path function. |
+| [Tracking the Impact of Fact Deletions on Knowledge Graph Queries, CIKM 2017](https://researchportal.ip-paris.fr/fr/publications/tracking-the-impact-of-fact-deletions-on-knowledge-graph-queries-/) | Tracking effects of deleted knowledge-graph facts through provenance expressions | The source-group audit does not claim to invent provenance-aware graph updates. It specifies imported annotation unions and jointly changing competitor ranks. |
+| [Ramusat et al., Semiring Provenance for Graph Queries, TaPP 2018](https://www.usenix.org/conference/tapp2018/presentation/ramusat) | Algebraic provenance for graph query evaluation | ARIADNE's record-to-group map and finite scenario certificates are a concrete application, not a new general provenance algebra. |
 | [InfoBAX, ICML 2021](https://proceedings.mlr.press/v139/neiswanger21a.html) and [DiscoBAX, ICML 2023](https://proceedings.mlr.press/v202/lyle23a.html) | Information acquisition for algorithm outputs and effective, diverse genomic interventions | A graph audit is not an experiment-selection breakthrough; real acquisition utility needs outcome data and a separate comparison. |
 
 Preprints above are identified as preprints, not peer-reviewed validation.
@@ -59,6 +80,35 @@ supports only zero, one or two deletions. Evidence from that implementation must
 not be used to claim unrestricted budgets, general GNN certification, source-level
 correlated errors or biological intervention effects.
 
+### What changes in v1.3
+
+Provider or citation annotations can link many binding records across compounds.
+One group withdrawal therefore cannot be assigned independently to one compound's
+budget. Version 1.3 deliberately uses a different algorithm and scope: exhaustive
+joint scoring of selected group subsets of size at most two. At most 16 groups
+can be selected; the default provider catalogue contains all 14 observed BINDS
+provider labels. This bounds the scenario space and makes every claim checkable.
+
+The implementation preserves overlap semantics: a record mentioned by two
+withdrawn groups is removed once, and a record with several annotations is not
+assumed to have independent corroboration. Every affected competitor changes
+jointly. The certificate contains the group-map digest, exhaustive scenario-table
+digest, worst supported ranks, separate support-loss witnesses and a bounded
+summary of the original shortlist.
+
+It also enumerates the smallest additional protected-group sets intersecting
+every failing scenario. This is minimum cardinality, with an exact count of all
+optimal sets and a bounded preview. The guarantee is conditional on those groups
+being unavailable for withdrawal; a review or experiment has not established
+their truth. Missing annotations and unselected groups remain outside scope.
+
+The potentially useful contribution is a reproducible workflow joining those
+semantics, exact finite certificates and an inspectable protection choice. It is
+not evidence of a new generic robustness algorithm, source independence,
+optimal experiment design or a published scientific breakthrough. A provider
+budget and an individual-edge budget are different perturbation spaces; their
+failure counts must not be presented as a like-for-like accuracy comparison.
+
 ## Evaluation designed to falsify the implementation
 
 1. Exhaustively enumerate all global deletion subsets on small graphs and compare
@@ -76,6 +126,14 @@ correlated errors or biological intervention effects.
 The output of `make benchmark-audits` is the measurement record. A theorem and a
 configured CI gate are not evidence of a successful run. Actual source identities,
 test results and benchmark output belong with each release's verification.
+
+Version 1.3 adds the separate `make benchmark-provenance` record. Its tests use
+independent tiny-graph enumeration for correlated group deletions and brute-force
+protection choices, including overlaps, protected groups, unsupported baselines,
+non-monotone score changes and a correctly rehashed false claim. The full provider
+benchmark covers the same canonical top-ten workload with all competitors. Any
+selected PubMed illustration declares its catalogue and post-exploration
+selection; it is not a held-out generalization result.
 
 The [complete local benchmark](audit_benchmark.md) covers 1,330 queries across all
 137 diseases. At budget two, the stronger margin-aware global greedy comparator

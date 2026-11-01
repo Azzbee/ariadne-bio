@@ -21,6 +21,8 @@ from app import __version__
 from app.audit_schemas import AuditResponse
 from app.binding_audit import BindingAuditor, certificate_digest
 from app.graph_engine import DISCLAIMER, FAMILIES, FEATURE_NAMES, GraphEngine
+from app.provenance_audit import ProvenanceAuditor
+from app.provenance_schemas import ProvenanceAuditResponse
 from scripts.prepare_data import write_json
 
 DEFAULT_DISEASES = (
@@ -34,6 +36,8 @@ DEFAULT_DISEASES = (
 )
 AUDIT_TOP_K = (1, 5, 10)
 AUDIT_BUDGETS = (0, 1, 2)
+PROVENANCE_TOP_K = 10
+PROVENANCE_BUDGETS = (1, 2)
 
 
 def exclusion_combinations() -> list[tuple[str, ...]]:
@@ -54,7 +58,11 @@ def case_filename(disease: dict) -> str:
 
 
 def build_case(
-    engine: GraphEngine, disease_id: str, top_k: int = 12, auditor: BindingAuditor | None = None
+    engine: GraphEngine,
+    disease_id: str,
+    top_k: int = 12,
+    auditor: BindingAuditor | None = None,
+    provenance_auditor: ProvenanceAuditor | None = None,
 ) -> dict:
     """Materialize every supported interaction for one published disease case."""
     rankings = {}
@@ -86,6 +94,9 @@ def build_case(
     audits, audit_verifications = _build_audits(
         auditor or BindingAuditor(engine), disease_id, compounds
     )
+    provenance_audits, provenance_verifications = _build_provenance_audits(
+        provenance_auditor or ProvenanceAuditor(engine), disease_id, compounds
+    )
     return {
         "disease": rankings[""]["disease"],
         "rankings": rankings,
@@ -93,6 +104,21 @@ def build_case(
         "assessments": assessments,
         "audits": audits,
         "audit_verifications": audit_verifications,
+        "provenance_audits": provenance_audits,
+        "provenance_verifications": provenance_verifications,
+        "provenance_demonstration": (
+            {
+                "compound_id": "Compound::DB00786",
+                "top_k": PROVENANCE_TOP_K,
+                "budget": 1,
+                "selection": (
+                    "Illustrative source-dependency case selected after inspecting the "
+                    "actual prepared graph. This is not an independent validation cohort."
+                ),
+            }
+            if disease_id == "Disease::DOID:7148"
+            else None
+        ),
         "audit_demonstration": (
             {
                 "compound_id": "Compound::DB01115",
@@ -123,6 +149,13 @@ def build_case(
             "audit_top_k": list(AUDIT_TOP_K),
             "audit_budgets": list(AUDIT_BUDGETS),
             "audit_scope": "Unmodified full graph; all recorded BINDS edges and all compounds",
+            "provenance_audit_count": len(compounds) * len(PROVENANCE_BUDGETS),
+            "provenance_top_k": PROVENANCE_TOP_K,
+            "provenance_budgets": list(PROVENANCE_BUDGETS),
+            "provenance_scope": (
+                "Unmodified full graph; every imported BINDS source label; any-mentioned "
+                "group withdrawal; all compounds; no conditional protection"
+            ),
             "selection_policy": (
                 "Exact ranked top-k for each configuration; evidence and exact score "
                 "assessments for their union under all configurations. Unsupported and "
@@ -143,6 +176,28 @@ def _build_audits(auditor: BindingAuditor, disease_id: str, compounds: set) -> t
             verification = auditor.verify(certificate)
             if not verification["valid"]:
                 raise ValueError("A recorded audit failed independent witness replay")
+            audits[compound_id][key] = certificate
+            verifications[compound_id][key] = {
+                **verification,
+                "certificate_sha256": certificate["certificate_sha256"],
+                "verification_execution": "recorded_at_export",
+            }
+    return audits, verifications
+
+
+def _build_provenance_audits(auditor: ProvenanceAuditor, disease_id: str, compounds: set) -> tuple:
+    """Retain exact group certificates only after complete verification and witness replay."""
+    audits, verifications = {}, {}
+    for compound_id in sorted(compounds):
+        audits[compound_id], verifications[compound_id] = {}, {}
+        for budget in PROVENANCE_BUDGETS:
+            key = f"{PROVENANCE_TOP_K}:{budget}"
+            certificate = auditor.audit(
+                disease_id, compound_id, top_k=PROVENANCE_TOP_K, budget=budget
+            )
+            verification = auditor.verify(certificate)
+            if not verification["valid"]:
+                raise ValueError("A recorded provenance audit failed verification and replay")
             audits[compound_id][key] = certificate
             verifications[compound_id][key] = {
                 **verification,
@@ -280,6 +335,7 @@ def validate_case(case: dict) -> None:
                 raise ValueError("Assessment identity or exclusions do not match the case")
             _validate_assessment(assessment, variants[""], variants[key])
     _validate_audits(case)
+    _validate_provenance_audits(case)
 
 
 def _validate_audits(case: dict) -> None:
@@ -313,6 +369,44 @@ def _validate_audits(case: dict) -> None:
                 raise ValueError("Recorded verification does not validate this exact certificate")
 
 
+def _validate_provenance_audits(case: dict) -> None:
+    """Reject missing scopes, stale proofs and verification records from another audit."""
+    audits = case.get("provenance_audits", {})
+    verifications = case.get("provenance_verifications", {})
+    if set(audits) != set(case["assessments"]) or set(verifications) != set(audits):
+        raise ValueError("A published candidate is missing its provenance audit or verification")
+    expected = {f"{PROVENANCE_TOP_K}:{budget}" for budget in PROVENANCE_BUDGETS}
+    for compound_id, variants in audits.items():
+        if set(variants) != expected or set(verifications[compound_id]) != expected:
+            raise ValueError("A published candidate is missing a provenance audit configuration")
+        for key, certificate in variants.items():
+            ProvenanceAuditResponse.model_validate(certificate)
+            scope = certificate["scope"]
+            if (
+                certificate["disease"] != case["disease"]
+                or certificate["compound"]["id"] != compound_id
+                or f"{certificate['top_k']}:{certificate['budget']}" != key
+                or certificate_digest(certificate) != certificate["certificate_sha256"]
+            ):
+                raise ValueError("Provenance audit identity or checksum differs")
+            if (
+                scope.get("group_kind") != "source"
+                or scope.get("protected_group_ids") != []
+                or scope.get("operation") != "withdraw_records_mentioning_any_selected_group"
+                or scope.get("includes_competitor_changes") is not True
+            ):
+                raise ValueError("Provenance audit source scope differs")
+            verification = verifications[compound_id][key]
+            if (
+                verification.get("valid") is not True
+                or verification.get("status") != "verified"
+                or verification.get("errors") != []
+                or verification.get("certificate_sha256") != certificate["certificate_sha256"]
+                or verification.get("verification_execution") != "recorded_at_export"
+            ):
+                raise ValueError("Recorded verification does not validate this provenance audit")
+
+
 def _write_snapshot(
     engine: GraphEngine, output: Path, disease_ids=DEFAULT_DISEASES, top_k: int = 12
 ) -> dict:
@@ -327,8 +421,11 @@ def _write_snapshot(
     (output / "cases").mkdir(parents=True, exist_ok=True)
     cases, diseases, files = {}, [], []
     auditor = BindingAuditor(engine)
+    provenance_auditor = ProvenanceAuditor(engine)
     for disease_id in disease_ids:
-        case = build_case(engine, disease_id, top_k, auditor=auditor)
+        case = build_case(
+            engine, disease_id, top_k, auditor=auditor, provenance_auditor=provenance_auditor
+        )
         validate_case(case)
         filename = case_filename(case["disease"])
         path = output / filename
@@ -355,6 +452,7 @@ def _write_snapshot(
         "cases": cases,
         "stats": {**engine.stats(), "graph_sha256": graph_sha256},
         "provenance": engine.provenance(),
+        "provenance_catalog": provenance_auditor.catalog("source", limit=100),
         "evaluation": engine.evaluation(),
         "health": {
             "status": "ok",
@@ -387,6 +485,13 @@ def _write_snapshot(
             "Global BINDS-withdrawal certificates and their successful verification were "
             "computed at export. The hosted edition retrieves these recorded results; it "
             "does not execute the solver or independently replay graph edits in the browser."
+        ),
+        "provenance_audit_disclosure": (
+            "Shared-provenance audits enumerate all selected source-label withdrawals, "
+            "with no protection assumptions, and verify the result at export. Conditional "
+            "protection plans are sensitivity statements, not evidence validation or an "
+            "experiment policy. The browser loads recorded results; new scopes and imported "
+            "PubMed-reference audits require the live application."
         ),
         "disclaimer": DISCLAIMER,
         "runtime_seconds": round(time.perf_counter() - started, 3),

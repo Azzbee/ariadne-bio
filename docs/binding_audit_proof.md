@@ -43,19 +43,25 @@ unchanged. A state is supported exactly when the sum of the three counts is
 positive. Unsupported states have a finite diagnostic model output but **no
 supported rank**.
 
-The audit defines its own explicit float64 evaluation order: start with the
-saved intercept, add each standardized coefficient term in the fixed
-`FEATURE_NAMES` order, then apply SciPy `expit`. No fitted parameter changes.
+The audit's default scorer is `decimal80-binary64-v1`, specified completely in
+the [numerical contract](audit_numerical_contract.md). It uses explicit Decimal
+transforms, integer nearest-even conversion to binary64, and separate ordered
+binary64 operations: start with the saved intercept, add each standardized
+coefficient term in `FEATURE_NAMES` order, then apply the declared Decimal
+sigmoid. No fitted parameter changes.
 Ranking uses the resulting score descending, then compound ID ascending for
 exact score ties. In particular, sigmoid saturation can create score ties even
 when logits differ; rank comparisons use scores, not logits.
 
 This canonical scorer makes the audited function explicit. It does not replace
 the legacy vectorized scorer in existing rankings or assessments. The audit
-reports its baseline alongside the legacy score and rank and their differences.
-The guarantee concerns the canonical audit scorer with the bound input/model
-identities; it is not a claim about ideal real arithmetic or every platform's
-math library. The legacy exhaustive score-regression gate remains separate.
+seals its own baseline, omitting platform-dependent legacy comparison fields.
+The guarantee concerns the named finite scorer with the bound input/model
+identities and conforming nearest-even binary64 arithmetic; it is not a claim
+about ideal real arithmetic. Historical `float64-fixed-order-v1` certificates
+retain their original NumPy/SciPy implementation, comparison fields and strict
+runtime-dependent verification. The legacy explorer and its exhaustive score
+regression gate remain separate.
 
 ## Lemma 1: separability
 

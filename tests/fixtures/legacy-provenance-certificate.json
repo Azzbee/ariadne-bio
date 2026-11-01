@@ -1,0 +1,368 @@
+{
+  "baseline": {
+    "counts": {
+      "direct": 0,
+      "interaction": 2,
+      "pathway": 2
+    },
+    "evidence_count": 4,
+    "legacy_rank": 2,
+    "legacy_score": 0.5,
+    "logit": 0.0,
+    "rank": 2,
+    "score": 0.5,
+    "supported": true
+  },
+  "budget": 2,
+  "certificate_sha256": "2648b8e5690b004624c29aca254cb92ec14fdf0eba5e7d3def9644424968f363",
+  "compound": {
+    "id": "Compound::C2",
+    "name": "C2"
+  },
+  "disease": {
+    "id": "Disease::D1",
+    "name": "D1"
+  },
+  "identity": {
+    "dataset_sha256": "fixture",
+    "graph_sha256": "19d8d18fd27eef7f4a87ec311ee30f754407ce667f1a619e6cfeb5b8ff1bc69b",
+    "group_map_sha256": "dc514310ee463918e76159d90f8cdf9ec2c4fdea36089d8afbf3578c5c02c2da",
+    "model_sha256": "22eeac582e9a2e291b4e8b1ad244e6317f2f5fd67e38021572ed5bae99d2d01d",
+    "scorer": "float64-fixed-order-v1"
+  },
+  "interpretation": "Exact for this fixed model and the selected provenance-group withdrawal space. Withdrawing a group removes every recorded BINDS edge mentioning that provider label or imported PubMed identifier, including records with other annotations. Overlapping groups remove a record once. An annotation is not proof of independent corroboration, and a PubMed group is not necessarily one experiment. This is a conservative record-quarantine stress scenario, not a factual retraction, clinical effect, or probability of error. All competing compounds change jointly. Protected groups are assumed unavailable for withdrawal; protection does not mean a review or experiment has established that assumption. Binary64 exactness is relative to the declared scorer and numerical runtime; verification rejects numerical mismatches. Other relation families, new records, refitting and unselected groups are outside scope.",
+  "method": "provenance-group-exhaustive-v1",
+  "proof": {
+    "algorithm": "exhaustive bounded group subsets and exact minimum-cardinality hitting sets",
+    "covered_scenarios": 2,
+    "group_map_sha256": "dc514310ee463918e76159d90f8cdf9ec2c4fdea36089d8afbf3578c5c02c2da",
+    "scenario_table_sha256": "47d56357ef7e3266aeaf5686b31fae27dad9f51ee66d781dba0afe32716ff929",
+    "scenarios_evaluated": 2,
+    "search_budget": 2
+  },
+  "protection_plan": {
+    "alternatives_truncated": false,
+    "failing_scenario_count": 2,
+    "interpretation": "Minimum cardinality among additional selected groups that must be assumed unavailable for withdrawal to block every failing scenario in this certificate. This is a conditional combinatorial protection plan, not an optimal experiment, a measured review-cost saving, or evidence that the protected records are true. A record can still be withdrawn through another unprotected overlapping group.",
+    "minimum_additional_groups": null,
+    "optimal_set_count": 0,
+    "optimal_sets_preview": [],
+    "representative": [],
+    "status": "impossible_baseline"
+  },
+  "results": [
+    {
+      "budget": 0,
+      "rank_witness": {
+        "affected_compound_count": 0,
+        "focus": {
+          "after": {
+            "counts": {
+              "direct": 0,
+              "interaction": 2,
+              "pathway": 2
+            },
+            "evidence_count": 4,
+            "logit": 0.0,
+            "rank": 2,
+            "score": 0.5,
+            "supported": true
+          },
+          "before": {
+            "counts": {
+              "direct": 0,
+              "interaction": 2,
+              "pathway": 2
+            },
+            "evidence_count": 4,
+            "logit": 0.0,
+            "rank": 2,
+            "score": 0.5,
+            "supported": true
+          }
+        },
+        "group_ids": [],
+        "preview_truncated": false,
+        "removed_edge_count": 0,
+        "removed_edge_ids_sha256": "99bcfca61a865fe7ac5bb675250de956e8e0fb175d59adac80bb2fb177154a2c",
+        "removed_edges_preview": []
+      },
+      "robust": false,
+      "scenario_count": 1,
+      "unsupported_attainable": false,
+      "unsupported_witness": null,
+      "worst_supported_rank": 2
+    },
+    {
+      "budget": 1,
+      "rank_witness": {
+        "affected_compound_count": 0,
+        "focus": {
+          "after": {
+            "counts": {
+              "direct": 0,
+              "interaction": 2,
+              "pathway": 2
+            },
+            "evidence_count": 4,
+            "logit": 0.0,
+            "rank": 2,
+            "score": 0.5,
+            "supported": true
+          },
+          "before": {
+            "counts": {
+              "direct": 0,
+              "interaction": 2,
+              "pathway": 2
+            },
+            "evidence_count": 4,
+            "logit": 0.0,
+            "rank": 2,
+            "score": 0.5,
+            "supported": true
+          }
+        },
+        "group_ids": [],
+        "preview_truncated": false,
+        "removed_edge_count": 0,
+        "removed_edge_ids_sha256": "99bcfca61a865fe7ac5bb675250de956e8e0fb175d59adac80bb2fb177154a2c",
+        "removed_edges_preview": []
+      },
+      "robust": false,
+      "scenario_count": 2,
+      "unsupported_attainable": true,
+      "unsupported_witness": {
+        "affected_compound_count": 3,
+        "focus": {
+          "after": {
+            "counts": {
+              "direct": 0,
+              "interaction": 0,
+              "pathway": 0
+            },
+            "evidence_count": 0,
+            "logit": 0.0,
+            "rank": null,
+            "score": 0.5,
+            "supported": false
+          },
+          "before": {
+            "counts": {
+              "direct": 0,
+              "interaction": 2,
+              "pathway": 2
+            },
+            "evidence_count": 4,
+            "logit": 0.0,
+            "rank": 2,
+            "score": 0.5,
+            "supported": true
+          }
+        },
+        "group_ids": [
+          "source:Hand-counted fixture"
+        ],
+        "preview_truncated": false,
+        "removed_edge_count": 3,
+        "removed_edge_ids_sha256": "699dc4f04ca4a5a9ddac09d288e830730b426566744c714b2352d494feeec2fd",
+        "removed_edges_preview": [
+          {
+            "data": {
+              "source": "Hand-counted fixture"
+            },
+            "id": "e0",
+            "license": "CC0",
+            "source": "Compound::C1",
+            "sources": [
+              "Hand-counted fixture"
+            ],
+            "target": "Gene::G1",
+            "type": "BINDS"
+          },
+          {
+            "data": {
+              "source": "Hand-counted fixture"
+            },
+            "id": "e2",
+            "license": "CC0",
+            "source": "Compound::C2",
+            "sources": [
+              "Hand-counted fixture"
+            ],
+            "target": "Gene::G2",
+            "type": "BINDS"
+          },
+          {
+            "data": {
+              "source": "Hand-counted fixture"
+            },
+            "id": "e4",
+            "license": "CC0",
+            "source": "Compound::C3",
+            "sources": [
+              "Hand-counted fixture"
+            ],
+            "target": "Gene::G3",
+            "type": "BINDS"
+          }
+        ]
+      },
+      "worst_supported_rank": 2
+    },
+    {
+      "budget": 2,
+      "rank_witness": {
+        "affected_compound_count": 0,
+        "focus": {
+          "after": {
+            "counts": {
+              "direct": 0,
+              "interaction": 2,
+              "pathway": 2
+            },
+            "evidence_count": 4,
+            "logit": 0.0,
+            "rank": 2,
+            "score": 0.5,
+            "supported": true
+          },
+          "before": {
+            "counts": {
+              "direct": 0,
+              "interaction": 2,
+              "pathway": 2
+            },
+            "evidence_count": 4,
+            "logit": 0.0,
+            "rank": 2,
+            "score": 0.5,
+            "supported": true
+          }
+        },
+        "group_ids": [],
+        "preview_truncated": false,
+        "removed_edge_count": 0,
+        "removed_edge_ids_sha256": "99bcfca61a865fe7ac5bb675250de956e8e0fb175d59adac80bb2fb177154a2c",
+        "removed_edges_preview": []
+      },
+      "robust": false,
+      "scenario_count": 2,
+      "unsupported_attainable": true,
+      "unsupported_witness": {
+        "affected_compound_count": 3,
+        "focus": {
+          "after": {
+            "counts": {
+              "direct": 0,
+              "interaction": 0,
+              "pathway": 0
+            },
+            "evidence_count": 0,
+            "logit": 0.0,
+            "rank": null,
+            "score": 0.5,
+            "supported": false
+          },
+          "before": {
+            "counts": {
+              "direct": 0,
+              "interaction": 2,
+              "pathway": 2
+            },
+            "evidence_count": 4,
+            "logit": 0.0,
+            "rank": 2,
+            "score": 0.5,
+            "supported": true
+          }
+        },
+        "group_ids": [
+          "source:Hand-counted fixture"
+        ],
+        "preview_truncated": false,
+        "removed_edge_count": 3,
+        "removed_edge_ids_sha256": "699dc4f04ca4a5a9ddac09d288e830730b426566744c714b2352d494feeec2fd",
+        "removed_edges_preview": [
+          {
+            "data": {
+              "source": "Hand-counted fixture"
+            },
+            "id": "e0",
+            "license": "CC0",
+            "source": "Compound::C1",
+            "sources": [
+              "Hand-counted fixture"
+            ],
+            "target": "Gene::G1",
+            "type": "BINDS"
+          },
+          {
+            "data": {
+              "source": "Hand-counted fixture"
+            },
+            "id": "e2",
+            "license": "CC0",
+            "source": "Compound::C2",
+            "sources": [
+              "Hand-counted fixture"
+            ],
+            "target": "Gene::G2",
+            "type": "BINDS"
+          },
+          {
+            "data": {
+              "source": "Hand-counted fixture"
+            },
+            "id": "e4",
+            "license": "CC0",
+            "source": "Compound::C3",
+            "sources": [
+              "Hand-counted fixture"
+            ],
+            "target": "Gene::G3",
+            "type": "BINDS"
+          }
+        ]
+      },
+      "worst_supported_rank": 2
+    }
+  ],
+  "schema_version": "1.0",
+  "scope": {
+    "available_group_count": 1,
+    "eligible_group_count": 1,
+    "group_ids": [
+      "source:Hand-counted fixture"
+    ],
+    "group_kind": "source",
+    "groups": [
+      {
+        "compound_count": 3,
+        "edge_count": 3,
+        "edge_ids_sha256": "699dc4f04ca4a5a9ddac09d288e830730b426566744c714b2352d494feeec2fd",
+        "group_id": "source:Hand-counted fixture",
+        "label": "Hand-counted fixture"
+      }
+    ],
+    "includes_competitor_changes": true,
+    "operation": "withdraw_records_mentioning_any_selected_group",
+    "protected_group_ids": [],
+    "relationship": "BINDS"
+  },
+  "shortlist": [
+    {
+      "baseline_rank": 1,
+      "baseline_score": 0.5,
+      "compound": {
+        "id": "Compound::C1",
+        "name": "C1"
+      },
+      "robust": false,
+      "unsupported_attainable": true,
+      "worst_supported_rank": 1
+    }
+  ],
+  "shortlist_truncated": false,
+  "top_k": 1
+}

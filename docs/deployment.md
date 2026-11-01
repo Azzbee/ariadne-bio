@@ -183,6 +183,14 @@ them. This
 prevents an early failure from uploading a committed success from an older run.
 The source graph, notebook and historical reference reports are preserved.
 
+After the live HTTP smoke check, CI copies `model.json`, `manifest.json` and
+`evaluation.json` directly from the API container into `reports/live-*.json`.
+The live-artifact gate checks the model's parameter self-hash and binds every
+binding/provider/conditional/PubMed smoke certificate to the copied model and
+prepared graph. These files allow offline replay of the actual live certificates.
+The quality job's separately fitted model and the committed research-snapshot
+model remain separate origins; neither is relabelled as the container fit.
+
 Images are tagged with both `latest` and the source commit SHA:
 
 ```text
@@ -230,3 +238,60 @@ or replace live/offline certificate verification.
 
 `make docker-stop` retains data. `make clean` removes only caches and test
 outputs. Destructive volume deletion is not part of routine startup or cleanup.
+
+## Prepared graph identity and existing volumes
+
+Version 1.3 binds a completed Neo4j import to both the original dataset archive
+SHA-256 and the exact prepared `graph.json` SHA-256. The importer inspects the
+database before creating constraints or writing records. An existing different
+graph, a nonempty unmarked database, an incomplete import or a legacy marker
+without a prepared-graph identity is rejected. A completed import of the same
+graph remains idempotent. The completion marker is written only after all
+record batches, index readiness and node/relationship inventory checks succeed.
+API startup checks both identities and the recorded inventory as well.
+
+The previous version's marker identifies only the source archive. Equal archive
+identities cannot establish equal prepared graphs, so version 1.3 does not
+silently adopt or clear that database. Preserve it and create an explicitly new
+Compose project when upgrading a legacy local volume:
+
+```bash
+make docker-stop
+make docker-run COMPOSE='docker compose -p ariadne-v13'
+```
+
+The first command stops the original project without deleting its volumes. The
+second uses new project-scoped volumes and reuses the local credential
+configuration. Use `COMPOSE='docker compose -p ariadne-v13'` for subsequent
+`docker-logs`, `docker-stop` and other Compose targets for that project. Ports
+must be free; choose new port settings if both projects should run together.
+Do not edit an old database's checksum marker to bypass the check.
+
+This guard protects the normal single-writer initialization workflow against
+accidentally mixing prepared datasets. Inventory counts are not an independent
+cryptographic attestation of every live database property, and concurrent
+external database mutations are outside this deployment contract. The importer
+continues to target the prepared Hetionet schema; this is not a general-purpose
+customer-data ingestion product.
+
+## Correlated provenance audits
+
+`make benchmark-provenance` evaluates the canonical top-ten workload under
+withdrawals of zero, one or two observed BINDS provider groups. Every selected
+group removes all binding records bearing that annotation; overlapping records
+are removed once. Other relation families and the fitted model remain fixed.
+The live API also supports an explicit selection of up to 16 imported PubMed
+groups. This is a finite stress scenario over recorded annotations, not a claim
+that each provider or PMID is an independent experiment.
+
+The same certificate format carries a minimum-cardinality conditional protection
+plan: additional groups that must be assumed unavailable for withdrawal to block
+every failing scenario in the declared space. Review completion does not itself
+establish that assumption, and an overlapping unprotected group can still remove
+the same record. See the [user guide](provenance_audit.md) and
+[proof](provenance_audit_proof.md).
+
+The new audit computes edited matrices in memory. It never deletes records from
+Neo4j or changes the source graph/model files. Its static research edition stores
+explicitly recorded certificates; use the live API or offline verifier for a new
+computation against the matching graph and model.

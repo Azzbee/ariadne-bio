@@ -58,12 +58,30 @@ IDs are namespace-qualified strings, e.g. `Disease::DOID:...`.
   binding-envelope certificate with `scope`, `identity`, `baseline`, `results`
   for each budget, `proof` and `certificate_sha256`. All BINDS edges, including
   competitors, are eligible; the full graph is used independently of UI exclusions.
-  Integer `budget` is 0..2 and `top_k` 1..100. The audit-only canonical float64
-  scorer must not change legacy rankings or assessment bytes.
+  Integer `budget` is 0..2 and `top_k` 1..100. The audit-only declared arithmetic
+  contract must not change legacy rankings or assessment bytes. New certificates
+  use `decimal80-binary64-v1`; historical scorer identities retain their original
+  verifier semantics. Unknown scorer identities fail closed.
 - POST `/audit/verify` body `{certificate:<complete response>}` =>
   `{status:"verified"|"invalid",valid,checks,errors,verification_method,replayed_witnesses}`.
   Verification recomputes the same-algorithm bound and independently replays
   witnesses by matrix edits; a content hash alone is never sufficient.
+- GET `/provenance/groups?kind=source&q=&limit=30&offset=0` => observed BINDS
+  source-label or imported PubMed groups, exact membership digests and annotation
+  coverage. Catalog lookup works without a fitted model. Labels and references
+  never imply independent corroboration, falsity or verified study dependency.
+- POST `/provenance/audit` body `{disease_id,compound_id,top_k:10,budget:2,
+  group_kind:"source",group_ids:null,protected_group_ids:[]}` => exact correlated
+  group-withdrawal certificate. Explicit selections contain 1..16 distinct groups;
+  PubMed requires a selection. All source groups are the default. Withdraw the
+  union of BINDS records mentioning any withdrawn group; rerank all compounds
+  jointly. Budgets are 0..2, `top_k` is 1..100. `results[].robust` combines supported
+  rank and loss-of-support results. The `protection_plan` finds minimum-cardinality
+  additional groups whose withdrawal must be excluded to block every failing
+  scenario. This is a conditional assumption, never an optimal review or experiment.
+- POST `/provenance/audit/verify` accepts a complete group certificate and separately
+  reconstructs the scenario table, protection optimum and matrix witnesses. The
+  shared offline `scripts.verify_audit` CLI dispatches both certificate methods.
 
 ## Data engine interface
 
