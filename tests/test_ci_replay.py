@@ -9,6 +9,7 @@ import pytest
 
 from app.binding_audit import BindingAuditor, certificate_digest
 from app.graph_engine import GraphEngine
+from app.mixed_audit import MixedAuditor
 from app.provenance_audit import ProvenanceAuditor
 from infra import replay_ci_certificates as replay_cli
 from tests.test_graph_engine import create_fixture_engine, tiny_graph
@@ -29,6 +30,8 @@ def replay_bundle(tmp_path):
     for edge in graph["edges"]:
         if edge["type"] == "BINDS":
             edge["data"]["pubmed_ids"] = ["100"]
+            if edge["source"] == "Compound::C1":
+                edge["sources"].append("Secondary annotation")
     engine = create_fixture_engine(data, graph)
     model = deepcopy(engine.model)
     model["dataset_sha256"] = "a" * 64
@@ -51,8 +54,9 @@ def replay_bundle(tmp_path):
     pubmed = auditor.audit(
         "Disease::D1", "Compound::C2", group_kind="pubmed", group_ids=["pubmed:100"]
     )
-    quality, integration = tmp_path / "quality", tmp_path / "integration"
-    for kind, directory in (("quality", quality), ("integration", integration)):
+    mixed = MixedAuditor(engine).audit("Disease::D1", "Compound::C2")
+    quality, integration, joint = (tmp_path / kind for kind in ("quality", "integration", "mixed"))
+    for kind, directory in (("quality", quality), ("integration", integration), ("mixed", joint)):
         for key, name in replay_cli.ARTIFACT_FILES[kind].items():
             _write(
                 directory / name,
@@ -67,8 +71,16 @@ def replay_bundle(tmp_path):
             binding if method == "binding-envelope-v1" else (pubmed if "pubmed" in name else source)
         )
         _write(quality / name, certificate)
-    smoke = {"binding_audit": {}, "provenance_audit": {}}
-    actual = (binding, source, conditional, pubmed)
+    joint_auditor = MixedAuditor(engine)
+    first_disease, last_disease = engine.entities["Disease"][0], engine.entities["Disease"][-1]
+    first = joint_auditor.baseline_candidates(first_disease, 10)[0]
+    last = joint_auditor.baseline_candidates(last_disease, 10)[-1]
+    for (name, _), disease, candidate in zip(
+        replay_cli.MIXED_CERTIFICATES, (first_disease, last_disease), (first, last)
+    ):
+        _write(joint / name, joint_auditor.audit(disease, candidate["id"]))
+    smoke = {"binding_audit": {}, "provenance_audit": {}, "mixed_audit": {}}
+    actual = (binding, source, conditional, pubmed, mixed)
     for (section, key, verification_key, _), certificate in zip(replay_cli.CERTIFICATES, actual):
         smoke[section][key] = certificate
         # Deliberately incorrect saved verdict: the command must recompute for itself.
@@ -79,10 +91,16 @@ def replay_bundle(tmp_path):
     del adjacent["model_sha256"]
     adjacent["model_sha256"] = sha256(json.dumps(adjacent, sort_keys=True).encode()).hexdigest()
     _write(data / "model.json", adjacent)
-    return {"graph": data / "graph.json", "quality": quality, "integration": integration}
+    return {
+        "graph": data / "graph.json",
+        "quality": quality,
+        "integration": integration,
+        "mixed": joint,
+        "mixed_auditor": joint_auditor,
+    }
 
 
-@pytest.mark.parametrize("kind,count", [("quality", 6), ("integration", 4)])
+@pytest.mark.parametrize("kind,count", [("quality", 6), ("integration", 5), ("mixed", 2)])
 def test_all_certificates_replay_without_reading_adjacent_fit_or_saved_verdict(
     replay_bundle, kind, count
 ):
@@ -94,6 +112,37 @@ def test_all_certificates_replay_without_reading_adjacent_fit_or_saved_verdict(
     adjacent = json.loads((replay_bundle["graph"].parent / "model.json").read_text())
     assert report["identity"]["model_sha256"] != adjacent["model_sha256"]
     assert "does not authenticate" in report["interpretation"]
+
+
+@pytest.mark.parametrize("slot", [0, 1], ids=["first", "last"])
+@pytest.mark.parametrize("narrowing", ["selected_group", "top_k"])
+def test_valid_mixed_certificate_cannot_replace_complete_canonical_role(
+    replay_bundle, slot, narrowing
+):
+    """A valid certificate for a narrower query is not the required benchmark example."""
+    directory = replay_bundle["mixed"]
+    path = directory / replay_cli.MIXED_CERTIFICATES[slot][0]
+    canonical = json.loads(path.read_text())
+    auditor = replay_bundle["mixed_auditor"]
+    request = {
+        "disease_id": canonical["disease"]["id"],
+        "compound_id": canonical["compound"]["id"],
+        "top_k": 10,
+    }
+    if narrowing == "selected_group":
+        assert len(canonical["scope"]["group_ids"]) == 2
+        request["group_ids"] = canonical["scope"]["group_ids"][-1:]
+        rejection = "complete canonical cohort role"
+    else:
+        request["top_k"] = 5
+        rejection = "wrong group or budget scope"
+    substitute = auditor.audit(**request)
+    assert substitute["identity"] == canonical["identity"]
+    assert substitute["certificate_sha256"] != canonical["certificate_sha256"]
+    assert auditor.verify(substitute)["valid"] is True
+    _write(path, substitute)
+    with pytest.raises(ValueError, match=rejection):
+        replay_cli.replay(directory, replay_bundle["graph"], "mixed")
 
 
 def test_rehashed_false_claim_fails_even_with_saved_success(replay_bundle):
@@ -108,7 +157,7 @@ def test_rehashed_false_claim_fails_even_with_saved_success(replay_bundle):
     report = replay_cli.replay(directory, replay_bundle["graph"], "integration")
     assert report["status"] == "failed"
     assert report["valid"] is False
-    assert sum(item["verification"]["valid"] for item in report["certificates"]) == 3
+    assert sum(item["verification"]["valid"] for item in report["certificates"]) == 4
 
 
 def test_missing_required_quality_certificate_is_not_silently_skipped(replay_bundle):

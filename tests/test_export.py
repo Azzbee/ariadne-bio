@@ -8,6 +8,7 @@ import pytest
 
 from app import __version__
 from app.binding_audit import BindingAuditor
+from app.mixed_audit import MixedAuditor
 from app.provenance_audit import ProvenanceAuditor
 from scripts.export_snapshot import (
     build_case,
@@ -17,6 +18,46 @@ from scripts.export_snapshot import (
     validate_case,
 )
 from tests.test_graph_engine import create_fixture_engine
+
+
+def test_mixed_snapshots_retain_the_complete_verified_frontier(tmp_path):
+    """Each inspectable compound has a source-bound four-cell joint certificate."""
+    case = build_case(create_fixture_engine(tmp_path), "Disease::D1", top_k=1)
+    assert set(case["mixed_audits"]) == set(case["assessments"])
+    assert case["coverage"]["mixed_audit_count"] == len(case["assessments"])
+    for compound_id, variants in case["mixed_audits"].items():
+        assert set(variants) == {"10:1:1"}
+        certificate = variants["10:1:1"]
+        assert len(certificate["results"]) == 4
+        verification = case["mixed_verifications"][compound_id]["10:1:1"]
+        assert verification["valid"] is True
+        assert verification["replayed_witnesses"] >= 1
+        assert verification["certificate_sha256"] == certificate["certificate_sha256"]
+        assert verification["verification_execution"] == "recorded_at_export"
+
+
+@pytest.mark.parametrize("damage", ["missing", "scope", "checksum", "verifier"])
+def test_mixed_snapshot_damage_fails_closed(tmp_path, damage):
+    """A recorded joint verdict cannot be detached from its pair, scope or proof."""
+    case = build_case(create_fixture_engine(tmp_path), "Disease::D1", top_k=1)
+    variants = case["mixed_audits"]["Compound::C2"]
+    if damage == "missing":
+        del case["mixed_audits"]["Compound::C2"]
+    elif damage == "scope":
+        variants["10:1:1"]["group_budget"] = 0
+    elif damage == "checksum":
+        variants["10:1:1"]["results"][0]["worst_supported_rank"] = 999
+    else:
+        case["mixed_verifications"]["Compound::C2"]["10:1:1"]["valid"] = False
+    with pytest.raises(ValueError):
+        validate_case(case)
+
+
+def test_failed_mixed_verification_aborts_export(tmp_path, monkeypatch):
+    """The exporter never publishes a joint result after failed mathematical replay."""
+    monkeypatch.setattr(MixedAuditor, "verify", lambda *_: {"valid": False})
+    with pytest.raises(ValueError, match="joint audit failed verification"):
+        build_case(create_fixture_engine(tmp_path), "Disease::D1", top_k=1)
 
 
 def test_provenance_snapshots_cover_inspectable_pairs_and_record_actual_verification(tmp_path):

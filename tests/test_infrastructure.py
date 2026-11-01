@@ -241,6 +241,57 @@ def test_quality_evidence_removes_only_outputs_that_this_job_rebuilds(tmp_path):
     )
 
 
+def test_mixed_evidence_invalidates_nested_scaling_success_and_retains_other_jobs(tmp_path):
+    """An early mixed-job failure must not upload committed or nested prior success."""
+    evidence = load_module("prepare_ci_evidence")
+    for name in evidence.MIXED_OUTPUTS:
+        target = tmp_path / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text("old success")
+    scaling = tmp_path / "reports/v1.4.0/scaling"
+    nested = scaling / "inputs/c0064-g08-s303/graph.json"
+    nested.parent.mkdir(parents=True)
+    nested.write_text("old input")
+    (scaling / "mixed-scaling-benchmark.json").write_text("old scaling success")
+    protected = [
+        "data/processed/graph.json",
+        "reports/ci-quality.json",
+        "reports/ci-integration.json",
+        "reports/v1.3.0/provenance-audit-summary.json",
+    ]
+    for name in protected:
+        target = tmp_path / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text("preserved independent evidence")
+    evidence.prepare_reports(tmp_path, {"checkout_sha": "current-mixed"}, "mixed")
+    assert not scaling.exists()
+    assert all(
+        not (tmp_path / name).exists()
+        for name in evidence.MIXED_OUTPUTS
+        if name != "reports/ci-mixed.json"
+    )
+    assert all(
+        (tmp_path / name).read_text() == "preserved independent evidence" for name in protected
+    )
+    assert json.loads((tmp_path / "reports/ci-mixed.json").read_text())["checkout_sha"] == (
+        "current-mixed"
+    )
+
+
+def test_mixed_cleanup_does_not_follow_scaling_symlink(tmp_path):
+    """A replaced output path cannot cause deletion of another evidence directory."""
+    evidence = load_module("prepare_ci_evidence")
+    outside = tmp_path / "preserved"
+    outside.mkdir()
+    (outside / "receipt.json").write_text("retained")
+    scaling = tmp_path / "reports/v1.4.0/scaling"
+    scaling.parent.mkdir(parents=True)
+    scaling.symlink_to(outside, target_is_directory=True)
+    evidence.prepare_reports(tmp_path, {"checkout_sha": "current-mixed"}, "mixed")
+    assert not scaling.exists()
+    assert (outside / "receipt.json").read_text() == "retained"
+
+
 def test_model_failure_report_records_actual_digest_and_nonzero_exit(monkeypatch, capsys):
     """CLI evidence must identify the mismatch without declaring a successful gate."""
     bootstrap = load_module("bootstrap_model")
