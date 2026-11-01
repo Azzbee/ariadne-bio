@@ -35,6 +35,15 @@ RUNTIME_FILES = (
     "provenance-model.js",
     "provenance.css",
 )
+# These immutable references close links in the delivered docs, without turning
+# the recorded research edition into the separate executable source distribution.
+REFERENCE_FILES = (
+    "app/binding_audit.py",
+    "infra/bootstrap_model.py",
+    "reports/v1.1.0/unit-junit.xml",
+    "reports/v1.1.0/frontend.tap",
+    "demo.ipynb",
+)
 SECRET_PARTS = {".git", ".aws", ".ssh", "node_modules", ".venv", "credentials"}
 
 
@@ -236,6 +245,7 @@ def build(repo: Path, ref: str, snapshot: Path, output: Path, evidence: Path | N
     )
     research.update(snapshot_files)
     research.update({name: content for name, content in files.items() if name.startswith("docs/")})
+    research.update({name: files[name] for name in REFERENCE_FILES})
     research.update(
         {
             name: content
@@ -254,6 +264,8 @@ def build(repo: Path, ref: str, snapshot: Path, output: Path, evidence: Path | N
         "Run `python3 -m http.server 8080 --bind 127.0.0.1` here and open "
         "http://localhost:8080. This edition uses recorded results; it runs no live "
         "database, model provider, audit optimizer or witness replay.\n\n"
+        "The included notebook and small source-file subset are documentation references. "
+        "Use the separate full-source ZIP for execution and offline verification.\n\n"
         "Code is MIT; constituent data retain their own terms, including noncommercial "
         "and missing metadata. See docs/data_sources.md and docs/licensing_audit.md. "
         "A package hash is not a signature or data-rights clearance.\n\n"
