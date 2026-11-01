@@ -1,0 +1,286 @@
+{
+  "schema_version": "1.0",
+  "title": "Synthetic mixed-audit scaling against exhaustive sparse recomputation",
+  "status": "passed",
+  "executed_at": "2026-11-01T22:50:31.714881+00:00",
+  "source": {
+    "git_revision": "54da143b57d64717bb082fa3606776b3f6ab0db5",
+    "working_tree_dirty": false,
+    "file_sha256": {
+      "app/audit_numerics.py": "80527c14035edc0f448825e8b981d68bb7126ff9f65f6e0381d8a71c415d53c7",
+      "app/binding_audit.py": "4356019800543e89e4658d89926b998993b9ddc1d9d0db312cc1770a6e509ffa",
+      "app/provenance_audit.py": "bd897086af7c446cc5cfadac5b9137b25590d4a14985deda6493d6af838413bd",
+      "app/mixed_audit.py": "bdec2b54cf3ed5b4118e8bc1ae4f7b58308ecc00e4cb08df047078132ac29356",
+      "app/graph_engine.py": "80c18947f85dfaea71f32fd0b7608d5977b11be2d1f01fcdf2cc6e292910b81c",
+      "scripts/benchmark_mixed_scaling.py": "bb27fef1c2d2d06f55503b70fd8bfebd050e939909fc0076babdc21e36eb2957",
+      "scripts/benchmark_provenance.py": "4cd6e49708fa11d74c5afd34e28ebc1018b79951e74ac23561d1099bc4083d0d"
+    }
+  },
+  "source_at_finish": {
+    "git_revision": "54da143b57d64717bb082fa3606776b3f6ab0db5",
+    "working_tree_dirty": false,
+    "file_sha256": {
+      "app/audit_numerics.py": "80527c14035edc0f448825e8b981d68bb7126ff9f65f6e0381d8a71c415d53c7",
+      "app/binding_audit.py": "4356019800543e89e4658d89926b998993b9ddc1d9d0db312cc1770a6e509ffa",
+      "app/provenance_audit.py": "bd897086af7c446cc5cfadac5b9137b25590d4a14985deda6493d6af838413bd",
+      "app/mixed_audit.py": "bdec2b54cf3ed5b4118e8bc1ae4f7b58308ecc00e4cb08df047078132ac29356",
+      "app/graph_engine.py": "80c18947f85dfaea71f32fd0b7608d5977b11be2d1f01fcdf2cc6e292910b81c",
+      "scripts/benchmark_mixed_scaling.py": "bb27fef1c2d2d06f55503b70fd8bfebd050e939909fc0076babdc21e36eb2957",
+      "scripts/benchmark_provenance.py": "4cd6e49708fa11d74c5afd34e28ebc1018b79951e74ac23561d1099bc4083d0d"
+    }
+  },
+  "protocol": {
+    "compounds": [
+      8,
+      16,
+      32,
+      64
+    ],
+    "source_groups": [
+      4,
+      8
+    ],
+    "seeds": [
+      101,
+      202,
+      303
+    ],
+    "trials_per_dataset": 3,
+    "is_full_predeclared_grid": true,
+    "genes": 16,
+    "pathways": 4,
+    "diseases": 1,
+    "bindings_per_compound": 4,
+    "canonical_baseline_foci": 3,
+    "top_k": 3,
+    "generator": "NumPy PCG64; signed fixed coefficients and seeded scaling; overlapping and missing source labels",
+    "cache_policy": "Clear all three scalar arithmetic caches before each method; fresh solver per method/trial; alternate method order by dataset index + trial",
+    "workload": "Both methods share one GraphEngine load and cohort. Each solves all four budget cells for the same three compounds. Naive shares each full-world rerank across all three; envelopes share all slices across all three.",
+    "timing": "perf_counter wall seconds; setup, solve, shared load/cohort and independent verification are separate; ratios exclude verification and shared load/cohort",
+    "independence": "Naive independently recomputes full sparse path products and ranks in each world, without contribution tables, envelopes, production rank helpers or production replay; the finite arithmetic scorer is deliberately shared",
+    "verification": "All four frontier cells and action counts match exhaustive results; every certificate verifies; every emitted witness is independently recomputed by full sparse products",
+    "limitations": "Small synthetic graphs on one recorded runtime, fixed degrees and one disease; no claim about Hetionet-scale latency, asymptotic exponent, predictive accuracy or general graph neural networks; runtime ratios include Python and certificate serialization overhead. The reference is literal exhaustive recomputation, not the fastest possible exhaustive solver."
+  },
+  "coverage": {
+    "datasets": 24,
+    "trials": 72,
+    "certificates_verified": 216,
+    "frontier_cells_compared": 864,
+    "literal_matrix_witness_replays": 864,
+    "failed_checks": 0
+  },
+  "summary": [
+    {
+      "compounds": 8,
+      "source_groups": 4,
+      "trials": 9,
+      "median_seconds": {
+        "envelope": {
+          "setup_seconds": 0.0015169939943007194,
+          "solve_seconds": 0.01590592400316382
+        },
+        "naive": {
+          "setup_seconds": 3.8607999158557504e-05,
+          "solve_seconds": 0.1873664579979959
+        }
+      },
+      "paired_naive_over_envelope_solve_ratio": {
+        "minimum": 6.421300308737081,
+        "median": 11.97040990680498,
+        "maximum": 14.833027639768513
+      },
+      "paired_naive_over_envelope_setup_and_solve_ratio": {
+        "minimum": 5.9991510385227285,
+        "median": 10.914363075461145,
+        "maximum": 13.504884318648491
+      }
+    },
+    {
+      "compounds": 8,
+      "source_groups": 8,
+      "trials": 9,
+      "median_seconds": {
+        "envelope": {
+          "setup_seconds": 0.001579216004756745,
+          "solve_seconds": 0.019417310002609156
+        },
+        "naive": {
+          "setup_seconds": 4.17199989897199e-05,
+          "solve_seconds": 0.39256247699813684
+        }
+      },
+      "paired_naive_over_envelope_solve_ratio": {
+        "minimum": 13.20194906532932,
+        "median": 20.69646818479422,
+        "maximum": 33.616326790559654
+      },
+      "paired_naive_over_envelope_setup_and_solve_ratio": {
+        "minimum": 12.597662652151493,
+        "median": 18.888626595361263,
+        "maximum": 30.693304840897746
+      }
+    },
+    {
+      "compounds": 16,
+      "source_groups": 4,
+      "trials": 9,
+      "median_seconds": {
+        "envelope": {
+          "setup_seconds": 0.0022636770008830354,
+          "solve_seconds": 0.023361619001661893
+        },
+        "naive": {
+          "setup_seconds": 6.600699998671189e-05,
+          "solve_seconds": 0.37373849200230325
+        }
+      },
+      "paired_naive_over_envelope_solve_ratio": {
+        "minimum": 11.577909819524063,
+        "median": 16.01908185293889,
+        "maximum": 18.936809895888704
+      },
+      "paired_naive_over_envelope_setup_and_solve_ratio": {
+        "minimum": 9.036555167355624,
+        "median": 13.24624193715818,
+        "maximum": 17.139380210159423
+      }
+    },
+    {
+      "compounds": 16,
+      "source_groups": 8,
+      "trials": 9,
+      "median_seconds": {
+        "envelope": {
+          "setup_seconds": 0.0026550760012469254,
+          "solve_seconds": 0.02884480899956543
+        },
+        "naive": {
+          "setup_seconds": 8.411399903707206e-05,
+          "solve_seconds": 0.7521255419997033
+        }
+      },
+      "paired_naive_over_envelope_solve_ratio": {
+        "minimum": 20.63601993664862,
+        "median": 27.540923922311165,
+        "maximum": 42.7276418443128
+      },
+      "paired_naive_over_envelope_setup_and_solve_ratio": {
+        "minimum": 18.33702896046961,
+        "median": 24.9031107140513,
+        "maximum": 35.13031750916341
+      }
+    },
+    {
+      "compounds": 32,
+      "source_groups": 4,
+      "trials": 9,
+      "median_seconds": {
+        "envelope": {
+          "setup_seconds": 0.004344387001765426,
+          "solve_seconds": 0.02577086399833206
+        },
+        "naive": {
+          "setup_seconds": 0.0001246110041392967,
+          "solve_seconds": 0.8577565079976921
+        }
+      },
+      "paired_naive_over_envelope_solve_ratio": {
+        "minimum": 23.798971653079583,
+        "median": 33.948164758933224,
+        "maximum": 36.49584143109947
+      },
+      "paired_naive_over_envelope_setup_and_solve_ratio": {
+        "minimum": 21.13831324818082,
+        "median": 27.433037748522622,
+        "maximum": 31.190782820628527
+      }
+    },
+    {
+      "compounds": 32,
+      "source_groups": 8,
+      "trials": 9,
+      "median_seconds": {
+        "envelope": {
+          "setup_seconds": 0.004404161998536438,
+          "solve_seconds": 0.03460873799485853
+        },
+        "naive": {
+          "setup_seconds": 0.00013976099580759183,
+          "solve_seconds": 1.713551795000967
+        }
+      },
+      "paired_naive_over_envelope_solve_ratio": {
+        "minimum": 42.576022222526525,
+        "median": 49.08907085289393,
+        "maximum": 83.3526727533409
+      },
+      "paired_naive_over_envelope_setup_and_solve_ratio": {
+        "minimum": 37.61375567596011,
+        "median": 41.933630656339176,
+        "maximum": 74.95412549190479
+      }
+    },
+    {
+      "compounds": 64,
+      "source_groups": 4,
+      "trials": 9,
+      "median_seconds": {
+        "envelope": {
+          "setup_seconds": 0.008591361998696811,
+          "solve_seconds": 0.034409354004310444
+        },
+        "naive": {
+          "setup_seconds": 0.0002543680020608008,
+          "solve_seconds": 1.8610293390011066
+        }
+      },
+      "paired_naive_over_envelope_solve_ratio": {
+        "minimum": 44.867728898926636,
+        "median": 55.85974345108406,
+        "maximum": 90.93584732241332
+      },
+      "paired_naive_over_envelope_setup_and_solve_ratio": {
+        "minimum": 30.67591783747435,
+        "median": 44.06041756344909,
+        "maximum": 76.61479300706776
+      }
+    },
+    {
+      "compounds": 64,
+      "source_groups": 8,
+      "trials": 9,
+      "median_seconds": {
+        "envelope": {
+          "setup_seconds": 0.007207205999293365,
+          "solve_seconds": 0.04012486599822296
+        },
+        "naive": {
+          "setup_seconds": 0.00026174800586886704,
+          "solve_seconds": 3.383914220998122
+        }
+      },
+      "paired_naive_over_envelope_solve_ratio": {
+        "minimum": 70.17244919835198,
+        "median": 84.79154781851899,
+        "maximum": 90.69206543321948
+      },
+      "paired_naive_over_envelope_setup_and_solve_ratio": {
+        "minimum": 61.74745385140923,
+        "median": 70.97104050175778,
+        "maximum": 78.54950793087377
+      }
+    }
+  ],
+  "runtime_seconds": 99.18129891300487,
+  "environment": {
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "processor": "x86_64"
+  },
+  "full_report": {
+    "file": "mixed-scaling-benchmark.json",
+    "sha256": "80d13822f2d6be1a6d34cd0155bfbc50433c345d619dc6a3ebd33454fcc95599"
+  }
+}
