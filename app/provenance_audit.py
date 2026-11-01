@@ -17,14 +17,20 @@ from threading import RLock
 
 import numpy as np
 
-from app.binding_audit import SCORER, canonical_scores, certificate_digest
+from app.audit_numerics import SCORER, LEGACY_SCORER, SUPPORTED_SCORERS, canonical_scores
+from app.binding_audit import (
+    FrozenAuditInputs,
+    certificate_digest,
+    certificate_scorer,
+    legacy_canonical_scores,
+)
 from app.graph_engine import FEATURE_NAMES
 
 MAX_GROUPS = 16
 MAX_BUDGET = 2
 MAX_PREVIEW = 12
 METHOD = "provenance-group-exhaustive-v1"
-INTERPRETATION = (
+LEGACY_INTERPRETATION = (
     "Exact for this fixed model and the selected provenance-group withdrawal space. "
     "Withdrawing a group removes every recorded BINDS edge mentioning that provider "
     "label or imported PubMed identifier, including records with other annotations. "
@@ -37,6 +43,20 @@ INTERPRETATION = (
     "relative to the declared scorer and numerical runtime; verification rejects "
     "numerical mismatches. Other relation families, new records, refitting and "
     "unselected groups are outside scope."
+)
+INTERPRETATION = (
+    "Exact for this fixed model and the selected provenance-group withdrawal space. "
+    "Withdrawing a group removes every recorded BINDS edge mentioning that provider "
+    "label or imported PubMed identifier, including records with other annotations. "
+    "Overlapping groups remove a record once. An annotation is not proof of independent "
+    "corroboration, and a PubMed group is not necessarily one experiment. This is a "
+    "conservative record-quarantine stress scenario, not a factual retraction, clinical "
+    "effect, or probability of error. All competing compounds change jointly. "
+    "Protected groups are assumed unavailable for withdrawal; protection does not mean "
+    "a review or experiment has established that assumption. Exactness is relative to "
+    "the declared decimal80-binary64-v1 finite arithmetic contract; strict verification "
+    "rejects numerical mismatches. Legacy GraphEngine scores are separate and unchanged. "
+    "Other relation families, new records, refitting and unselected groups are outside scope."
 )
 PROTECTION_INTERPRETATION = (
     "Minimum cardinality among additional selected groups that must be assumed "
@@ -127,15 +147,20 @@ class _Scenarios:
 class ProvenanceAuditor:
     """A bounded, immutable audit; catalog lookup works without a fitted model."""
 
-    def __init__(self, engine, cache_size=4):
+    def __init__(self, engine, cache_size=4, *, scorer=SCORER):
         if isinstance(cache_size, bool) or not isinstance(cache_size, int) or cache_size < 1:
             raise ValueError("Provenance cache size must be a positive integer")
+        if scorer not in SUPPORTED_SCORERS:
+            raise ValueError("Unsupported audit scorer identity")
         self.engine = engine
+        self._scorer = scorer
+        self._score = canonical_scores if scorer == SCORER else legacy_canonical_scores
+        self._compatible_verifiers = {}
         self._lock = RLock()
         self._cache_size = cache_size
         self._caches = {key: OrderedDict() for key in ("scenarios", "verification", "replay")}
         self._model = None if engine.model is None else _model_parameters(engine.model)
-        self._legacy_scores = None if engine.model is None else engine.score_matrix().copy()
+        self._inputs = FrozenAuditInputs.capture(engine, scorer)
         self._matrices = {key: value.copy() for key, value in engine.matrices.items()}
         self._compounds = tuple(engine.entities["Compound"])
         self._compound_positions = dict(engine.positions["Compound"])
@@ -159,7 +184,7 @@ class ProvenanceAuditor:
                 if engine.model is not None
                 else None
             ),
-            "scorer": SCORER,
+            "scorer": scorer,
             "group_map_sha256": _digest(self._groups),
         }
 
@@ -293,7 +318,7 @@ class ProvenanceAuditor:
         if self._model is None:
             raise RuntimeError("A fitted model is required for provenance audits; run evaluate")
         for key, label in ((disease_id, "Disease"), (compound_id, "Compound")):
-            node = self.engine.nodes.get(key)
+            node = self._inputs.nodes.get(key)
             if node is None or node["label"] != label:
                 raise KeyError(f"Unknown {label.lower()}: {key}")
         for name, value, maximum in (("top_k", top_k, 100), ("budget", budget, MAX_BUDGET)):
@@ -312,11 +337,11 @@ class ProvenanceAuditor:
         return tuple(sorted(set().union(*(self._groups[key] for key in groups)))) if groups else ()
 
     def _state(self, counts, degrees, disease_degree):
-        scores, logits = canonical_scores(counts, degrees, disease_degree, self._model)
+        scores, logits = self._score(counts, degrees, disease_degree, self._model)
         return _State(counts, scores, logits, _rank(scores, counts))
 
     def _build(self, disease_id, groups):
-        disease_index = self.engine.positions["Disease"][disease_id]
+        disease_index = self._inputs.disease_positions[disease_id]
         association = self._matrices["ASSOCIATES"].getrow(disease_index).toarray().ravel()
         pathways = self._matrices["PARTICIPATES"]
         contributions = np.column_stack(
@@ -328,7 +353,7 @@ class ProvenanceAuditor:
         ).astype(np.int64)
         counts = np.asarray(self._matrices["BINDS"] @ contributions, dtype=np.int64)
         if np.any(contributions < 0) or not np.array_equal(
-            counts, self.engine.path_counts[:, disease_index]
+            counts, self._inputs.path_counts[:, disease_index]
         ):
             raise ValueError("Provenance path counts disagree with the original graph")
         states = {}
@@ -455,7 +480,7 @@ class ProvenanceAuditor:
         raise ValueError("A finite nonempty failure family must admit protection")
 
     def _entity(self, identifier):
-        return {"id": identifier, "name": self.engine.nodes[identifier]["name"]}
+        return {"id": identifier, "name": self._inputs.nodes[identifier]["name"]}
 
     def _shortlist(self, scenarios, allowed, top_k):
         baseline = scenarios.states[()]
@@ -476,12 +501,14 @@ class ProvenanceAuditor:
 
     def _baseline(self, disease_id, focus, scenarios):
         baseline = self._summary(scenarios.states[()], focus)
-        disease_index = self.engine.positions["Disease"][disease_id]
-        legacy_scores = self._legacy_scores[:, disease_index]
-        legacy_ranks = _rank(legacy_scores, scenarios.states[()].counts)
-        baseline.update(
-            legacy_score=float(legacy_scores[focus]), legacy_rank=int(legacy_ranks[focus]) or None
-        )
+        if self._scorer == LEGACY_SCORER:
+            disease_index = self._inputs.disease_positions[disease_id]
+            legacy_scores = self._inputs.legacy_scores[:, disease_index]
+            legacy_ranks = _rank(legacy_scores, scenarios.states[()].counts)
+            baseline.update(
+                legacy_score=float(legacy_scores[focus]),
+                legacy_rank=int(legacy_ranks[focus]) or None,
+            )
         return baseline
 
     def _certificate(
@@ -543,7 +570,9 @@ class ProvenanceAuditor:
                 "scenario_table_sha256": scenarios.digest,
                 "group_map_sha256": self._identity["group_map_sha256"],
             },
-            "interpretation": INTERPRETATION,
+            "interpretation": (
+                LEGACY_INTERPRETATION if self._scorer == LEGACY_SCORER else INTERPRETATION
+            ),
         }
         result["certificate_sha256"] = certificate_digest(result)
         return result
@@ -633,7 +662,7 @@ class ProvenanceAuditor:
                 bindings[self._coordinates[edge]] = 0
             bindings = bindings.tocsr()
             bindings.eliminate_zeros()
-            index = self.engine.positions["Disease"][disease_id]
+            index = self._inputs.disease_positions[disease_id]
             association = self._matrices["ASSOCIATES"].getrow(index).T
             pathways = self._matrices["PARTICIPATES"]
             direct = (bindings @ association).toarray().ravel()
@@ -671,6 +700,14 @@ class ProvenanceAuditor:
             "verification_method": "edited CSR matrices and full sparse path products",
         }
 
+    def _alternate_verifier(self, scorer):
+        with self._lock:
+            if scorer not in self._compatible_verifiers:
+                self._compatible_verifiers[scorer] = ProvenanceAuditor(
+                    self.engine, self._cache_size, scorer=scorer
+                )
+            return self._compatible_verifiers[scorer]
+
     def verify(self, certificate):
         """Recompute all claims separately and independently replay each distinct witness."""
         checks, errors, replayed = [], [], 0
@@ -680,6 +717,10 @@ class ProvenanceAuditor:
             if certificate.get("certificate_sha256") != certificate_digest(certificate):
                 raise ValueError("Certificate checksum does not match its contents")
             checks.append("Certificate content checksum matches")
+            if certificate_scorer(certificate, self._identity) != self._scorer:
+                return self._alternate_verifier(certificate["identity"]["scorer"]).verify(
+                    certificate
+                )
             if certificate.get("identity") != self._identity:
                 raise ValueError("Graph, model, scorer or provenance map identity does not match")
             checks.append("Graph, model, scorer and complete provenance map identities match")
