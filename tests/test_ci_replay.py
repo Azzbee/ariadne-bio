@@ -3,16 +3,24 @@
 from copy import deepcopy
 from hashlib import sha256
 import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
 import sys
 
 import pytest
+import yaml
 
 from app.binding_audit import BindingAuditor, certificate_digest
 from app.graph_engine import GraphEngine
 from app.mixed_audit import MixedAuditor
 from app.provenance_audit import ProvenanceAuditor
 from infra import replay_ci_certificates as replay_cli
+from infra.prepare_ci_evidence import prepare_reports
 from tests.test_graph_engine import create_fixture_engine, tiny_graph
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _write(path, value):
@@ -114,6 +122,72 @@ def test_all_certificates_replay_without_reading_adjacent_fit_or_saved_verdict(
     assert "does not authenticate" in report["interpretation"]
 
 
+@pytest.mark.parametrize("kind", ["quality", "integration", "mixed"])
+@pytest.mark.parametrize("corrupt", [False, True], ids=["valid", "invalid-model"])
+def test_required_workflow_gate_copies_only_a_fresh_successful_replay(
+    replay_bundle, tmp_path, kind, corrupt
+):
+    """Execute the actual CI Bash step: a bad fit must fail without a success upload."""
+    workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
+    steps = workflow["jobs"]["mixed-research" if kind == "mixed" else kind]["steps"]
+    gate = next(step for step in steps if "-m infra.replay_ci_certificates" in step.get("run", ""))
+    upload = next(step for step in steps if step.get("with", {}).get("name") == f"{kind}-evidence")
+    assert steps.index(gate) < steps.index(upload)
+    assert gate["shell"] == "bash"
+    assert "if" not in gate and "continue-on-error" not in gate
+    receipt_path = f"reports/ci-{kind}-replay.json"
+    assert receipt_path in upload["with"]["path"].splitlines()
+
+    checkout = tmp_path / "checkout"
+    receipt = checkout / receipt_path
+    _write(receipt, {"valid": True, "status": "stale success"})
+    prepare_reports(checkout, {"job": kind}, kind)
+    assert not receipt.exists()
+    artifact = checkout / "reports" if kind == "integration" else checkout
+    shutil.copytree(replay_bundle[kind], artifact, dirs_exist_ok=True)
+    graph = checkout / "data/processed/graph.json"
+    graph.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(replay_bundle["graph"], graph)
+    if kind == "integration":
+        # The host fit is intentionally different; the live model must win.
+        shutil.copyfile(replay_bundle["graph"].parent / "model.json", graph.parent / "model.json")
+    if corrupt:
+        model_path = artifact / replay_cli.ARTIFACT_FILES[kind]["model.json"]
+        model = json.loads(model_path.read_text())
+        model["intercept"] += 1
+        _write(model_path, model)
+
+    runner_temp = tmp_path / "runner-temp"
+    runner_temp.mkdir()
+    temporary_receipt = runner_temp / f"ariadne-{kind}-replay.json"
+    _write(temporary_receipt, {"valid": True, "status": "stale temporary success"})
+    environment = {
+        **os.environ,
+        "RUNNER_TEMP": str(runner_temp),
+        "PYTHONPATH": str(ROOT),
+        "PATH": str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", ""),
+    }
+    result = subprocess.run(
+        ["bash", "--noprofile", "--norc", "-e", "-o", "pipefail", "-c", gate["run"]],
+        cwd=checkout,
+        env=environment,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    report = json.loads(temporary_receipt.read_text())
+    assert report["valid"] is not corrupt
+    if corrupt:
+        assert result.returncode != 0
+        assert not receipt.exists()
+        assert "checksum mismatch" in " ".join(report["errors"])
+    else:
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert receipt.read_bytes() == temporary_receipt.read_bytes()
+        assert report["artifact_kind"] == kind
+        assert all(item["verification"]["valid"] for item in report["certificates"])
+
+
 @pytest.mark.parametrize("slot", [0, 1], ids=["first", "last"])
 @pytest.mark.parametrize("narrowing", ["selected_group", "top_k"])
 def test_valid_mixed_certificate_cannot_replace_complete_canonical_role(
@@ -143,6 +217,34 @@ def test_valid_mixed_certificate_cannot_replace_complete_canonical_role(
     _write(path, substitute)
     with pytest.raises(ValueError, match=rejection):
         replay_cli.replay(directory, replay_bundle["graph"], "mixed")
+
+
+@pytest.mark.parametrize("narrowing", ["selected_group", "top_k"])
+def test_valid_narrow_joint_certificate_cannot_replace_live_default_scope(replay_bundle, narrowing):
+    """Standalone validity cannot substitute a narrower query for the live API role."""
+    directory = replay_bundle["integration"]
+    path = directory / "http_smoke.json"
+    smoke = json.loads(path.read_text())
+    canonical = smoke["mixed_audit"]["certificate"]
+    auditor = replay_bundle["mixed_auditor"]
+    request = {
+        "disease_id": canonical["disease"]["id"],
+        "compound_id": canonical["compound"]["id"],
+        "top_k": 10,
+    }
+    if narrowing == "selected_group":
+        assert len(canonical["scope"]["group_ids"]) == 2
+        request["group_ids"] = canonical["scope"]["group_ids"][-1:]
+    else:
+        request["top_k"] = 5
+    substitute = auditor.audit(**request)
+    assert substitute["identity"] == canonical["identity"]
+    assert substitute["certificate_sha256"] != canonical["certificate_sha256"]
+    assert auditor.verify(substitute)["valid"] is True
+    smoke["mixed_audit"]["certificate"] = substitute
+    _write(path, smoke)
+    with pytest.raises(ValueError, match="Live joint certificate.*complete canonical source scope"):
+        replay_cli.replay(directory, replay_bundle["graph"], "integration")
 
 
 def test_rehashed_false_claim_fails_even_with_saved_success(replay_bundle):
