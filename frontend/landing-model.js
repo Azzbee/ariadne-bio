@@ -29,8 +29,8 @@ export function viewURL(currentURL, view, investigation = {}) {
 }
 
 // Frozen illustration from v1.3.0. These are recorded audit results, not a live
-// computation or a predicted treatment effect. The snapshot test checks the
-// values against the full retained certificates whenever the snapshot is present.
+// computation or a predicted treatment effect. The historical fixture test always
+// checks these values against the full certificates from the sealed v1.3 archive.
 export const RECORDED_CASE = Object.freeze({
   disease: 'Disease::DOID:7148', compound: 'Compound::DB00786',
   certificate: '73b4f7cc762e8e362e1d2fc0c753b290bbee3f051eb5a3df9809ca9de58a60e2',
