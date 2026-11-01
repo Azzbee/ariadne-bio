@@ -92,7 +92,7 @@ compound **or any competitor**. It never changes the fitted model or stored grap
 | `method`, `schema_version` | Algorithm and certificate format identity |
 | `scope` | BINDS deletion, all recorded binding edges, eligible-edge and candidate counts, competitor inclusion |
 | `identity` | Dataset/graph/model SHA-256 values and the canonical audit scorer identifier |
-| `baseline` | Canonical score, logit, supported status and rank, counts, legacy score/rank and numerical difference |
+| `baseline` | Declared audit score, logit, supported status and rank, and counts. Historical float64 certificates also retain recorded legacy comparison fields; new decimal/binary64 certificates omit them. |
 | `results` | One result for each budget from zero through the requested limit |
 | `results[].worst_supported_rank` | Exact largest supported rank attainable anywhere in the allowed deletion space, or null if no supported state exists |
 | `results[].unsupported_attainable` | Whether some allowed deletion leaves the focus with no supporting paths |
@@ -108,10 +108,14 @@ compound **or any competitor**. It never changes the fitted model or stored grap
 | `proof.envelope_bounds_sha256` | Digest of the local envelope bounds and attaining local states |
 | `certificate_sha256` | Deterministic JSON digest of the complete certificate excluding this field |
 
-Ranks use the canonical float64 score descending and compound ID ascending for
-ties. The existing ranking endpoint continues to use its legacy scorer, so the
-response discloses small numerical differences rather than silently replacing
-historical scores. A top-k guarantee here is conditional on the graph, frozen
+Ranks use the declared audit score descending and compound ID ascending for
+ties. New certificates identify `decimal80-binary64-v1`; historical
+`float64-fixed-order-v1` certificates retain their original arithmetic identity.
+The existing ranking endpoint keeps its own scorer. New certificates omit
+`legacy_score`, `legacy_rank`, `score_difference`, and `rank_agrees_with_legacy`;
+absence of these fields makes no claim about explorer rank or agreement.
+Verification dispatches by the declared scorer and rejects unknown identities.
+A top-k guarantee here is conditional on the graph, frozen
 model, scorer, candidate universe and allowed deletion family. It is not a
 clinical claim or a probability that the shortlist is correct.
 

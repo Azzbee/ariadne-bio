@@ -27,8 +27,12 @@ art, not a claim of being the first certified ranking method, a new biological
 discovery, or demonstrated commercial demand.
 
 Existing v1.1 scores, fixed-model assessments and family-exclusion behavior remain
-separate. The audit's canonical float64 scorer makes its numerical function
-explicit and reports any baseline difference from the legacy scorer.
+separate. New audits use the explicit
+[`decimal80-binary64-v1` numerical contract](audit_numerical_contract.md): fixed
+Decimal transforms, exact integer rounding to binary64, and ordered basic
+arithmetic. Legacy explorer outputs are not sealed into new certificates.
+Historical scorer identities retain their original strict verification; they
+are not silently relabeled as portable.
 
 ## Scientific prior art
 

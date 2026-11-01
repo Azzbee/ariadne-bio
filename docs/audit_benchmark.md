@@ -140,13 +140,24 @@ runtime with Python 3.12.14, NumPy 2.3.5 and SciPy 1.17.0. This is one local run
 not an API latency guarantee or a hardware-normalized performance comparison.
 Dataset download, preparation and model fitting are outside that timing.
 
-The audit scorer deliberately fixes its float64 operation order. Against the
+The historical `float64-fixed-order-v1` scorer used for this v1.2 report
+deliberately fixed its float64 operation order. Against the
 unchanged legacy scorer, all **212,624 compound–disease scores** were compared:
 126,860 differed in their final bits, the maximum absolute difference was
 `9.992007221626409e-16`, and **zero supported ranking positions changed**. The
 certificate applies to the named canonical scorer and exact graph/model
 identities. It does not assert bit identity between the audit and legacy scorer,
 or between separately retrained models on different numerical runtimes.
+
+Subsequent independent replay of a real CI artifact exposed last-bit differences
+in that historical scorer's CPU-dispatched `log1p`, despite fixed accumulation
+order. Current certificates therefore use the separately versioned
+[`decimal80-binary64-v1` finite arithmetic contract](audit_numerical_contract.md).
+The archived numerical counts above describe the historical report; they are not
+silently reassigned to the new scorer. New certificates omit platform-dependent
+legacy baseline comparisons. Old certificates retain strict historical replay,
+which can fail on a different numerical runtime. Complete cross-runtime replay
+requires the retained exact model and graph, not a fresh fit.
 
 ## Reproduce or falsify the result
 

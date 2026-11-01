@@ -55,10 +55,13 @@ groups can have equal membership sets, but they remain distinct actions and
 distinct protection conditions. Edges with no annotation of the selected kind
 cannot be removed by this uncertainty model.
 
-For compound `c`, let `r_c(S)` be its supported rank under the unchanged
-`float64-fixed-order-v1` scorer. The three path families, eight feature terms,
-degree normalization, fixed coefficient order and score/compound-ID tie rule are
-identical to the [v1.2 numerical contract](binding_audit_proof.md). A compound
+For compound `c`, let `r_c(S)` be its supported rank under the declared scorer,
+now `decimal80-binary64-v1`. The [numerical contract](audit_numerical_contract.md)
+specifies each Decimal transform and binary64 rounding operation. Both audit
+families use the same three path families, eight feature terms, normalization,
+fixed coefficient order and score/compound-ID tie rule. Historical certificates
+explicitly declaring `float64-fixed-order-v1` retain their original strict
+runtime-dependent verification. A compound
 with no surviving paths has a finite diagnostic score but no supported rank.
 
 ## Lemma 1: exact scenario scoring with overlapping groups
