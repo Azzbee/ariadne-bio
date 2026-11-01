@@ -16,7 +16,8 @@ concurrency:
 jobs:
   quality:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    # Exact Decimal-defined audit arithmetic also runs in the complete benchmarks.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -36,10 +37,8 @@ jobs:
         run: make data PYTHON=python
       - name: Inventory observed data licenses without automatic legal clearance
         run: make audit-licenses PYTHON=python
-      - name: Benchmark exact global binding-deletion audits on all diseases
-        run: make benchmark-audits PYTHON=python
-      - name: Benchmark correlated provenance withdrawals and conditional protection plans
-        run: make benchmark-provenance PYTHON=python
+      - name: Benchmark independent binding and provenance audit workloads
+        run: make -j2 benchmark-audits benchmark-provenance PYTHON=python
       - name: Reproduce size-matched random controls for disclosed illustrative cases
         run: make provenance-controls PYTHON=python
       - name: Export and verify complete frozen research edition
