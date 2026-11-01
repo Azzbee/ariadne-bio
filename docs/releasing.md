@@ -38,6 +38,7 @@ the blocked action and use a permitted alternative or obtain explicit approval.
 | Artifact | Required content |
 | --- | --- |
 | `ci-quality.json`, `ci-integration.json`, `ci-mixed.json` | Checkout SHA, Actions run and attempt, job and start time; each job has a separate context |
+| `ci-quality-replay.json`, `ci-integration-replay.json`, `ci-mixed-replay.json` | Successful required in-job replays using that job's retained fitted model, exact input hashes, context and recomputed certificate/witness results |
 | `ollama-model.json` | Actual full model digest, expected digest, size and whether it was reused; the reference default must be `verified` |
 | `http_smoke.json` | Live HTTP checks, frontend headers, exact assessment reconstruction, retained unsupported pair, complete binding/provenance/joint certificates, recomputed verification and rejection of correctly rehashed false claims |
 | `live-model.json`, `live-manifest.json`, `live-evaluation.json`, `live-artifacts-verification.json` | Bytes copied directly from the running API container after smoke, model self-hash and exact identity binding for binding/provider/conditional/PubMed/joint certificates; never substitute another job's fit |
@@ -76,6 +77,33 @@ self-hash and requires every retained smoke certificate and selected-compound
 assessment to identify it and the same prepared graph. All five successful
 binding/provider/conditional/PubMed/joint certificates must match.
 
+### Required retained-model replay gates
+
+Every verification job runs `python -m infra.replay_ci_certificates` as a required
+step after its inputs and tests are complete and before evidence upload. The
+command is strict by construction: it has no permissive mode, never fits a
+replacement model and does not trust a saved verification verdict.
+
+| Job | Evidence input directory | Retained model | Required certificates | Uploaded success receipt |
+|---|---|---|---|---|
+| Quality | Checkout root (`--artifact-dir .`) | `data/processed/model.json` | Four binding and two provenance examples | `reports/ci-quality-replay.json` |
+| Joint research | Checkout root (`--artifact-dir .`) | `data/processed/model.json` | Canonical first and last joint-workload examples | `reports/ci-mixed-replay.json` |
+| Integration | `--artifact-dir reports` | `reports/live-model.json`, copied from the running API | All five complete live smoke certificates | `reports/ci-integration-replay.json` |
+
+All three use `--graph data/processed/graph.json`. Integration's separately
+prepared host graph supplies only graph bytes: the replay reconstructs its engine
+with the retained container model, manifest and evaluation. A host-side fresh fit
+cannot replace the live fit.
+
+The command writes its initial and final verdict to
+`$RUNNER_TEMP/ariadne-<kind>-replay.json`, outside both the evidence input tree and
+prepared graph directory. The Bash step stops on any nonzero exit. Only a
+successful replay is copied to the corresponding `reports/ci-<kind>-replay.json`
+and included in the artifact. Each job's initial cleanup explicitly removes its
+old replay receipt, so an early failure cannot upload a stale success. Failure
+details remain in the actual job log. These gates use the existing read-only
+workflow permissions; they add no publication or permission channel.
+
 ### Reproduce certificates on another machine
 
 Download `quality-evidence`, `integration-evidence` and `mixed-evidence` from
@@ -98,11 +126,20 @@ Then use the retained parameters directly:
   --graph data/processed/graph.json --output /tmp/ariadne-mixed-replay.json
 ```
 
+The required in-job receipt is useful evidence, but independent release
+verification still downloads and replays the actual uploaded ZIP bytes. Perform
+the three-artifact download, digest check and replay for both the tested PR run
+and the post-merge main run: six distinct ZIPs, with separate run IDs, checkout
+identities, source-tree checks and replay receipts. Preserve each original
+archive; a local reconstruction or a receipt from another run cannot replace it.
+
 The command requires all six quality examples, all five live certificates, or
 both fixed first/last joint-workload examples, according to the selected kind.
 Joint replay rederives the first and last canonical top-ten query identities
 and the complete observed source-group scope. A valid certificate for a selected
-subset or another `top_k` cannot fill one of those benchmark roles.
+subset or another `top_k` cannot fill one of those benchmark roles. The live joint
+slot also must equal the canonical top-ten, all-source, one-group-plus-one-record
+certificate for the selected smoke pair; a valid narrower scope is rejected.
 It checks actual graph bytes, the retained model's parameter self-hash and
 evaluation identity, then recomputes every certificate and independently
 replays its matrix witnesses. It ignores saved verification verdicts. The

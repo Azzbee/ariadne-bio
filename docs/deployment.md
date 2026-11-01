@@ -244,6 +244,23 @@ establish identical fitted parameters. The three artifacts are named
 `quality-evidence`, `mixed-evidence` and `integration-evidence`; use the matching
 `infra.replay_ci_certificates --kind` value described in the release guide.
 
+Each job also runs that strict retained-model replay as a required gate before
+upload. Quality and joint research read their current checkout's evidence;
+integration reads `reports/` and reconstructs the engine with the exact
+`live-model.json` copied from the API container, never the host's fresh fit.
+All three check the actual prepared graph bytes, fitted-parameter self-hash,
+certificate scope, recomputed bounds and independent matrix witnesses.
+The replay writes outside the input tree under `$RUNNER_TEMP`; only exit zero
+allows its receipt to be copied to `reports/ci-<kind>-replay.json` for upload.
+Initial per-job cleanup removes old receipts, and a failed replay fails the job.
+
+This in-job gate complements the release check on another runtime. Download all
+three actual artifact ZIPs from both the PR run and post-merge main run, verify
+their GitHub-provided digests, retain each original archive and independently
+replay its retained inputs. The [release guide](releasing.md) gives the exact
+commands and separates those six downloads from local reconstructions and
+previously saved verdicts.
+
 Images are tagged with both `latest` and the source commit SHA:
 
 ```text
