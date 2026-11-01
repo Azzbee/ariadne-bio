@@ -27,6 +27,10 @@ def release_input(tmp_path):
         "pyproject.toml": '[project]\nversion = "1.3.0"\n',
         "LICENSE": "Explicit test fixture license\n",
         "docs/provenance_audit.md": "Test fixture documentation\n",
+        "app/binding_audit.py": '"""Committed binding-audit reference fixture."""\n',
+        "infra/bootstrap_model.py": '"""Committed bootstrap reference fixture."""\n',
+        "reports/v1.1.0/unit-junit.xml": '<testsuite name="historical fixture"/>\n',
+        "reports/v1.1.0/frontend.tap": "TAP version 13\n1..0\n",
         "frontend/assets/mark.svg": '<svg xmlns="http://www.w3.org/2000/svg"><title>Committed mark</title></svg>\n',
         "reports/v1.3.0/provenance-review-marimastat.html": "<!doctype html><title>Committed review</title>\n",
         "executable.sh": "#!/bin/sh\nexit 0\n",
@@ -132,6 +136,38 @@ def test_committed_assets_and_html_reviews_survive_dirty_working_tree(release_in
     with zipfile.ZipFile(root / "output/ariadne-research-edition.zip") as archive:
         assert archive.read("assets/mark.svg") == expected_asset
         assert archive.read("reports/v1.3.0/provenance-review-marimastat.html") == expected_review
+
+
+def test_linked_references_use_exact_source_bytes_without_shipping_an_executable_subset(
+    release_input,
+):
+    """Docs targets survive; the reference notebook matches the separately shipped notebook."""
+    repo, snapshot, root = release_input
+    paths = (
+        "app/binding_audit.py",
+        "infra/bootstrap_model.py",
+        "reports/v1.1.0/unit-junit.xml",
+        "reports/v1.1.0/frontend.tap",
+        "demo.ipynb",
+    )
+    expected = {name: (repo / name).read_bytes() for name in paths}
+    for name in paths:
+        (repo / name).write_text("uncommitted reference must not ship")
+    package.build(repo, "HEAD", snapshot, root / "output")
+    with zipfile.ZipFile(root / "output/ariadne-research-edition.zip") as archive:
+        assert all(archive.read(name) == content for name, content in expected.items())
+        assert "app/__init__.py" not in archive.namelist()
+        assert "separate full-source ZIP" in archive.read("README.md").decode()
+        assert (
+            archive.read("demo.ipynb")
+            == (root / "output/ariadne-v1.3.0-executed.ipynb").read_bytes()
+        )
+    with zipfile.ZipFile(root / "output/ariadne-v1.3.0-source.zip") as archive:
+        assert "ariadne-bio-v1.3.0/app/__init__.py" in archive.namelist()
+        assert all(
+            archive.read("ariadne-bio-v1.3.0/" + name) == content
+            for name, content in expected.items()
+        )
 
 
 @pytest.mark.parametrize("key", ["model_sha256", "graph_sha256", "dataset_sha256"])
