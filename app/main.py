@@ -13,6 +13,7 @@ from app import __version__
 from app.agent import EvidenceAgent
 from app.audit_routes import router as audit_router
 from app.config import Settings
+from app.provenance_routes import router as provenance_router
 from app.schemas import (
     AgentRequest,
     AgentResponse,
@@ -85,7 +86,10 @@ def create_app(settings=None, service=None, agent=None) -> FastAPI:
     def health(request: Request):
         active = current(request)
         if active.repository:
-            active.repository.verify(active.engine.manifest.get("dataset_sha256"))
+            active.repository.verify(
+                active.engine.manifest.get("dataset_sha256"),
+                active.engine.manifest.get("graph_sha256"),
+            )
         return {
             "status": "ok",
             "graph_backend": config.graph_backend,
@@ -195,6 +199,7 @@ def create_app(settings=None, service=None, agent=None) -> FastAPI:
         )
 
     application.include_router(audit_router)
+    application.include_router(provenance_router)
 
     frontend = Path(__file__).resolve().parents[1] / "frontend"
     if (frontend / "index.html").exists():
