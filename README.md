@@ -112,9 +112,12 @@ count uses the full permitted graph; displayed paths are bounded and truncation
 is reported. See the [model card](docs/model_card.md) and [API contract](docs/api.md).
 
 The binding audit always starts from the complete graph, independently of the
-family-exclusion controls. Its canonical float64 scorer uses the same fitted
-parameters with an explicit operation order; existing ranking scores remain
-unchanged, and the audit reports its baseline difference from the legacy scorer.
+family-exclusion controls. New certificates declare `decimal80-binary64-v1`,
+which applies the same fitted parameters through a specified decimal/binary64
+arithmetic contract. The explorer retains its existing scorer. Historical
+`float64-fixed-order-v1` certificates retain their original identity and any
+recorded explorer comparisons; new certificates omit those runtime-dependent
+comparison fields. Exact verification always uses the certificate's declared scorer.
 It considers all 1,552 compounds as competitors. At budget two, 117,147 local
 states cover 66,949,807 possible global deletion subsets by a separability proof;
 these are state counts, not a measured runtime speedup. A witness proves that a

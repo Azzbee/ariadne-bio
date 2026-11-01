@@ -58,8 +58,10 @@ IDs are namespace-qualified strings, e.g. `Disease::DOID:...`.
   binding-envelope certificate with `scope`, `identity`, `baseline`, `results`
   for each budget, `proof` and `certificate_sha256`. All BINDS edges, including
   competitors, are eligible; the full graph is used independently of UI exclusions.
-  Integer `budget` is 0..2 and `top_k` 1..100. The audit-only canonical float64
-  scorer must not change legacy rankings or assessment bytes.
+  Integer `budget` is 0..2 and `top_k` 1..100. The audit-only declared arithmetic
+  contract must not change legacy rankings or assessment bytes. New certificates
+  use `decimal80-binary64-v1`; historical scorer identities retain their original
+  verifier semantics. Unknown scorer identities fail closed.
 - POST `/audit/verify` body `{certificate:<complete response>}` =>
   `{status:"verified"|"invalid",valid,checks,errors,verification_method,replayed_witnesses}`.
   Verification recomputes the same-algorithm bound and independently replays
