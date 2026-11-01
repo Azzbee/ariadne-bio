@@ -118,7 +118,7 @@ def verify_binding_audit(base_url: str, disease_id: str, compound_id: str) -> di
     assert certificate["disease"]["id"] == disease_id
     assert certificate["compound"]["id"] == compound_id
     assert certificate["method"] == "binding-envelope-v1"
-    assert certificate["identity"]["scorer"] == "float64-fixed-order-v1"
+    assert certificate["identity"]["scorer"] == "decimal80-binary64-v1"
     assert certificate["scope"]["universe"] == "all_recorded_BINDS_edges"
     assert certificate["scope"]["includes_competitor_changes"] is True
     assert certificate["certificate_sha256"] == _certificate_hash(certificate)
@@ -170,6 +170,7 @@ def verify_provenance_audit(base_url: str, disease_id: str, compound_id: str) ->
     }
     certificate = request(base_url, "/api/provenance/audit", parameters)
     assert certificate["method"] == "provenance-group-exhaustive-v1"
+    assert certificate["identity"]["scorer"] == "decimal80-binary64-v1"
     assert certificate["scope"]["operation"] == "withdraw_records_mentioning_any_selected_group"
     assert certificate["scope"]["group_ids"] == selected
     assert certificate["scope"]["includes_competitor_changes"] is True
