@@ -51,6 +51,14 @@ jobs:
         run: make test PYTHON=python
       - name: Execute notebook
         run: make notebook PYTHON=python
+      - name: Strictly replay quality certificates with this job's retained model
+        shell: bash
+        run: |
+          python -m infra.replay_ci_certificates \
+            --kind quality --artifact-dir . \
+            --graph data/processed/graph.json \
+            --output "$RUNNER_TEMP/ariadne-quality-replay.json"
+          cp "$RUNNER_TEMP/ariadne-quality-replay.json" reports/ci-quality-replay.json
       - name: Upload verification artifacts
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -59,6 +67,7 @@ jobs:
           if-no-files-found: warn
           path: |
             reports/ci-quality.json
+            reports/ci-quality-replay.json
             reports/v1.1.0/score-regression.json
             reports/v1.1.0/assessment-nicotine-interacts.json
             reports/v1.1.0/assessment-galantamine-interacts.json
@@ -100,6 +109,14 @@ jobs:
         run: |
           python -m scripts.plot_mixed_benchmark reports/v1.4.0/mixed-audit-benchmark.json
           python -m scripts.plot_mixed_scaling reports/v1.4.0/scaling/mixed-scaling-benchmark.json
+      - name: Strictly replay joint certificates with this job's retained model
+        shell: bash
+        run: |
+          python -m infra.replay_ci_certificates \
+            --kind mixed --artifact-dir . \
+            --graph data/processed/graph.json \
+            --output "$RUNNER_TEMP/ariadne-mixed-replay.json"
+          cp "$RUNNER_TEMP/ariadne-mixed-replay.json" reports/ci-mixed-replay.json
       - name: Upload joint-audit research evidence and exact replay inputs
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -108,6 +125,7 @@ jobs:
           if-no-files-found: error
           path: |
             reports/ci-mixed.json
+            reports/ci-mixed-replay.json
             reports/v1.4.0/mixed-audit-benchmark.json
             reports/v1.4.0/mixed-audit-summary.json
             reports/v1.4.0/mixed-audit-example-*.json
@@ -173,6 +191,14 @@ jobs:
           make test-integration PYTHON=python
       - name: Verify real LLM investigation, evidence challenge and rejection
         run: make test-llm PYTHON=python
+      - name: Strictly replay live certificates with the retained container model
+        shell: bash
+        run: |
+          python -m infra.replay_ci_certificates \
+            --kind integration --artifact-dir reports \
+            --graph data/processed/graph.json \
+            --output "$RUNNER_TEMP/ariadne-integration-replay.json"
+          cp "$RUNNER_TEMP/ariadne-integration-replay.json" reports/ci-integration-replay.json
       - name: Collect stack logs
         if: always()
         run: |
@@ -189,6 +215,7 @@ jobs:
           name: integration-evidence
           path: |
             reports/ci-integration.json
+            reports/ci-integration-replay.json
             reports/http_smoke.json
             reports/live-model.json
             reports/live-manifest.json
