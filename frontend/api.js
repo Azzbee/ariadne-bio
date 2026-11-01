@@ -1,5 +1,6 @@
 import { compoundReferences, diseaseReferences, exclusionKey, isUnsafeQuestion, makeChallenge, requestedExclusions, requestsTopCandidate } from './utils.js';
 import { auditKey, copyJSON, stableJSON, validateAudit } from './audit-model.js';
+import { provenanceKey, provenanceParameters, validateProvenanceAudit } from './provenance-model.js';
 import { snapshotFileRecord, validateSnapshotCase, verifySnapshotBytes } from './integrity.js';
 
 export class APIError extends Error {
@@ -70,7 +71,7 @@ export class AriadneAPI {
       this.mode = 'snapshot';
       this.healthData = {
         status: 'ok', graph_backend: 'published research snapshot', dataset_ready: true,
-        agent_mode: 'deterministic', version: '1.2.0', ...(this.manifest.health || {})
+        agent_mode: 'deterministic', version: '1.3.0', ...(this.manifest.health || {})
       };
       return this.healthData;
     } catch {
@@ -109,6 +110,43 @@ export class AriadneAPI {
   async stats() { return this.mode === 'snapshot' ? this.manifest.stats : this.get('/stats'); }
   async provenance() { return this.mode === 'snapshot' ? this.manifest.provenance : this.get('/provenance'); }
   async evaluation() { return this.mode === 'snapshot' ? this.manifest.evaluation : this.get('/evaluation'); }
+
+  async provenanceGroups(kind = 'source', query = '', limit = 30, offset = 0) {
+    if (!['source', 'pubmed'].includes(kind) || !Number.isInteger(limit) || limit < 1 || limit > 100 || !Number.isInteger(offset) || offset < 0) throw new APIError('Invalid provenance catalog query.');
+    if (this.mode === 'live') return this.get(`/provenance/groups?kind=${kind}&q=${encodeURIComponent(query)}&limit=${limit}&offset=${offset}`);
+    const catalog = this.manifest.provenance_catalog;
+    if (kind !== 'source' || !catalog) throw new APIError('The recorded edition includes the complete imported source-label catalog. Run the full application to select imported PubMed references.');
+    const items = catalog.items.filter(item => item.label.toLowerCase().includes(query.toLowerCase()));
+    return copyJSON({ ...catalog, items: items.slice(offset, offset + limit), total: items.length, offset, limit });
+  }
+
+  async provenanceAudit(diseaseId, compoundId, options = {}) {
+    const p = provenanceParameters(options);
+    if (this.mode === 'live') return this.post('/provenance/audit', {
+      disease_id: diseaseId, compound_id: compoundId, top_k: p.topK, budget: p.budget,
+      group_kind: p.groupKind, group_ids: p.groupIds, protected_group_ids: p.protectedGroupIds
+    });
+    if (p.groupKind !== 'source' || p.groupIds !== null || p.protectedGroupIds.length) throw new APIError('Custom provenance scopes and conditional protection require the live application. The snapshot publishes the complete unprotected source-label audit.');
+    const data = await this.loadCase(diseaseId), key = provenanceKey(p.topK, p.budget);
+    const certificate = data.provenance_audits?.[compoundId]?.[key];
+    if (!certificate) throw new APIError('This shared-dependency audit is not included in the recorded case. Run the full application for a new audit.');
+    const completeSourceScope = this.manifest.provenance_catalog?.items?.map(item => item.group_id).sort();
+    if (!completeSourceScope || stableJSON([...certificate.scope.group_ids].sort()) !== stableJSON(completeSourceScope)) throw new APIError('This recorded audit does not include the complete published source-label catalog.');
+    return copyJSON(validateProvenanceAudit(certificate, diseaseId, compoundId, p));
+  }
+
+  async verifyProvenanceAudit(certificate) {
+    if (this.mode === 'live') return this.post('/provenance/audit/verify', { certificate });
+    const data = await this.loadCase(certificate?.disease?.id), key = provenanceKey(certificate?.top_k, certificate?.budget);
+    const recorded = data.provenance_audits?.[certificate?.compound?.id]?.[key];
+    if (!recorded || stableJSON(recorded) !== stableJSON(certificate)) return {
+      status: 'invalid', valid: false, checks: [], errors: ['This result does not exactly match a published shared-dependency certificate.'],
+      verification_method: 'Exact comparison with the recorded certificate; no graph solver runs in the browser.', replayed_witnesses: 0
+    };
+    const result = data.provenance_verifications?.[certificate.compound.id]?.[key];
+    if (!result || result.valid !== true || result.status !== 'verified' || result.errors?.length !== 0 || result.certificate_sha256 !== certificate.certificate_sha256 || result.verification_execution !== 'recorded_at_export') throw new APIError('This result has no matching successful recorded verification.');
+    return copyJSON(result);
+  }
 
   async diseases(query = '', limit = 137, offset = 0) {
     if (this.mode === 'live') return this.get(`/diseases?q=${encodeURIComponent(query)}&limit=${limit}&offset=${offset}`);

@@ -1,5 +1,7 @@
 import { AriadneAPI } from './api.js';
 import { AuditPanel } from './audit.js';
+import { ProvenancePanel } from './provenance.js';
+import { provenanceExampleURL } from './provenance-model.js';
 import { auditLinkParameters, rivalExampleURL } from './audit-model.js';
 import { EvidenceGraph, pathFamily } from './graph.js';
 import {
@@ -42,6 +44,15 @@ const auditPanel = new AuditPanel($('audit-section'), api, {
     $('audit-method-title').focus({ preventScroll: true });
   }
 });
+const provenancePanel = new ProvenancePanel($('dependency-section'), api, {
+  onNotice: toast,
+  onParameters: updateURLState,
+  onCompound: async compound => {
+    const diseaseId = state.disease?.id;
+    await chooseCandidate(compound);
+    if (state.disease?.id === diseaseId && state.candidate?.id === compound.id) await provenancePanel.run();
+  }
+});
 
 function toast(message) {
   clearTimeout(toastTimer);
@@ -64,12 +75,14 @@ function refreshControls() {
   $('export-case').disabled = loadingCase || !state.evidence || !state.assessment;
   $('share-case').disabled = loadingCase || !state.disease || !state.candidate;
   $('open-audit').disabled = loadingCase || !state.disease || !state.candidate;
+  $('open-dependencies').disabled = loadingCase || !state.disease || !state.candidate;
   $('agent-submit').disabled = loadingCase || state.agentBusy || !state.candidate;
   document.querySelectorAll('[data-prompt]').forEach(button => { button.disabled = $('agent-submit').disabled; });
   document.querySelectorAll('[data-path-filter]').forEach(button => { button.disabled = loadingCase || !state.evidence; });
   $('fit-graph').disabled = loadingCase || !state.evidence;
   $('workbench').setAttribute('aria-busy', String(loadingCase));
   auditPanel.setContext({ disease: state.disease, candidate: state.candidate, excluded: state.excluded, loading: loadingCase });
+  provenancePanel.setContext({ disease: state.disease, candidate: state.candidate, excluded: state.excluded, loading: loadingCase });
 }
 
 function invalidateAgent() {
@@ -119,6 +132,7 @@ function updateURLState() {
     params.set('audit_k', String(auditPanel.session.topK));
     params.set('audit_budget', String(auditPanel.session.budget));
   }
+  if (params.has('dependency_budget')) params.set('dependency_budget', String(provenancePanel.session.parameters.budget));
   const next = `${location.pathname}${params.toString() ? '?' + params.toString() : ''}${location.hash}`;
   history.replaceState(null, '', next);
 }
@@ -138,6 +152,8 @@ async function boot() {
     renderOverview();
     const linkedAudit = auditLinkParameters(query);
     auditPanel.configure(linkedAudit);
+    const linkedDependency = /^[12]$/.test(query.get('dependency_budget') || '') ? Number(query.get('dependency_budget')) : null;
+    if (linkedDependency !== null) provenancePanel.configure(linkedDependency);
     const preferred = query.get('disease') || api.manifest?.default_disease_id || 'Disease::DOID:10652';
     const selected = selectDisease(state.diseases, preferred);
     state.excluded = exclusionKey(query.get('exclude') || '').split(',').filter(Boolean);
@@ -153,6 +169,12 @@ async function boot() {
       auditPanel.focus();
       await auditPanel.run();
     }
+    if (linkedDependency !== null && state.view === 'investigate' && state.assessment && state.evidence
+      && (!query.has('disease') || query.get('disease') === state.disease?.id)
+      && (!query.has('compound') || query.get('compound') === state.candidate?.id)) {
+      provenancePanel.focus();
+      await provenancePanel.run();
+    }
   } catch (error) {
     if (request !== bootRequest) return;
     $('fatal-message').textContent = errorMessage(error);
@@ -165,6 +187,7 @@ async function boot() {
 function renderOverview() {
   const snapshot = api.mode === 'snapshot';
   $('audit-example-link').href = rivalExampleURL(location.href);
+  $('dependency-example-link').href = provenanceExampleURL(location.href);
   $('runtime-pill').innerHTML = `<span class="status-dot${snapshot ? ' snapshot' : ''}"></span>${snapshot ? 'Research snapshot' : 'Live graph'}`;
   $('runtime-pill').title = snapshot ? 'Published results from an executed graph analysis. No live database connection.' : `Graph backend: ${state.health.graph_backend || 'connected'}`;
   $('dataset-name').innerHTML = `${esc((state.stats.dataset || 'Hetionet').toUpperCase())} <b>v${esc(state.stats.version || '1.0')}</b>`;
@@ -619,7 +642,7 @@ function renderProvenance(provenance) {
 function exportCase() {
   if (!state.evidence || !state.assessment || state.busy || state.evidenceBusy) return;
   const payload = {
-    application: 'ARIADNE', version: state.health?.version || '1.2.0',
+    application: 'ARIADNE', version: state.health?.version || '1.3.0',
     exported_at: new Date().toISOString(), edition: api.mode,
     disease: state.disease, selected_compound: state.candidate,
     excluded_families: state.excluded, ranking: state.rankings,
@@ -745,6 +768,7 @@ document.querySelectorAll('[data-prompt]').forEach(button => button.addEventList
 $('export-case').addEventListener('click', exportCase);
 $('share-case').addEventListener('click', shareCase);
 $('open-audit').addEventListener('click', () => auditPanel.focus());
+$('open-dependencies').addEventListener('click', () => provenancePanel.focus());
 document.querySelectorAll('[data-close-dialog]').forEach(button => button.addEventListener('click', () => $('detail-dialog').close()));
 $('detail-dialog').addEventListener('click', event => {
   const rect = $('detail-dialog').getBoundingClientRect();

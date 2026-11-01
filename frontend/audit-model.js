@@ -33,6 +33,7 @@ export function rivalExampleURL(currentURL) {
   url.searchParams.set('compound', 'Compound::DB01115');
   url.searchParams.set('audit_k', '10');
   url.searchParams.set('audit_budget', '1');
+  url.searchParams.delete('dependency_budget');
   url.searchParams.delete('exclude');
   url.searchParams.delete('view');
   url.hash = 'audit-section';
