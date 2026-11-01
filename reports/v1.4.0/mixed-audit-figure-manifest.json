@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "source_report_sha256": "d07d34e1afd404aaace4fc083ecd9f5c9b872256613378dad338fdc2487f675e",
+  "renderer_sha256": "da1557e37b7536e34ad784f011ce98abbf755dcbb7056d6a1da77aaa2851ca8d",
+  "matplotlib_version": "3.10.8",
+  "candidate_queries": 1330,
+  "artifacts": [
+    {
+      "file": "mixed-audit-results.svg",
+      "bytes": 30874,
+      "sha256": "83638b913eec44895edf8f5caa6c447c3a3a6675115e3525c87e19abfb063a19"
+    },
+    {
+      "file": "mixed-audit-results.png",
+      "bytes": 237404,
+      "sha256": "c1b0b6263818a84bc85de2d480f22d525d39c68e55aeb969ef6a72a9ec3c9947"
+    }
+  ]
+}

@@ -1,0 +1,203 @@
+{
+  "schema_version": "1.0",
+  "title": "Exact simultaneous provenance-group and residual-record audit benchmark",
+  "status": "passed",
+  "executed_at": "2026-11-01T22:48:44.050856+00:00",
+  "source": {
+    "git_revision": "3f14898bdcc85147ec577287daea7240dae9ec30",
+    "working_tree_dirty": false,
+    "file_sha256": {
+      "app/audit_numerics.py": "80527c14035edc0f448825e8b981d68bb7126ff9f65f6e0381d8a71c415d53c7",
+      "app/binding_audit.py": "4356019800543e89e4658d89926b998993b9ddc1d9d0db312cc1770a6e509ffa",
+      "app/provenance_audit.py": "bd897086af7c446cc5cfadac5b9137b25590d4a14985deda6493d6af838413bd",
+      "app/mixed_audit.py": "bdec2b54cf3ed5b4118e8bc1ae4f7b58308ecc00e4cb08df047078132ac29356",
+      "app/graph_engine.py": "80c18947f85dfaea71f32fd0b7608d5977b11be2d1f01fcdf2cc6e292910b81c",
+      "scripts/benchmark_mixed.py": "06352693b154cc0ef3e5f8d3d77a23a6417ea9c8d9f32f238712472dc067f9a5",
+      "scripts/benchmark_provenance.py": "4cd6e49708fa11d74c5afd34e28ebc1018b79951e74ac23561d1099bc4083d0d"
+    }
+  },
+  "source_at_finish": {
+    "git_revision": "3f14898bdcc85147ec577287daea7240dae9ec30",
+    "working_tree_dirty": false,
+    "file_sha256": {
+      "app/audit_numerics.py": "80527c14035edc0f448825e8b981d68bb7126ff9f65f6e0381d8a71c415d53c7",
+      "app/binding_audit.py": "4356019800543e89e4658d89926b998993b9ddc1d9d0db312cc1770a6e509ffa",
+      "app/provenance_audit.py": "bd897086af7c446cc5cfadac5b9137b25590d4a14985deda6493d6af838413bd",
+      "app/mixed_audit.py": "bdec2b54cf3ed5b4118e8bc1ae4f7b58308ecc00e4cb08df047078132ac29356",
+      "app/graph_engine.py": "80c18947f85dfaea71f32fd0b7608d5977b11be2d1f01fcdf2cc6e292910b81c",
+      "scripts/benchmark_mixed.py": "06352693b154cc0ef3e5f8d3d77a23a6417ea9c8d9f32f238712472dc067f9a5",
+      "scripts/benchmark_provenance.py": "4cd6e49708fa11d74c5afd34e28ebc1018b79951e74ac23561d1099bc4083d0d"
+    }
+  },
+  "input_file_sha256": {
+    "graph.json": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
+    "model.json": "266370f46df03d4b3554f4441e336c19e53d4ca74ec00aaff3a16b684dcecc70",
+    "manifest.json": "e49eb7ccb61740ba391e8c99f18bf01c77f33342579b927c3ff2e2181cc78234",
+    "evaluation.json": "313844d07db165396356eb79e59f2792b2963bb2e3cb5db397ad4b1db2fbed08"
+  },
+  "identity": {
+    "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+    "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
+    "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
+    "scorer": "decimal80-binary64-v1",
+    "group_map_sha256": "e428edd4119421bff3406c8897ca39416e4e64535730e1c8fe4de27a9d2e997d"
+  },
+  "protocol": {
+    "population": "Every graph disease and its canonical baseline supported top-k",
+    "top_k": 10,
+    "budget_cells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "group_scope": "Every observed BINDS provider label, at most one withdrawal",
+    "record_scope": "At most one additional surviving BINDS record anywhere in the graph",
+    "competitors": "All graph compounds, jointly reranked without model refitting",
+    "comparison": "Both greedy operation orders use the identical joint threat space; first action uses rank with rank-boundary margin ties, second action optimized. The strongest combined outcome is reported even when it equals exact search.",
+    "interaction": "Both one-operation axes robust but a permitted joint scenario fails",
+    "verification": "Every certificate separately recomputed and distinct witnesses independently replayed by full sparse matrix edits; every greedy witness also replayed",
+    "maximality_oracle": "Independent exhaustive joint-world tests in test_mixed_audit.py",
+    "work_count_semantics": "Conditional local compound states and covered action representations count different work units; action representations may duplicate edited graphs; neither their ratio nor repeated cache use is a measured speedup",
+    "runtime_scope": "One process wall time including initialization, cohort construction, exact verification and both greedy orders; not isolated single-query latency",
+    "interpretation": "Finite fixed-model sensitivity, not source independence, biological synergy, error probability, efficacy, or prospective commercial value"
+  },
+  "coverage": {
+    "diseases_total": 137,
+    "diseases_processed": 137,
+    "diseases_without_supported_candidates": 3,
+    "candidate_queries": 1330,
+    "budget_results": 5320,
+    "certificates_verified": 1330,
+    "certificate_witness_replays": 5560,
+    "greedy_witness_replays": 2455,
+    "greedy_outcomes_checked": 3990,
+    "candidate_universe": 1552,
+    "failed_checks": 0,
+    "max_certificate_bytes": 23280
+  },
+  "summary": [
+    {
+      "group_budget": 0,
+      "edge_budget": 0,
+      "candidate_queries": 1330,
+      "robust": 1330,
+      "fragile": 0,
+      "unsupported_attainable": 0
+    },
+    {
+      "group_budget": 0,
+      "edge_budget": 1,
+      "candidate_queries": 1330,
+      "robust": 256,
+      "fragile": 1074,
+      "unsupported_attainable": 79
+    },
+    {
+      "group_budget": 1,
+      "edge_budget": 0,
+      "candidate_queries": 1330,
+      "robust": 39,
+      "fragile": 1291,
+      "unsupported_attainable": 205
+    },
+    {
+      "group_budget": 1,
+      "edge_budget": 1,
+      "candidate_queries": 1330,
+      "robust": 0,
+      "fragile": 1330,
+      "unsupported_attainable": 375
+    }
+  ],
+  "interaction_summary": {
+    "candidate_queries": 1330,
+    "both_axes_robust": 30,
+    "new_joint_failures": 30,
+    "new_joint_support_loss": 170,
+    "joint_rank_worse_than_both_axes": 1242,
+    "maximum_joint_supported_rank_gap": 1319
+  },
+  "greedy_summary": {
+    "source_first": {
+      "candidate_queries": 1330,
+      "failures_found": 1324,
+      "exact_failures_missed": 6,
+      "unsupported_found": 346,
+      "worst_supported_rank_underestimates": 202,
+      "maximum_supported_rank_gap": 1048
+    },
+    "edge_first": {
+      "candidate_queries": 1330,
+      "failures_found": 1320,
+      "exact_failures_missed": 10,
+      "unsupported_found": 250,
+      "worst_supported_rank_underestimates": 759,
+      "maximum_supported_rank_gap": 1062
+    },
+    "strongest": {
+      "candidate_queries": 1330,
+      "failures_found": 1326,
+      "exact_failures_missed": 4,
+      "unsupported_found": 364,
+      "worst_supported_rank_underestimates": 54,
+      "maximum_supported_rank_gap": 867
+    }
+  },
+  "preservation": {
+    "scientific_module_bytes_unchanged": true,
+    "input_file_bytes_unchanged": true,
+    "fitted_model_unchanged": true,
+    "legacy_scores_unchanged": true
+  },
+  "runtime_seconds": 1017.7413411220041,
+  "environment": {
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39"
+  },
+  "invocation": {
+    "module": "scripts.benchmark_mixed",
+    "data_dir": "/workspace/scratch/6b648cf07c4b/ariadne/data/processed",
+    "output": "/workspace/scratch/6b648cf07c4b/ariadne-release-v1.4.0/reference/mixed-audit-benchmark.json"
+  },
+  "full_report": {
+    "file": "mixed-audit-benchmark.json",
+    "sha256": "d07d34e1afd404aaace4fc083ecd9f5c9b872256613378dad338fdc2487f675e"
+  },
+  "examples": {
+    "first_query": {
+      "file": "mixed-audit-example-first.json",
+      "status": "passed"
+    },
+    "last_query": {
+      "file": "mixed-audit-example-last.json",
+      "status": "passed"
+    },
+    "first_interaction": {
+      "file": "mixed-audit-example-interaction.json",
+      "status": "passed"
+    },
+    "largest_rank_gap": {
+      "file": "mixed-audit-example-rank-gap.json",
+      "status": "passed"
+    },
+    "largest_greedy_gap": {
+      "file": "mixed-audit-example-greedy-gap.json",
+      "status": "passed"
+    }
+  }
+}

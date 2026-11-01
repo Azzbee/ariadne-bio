@@ -1,0 +1,1108 @@
+{
+  "schema_version": "1.0",
+  "method": "mixed-group-edge-envelope-v1",
+  "disease": {
+    "id": "Disease::DOID:11714",
+    "name": "gestational diabetes"
+  },
+  "compound": {
+    "id": "Compound::DB04839",
+    "name": "Cyproterone acetate"
+  },
+  "top_k": 10,
+  "group_budget": 1,
+  "edge_budget": 1,
+  "scope": {
+    "relationship": "BINDS",
+    "operation": "withdraw_group_then_delete_residual_record",
+    "group_kind": "source",
+    "group_ids": [
+      "source:BindingDB",
+      "source:ChEMBL",
+      "source:DrugBank (carrier)",
+      "source:DrugBank (enzyme)",
+      "source:DrugBank (target)",
+      "source:DrugBank (transporter)",
+      "source:DrugCentral (ChEMBL)",
+      "source:DrugCentral (IUPHAR)",
+      "source:DrugCentral (KEGG DRUG)",
+      "source:DrugCentral (label)",
+      "source:DrugCentral (literature)",
+      "source:PDSP Ki",
+      "source:PubChem",
+      "source:US Patent"
+    ],
+    "groups": [
+      {
+        "group_id": "source:BindingDB",
+        "label": "BindingDB",
+        "edge_count": 209,
+        "compound_count": 84,
+        "edge_ids_sha256": "fc1779d596c36bedf531401f03c8b63f5fd08dfb32dfb4bfb36f74966e301c8d"
+      },
+      {
+        "group_id": "source:ChEMBL",
+        "label": "ChEMBL",
+        "edge_count": 1711,
+        "compound_count": 470,
+        "edge_ids_sha256": "4aa4eb32cc34f9d6b0f0d0d5b8c89d44e2ccee5383e2481de5adca6292a8a29d"
+      },
+      {
+        "group_id": "source:DrugBank (carrier)",
+        "label": "DrugBank (carrier)",
+        "edge_count": 217,
+        "compound_count": 172,
+        "edge_ids_sha256": "4be65958a81d53c8737b7084d72644ad01cd7a8a2b1f3d0893639213d4c0f27c"
+      },
+      {
+        "group_id": "source:DrugBank (enzyme)",
+        "label": "DrugBank (enzyme)",
+        "edge_count": 3216,
+        "compound_count": 877,
+        "edge_ids_sha256": "56e1283d5a515d28201f763576c8e63c94c226eb1383350c82b613a16e10989b"
+      },
+      {
+        "group_id": "source:DrugBank (target)",
+        "label": "DrugBank (target)",
+        "edge_count": 4603,
+        "compound_count": 1182,
+        "edge_ids_sha256": "2df76bbe4afdb45fa354889a21ce20ed6946827e643423749499e1e7fc3e0db0"
+      },
+      {
+        "group_id": "source:DrugBank (transporter)",
+        "label": "DrugBank (transporter)",
+        "edge_count": 1517,
+        "compound_count": 522,
+        "edge_ids_sha256": "525ef5544babafc7afc58b6429cd3fb5a81e814d01b723205d8f08414d8db0f8"
+      },
+      {
+        "group_id": "source:DrugCentral (ChEMBL)",
+        "label": "DrugCentral (ChEMBL)",
+        "edge_count": 1836,
+        "compound_count": 792,
+        "edge_ids_sha256": "8a2c057a3761eb3547cd4e26585280bacaaef23c65496db8b5bc2b29ad928c2d"
+      },
+      {
+        "group_id": "source:DrugCentral (IUPHAR)",
+        "label": "DrugCentral (IUPHAR)",
+        "edge_count": 56,
+        "compound_count": 39,
+        "edge_ids_sha256": "71343f32fbee7d6f8762039e53171d86487f647049c476d9ebb86653f63c8c2a"
+      },
+      {
+        "group_id": "source:DrugCentral (KEGG DRUG)",
+        "label": "DrugCentral (KEGG DRUG)",
+        "edge_count": 25,
+        "compound_count": 8,
+        "edge_ids_sha256": "4d8ed69bca09de9807bd1ed4155498ae00ad07234478a4c32b88915b827b5e6a"
+      },
+      {
+        "group_id": "source:DrugCentral (label)",
+        "label": "DrugCentral (label)",
+        "edge_count": 68,
+        "compound_count": 35,
+        "edge_ids_sha256": "c9172eb96ef1acad92ffd32fbae9a63ab53c055f52453af65f092eb17ec6e0cf"
+      },
+      {
+        "group_id": "source:DrugCentral (literature)",
+        "label": "DrugCentral (literature)",
+        "edge_count": 182,
+        "compound_count": 81,
+        "edge_ids_sha256": "6c8849de0048c807454f9b32443bc718d1516b22176f90732ff4d32006fdd6bf"
+      },
+      {
+        "group_id": "source:PDSP Ki",
+        "label": "PDSP Ki",
+        "edge_count": 521,
+        "compound_count": 186,
+        "edge_ids_sha256": "f3e00692f34497cc466ad9469f5c526b27cc871046b82353a08bb9d830eaa4ab"
+      },
+      {
+        "group_id": "source:PubChem",
+        "label": "PubChem",
+        "edge_count": 137,
+        "compound_count": 32,
+        "edge_ids_sha256": "22284a82ec78765640fe1830e7aa9def80d70ca930095b18a2a345858a28d221"
+      },
+      {
+        "group_id": "source:US Patent",
+        "label": "US Patent",
+        "edge_count": 23,
+        "compound_count": 9,
+        "edge_ids_sha256": "9d269508ab9c60d88eec29d07d93ad223d990fe5e5762eb6557b59a610ddb382"
+      }
+    ],
+    "eligible_group_count": 14,
+    "eligible_edge_count": 11571,
+    "candidate_count": 1552,
+    "includes_competitor_changes": true
+  },
+  "identity": {
+    "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+    "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
+    "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
+    "scorer": "decimal80-binary64-v1",
+    "group_map_sha256": "e428edd4119421bff3406c8897ca39416e4e64535730e1c8fe4de27a9d2e997d"
+  },
+  "baseline": {
+    "supported": true,
+    "rank": 6,
+    "score": 0.9898010864878307,
+    "logit": 4.575222803999436,
+    "counts": {
+      "direct": 2,
+      "interaction": 1,
+      "pathway": 32
+    },
+    "evidence_count": 35
+  },
+  "results": [
+    {
+      "group_budget": 0,
+      "edge_budget": 0,
+      "worst_supported_rank": 6,
+      "unsupported_attainable": false,
+      "robust": true,
+      "covered_action_representations": 1,
+      "rank_witness": {
+        "group_ids": [],
+        "residual_edge_ids": [],
+        "removed_edge_count": 0,
+        "removed_edge_ids_sha256": "99bcfca61a865fe7ac5bb675250de956e8e0fb175d59adac80bb2fb177154a2c",
+        "affected_compound_count": 0,
+        "removed_edges_preview": [],
+        "preview_truncated": false,
+        "focus": {
+          "before": {
+            "supported": true,
+            "rank": 6,
+            "score": 0.9898010864878307,
+            "logit": 4.575222803999436,
+            "counts": {
+              "direct": 2,
+              "interaction": 1,
+              "pathway": 32
+            },
+            "evidence_count": 35
+          },
+          "after": {
+            "supported": true,
+            "rank": 6,
+            "score": 0.9898010864878307,
+            "logit": 4.575222803999436,
+            "counts": {
+              "direct": 2,
+              "interaction": 1,
+              "pathway": 32
+            },
+            "evidence_count": 35
+          }
+        }
+      },
+      "unsupported_witness": null
+    },
+    {
+      "group_budget": 0,
+      "edge_budget": 1,
+      "worst_supported_rank": 15,
+      "unsupported_attainable": false,
+      "robust": false,
+      "covered_action_representations": 11572,
+      "rank_witness": {
+        "group_ids": [],
+        "residual_edge_ids": [
+          "e_bc53c23888e73b7c49d6c06d"
+        ],
+        "removed_edge_count": 1,
+        "removed_edge_ids_sha256": "2c5b8af190b5c2de96f8a3cd154c8565d286fb31edfd47ee24963faa785092ce",
+        "affected_compound_count": 1,
+        "removed_edges_preview": [
+          {
+            "id": "e_bc53c23888e73b7c49d6c06d",
+            "source": "Compound::DB04839",
+            "target": "Gene::367",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "ChEMBL",
+              "DrugBank (target)",
+              "DrugCentral (IUPHAR)"
+            ],
+            "license": "CC BY-SA 3.0",
+            "data": {
+              "pubmed_ids": [
+                "15456242",
+                "15483189",
+                "15579329",
+                "17016423",
+                "17139284",
+                "19463689",
+                "9484511"
+              ],
+              "urls": [
+                "http://www.guidetopharmacology.org/GRAC/LigandDisplayForward?ligandId=2865"
+              ],
+              "license": "CC BY-SA 3.0",
+              "affinity_nM": 14.0,
+              "sources": [
+                "ChEMBL",
+                "DrugBank (target)",
+                "DrugCentral (IUPHAR)"
+              ],
+              "actions": [
+                "antagonist"
+              ],
+              "unbiased": false
+            }
+          }
+        ],
+        "preview_truncated": false,
+        "focus": {
+          "before": {
+            "supported": true,
+            "rank": 6,
+            "score": 0.9898010864878307,
+            "logit": 4.575222803999436,
+            "counts": {
+              "direct": 2,
+              "interaction": 1,
+              "pathway": 32
+            },
+            "evidence_count": 35
+          },
+          "after": {
+            "supported": true,
+            "rank": 15,
+            "score": 0.9477189696760931,
+            "logit": 2.8974244164528447,
+            "counts": {
+              "direct": 1,
+              "interaction": 1,
+              "pathway": 26
+            },
+            "evidence_count": 28
+          }
+        }
+      },
+      "unsupported_witness": null
+    },
+    {
+      "group_budget": 1,
+      "edge_budget": 0,
+      "worst_supported_rank": 19,
+      "unsupported_attainable": false,
+      "robust": false,
+      "covered_action_representations": 15,
+      "rank_witness": {
+        "group_ids": [
+          "source:DrugBank (enzyme)"
+        ],
+        "residual_edge_ids": [],
+        "removed_edge_count": 3216,
+        "removed_edge_ids_sha256": "56e1283d5a515d28201f763576c8e63c94c226eb1383350c82b613a16e10989b",
+        "affected_compound_count": 877,
+        "removed_edges_preview": [
+          {
+            "id": "e_000f807ce05228d5c2315ce4",
+            "source": "Compound::DB00667",
+            "target": "Gene::1559",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (enzyme)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "19934256"
+              ],
+              "actions": [
+                "inhibitor",
+                "substrate"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (enzyme)"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_007e9359541f70246f874c0f",
+            "source": "Compound::DB01050",
+            "target": "Gene::54658",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (enzyme)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "19515014"
+              ],
+              "actions": [
+                "substrate"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (enzyme)"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_009a4128da035005f064b446",
+            "source": "Compound::DB00381",
+            "target": "Gene::1576",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (enzyme)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "10805063",
+                "19934256"
+              ],
+              "actions": [
+                "inhibitor",
+                "substrate"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (enzyme)"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_009d5c27dd5c1c05d600405e",
+            "source": "Compound::DB00949",
+            "target": "Gene::1571",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (enzyme)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "19934256"
+              ],
+              "actions": [
+                "substrate"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (enzyme)"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_00a6b4b2734024bf9e3c20a6",
+            "source": "Compound::DB00604",
+            "target": "Gene::100861540",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (enzyme)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "19934256"
+              ],
+              "actions": [
+                "substrate"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (enzyme)"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_00bd596f0a4998f808f93f48",
+            "source": "Compound::DB00313",
+            "target": "Gene::1576",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (enzyme)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "19934256"
+              ],
+              "actions": [
+                "inhibitor"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (enzyme)"
+              ],
+              "unbiased": false
+            }
+          }
+        ],
+        "preview_truncated": true,
+        "focus": {
+          "before": {
+            "supported": true,
+            "rank": 6,
+            "score": 0.9898010864878307,
+            "logit": 4.575222803999436,
+            "counts": {
+              "direct": 2,
+              "interaction": 1,
+              "pathway": 32
+            },
+            "evidence_count": 35
+          },
+          "after": {
+            "supported": true,
+            "rank": 19,
+            "score": 0.9477189696760931,
+            "logit": 2.8974244164528447,
+            "counts": {
+              "direct": 1,
+              "interaction": 1,
+              "pathway": 26
+            },
+            "evidence_count": 28
+          }
+        }
+      },
+      "unsupported_witness": null
+    },
+    {
+      "group_budget": 1,
+      "edge_budget": 1,
+      "worst_supported_rank": 1338,
+      "unsupported_attainable": true,
+      "robust": false,
+      "covered_action_representations": 159259,
+      "rank_witness": {
+        "group_ids": [
+          "source:DrugCentral (IUPHAR)"
+        ],
+        "residual_edge_ids": [
+          "e_fd073dfb24cd1cb240aa800f"
+        ],
+        "removed_edge_count": 57,
+        "removed_edge_ids_sha256": "adabce0ad7c64ff131fb09d338f0ac7bca381f19e6c72cebfcc20be1fea508f9",
+        "affected_compound_count": 39,
+        "removed_edges_preview": [
+          {
+            "id": "e_0178b6c49983a04545bf69b8",
+            "source": "Compound::DB05812",
+            "target": "Gene::1586",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "BindingDB",
+              "ChEMBL",
+              "DrugBank (target)",
+              "DrugCentral (IUPHAR)"
+            ],
+            "license": "CC BY-SA 3.0",
+            "data": {
+              "pubmed_ids": [
+                "12773039",
+                "15828836",
+                "18024111",
+                "18061460",
+                "18672868",
+                "18674917",
+                "19211174",
+                "20550118",
+                "20645691",
+                "20684610",
+                "22788843",
+                "23363058",
+                "23859149",
+                "7608911",
+                "9876107"
+              ],
+              "urls": [
+                "http://www.guidetopharmacology.org/GRAC/LigandDisplayForward?ligandId=6745"
+              ],
+              "license": "CC BY-SA 3.0",
+              "affinity_nM": 54.50063000000001,
+              "sources": [
+                "BindingDB",
+                "ChEMBL",
+                "DrugBank (target)",
+                "DrugCentral (IUPHAR)"
+              ],
+              "actions": [
+                "inhibitor"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_038cbf5420acdf3c1bef3913",
+            "source": "Compound::DB01621",
+            "target": "Gene::1813",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (target)",
+              "DrugCentral (IUPHAR)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "11103886",
+                "11752352",
+                "11873706",
+                "15694263",
+                "16867246",
+                "20643630",
+                "2875894"
+              ],
+              "urls": [
+                "http://www.guidetopharmacology.org/GRAC/LigandDisplayForward?ligandId=7557"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (target)",
+                "DrugCentral (IUPHAR)"
+              ],
+              "actions": [
+                "antagonist"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_08287260966c986ad7f5d4d9",
+            "source": "Compound::DB01392",
+            "target": "Gene::151",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (target)",
+              "DrugCentral (IUPHAR)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "10611634",
+                "10822066",
+                "12110610",
+                "12170055",
+                "17123717",
+                "8872361"
+              ],
+              "urls": [
+                "http://www.guidetopharmacology.org/GRAC/LigandDisplayForward?ligandId=102"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (target)",
+                "DrugCentral (IUPHAR)"
+              ],
+              "actions": [
+                "antagonist"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_09c273ff36dff1ad19296fa1",
+            "source": "Compound::DB00457",
+            "target": "Gene::146",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "ChEMBL",
+              "DrugBank (target)",
+              "DrugCentral (IUPHAR)",
+              "PDSP Ki"
+            ],
+            "license": "CC BY-SA 3.0",
+            "data": {
+              "pubmed_ids": [
+                "10522703",
+                "10579841",
+                "10611634",
+                "11448222",
+                "11682453",
+                "12065700",
+                "18187928",
+                "7658428",
+                "7752182",
+                "7855217",
+                "9548811",
+                "9888842"
+              ],
+              "urls": [
+                "http://www.guidetopharmacology.org/GRAC/LigandDisplayForward?ligandId=503"
+              ],
+              "license": "CC BY-SA 3.0",
+              "affinity_nM": 0.24241,
+              "sources": [
+                "ChEMBL",
+                "DrugBank (target)",
+                "DrugCentral (IUPHAR)",
+                "PDSP Ki"
+              ],
+              "actions": [
+                "antagonist",
+                "inverse agonist"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_0d28751f4664ea297aec1b9f",
+            "source": "Compound::DB01392",
+            "target": "Gene::150",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "ChEMBL",
+              "DrugBank (target)",
+              "DrugCentral (IUPHAR)",
+              "PDSP Ki"
+            ],
+            "license": "CC BY-SA 3.0",
+            "data": {
+              "pubmed_ids": [
+                "10506165",
+                "10602703",
+                "10611634",
+                "10762040",
+                "11132243",
+                "11408545",
+                "12591093",
+                "1353247",
+                "15911252",
+                "16325800",
+                "1656026",
+                "17257841",
+                "17558432",
+                "17664022",
+                "19788200",
+                "6149136",
+                "7562902",
+                "7855217",
+                "7908054",
+                "7996470",
+                "9400006",
+                "9605427"
+              ],
+              "urls": [
+                "http://www.guidetopharmacology.org/GRAC/LigandDisplayForward?ligandId=102"
+              ],
+              "license": "CC BY-SA 3.0",
+              "affinity_nM": 1.4,
+              "sources": [
+                "ChEMBL",
+                "DrugBank (target)",
+                "DrugCentral (IUPHAR)",
+                "PDSP Ki"
+              ],
+              "actions": [
+                "antagonist"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_0e2b5cb4ae5a1708fced76d5",
+            "source": "Compound::DB00866",
+            "target": "Gene::154",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "DrugBank (target)",
+              "DrugCentral (IUPHAR)"
+            ],
+            "license": "CC BY-NC 4.0",
+            "data": {
+              "pubmed_ids": [
+                "2439825",
+                "2859531",
+                "2871880"
+              ],
+              "urls": [
+                "http://www.guidetopharmacology.org/GRAC/LigandDisplayForward?ligandId=563"
+              ],
+              "license": "CC BY-NC 4.0",
+              "sources": [
+                "DrugBank (target)",
+                "DrugCentral (IUPHAR)"
+              ],
+              "actions": [
+                "antagonist"
+              ],
+              "unbiased": false
+            }
+          }
+        ],
+        "preview_truncated": true,
+        "focus": {
+          "before": {
+            "supported": true,
+            "rank": 6,
+            "score": 0.9898010864878307,
+            "logit": 4.575222803999436,
+            "counts": {
+              "direct": 2,
+              "interaction": 1,
+              "pathway": 32
+            },
+            "evidence_count": 35
+          },
+          "after": {
+            "supported": true,
+            "rank": 1338,
+            "score": 0.45327586559467103,
+            "logit": -0.1874434355814052,
+            "counts": {
+              "direct": 0,
+              "interaction": 1,
+              "pathway": 20
+            },
+            "evidence_count": 21
+          }
+        }
+      },
+      "unsupported_witness": {
+        "group_ids": [
+          "source:ChEMBL"
+        ],
+        "residual_edge_ids": [
+          "e_fd073dfb24cd1cb240aa800f"
+        ],
+        "removed_edge_count": 1712,
+        "removed_edge_ids_sha256": "2cecb47eb3f4a6d41c103deebe66ba707ecedf4d230a57713494dc665a918b2d",
+        "affected_compound_count": 470,
+        "removed_edges_preview": [
+          {
+            "id": "e_002e2c86b7062fe1dde41e83",
+            "source": "Compound::DB01197",
+            "target": "Gene::5972",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "ChEMBL"
+            ],
+            "license": "CC BY-SA 3.0",
+            "data": {
+              "pubmed_ids": [
+                "6267277"
+              ],
+              "license": "CC BY-SA 3.0",
+              "affinity_nM": 1.7,
+              "sources": [
+                "ChEMBL"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_004f86e96aa7061fcb83931c",
+            "source": "Compound::DB01069",
+            "target": "Gene::3269",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "ChEMBL",
+              "DrugBank (target)",
+              "DrugCentral (ChEMBL)"
+            ],
+            "license": "CC BY-SA 3.0",
+            "data": {
+              "pubmed_ids": [
+                "11752352",
+                "12657913",
+                "23919353",
+                "2576052",
+                "2866055",
+                "3011460",
+                "8098142",
+                "9442829"
+              ],
+              "urls": [
+                "https://www.ebi.ac.uk/chembl/compound/inspect/CHEMBL251904"
+              ],
+              "license": "CC BY-SA 3.0",
+              "affinity_nM": 5.4,
+              "sources": [
+                "ChEMBL",
+                "DrugBank (target)",
+                "DrugCentral (ChEMBL)"
+              ],
+              "actions": [
+                "antagonist"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_00541ce4f0d4d00af7298240",
+            "source": "Compound::DB00543",
+            "target": "Gene::3363",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "ChEMBL",
+              "DrugBank (target)"
+            ],
+            "license": "CC BY-SA 3.0",
+            "data": {
+              "pubmed_ids": [
+                "12825922",
+                "7908055"
+              ],
+              "license": "CC BY-SA 3.0",
+              "affinity_nM": 500.0,
+              "sources": [
+                "ChEMBL",
+                "DrugBank (target)"
+              ],
+              "actions": [
+                "antagonist"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_00b102eb8e53840a8d5165ff",
+            "source": "Compound::DB06616",
+            "target": "Gene::8573",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "ChEMBL"
+            ],
+            "license": "CC BY-SA 3.0",
+            "data": {
+              "pubmed_ids": [
+                "22037378"
+              ],
+              "license": "CC BY-SA 3.0",
+              "affinity_nM": 830.0,
+              "sources": [
+                "ChEMBL"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_00c5dc5885f2e9cb4295ff44",
+            "source": "Compound::DB08865",
+            "target": "Gene::7525",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "ChEMBL"
+            ],
+            "license": "CC BY-SA 3.0",
+            "data": {
+              "pubmed_ids": [
+                "22037378"
+              ],
+              "license": "CC BY-SA 3.0",
+              "affinity_nM": 770.0,
+              "sources": [
+                "ChEMBL"
+              ],
+              "unbiased": false
+            }
+          },
+          {
+            "id": "e_00c99930a2b3264f7b680d1d",
+            "source": "Compound::DB04868",
+            "target": "Gene::765",
+            "type": "BINDS",
+            "direction": "both",
+            "sources": [
+              "ChEMBL"
+            ],
+            "license": "CC BY-SA 3.0",
+            "data": {
+              "pubmed_ids": [
+                "19527930"
+              ],
+              "license": "CC BY-SA 3.0",
+              "affinity_nM": 461.0,
+              "sources": [
+                "ChEMBL"
+              ],
+              "unbiased": false
+            }
+          }
+        ],
+        "preview_truncated": true,
+        "focus": {
+          "before": {
+            "supported": true,
+            "rank": 6,
+            "score": 0.9898010864878307,
+            "logit": 4.575222803999436,
+            "counts": {
+              "direct": 2,
+              "interaction": 1,
+              "pathway": 32
+            },
+            "evidence_count": 35
+          },
+          "after": {
+            "supported": false,
+            "rank": null,
+            "score": 0.3137713304244799,
+            "logit": -0.7825464362031447,
+            "counts": {
+              "direct": 0,
+              "interaction": 0,
+              "pathway": 0
+            },
+            "evidence_count": 0
+          }
+        }
+      }
+    }
+  ],
+  "proof": {
+    "algorithm": "conditional batched one-edge envelopes and exact disjoint rank allocation",
+    "search_group_budget": 1,
+    "search_edge_budget": 1,
+    "local_states_evaluated": 182524,
+    "conditional_slice_count": 15,
+    "envelope_table_sha256": "399905a583decd3410ffa26a1f86f879964cbb4e81df211d4c38ed85ae4f1e6c",
+    "conditional_slices": [
+      {
+        "group_ids": [],
+        "remaining_edge_count": 11571,
+        "local_states_evaluated": 13123,
+        "bounds_sha256": "896b86a15b04484d7bb812af20fa8665c3b75cb7abd9f9bfb1da78c870f69b5f"
+      },
+      {
+        "group_ids": [
+          "source:BindingDB"
+        ],
+        "remaining_edge_count": 11362,
+        "local_states_evaluated": 12914,
+        "bounds_sha256": "503d3a2ec6293f7cbd4a55dcab1c23671af1e3bcd7997784d69c45c54e54e58b"
+      },
+      {
+        "group_ids": [
+          "source:ChEMBL"
+        ],
+        "remaining_edge_count": 9860,
+        "local_states_evaluated": 11412,
+        "bounds_sha256": "542c53ec5c59683e890fd4f07fcf2c79ffc8db5058572678f80ea703e12fc4fc"
+      },
+      {
+        "group_ids": [
+          "source:DrugBank (carrier)"
+        ],
+        "remaining_edge_count": 11354,
+        "local_states_evaluated": 12906,
+        "bounds_sha256": "f5c96e9b4d3da03fdf67290957876a74b797d5f98afaef6a5929f5120f322a3b"
+      },
+      {
+        "group_ids": [
+          "source:DrugBank (enzyme)"
+        ],
+        "remaining_edge_count": 8355,
+        "local_states_evaluated": 9907,
+        "bounds_sha256": "06960222859e3af692e3edd4a39e1a4cdec6f06a85cead24de82bf97d40f0fe0"
+      },
+      {
+        "group_ids": [
+          "source:DrugBank (target)"
+        ],
+        "remaining_edge_count": 6968,
+        "local_states_evaluated": 8520,
+        "bounds_sha256": "1d5487fbb5cd2165ee40e48a415c5535568e7eae1800205ec5a0f33cfef6c1fb"
+      },
+      {
+        "group_ids": [
+          "source:DrugBank (transporter)"
+        ],
+        "remaining_edge_count": 10054,
+        "local_states_evaluated": 11606,
+        "bounds_sha256": "3a6fa11fffa7e1e6802c9c704820e0f306dfcdb86a2795de6efeb2169352bac7"
+      },
+      {
+        "group_ids": [
+          "source:DrugCentral (ChEMBL)"
+        ],
+        "remaining_edge_count": 9735,
+        "local_states_evaluated": 11287,
+        "bounds_sha256": "2f438b09d5e94e077f8b3643efb5c9f3e5048823939b1b909fe59c3dfbe00582"
+      },
+      {
+        "group_ids": [
+          "source:DrugCentral (IUPHAR)"
+        ],
+        "remaining_edge_count": 11515,
+        "local_states_evaluated": 13067,
+        "bounds_sha256": "f2efcb4ee2fc4bc3a6993eaff0dc508431024c4f6d23b2573a736c5d26e7108d"
+      },
+      {
+        "group_ids": [
+          "source:DrugCentral (KEGG DRUG)"
+        ],
+        "remaining_edge_count": 11546,
+        "local_states_evaluated": 13098,
+        "bounds_sha256": "c12e79e013f37647a789036cd5a4d417da138652f3c74d776221304d6849aa60"
+      },
+      {
+        "group_ids": [
+          "source:DrugCentral (label)"
+        ],
+        "remaining_edge_count": 11503,
+        "local_states_evaluated": 13055,
+        "bounds_sha256": "c696ed9c6df5d732490b5447149397ad3917edc80980558233102d8b25821105"
+      },
+      {
+        "group_ids": [
+          "source:DrugCentral (literature)"
+        ],
+        "remaining_edge_count": 11389,
+        "local_states_evaluated": 12941,
+        "bounds_sha256": "6c57484d5d98772b0fa05c8b33324ac01844aaf08337ea70b6af323b041c054f"
+      },
+      {
+        "group_ids": [
+          "source:PDSP Ki"
+        ],
+        "remaining_edge_count": 11050,
+        "local_states_evaluated": 12602,
+        "bounds_sha256": "28f2173820eb91bc182ec55a39a3d34323f9e9eb34a24f612cceb1c4adc9b495"
+      },
+      {
+        "group_ids": [
+          "source:PubChem"
+        ],
+        "remaining_edge_count": 11434,
+        "local_states_evaluated": 12986,
+        "bounds_sha256": "9019c0f971f4a92db3d5d93a921d3733ceadc0cea1fa20b99cc56e656d6808b0"
+      },
+      {
+        "group_ids": [
+          "source:US Patent"
+        ],
+        "remaining_edge_count": 11548,
+        "local_states_evaluated": 13100,
+        "bounds_sha256": "a2fda96ca901865108f75dfa74d3c111a7e9d787027af6446e81881e113c765d"
+      }
+    ],
+    "covered_action_representations": 159259,
+    "count_semantics": "Action representations may produce identical removed unions; counts are not unique edited graphs or measured speedups. All selected 1+1 slices are cached even when the requested rectangle is smaller."
+  },
+  "interpretation": "Exact for the declared frozen ranker and the rectangular budget of at most one selected provenance-group withdrawal plus at most one residual BINDS record deletion. A group removes the union of all records carrying its imported annotation; a residual record must survive that withdrawal. All competing compounds change jointly. Group and record budgets are separate units, not equal amounts of evidence. Source labels are not independent suppliers, and a citation need not identify one experiment. This is an evidence-quarantine sensitivity analysis, not a factual retraction, clinical effect, error probability or new biological discovery. Exactness is relative to decimal80-binary64-v1. Unselected annotations, other relation families, larger budgets, new records and model refitting are outside scope.",
+  "certificate_sha256": "5e853eba2d925e021cd2df0beec777adaa245172576a46c564e6f5a5c81ec056"
+}
