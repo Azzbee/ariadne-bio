@@ -2,7 +2,7 @@
 PYTHON ?= .venv/bin/python
 COMPOSE ?= docker compose
 
-.PHONY: help init install data evaluate ingest run docker-run docker-core docker-stop docker-logs test test-integration test-llm lint format notebook snapshot verify-scores audit-licenses benchmark-audits smoke clean
+.PHONY: help init install data evaluate ingest run docker-run docker-core docker-stop docker-logs test test-integration test-llm lint format notebook snapshot verify-scores audit-licenses benchmark-audits benchmark-provenance provenance-controls package-release smoke clean
 
 help: ## List reproducible project commands
 	@awk 'BEGIN {FS = ":.*##"; printf "ARIADNE — trace evidence, challenge hypotheses\n\n"} /^[a-zA-Z_-]+:.*?##/ {printf "  %-19s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -75,6 +75,15 @@ audit-licenses: ## Inventory observed data-license text; never grants commercial
 
 benchmark-audits: ## Audit all diseases' top ten against global binding-deletion budgets 0..2
 	$(PYTHON) -m scripts.benchmark_audits --data-dir data/processed --output reports/v1.2.0/binding-audit-benchmark.json
+
+benchmark-provenance: ## Audit correlated provider withdrawals and conditional protection plans
+	$(PYTHON) -m scripts.benchmark_provenance --data-dir data/processed --output reports/v1.3.0/provenance-audit-benchmark.json
+
+provenance-controls: ## Measure disclosed size-matched random controls for two illustrative cases
+	$(PYTHON) -m scripts.provenance_controls --data-dir data/processed --output reports/v1.3.0/provenance-size-matched-controls.json
+
+package-release: ## Package an explicit committed source ref and its matching research snapshot
+	$(PYTHON) infra/package_release.py --ref $(or $(REF),HEAD) --output $(or $(OUTPUT),dist/release)
 
 smoke: ## Verify live HTTP evidence, audit certificates, tamper rejection and agent guard
 	$(PYTHON) infra/smoke.py --base-url http://localhost:8080

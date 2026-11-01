@@ -11,6 +11,16 @@ family and see how the same model's ranking changes. An agent resolves questions
 calls bounded graph tools, and explains the returned records with an auditable
 trace.
 
+**Version 1.3 adds correlated provenance audits and conditional protection plans.**
+Quarantine all binding records mentioning one or two selected providers or
+imported PubMed identifiers, including overlapping records and simultaneous
+changes to competitors. The engine enumerates the complete bounded scenario
+space and finds the smallest additional group-protection assumptions that block
+every failing scenario. This is exact for the declared model and catalogue;
+protection is an explicit assumption, not a claim that a review proves evidence
+true. See the [user guide](docs/provenance_audit.md),
+[proof](docs/provenance_audit_proof.md) and [prior art](docs/research_contribution.md).
+
 **Version 1.2 adds an exact ranking audit:** can this compound leave the top ten
 if any one or two recorded binding edges are withdrawn anywhere in the graph,
 including competitors' edges? The result gives the worst supported rank, loss-of-support
@@ -58,6 +68,11 @@ cd ariadne-bio
 make docker-run
 ```
 
+For an existing v1.2 volume, stop the old project with `make docker-stop`, then
+run `make docker-run COMPOSE='docker compose -p ariadne-v13'`. Version 1.3 requires
+a completed prepared-graph identity; the new project preserves the old volumes
+and creates an isolated import. [Upgrade details](docs/deployment.md#prepared-graph-identity-and-existing-volumes).
+
 Open **http://localhost:8080**. Interactive API documentation is at
 **http://localhost:8080/docs**, and Neo4j Browser is at **http://localhost:7474**.
 `make init` generates a private `.env` with a random database password, preserving
@@ -79,7 +94,8 @@ and can call a live language model. [Deployment details](docs/deployment.md).
 3. Exclude gene interactions or pathway membership. Compare ranks, scores and lost paths.
 4. Ask the agent to explain the investigation. Inspect its tool trace and citations.
 5. Run the binding audit, inspect a worst-case witness and verify its certificate.
-6. Open Evaluation to compare the model with baselines and inspect an actual failure.
+6. Audit provider or citation groups, inspect shared records and compare conditional protection sets.
+7. Open Evaluation to compare the model with baselines and inspect an actual failure.
 
 Version 1.1 keeps the selected compound visible when evidence changes, even when
 it falls outside the displayed ranking or loses every supporting path. Its
