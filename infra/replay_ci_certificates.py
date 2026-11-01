@@ -1,7 +1,7 @@
 """Strictly replay downloaded CI certificates with their retained fitted model.
 
-This command reads an already extracted quality-evidence or integration-evidence
-artifact and a separately prepared graph.json. It never trains a model, writes
+This command reads an extracted quality-evidence, integration-evidence or
+mixed-evidence artifact and a separately prepared graph.json. It never trains a model, writes
 into the artifact, or substitutes the committed research-snapshot model.
 """
 
@@ -22,6 +22,7 @@ import scipy
 
 from app.binding_audit import BindingAuditor
 from app.graph_engine import GraphEngine
+from app.mixed_audit import METHOD as MIXED_METHOD, MixedAuditor
 from app.provenance_audit import ProvenanceAuditor
 from infra.verify_live_artifacts import CERTIFICATES
 
@@ -33,7 +34,17 @@ QUALITY_CERTIFICATES = (
     ("reports/v1.3.0/provenance-audit-example-source.json", "provenance-group-exhaustive-v1"),
     ("reports/v1.3.0/provenance-audit-example-pubmed.json", "provenance-group-exhaustive-v1"),
 )
+MIXED_CERTIFICATES = (
+    ("reports/v1.4.0/mixed-audit-example-first.json", MIXED_METHOD),
+    ("reports/v1.4.0/mixed-audit-example-last.json", MIXED_METHOD),
+)
 ARTIFACT_FILES = {
+    "mixed": {
+        "model.json": "data/processed/model.json",
+        "manifest.json": "data/processed/manifest.json",
+        "evaluation.json": "data/processed/evaluation.json",
+        "context": "reports/ci-mixed.json",
+    },
     "quality": {
         "model.json": "data/processed/model.json",
         "manifest.json": "data/processed/manifest.json",
@@ -82,6 +93,16 @@ def _identity(values: dict, graph_bytes: bytes) -> dict:
 def _check_roles(certificates: list, kind: str) -> None:
     """Require actual source, citation and conditional coverage in their named slots."""
     by_path = {path: certificate for path, _, certificate in certificates}
+    if kind == "mixed":
+        for _, _, certificate in certificates:
+            if (
+                certificate.get("scope", {}).get("group_kind") != "source"
+                or not certificate.get("scope", {}).get("group_ids")
+                or (certificate.get("group_budget"), certificate.get("edge_budget")) != (1, 1)
+                or certificate.get("top_k") != 10
+            ):
+                raise ValueError("Required joint certificate has the wrong group or budget scope")
+        return
     if kind == "quality":
         source = by_path[QUALITY_CERTIFICATES[-2][0]]
         pubmed = by_path[QUALITY_CERTIFICATES[-1][0]]
@@ -113,7 +134,7 @@ def _check_roles(certificates: list, kind: str) -> None:
         binding = by_path["http_smoke.json:binding_audit.certificate"]
         if any(
             certificate.get(key) != source.get(key)
-            for certificate in (binding, pubmed)
+            for certificate in (binding, pubmed, by_path["http_smoke.json:mixed_audit.certificate"])
             for key in ("disease", "compound")
         ):
             raise ValueError("Live certificate roles do not describe the same selected pair")
@@ -122,7 +143,7 @@ def _check_roles(certificates: list, kind: str) -> None:
 def replay(artifact_dir: Path, graph_path: Path, kind: str) -> dict:
     """Recompute every required example or live certificate; do not trust saved verdicts."""
     if kind not in ARTIFACT_FILES:
-        raise ValueError("Artifact kind must be quality or integration")
+        raise ValueError("Artifact kind must be quality, integration or mixed")
     started = time.perf_counter()
     files = {}
 
@@ -142,8 +163,8 @@ def replay(artifact_dir: Path, graph_path: Path, kind: str) -> dict:
     graph_bytes = graph_path.read_bytes()
     identity = _identity(values, graph_bytes)
     certificates = []
-    if kind == "quality":
-        for name, method in QUALITY_CERTIFICATES:
+    if kind in {"quality", "mixed"}:
+        for name, method in (QUALITY_CERTIFICATES if kind == "quality" else MIXED_CERTIFICATES):
             _, certificate = read(name)
             certificates.append((name, method, certificate))
     else:
@@ -163,6 +184,29 @@ def replay(artifact_dir: Path, graph_path: Path, kind: str) -> dict:
             (data_dir / name).write_bytes(raw_inputs[name])
         engine = GraphEngine(data_dir)
         auditors = {}
+        if kind == "mixed":
+            auditor = MixedAuditor(engine)
+            auditors[MIXED_METHOD] = auditor
+            supported_diseases = [
+                disease
+                for disease in engine.entities["Disease"]
+                if engine.rankings(disease, limit=1)["candidates"]
+            ]
+            if not supported_diseases:
+                raise ValueError("Mixed evidence requires a nonempty canonical cohort")
+            expected = (
+                (supported_diseases[0], auditor.baseline_candidates(supported_diseases[0], 10)[0]),
+                (
+                    supported_diseases[-1],
+                    auditor.baseline_candidates(supported_diseases[-1], 10)[-1],
+                ),
+            )
+            for (_, _, certificate), (disease, candidate) in zip(certificates, expected):
+                canonical = auditor.audit(disease, candidate["id"], top_k=10)
+                if certificate.get("certificate_sha256") != canonical["certificate_sha256"]:
+                    raise ValueError(
+                        "Mixed example does not match its complete canonical cohort role"
+                    )
         for location, method, certificate in certificates:
             if certificate.get("method") != method:
                 raise ValueError(f"Unexpected certificate method at {location}")
@@ -171,9 +215,11 @@ def replay(artifact_dir: Path, graph_path: Path, kind: str) -> dict:
             ):
                 raise ValueError(f"Certificate input identity mismatch at {location}")
             if method not in auditors:
-                auditor_type = (
-                    BindingAuditor if method == "binding-envelope-v1" else ProvenanceAuditor
-                )
+                auditor_type = {
+                    "binding-envelope-v1": BindingAuditor,
+                    "provenance-group-exhaustive-v1": ProvenanceAuditor,
+                    MIXED_METHOD: MixedAuditor,
+                }[method]
                 auditors[method] = auditor_type(engine)
             verification = auditors[method].verify(certificate)
             results.append(
@@ -245,6 +291,8 @@ def main() -> int:
         names = list(ARTIFACT_FILES[args.kind].values())
         if args.kind == "quality":
             names.extend(name for name, _ in QUALITY_CERTIFICATES)
+        elif args.kind == "mixed":
+            names.extend(name for name, _ in MIXED_CERTIFICATES)
         else:
             names.append("http_smoke.json")
         inputs = [args.graph] + [args.artifact_dir / name for name in names]

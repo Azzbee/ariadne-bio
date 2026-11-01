@@ -22,6 +22,7 @@ CERTIFICATES = (
         "selected_pubmed_verification",
         "provenance-group-exhaustive-v1",
     ),
+    ("mixed_audit", "certificate", "verification", "mixed-group-edge-envelope-v1"),
 )
 
 
