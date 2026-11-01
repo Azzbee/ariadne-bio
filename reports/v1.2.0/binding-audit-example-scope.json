@@ -23,7 +23,7 @@
     "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
     "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
     "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
-    "scorer": "float64-fixed-order-v1"
+    "scorer": "decimal80-binary64-v1"
   },
   "baseline": {
     "supported": true,
@@ -35,11 +35,7 @@
       "interaction": 6,
       "pathway": 124
     },
-    "evidence_count": 130,
-    "legacy_score": 0.7458716933074747,
-    "legacy_rank": 10,
-    "score_difference": 1.1102230246251565e-16,
-    "rank_agrees_with_legacy": true
+    "evidence_count": 130
   },
   "results": [
     {
@@ -236,9 +232,9 @@
   "proof": {
     "local_states_evaluated": 117147,
     "covered_global_states": 66949807,
-    "envelope_bounds_sha256": "83dff8b9acd5e065b28aa76a4ea4a622291dd23eb7565cade06f87525f5d7385",
+    "envelope_bounds_sha256": "66014530d4a98949f1fb712dd7c8af6ecc18ac05eff10defa3a5ce680473e1c4",
     "search_budget": 2
   },
-  "interpretation": "This is an exact finite-budget audit of this fixed model under withdrawal of any recorded BINDS edges, including edges of competing compounds. It is not a biological intervention or a probability of efficacy. Source labels are not independent studies. The audit uses its declared fixed-order float64 scorer and score/compound-ID ties; legacy BLAS scores can differ in the last floating-point bits. Exactness is relative to this binary64 numerical runtime; transcendental functions can differ across runtimes, and verification rejects numerical mismatches. A null worst supported rank means no supported scenario exists. Unsupported outcomes are reported separately. The guarantee does not cover other edge families, correlated source-group failures, new edges, model refitting, or deletion budgets above the requested limit.",
-  "certificate_sha256": "4333608dea730b0007af343c0ddbc9470e6116cbee6788a2e5033d7a9ab865a3"
+  "interpretation": "This is an exact finite-budget audit of this fixed model under withdrawal of any recorded BINDS edges, including edges of competing compounds. It is not a biological intervention or a probability of efficacy. Source labels are not independent studies. The declared decimal80-binary64-v1 scorer uses fixed Decimal transforms and ordered nearest-even IEEE-754 binary64 arithmetic, with score/compound-ID ties. Exactness is relative to that finite arithmetic contract; strict verification rejects every numerical mismatch. Legacy GraphEngine scores remain separate and unchanged. A null worst supported rank means no supported scenario exists. Unsupported outcomes are reported separately. The guarantee does not cover other edge families, correlated source-group failures, new edges, model refitting, or larger deletion budgets.",
+  "certificate_sha256": "094eb47f77dd12ef2b565ec829b69c9c06755970fdfe8296f0df4057af390dae"
 }

@@ -23,23 +23,19 @@
     "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
     "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
     "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
-    "scorer": "float64-fixed-order-v1"
+    "scorer": "decimal80-binary64-v1"
   },
   "baseline": {
     "supported": true,
     "rank": 1,
-    "score": 0.9907880450557162,
+    "score": 0.9907880450557163,
     "logit": 4.6779985406258175,
     "counts": {
       "direct": 2,
       "interaction": 2,
       "pathway": 7
     },
-    "evidence_count": 11,
-    "legacy_score": 0.9907880450557162,
-    "legacy_rank": 1,
-    "score_difference": 0.0,
-    "rank_agrees_with_legacy": true
+    "evidence_count": 11
   },
   "results": [
     {
@@ -57,7 +53,7 @@
         "focus": {
           "supported": true,
           "rank": 1,
-          "score": 0.9907880450557162,
+          "score": 0.9907880450557163,
           "logit": 4.6779985406258175,
           "counts": {
             "direct": 2,
@@ -85,7 +81,7 @@
         "focus": {
           "supported": true,
           "rank": 1,
-          "score": 0.9907880450557162,
+          "score": 0.9907880450557163,
           "logit": 4.6779985406258175,
           "counts": {
             "direct": 2,
@@ -187,7 +183,7 @@
             "before": {
               "supported": true,
               "rank": 1,
-              "score": 0.9907880450557162
+              "score": 0.9907880450557163
             },
             "after": {
               "supported": true,
@@ -209,9 +205,9 @@
   "proof": {
     "local_states_evaluated": 117147,
     "covered_global_states": 66949807,
-    "envelope_bounds_sha256": "d0dd0ad0e9e3f5c707d1b067d9fe494121ceada8089c89cf26dcce6490c9edd9",
+    "envelope_bounds_sha256": "4d1de67974c5be0f8d50dd97290fdf1a8f3d83af87322e943761ef87712bab9b",
     "search_budget": 2
   },
-  "interpretation": "This is an exact finite-budget audit of this fixed model under withdrawal of any recorded BINDS edges, including edges of competing compounds. It is not a biological intervention or a probability of efficacy. Source labels are not independent studies. The audit uses its declared fixed-order float64 scorer and score/compound-ID ties; legacy BLAS scores can differ in the last floating-point bits. Exactness is relative to this binary64 numerical runtime; transcendental functions can differ across runtimes, and verification rejects numerical mismatches. A null worst supported rank means no supported scenario exists. Unsupported outcomes are reported separately. The guarantee does not cover other edge families, correlated source-group failures, new edges, model refitting, or deletion budgets above the requested limit.",
-  "certificate_sha256": "b0fe8cf4169a41ecbf8cdac10d9a9995a13f5fb947d9487122757375dd54f578"
+  "interpretation": "This is an exact finite-budget audit of this fixed model under withdrawal of any recorded BINDS edges, including edges of competing compounds. It is not a biological intervention or a probability of efficacy. Source labels are not independent studies. The declared decimal80-binary64-v1 scorer uses fixed Decimal transforms and ordered nearest-even IEEE-754 binary64 arithmetic, with score/compound-ID ties. Exactness is relative to that finite arithmetic contract; strict verification rejects every numerical mismatch. Legacy GraphEngine scores remain separate and unchanged. A null worst supported rank means no supported scenario exists. Unsupported outcomes are reported separately. The guarantee does not cover other edge families, correlated source-group failures, new edges, model refitting, or larger deletion budgets.",
+  "certificate_sha256": "abf350c4e383e0832e5a372f6118845852183638ea4320614bbcc10a21bc03fe"
 }
