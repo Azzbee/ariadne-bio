@@ -39,7 +39,12 @@ def _require(condition, message):
 
 def _source_identity():
     root = Path(__file__).resolve().parents[1]
-    files = ["app/binding_audit.py", "app/graph_engine.py", "scripts/benchmark_audits.py"]
+    files = [
+        "app/audit_numerics.py",
+        "app/binding_audit.py",
+        "app/graph_engine.py",
+        "scripts/benchmark_audits.py",
+    ]
     hashes = {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in files}
     try:
         revision = subprocess.check_output(

@@ -41,6 +41,7 @@ def _require(condition, message):
 def _source_identity():
     root = Path(__file__).resolve().parents[1]
     names = (
+        "app/audit_numerics.py",
         "app/provenance_audit.py",
         "app/binding_audit.py",
         "app/graph_engine.py",

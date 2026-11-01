@@ -329,6 +329,7 @@ def run_controls(engine, *, draws=DRAWS, seed=SEED):
                 name: hashlib.sha256((root / name).read_bytes()).hexdigest()
                 for name in (
                     "scripts/provenance_controls.py",
+                    "app/audit_numerics.py",
                     "app/binding_audit.py",
                     "app/provenance_audit.py",
                     "app/graph_engine.py",
