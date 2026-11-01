@@ -36,7 +36,9 @@ comparison, or accept a numerical tolerance.
 The supported native arithmetic format is IEEE-754 binary64, round to nearest,
 ties to even, with gradual underflow. The scorer checks the format, representative
 even and odd halfway additions, negative rounding and subnormal preservation on
-every call. A nonconforming runtime is rejected. These checks are guards against
+every call. Sentinel results are compared through their integer bit patterns,
+so a runtime that also treats denormal comparison operands as zero cannot hide
+a flushed result. A nonconforming runtime is rejected. These checks are guards against
 unsupported environments, not an exhaustive hardware conformance proof.
 
 Every Decimal operation uses an explicitly constructed context:
