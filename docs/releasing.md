@@ -4,6 +4,9 @@ Release evidence must describe the exact tested source revision. A public image,
 a local successful test or a previous release report does not establish that a
 new revision passed. Both CI jobs therefore start with their own fresh checkout identity and remove
 only their prior generated outputs before installing dependencies or running tests.
+Quality and full-stack integration run concurrently on isolated runners; neither
+consumes the other's artifacts or fitted model. Image publication still requires
+both jobs to succeed for the same workflow run and source revision.
 
 ## Before merging
 

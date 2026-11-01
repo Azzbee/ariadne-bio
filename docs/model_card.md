@@ -149,11 +149,16 @@ an exact disjoint budget allocation produce an attainable worst supported rank.
 Possible loss of all paths is reported separately and prevents a robust-top-k
 claim, even when surviving supported scenarios have favorable ranks.
 
-The audit uses an explicit fixed-order float64 scorer with the same saved
-features, scaler and coefficients. The legacy ranking/assessment scorer is
-unchanged. Audit responses report the canonical baseline and legacy score/rank
-comparison. The certificate is relative to this numerical function and its
-recorded identities, not an idealized real-arithmetic predictor.
+New audit certificates use the
+[`decimal80-binary64-v1` finite arithmetic contract](audit_numerical_contract.md)
+with the same feature definitions, saved scaler and fitted coefficients. Decimal
+transforms, integer nearest-even conversion and separate ordered binary64
+operations define the audit's numerical function. The original ranking and
+assessment scorer is unchanged and is not sealed into new certificates.
+Historical `float64-fixed-order-v1` certificates retain their original numerical
+identity, legacy comparison fields and strict runtime-dependent verification.
+Every guarantee is relative to the declared scorer and recorded input identities,
+not an idealized real-arithmetic predictor or a newly fitted model.
 
 A score can increase after deleting binding evidence because normalized features
 and signed coefficients change. Auditing only the selected compound can therefore

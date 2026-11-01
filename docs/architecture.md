@@ -114,10 +114,16 @@ or recompute them in browser JavaScript.
 
 ## Binding-audit computation
 
-The auditor snapshots the fitted model and evidence matrices when first needed.
-It validates binary binding records, preserves compound-ID tie ordering, and
-uses a dedicated fixed-order float64 scorer. This leaves the earlier vectorized
-ranking and assessment calculations unchanged.
+The auditor snapshots the fitted model, evidence matrices, entity metadata,
+disease positions and original path counts when first needed. It validates the
+record identities, preserves compound-ID tie ordering, and uses the explicit
+[`decimal80-binary64-v1` numerical contract](audit_numerical_contract.md).
+Precision-80 Decimal transforms and separately ordered nearest-even binary64
+operations make the sealed finite function independent of dispatched NumPy
+transcendentals. The earlier vectorized ranking and assessment calculations
+remain unchanged. Historical scorer identities select their original strict
+verifier and a captured legacy score matrix; new certificates omit those
+platform-dependent comparison fields.
 
 For a disease, a bounded cache holds local supported score minima/maxima at
 deletion counts zero, one and two. The selected compound's minimum score sets a

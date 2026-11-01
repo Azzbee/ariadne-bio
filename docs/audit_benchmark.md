@@ -11,11 +11,18 @@ that stronger comparator.
 Evidence: the compact [summary](../reports/v1.2.0/binding-audit-summary.json),
 complete [per-query report](../reports/v1.2.0/binding-audit-benchmark.json),
 [implementation](../app/binding_audit.py), and [proof](binding_audit_proof.md).
-The reference local run completed on 2026-10-31. Its report records the parent
-Git revision with `working_tree_dirty=true`, individual source-file hashes,
-graph/model identities and runtime versions. That is an identified local
-execution, not a claim that the parent revision already contained this change.
-Each CI run produces fresh artifacts for its own checkout.
+The reference run completed on **2026-11-01** from clean public commit
+[`27f5557dfeaacc6b6a19c17e0253b8d7de506c62`](https://github.com/Azzbee/ariadne-bio/commit/27f5557dfeaacc6b6a19c17e0253b8d7de506c62),
+using the retained graph and fitted model without refitting. The report records
+the `decimal80-binary64-v1` scorer, individual source-file hashes, graph/model
+identities and runtime versions. Each CI run produces fresh artifacts for its
+own checkout and fitted model; it does not replace this frozen-input reference.
+
+The `reports/v1.2.0/` paths remain stable for existing links. Their contents in the
+current checkout are regenerated with the v1.3 scorer and identify their actual
+source commit. The immutable
+[`v1.2.0` tag](https://github.com/Azzbee/ariadne-bio/tree/v1.2.0/reports/v1.2.0)
+retains the historical scorer and reports.
 
 ## Protocol
 
@@ -135,29 +142,32 @@ enumerate all 66.9 million global subsets. These state counts do not imply a
 measured speedup over a separately timed exhaustive algorithm.
 
 The complete measured audit, both greedy comparisons and replay checks took
-**185.32 seconds** after the graph engine was loaded, on the recorded Linux
-runtime with Python 3.12.14, NumPy 2.3.5 and SciPy 1.17.0. This is one local run,
-not an API latency guarantee or a hardware-normalized performance comparison.
-Dataset download, preparation and model fitting are outside that timing.
+**1,528.24 seconds** after the graph engine was loaded, on the recorded Linux
+runtime with Python 3.12.14, NumPy 2.3.5 and SciPy 1.17.0. The full provenance
+benchmark ran concurrently on the same shared host. This is one measured workload,
+not an isolated latency measurement, an API latency guarantee or a
+hardware-normalized performance comparison. Dataset download, preparation and
+model fitting are outside that timing.
 
-The historical `float64-fixed-order-v1` scorer used for this v1.2 report
-deliberately fixed its float64 operation order. Against the
-unchanged legacy scorer, all **212,624 compound–disease scores** were compared:
-126,860 differed in their final bits, the maximum absolute difference was
-`9.992007221626409e-16`, and **zero supported ranking positions changed**. The
-certificate applies to the named canonical scorer and exact graph/model
-identities. It does not assert bit identity between the audit and legacy scorer,
-or between separately retrained models on different numerical runtimes.
+The current
+[`decimal80-binary64-v1` scorer](audit_numerical_contract.md) defines decimal
+transcendentals and explicit binary64 rounding and operation order. Against the
+unchanged legacy explorer scorer, all **212,624 compound–disease scores** were
+compared: **151,811** differed in their final bits, the maximum absolute
+difference was `9.992007221626409e-16`, and **zero supported ranking positions
+changed**. These are measured diagnostics for this runtime; the explorer's
+platform-dependent calculations are excluded from new certificate seals. A
+certificate applies to its named scorer and exact graph/model identities. It
+does not assert bit identity with the explorer or between separately retrained
+models.
 
-Subsequent independent replay of a real CI artifact exposed last-bit differences
-in that historical scorer's CPU-dispatched `log1p`, despite fixed accumulation
-order. Current certificates therefore use the separately versioned
-[`decimal80-binary64-v1` finite arithmetic contract](audit_numerical_contract.md).
-The archived numerical counts above describe the historical report; they are not
-silently reassigned to the new scorer. New certificates omit platform-dependent
-legacy baseline comparisons. Old certificates retain strict historical replay,
-which can fail on a different numerical runtime. Complete cross-runtime replay
-requires the retained exact model and graph, not a fresh fit.
+Independent replay of a real CI artifact exposed last-bit differences in the
+historical `float64-fixed-order-v1` scorer's CPU-dispatched `log1p`, despite fixed
+accumulation order. That finding motivated the separately versioned finite
+arithmetic contract. Old certificates retain their original numerical identity
+and strict historical replay, which can fail on a different numerical runtime.
+Complete cross-runtime replay requires the retained exact model and graph, not
+a fresh fit.
 
 ## Reproduce or falsify the result
 
@@ -186,7 +196,9 @@ Any exhaustive small-graph disagreement, failed edited-matrix replay, rehashed
 false certificate accepted by verification, or legacy score regression falsifies
 an implementation claim and fails the corresponding test or CI gate.
 
-The work does not yet establish external scientific novelty, prospective review
-time savings, purchase demand, source-correlated error coverage, or a clinical
-benefit. See the [prior-art comparison](research_contribution.md),
+The [v1.3 group audit](provenance_audit.md) also evaluates bounded withdrawals of
+recorded provenance groups. Neither audit establishes the distribution or
+correlation of real evidence errors, external scientific novelty, prospective
+review time savings, purchase demand, or a clinical benefit. See the
+[prior-art comparison](research_contribution.md),
 [licensing inventory](licensing_audit.md) and [prospective pilot](commercial_pilot.md).
