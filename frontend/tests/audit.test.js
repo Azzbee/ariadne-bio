@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import { AriadneAPI } from '../api.js';
+import { AuditPanel } from '../audit.js';
 import {
   AuditSession, auditContext, auditKey, auditLinkParameters, auditVerdict, copyJSON,
   defaultWitnessKind, metadataList, rivalExampleURL, stableJSON, validateAudit, witnessChanges, witnessFor
@@ -108,6 +109,60 @@ test('snapshot verification labels recorded execution and rejects a changed enve
   assert.equal(bad.valid, false);
   assert.equal(bad.status, 'invalid');
   assert.match(bad.errors.join(' '), /does not exactly match/);
+});
+
+test('audit display supports both explicit scorer identities and rejects unknown arithmetic', () => {
+  for (const scorer of ['decimal80-binary64-v1', 'float64-fixed-order-v1']) {
+    const certificate = copyJSON(galantamine);
+    certificate.identity.scorer = scorer;
+    if (scorer === 'decimal80-binary64-v1') {
+      for (const key of ['legacy_score', 'legacy_rank', 'score_difference', 'rank_agrees_with_legacy']) delete certificate.baseline[key];
+    }
+    // Structural acceptance is distinct from authenticating this edited fixture's seal.
+    assert.equal(validateAudit(certificate, diseaseId, certificate.compound.id, 10, 2), certificate);
+  }
+  for (const scorer of ['decimal80-binary64-v2', 'unknown', null, undefined]) {
+    const certificate = copyJSON(galantamine); certificate.identity.scorer = scorer;
+    assert.throws(() => validateAudit(certificate, diseaseId, certificate.compound.id, 10, 2), /unknown canonical scorer/);
+  }
+});
+
+test('changing a binding certificate scorer cannot inherit its recorded verification', async () => {
+  const { api } = snapshotAPI(); await api.initialize(true);
+  const certificate = await api.audit(diseaseId, galantamine.compound.id, 10, 2);
+  certificate.identity.scorer = certificate.identity.scorer === 'decimal80-binary64-v1' ? 'float64-fixed-order-v1' : 'decimal80-binary64-v1';
+  const result = await api.verifyAudit(certificate);
+  assert.equal(result.valid, false); assert.equal(result.status, 'invalid');
+});
+
+function renderedAudit(certificate) {
+  const body = { innerHTML: '' };
+  AuditPanel.prototype.renderCertificate.call({
+    session: { certificate }, api: { mode: 'snapshot' }, selectedBudget: certificate.budget, selectedKind: 'rank',
+    find: id => id === 'audit-body' ? body : null, renderControls() {}, renderVerification() {}
+  });
+  return body.innerHTML;
+}
+
+test('portable audit presentation makes no explorer comparison when legacy fields are absent', () => {
+  const certificate = copyJSON(galantamine); certificate.identity.scorer = 'decimal80-binary64-v1';
+  for (const key of ['legacy_score', 'legacy_rank', 'score_difference', 'rank_agrees_with_legacy']) delete certificate.baseline[key];
+  const html = renderedAudit(certificate);
+  assert.match(html, /decimal80-binary64-v1/);
+  assert.match(html, /declared decimal\/binary64 arithmetic contract/);
+  assert.doesNotMatch(html, /Recorded explorer comparison|Explorer rank|score difference|audit-arithmetic-note|recorded explorer rank/);
+});
+
+test('historical comparison renders only recorded values and an explicit recorded disagreement', () => {
+  const certificate = copyJSON(galantamine); certificate.identity.scorer = 'float64-fixed-order-v1';
+  Object.assign(certificate.baseline, { legacy_rank: 2, score_difference: 1e-16, rank_agrees_with_legacy: false });
+  const html = renderedAudit(certificate);
+  assert.match(html, /Recorded explorer comparison/); assert.match(html, /Explorer rank #2/);
+  assert.match(html, /recorded explorer rank is #2/); assert.match(html, /historical certificate/);
+  delete certificate.baseline.legacy_rank;
+  const partial = renderedAudit(certificate);
+  assert.doesNotMatch(partial, /Explorer rank|recorded explorer rank|audit-arithmetic-note/);
+  assert.match(partial, /score difference/);
 });
 
 test('a missing recorded verification does not masquerade as fresh server replay', async () => {

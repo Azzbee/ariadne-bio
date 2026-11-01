@@ -98,6 +98,29 @@ test('altered certificates never inherit a recorded verification', async () => {
   assert.equal(result.valid, false); assert.equal(result.replayed_witnesses, 0);
 });
 
+test('provenance display accepts both declared scorer contracts and rejects unknown identities', () => {
+  for (const scorer of ['decimal80-binary64-v1', 'float64-fixed-order-v1']) {
+    const certificate = copyJSON(marimastat); certificate.identity.scorer = scorer;
+    if (scorer === 'decimal80-binary64-v1') {
+      for (const key of ['legacy_score', 'legacy_rank', 'score_difference', 'rank_agrees_with_legacy']) delete certificate.baseline[key];
+    }
+    // This checks display structure only; the edited fixture is not a resealed certificate.
+    assert.equal(validateProvenanceAudit(certificate, diseaseId, certificate.compound.id, { budget: certificate.budget }), certificate);
+  }
+  for (const scorer of ['decimal80-binary64-v2', 'unknown', null, undefined]) {
+    const certificate = copyJSON(marimastat); certificate.identity.scorer = scorer;
+    assert.throws(() => validateProvenanceAudit(certificate, diseaseId, certificate.compound.id, { budget: certificate.budget }), /unknown scorer/);
+  }
+});
+
+test('changing a provenance certificate scorer cannot inherit recorded verification', async () => {
+  const { api } = snapshotAPI(); await api.initialize(true);
+  const certificate = await api.provenanceAudit(diseaseId, marimastat.compound.id);
+  certificate.identity.scorer = certificate.identity.scorer === 'decimal80-binary64-v1' ? 'float64-fixed-order-v1' : 'decimal80-binary64-v1';
+  const result = await api.verifyProvenanceAudit(certificate);
+  assert.equal(result.valid, false); assert.equal(result.status, 'invalid'); assert.equal(result.replayed_witnesses, 0);
+});
+
 test('stale verification records are rejected even when case bytes match their manifest', async () => {
   const data = copyJSON(caseData); data.provenance_verifications[marimastat.compound.id]['10:2'].certificate_sha256 = 'f'.repeat(64);
   const { api } = snapshotAPI(data); await api.initialize(true);
