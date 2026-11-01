@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "status": "passed",
   "title": "Post-selected size-matched uniform BINDS-withdrawal controls",
-  "executed_at": "2026-11-01T10:54:23.220989+00:00",
+  "executed_at": "2026-11-01T13:08:23.569590+00:00",
   "protocol": {
     "selection": "The two group illustrations were chosen after exploratory stress testing; these descriptive controls were specified afterward",
     "purpose": "Separate withdrawal magnitude from the concentration of records in the named group for these illustrations only",
@@ -13,9 +13,10 @@
   },
   "source": {
     "file_sha256": {
-      "scripts/provenance_controls.py": "0cef4590eef3dc08dea9d98a9e4c8b6f1d477aecf01a653f493648ecd894e54c",
-      "app/binding_audit.py": "e2e662cffff5be1f36f91850a4b176db906c14efcc820e7b18d04021a5ce4e0b",
-      "app/provenance_audit.py": "fa43318f2e94769f016ac1279ee97f96a452d4d6d278b1035959183f27f5d56d",
+      "scripts/provenance_controls.py": "4b85564dae9be2f19a892e2d313a65d72250490197569bb9785163f2b38d66a7",
+      "app/audit_numerics.py": "80527c14035edc0f448825e8b981d68bb7126ff9f65f6e0381d8a71c415d53c7",
+      "app/binding_audit.py": "4356019800543e89e4658d89926b998993b9ddc1d9d0db312cc1770a6e509ffa",
+      "app/provenance_audit.py": "bd897086af7c446cc5cfadac5b9137b25590d4a14985deda6493d6af838413bd",
       "app/graph_engine.py": "80c18947f85dfaea71f32fd0b7608d5977b11be2d1f01fcdf2cc6e292910b81c"
     }
   },
@@ -33,7 +34,7 @@
         "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
         "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
         "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
-        "scorer": "float64-fixed-order-v1",
+        "scorer": "decimal80-binary64-v1",
         "group_map_sha256": "e428edd4119421bff3406c8897ca39416e4e64535730e1c8fe4de27a9d2e997d"
       },
       "group_id": "source:DrugBank (target)",
@@ -57,9 +58,7 @@
           "direct": 6,
           "interaction": 59,
           "pathway": 1901
-        },
-        "legacy_score": 0.9241421386479369,
-        "legacy_rank": 1
+        }
       },
       "structured_group_outcome": {
         "disease_id": "Disease::DOID:7148",
@@ -72,7 +71,7 @@
         "focus": {
           "supported": true,
           "rank": 1096,
-          "score": 0.13030119453504302,
+          "score": 0.13030119453504305,
           "logit": -1.8982982994284345,
           "evidence_count": 206,
           "counts": {
@@ -358,7 +357,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8939639498161163,
+          "score": 0.8939639498161164,
           "logit": 2.1318863174031017,
           "counts": {
             "direct": 4,
@@ -438,7 +437,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 2,
-          "score": 0.8528849942359927,
+          "score": 0.8528849942359928,
           "logit": 1.7574100803193031,
           "counts": {
             "direct": 3,
@@ -454,7 +453,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.9280937709994644,
+          "score": 0.9280937709994646,
           "logit": 2.557769878820886,
           "counts": {
             "direct": 6,
@@ -486,7 +485,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 37,
-          "score": 0.7003666536693315,
+          "score": 0.7003666536693314,
           "logit": 0.849044440580282,
           "counts": {
             "direct": 1,
@@ -502,7 +501,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8907951031375045,
+          "score": 0.8907951031375047,
           "logit": 2.098888532848142,
           "counts": {
             "direct": 4,
@@ -518,7 +517,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8868065707011574,
+          "score": 0.8868065707011573,
           "logit": 2.0585287681445426,
           "counts": {
             "direct": 4,
@@ -550,7 +549,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8692734249415619,
+          "score": 0.869273424941562,
           "logit": 1.8945497903350665,
           "counts": {
             "direct": 3,
@@ -582,7 +581,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9116738967012522,
+          "score": 0.9116738967012523,
           "logit": 2.334246672204502,
           "counts": {
             "direct": 5,
@@ -646,7 +645,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8599929198781194,
+          "score": 0.8599929198781195,
           "logit": 1.8152311628840885,
           "counts": {
             "direct": 3,
@@ -758,7 +757,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.8553773633110141,
+          "score": 0.855377363311014,
           "logit": 1.7774148877409186,
           "counts": {
             "direct": 3,
@@ -774,7 +773,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 2,
-          "score": 0.857442471100044,
+          "score": 0.8574424711000441,
           "logit": 1.7942084578756126,
           "counts": {
             "direct": 3,
@@ -822,7 +821,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.927334876392712,
+          "score": 0.9273348763927121,
           "logit": 2.546453208655355,
           "counts": {
             "direct": 6,
@@ -854,7 +853,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8881539424481812,
+          "score": 0.8881539424481814,
           "logit": 2.07202164690204,
           "counts": {
             "direct": 4,
@@ -886,7 +885,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8876842437688482,
+          "score": 0.8876842437688481,
           "logit": 2.0673019416953453,
           "counts": {
             "direct": 4,
@@ -982,7 +981,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9114087350859201,
+          "score": 0.9114087350859202,
           "logit": 2.330958200418201,
           "counts": {
             "direct": 5,
@@ -1078,7 +1077,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9099438340518999,
+          "score": 0.9099438340519,
           "logit": 2.312949335011999,
           "counts": {
             "direct": 5,
@@ -1110,7 +1109,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.874834008335296,
+          "score": 0.8748340083352959,
           "logit": 1.9443933739054573,
           "counts": {
             "direct": 4,
@@ -1142,7 +1141,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 7,
-          "score": 0.7996962463979962,
+          "score": 0.7996962463979961,
           "logit": 1.3843969811678105,
           "counts": {
             "direct": 2,
@@ -1190,7 +1189,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8831616219390371,
+          "score": 0.8831616219390372,
           "logit": 2.0227166254453905,
           "counts": {
             "direct": 4,
@@ -1222,7 +1221,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8569893131864499,
+          "score": 0.8569893131864498,
           "logit": 1.7905060880631203,
           "counts": {
             "direct": 3,
@@ -1238,7 +1237,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.9077481455332925,
+          "score": 0.9077481455332924,
           "logit": 2.2864445820269452,
           "counts": {
             "direct": 5,
@@ -1254,7 +1253,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.9241701510637524,
+          "score": 0.9241701510637523,
           "logit": 2.5004042002879396,
           "counts": {
             "direct": 5,
@@ -1350,7 +1349,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9149729150590417,
+          "score": 0.9149729150590415,
           "logit": 2.3759246117114694,
           "counts": {
             "direct": 5,
@@ -1430,7 +1429,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.9094541416032599,
+          "score": 0.90945414160326,
           "logit": 2.3069881301590085,
           "counts": {
             "direct": 5,
@@ -1446,7 +1445,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 5,
-          "score": 0.804539567319463,
+          "score": 0.8045395673194631,
           "logit": 1.4149121791599593,
           "counts": {
             "direct": 2,
@@ -1462,7 +1461,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8823331550029886,
+          "score": 0.8823331550029887,
           "logit": 2.01471242762738,
           "counts": {
             "direct": 4,
@@ -1494,7 +1493,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8819622529866574,
+          "score": 0.8819622529866575,
           "logit": 2.011144794768323,
           "counts": {
             "direct": 4,
@@ -1542,7 +1541,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 2,
-          "score": 0.851184852722846,
+          "score": 0.8511848527228462,
           "logit": 1.7439244097900801,
           "counts": {
             "direct": 3,
@@ -1558,7 +1557,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8632808524001072,
+          "score": 0.8632808524001071,
           "logit": 1.8428112713050437,
           "counts": {
             "direct": 3,
@@ -1574,7 +1573,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.882416839912631,
+          "score": 0.8824168399126309,
           "logit": 2.015518723298735,
           "counts": {
             "direct": 4,
@@ -1622,7 +1621,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 1,
-          "score": 0.9268618416875599,
+          "score": 0.92686184168756,
           "logit": 2.539454284266837,
           "counts": {
             "direct": 6,
@@ -1638,7 +1637,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.9246442153583793,
+          "score": 0.9246442153583794,
           "logit": 2.507188339058163,
           "counts": {
             "direct": 6,
@@ -1782,7 +1781,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 2,
-          "score": 0.8525316479609575,
+          "score": 0.8525316479609574,
           "logit": 1.7545967418655815,
           "counts": {
             "direct": 3,
@@ -1878,7 +1877,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8848683732160738,
+          "score": 0.8848683732160737,
           "logit": 2.0393628485571913,
           "counts": {
             "direct": 4,
@@ -1910,7 +1909,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 1,
-          "score": 0.8892741125687262,
+          "score": 0.8892741125687263,
           "logit": 2.083347861575234,
           "counts": {
             "direct": 4,
@@ -1942,7 +1941,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.9122587677229705,
+          "score": 0.9122587677229707,
           "logit": 2.3415317460840352,
           "counts": {
             "direct": 5,
@@ -1958,7 +1957,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 3,
-          "score": 0.8049903831011987,
+          "score": 0.8049903831011986,
           "logit": 1.4177814561116329,
           "counts": {
             "direct": 2,
@@ -1990,7 +1989,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 2,
-          "score": 0.8386193780571204,
+          "score": 0.8386193780571205,
           "logit": 1.6479912557820018,
           "counts": {
             "direct": 3,
@@ -2038,7 +2037,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8572992135240248,
+          "score": 0.8572992135240249,
           "logit": 1.7930369624352107,
           "counts": {
             "direct": 3,
@@ -2150,7 +2149,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.8522489252565337,
+          "score": 0.8522489252565338,
           "logit": 1.7523497196240505,
           "counts": {
             "direct": 3,
@@ -2166,7 +2165,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9141956388724833,
+          "score": 0.9141956388724835,
           "logit": 2.365974761261614,
           "counts": {
             "direct": 5,
@@ -2230,7 +2229,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.856022259320907,
+          "score": 0.8560222593209071,
           "logit": 1.7826376706731273,
           "counts": {
             "direct": 3,
@@ -2278,7 +2277,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8889880363822084,
+          "score": 0.8889880363822085,
           "logit": 2.080445802190596,
           "counts": {
             "direct": 4,
@@ -2310,7 +2309,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8845391003021751,
+          "score": 0.8845391003021752,
           "logit": 2.036134776837769,
           "counts": {
             "direct": 4,
@@ -2326,7 +2325,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.8886721189446101,
+          "score": 0.88867211894461,
           "logit": 2.0772486168452273,
           "counts": {
             "direct": 4,
@@ -2342,7 +2341,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8907981707131225,
+          "score": 0.8907981707131224,
           "logit": 2.098920066966633,
           "counts": {
             "direct": 4,
@@ -2358,7 +2357,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9198279902349319,
+          "score": 0.919827990234932,
           "logit": 2.440012236893798,
           "counts": {
             "direct": 5,
@@ -2390,7 +2389,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 1,
-          "score": 0.911405352974714,
+          "score": 0.9114053529747141,
           "logit": 2.330916313702395,
           "counts": {
             "direct": 5,
@@ -2422,7 +2421,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 1,
-          "score": 0.9093577654807198,
+          "score": 0.9093577654807199,
           "logit": 2.305818329031667,
           "counts": {
             "direct": 5,
@@ -2438,7 +2437,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 4,
-          "score": 0.8463205791054281,
+          "score": 0.846320579105428,
           "logit": 1.706029472743041,
           "counts": {
             "direct": 3,
@@ -2454,7 +2453,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8850402873381488,
+          "score": 0.8850402873381489,
           "logit": 2.0410514240821342,
           "counts": {
             "direct": 4,
@@ -2470,7 +2469,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8561295311723796,
+          "score": 0.8561295311723797,
           "logit": 1.7835083134239966,
           "counts": {
             "direct": 3,
@@ -2566,7 +2565,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8842990154872454,
+          "score": 0.8842990154872455,
           "logit": 2.033786114907824,
           "counts": {
             "direct": 4,
@@ -2598,7 +2597,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9163769912349922,
+          "score": 0.9163769912349923,
           "logit": 2.394109135803971,
           "counts": {
             "direct": 5,
@@ -2694,7 +2693,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 1,
-          "score": 0.8920317885969281,
+          "score": 0.892031788596928,
           "logit": 2.111664924447922,
           "counts": {
             "direct": 4,
@@ -2726,7 +2725,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9338213390088904,
+          "score": 0.9338213390088905,
           "logit": 2.64692706461791,
           "counts": {
             "direct": 6,
@@ -2742,7 +2741,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9076251997782107,
+          "score": 0.9076251997782105,
           "logit": 2.284977301232308,
           "counts": {
             "direct": 5,
@@ -2774,7 +2773,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.912657550156415,
+          "score": 0.9126575501564151,
           "logit": 2.3465241310917273,
           "counts": {
             "direct": 5,
@@ -2838,7 +2837,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 2,
-          "score": 0.8571388410600296,
+          "score": 0.8571388410600295,
           "logit": 1.7917266716024705,
           "counts": {
             "direct": 3,
@@ -2918,7 +2917,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9117900077531385,
+          "score": 0.9117900077531383,
           "logit": 2.335689461528438,
           "counts": {
             "direct": 5,
@@ -2950,7 +2949,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 4,
-          "score": 0.8131670514408385,
+          "score": 0.8131670514408383,
           "logit": 1.4707216693770568,
           "counts": {
             "direct": 2,
@@ -2966,7 +2965,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.9125169770714493,
+          "score": 0.9125169770714494,
           "logit": 2.3447619394285493,
           "counts": {
             "direct": 5,
@@ -3046,7 +3045,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8880124620680352,
+          "score": 0.8880124620680353,
           "logit": 2.0705981801143976,
           "counts": {
             "direct": 4,
@@ -3078,7 +3077,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 8,
-          "score": 0.7982080290885167,
+          "score": 0.7982080290885168,
           "logit": 1.3751319317858293,
           "counts": {
             "direct": 2,
@@ -3126,7 +3125,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 3,
-          "score": 0.8451143598868605,
+          "score": 0.8451143598868606,
           "logit": 1.6967849164591688,
           "counts": {
             "direct": 3,
@@ -3206,7 +3205,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8873089145022112,
+          "score": 0.887308914502211,
           "logit": 2.063542872045712,
           "counts": {
             "direct": 4,
@@ -3302,7 +3301,7 @@
           "focus_edges_removed": 14,
           "supported": true,
           "rank": 2,
-          "score": 0.8465909387030901,
+          "score": 0.84659093870309,
           "logit": 1.7081096679468446,
           "counts": {
             "direct": 3,
@@ -3334,7 +3333,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8824642543381045,
+          "score": 0.8824642543381046,
           "logit": 2.0159757772694977,
           "counts": {
             "direct": 4,
@@ -3382,7 +3381,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8928843470354928,
+          "score": 0.8928843470354927,
           "logit": 2.1205479423197815,
           "counts": {
             "direct": 4,
@@ -3398,7 +3397,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.88431932401566,
+          "score": 0.8843193240156599,
           "logit": 2.0339846217084183,
           "counts": {
             "direct": 4,
@@ -3494,7 +3493,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.88053408048239,
+          "score": 0.8805340804823899,
           "logit": 1.997497494640912,
           "counts": {
             "direct": 4,
@@ -3606,7 +3605,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8860681952027873,
+          "score": 0.8860681952027872,
           "logit": 2.051193851531747,
           "counts": {
             "direct": 4,
@@ -3638,7 +3637,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 2,
-          "score": 0.853272805084104,
+          "score": 0.8532728050841041,
           "logit": 1.7605042690292658,
           "counts": {
             "direct": 3,
@@ -3718,7 +3717,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.9288052516848854,
+          "score": 0.9288052516848855,
           "logit": 2.5684800285581444,
           "counts": {
             "direct": 6,
@@ -3734,7 +3733,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 2,
-          "score": 0.8555830925534728,
+          "score": 0.8555830925534729,
           "logit": 1.779078908904718,
           "counts": {
             "direct": 3,
@@ -3750,7 +3749,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 41,
-          "score": 0.691352814562081,
+          "score": 0.6913528145620811,
           "logit": 0.8064514490823271,
           "counts": {
             "direct": 1,
@@ -3766,7 +3765,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.9144590173853969,
+          "score": 0.9144590173853968,
           "logit": 2.3693370626682286,
           "counts": {
             "direct": 5,
@@ -3782,7 +3781,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.886115214428355,
+          "score": 0.8861152144283551,
           "logit": 2.0516596965487457,
           "counts": {
             "direct": 4,
@@ -3830,7 +3829,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 6,
-          "score": 0.8024757872141272,
+          "score": 0.8024757872141273,
           "logit": 1.4018405096421847,
           "counts": {
             "direct": 2,
@@ -3862,7 +3861,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8810230434433644,
+          "score": 0.8810230434433645,
           "logit": 2.002153949623267,
           "counts": {
             "direct": 4,
@@ -3894,7 +3893,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9038724626574408,
+          "score": 0.9038724626574409,
           "logit": 2.2410124455492166,
           "counts": {
             "direct": 5,
@@ -3926,7 +3925,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 8,
-          "score": 0.7979267796681276,
+          "score": 0.7979267796681278,
           "logit": 1.37338672982545,
           "counts": {
             "direct": 2,
@@ -3990,7 +3989,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 9,
-          "score": 0.7968470926391448,
+          "score": 0.7968470926391447,
           "logit": 1.3667038730006242,
           "counts": {
             "direct": 2,
@@ -4038,7 +4037,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9106679303819262,
+          "score": 0.9106679303819261,
           "logit": 2.3218177740267256,
           "counts": {
             "direct": 5,
@@ -4118,7 +4117,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.9110031563675058,
+          "score": 0.911003156367506,
           "logit": 2.3259454576824714,
           "counts": {
             "direct": 5,
@@ -4134,7 +4133,7 @@
           "focus_edges_removed": 14,
           "supported": true,
           "rank": 1,
-          "score": 0.887703076479671,
+          "score": 0.8877030764796711,
           "logit": 2.0674908475626186,
           "counts": {
             "direct": 4,
@@ -4214,7 +4213,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 2,
-          "score": 0.8552610088751781,
+          "score": 0.8552610088751782,
           "logit": 1.776474636733049,
           "counts": {
             "direct": 3,
@@ -4230,7 +4229,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 10,
-          "score": 0.7855362572834859,
+          "score": 0.7855362572834858,
           "logit": 1.298225922396577,
           "counts": {
             "direct": 2,
@@ -4326,7 +4325,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 31,
-          "score": 0.7058632084122859,
+          "score": 0.705863208412286,
           "logit": 0.875376526290305,
           "counts": {
             "direct": 1,
@@ -4454,7 +4453,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8879980846945976,
+          "score": 0.8879980846945975,
           "logit": 2.070453614024422,
           "counts": {
             "direct": 4,
@@ -4486,7 +4485,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8789874194464515,
+          "score": 0.8789874194464516,
           "logit": 1.9828760735261393,
           "counts": {
             "direct": 4,
@@ -4550,7 +4549,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9126207534345486,
+          "score": 0.9126207534345487,
           "logit": 2.3460626082520735,
           "counts": {
             "direct": 5,
@@ -4566,7 +4565,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8625241492471818,
+          "score": 0.8625241492471819,
           "logit": 1.8364148768475943,
           "counts": {
             "direct": 3,
@@ -4694,7 +4693,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 2,
-          "score": 0.850191774648518,
+          "score": 0.8501917746485181,
           "logit": 1.736105962806094,
           "counts": {
             "direct": 3,
@@ -4758,7 +4757,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8481041673605638,
+          "score": 0.8481041673605637,
           "logit": 1.7198084927861201,
           "counts": {
             "direct": 3,
@@ -4774,7 +4773,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.892829466177272,
+          "score": 0.8928294661772721,
           "logit": 2.119974255517148,
           "counts": {
             "direct": 4,
@@ -4822,7 +4821,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8855781719771899,
+          "score": 0.8855781719771898,
           "logit": 2.0463488682283852,
           "counts": {
             "direct": 4,
@@ -4854,7 +4853,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8864475857846382,
+          "score": 0.8864475857846381,
           "logit": 2.054957469296604,
           "counts": {
             "direct": 4,
@@ -4886,7 +4885,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.886343355033461,
+          "score": 0.8863433550334611,
           "logit": 2.0539223921524012,
           "counts": {
             "direct": 4,
@@ -4902,7 +4901,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9128636242060023,
+          "score": 0.9128636242060022,
           "logit": 2.349112069148685,
           "counts": {
             "direct": 5,
@@ -4918,7 +4917,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8920186013912478,
+          "score": 0.8920186013912477,
           "logit": 2.111528008754303,
           "counts": {
             "direct": 4,
@@ -4998,7 +4997,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 1,
-          "score": 0.8400175482206486,
+          "score": 0.8400175482206487,
           "logit": 1.6583586495181393,
           "counts": {
             "direct": 3,
@@ -5014,7 +5013,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8854522401048418,
+          "score": 0.8854522401048419,
           "logit": 2.04510666724366,
           "counts": {
             "direct": 4,
@@ -5030,7 +5029,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 7,
-          "score": 0.7998669104892897,
+          "score": 0.7998669104892898,
           "logit": 1.3854627591503255,
           "counts": {
             "direct": 2,
@@ -5094,7 +5093,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8863339499816894,
+          "score": 0.8863339499816895,
           "logit": 2.053829034762451,
           "counts": {
             "direct": 4,
@@ -5126,7 +5125,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 1,
-          "score": 0.9085092949084685,
+          "score": 0.9085092949084684,
           "logit": 2.2955677354109927,
           "counts": {
             "direct": 5,
@@ -5158,7 +5157,7 @@
           "focus_edges_removed": 15,
           "supported": true,
           "rank": 4,
-          "score": 0.7906318325861156,
+          "score": 0.7906318325861155,
           "logit": 1.3287381450849611,
           "counts": {
             "direct": 2,
@@ -5174,7 +5173,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 1,
-          "score": 0.8555853421936188,
+          "score": 0.8555853421936187,
           "logit": 1.779097115788949,
           "counts": {
             "direct": 3,
@@ -5206,7 +5205,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9114376237576589,
+          "score": 0.911437623757659,
           "logit": 2.331316039211546,
           "counts": {
             "direct": 5,
@@ -5238,7 +5237,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8586405556724269,
+          "score": 0.858640555672427,
           "logit": 1.8040444922263312,
           "counts": {
             "direct": 3,
@@ -5254,7 +5253,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 6,
-          "score": 0.795717650957619,
+          "score": 0.7957176509576189,
           "logit": 1.3597413122238844,
           "counts": {
             "direct": 2,
@@ -5286,7 +5285,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9096208515301114,
+          "score": 0.9096208515301115,
           "logit": 2.309014283745917,
           "counts": {
             "direct": 5,
@@ -5302,7 +5301,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8888348501457676,
+          "score": 0.8888348501457677,
           "logit": 2.07889451578692,
           "counts": {
             "direct": 4,
@@ -5350,7 +5349,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 1,
-          "score": 0.9102460174328643,
+          "score": 0.9102460174328642,
           "logit": 2.3166425114095848,
           "counts": {
             "direct": 5,
@@ -5366,7 +5365,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8561625515058627,
+          "score": 0.8561625515058626,
           "logit": 1.7837764226668364,
           "counts": {
             "direct": 3,
@@ -5382,7 +5381,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9150089741436672,
+          "score": 0.9150089741436673,
           "logit": 2.376388200278954,
           "counts": {
             "direct": 5,
@@ -5430,7 +5429,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8935239632880848,
+          "score": 0.8935239632880847,
           "logit": 2.1272532013807464,
           "counts": {
             "direct": 4,
@@ -5462,7 +5461,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8914739693666301,
+          "score": 0.89147396936663,
           "logit": 2.105886180308076,
           "counts": {
             "direct": 4,
@@ -5478,7 +5477,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8791906899525193,
+          "score": 0.8791906899525191,
           "logit": 1.984788461346909,
           "counts": {
             "direct": 4,
@@ -5526,7 +5525,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8571680049711978,
+          "score": 0.8571680049711977,
           "logit": 1.791964858225063,
           "counts": {
             "direct": 3,
@@ -5542,7 +5541,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8910038899244422,
+          "score": 0.8910038899244421,
           "logit": 2.10103659904538,
           "counts": {
             "direct": 4,
@@ -5574,7 +5573,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9117272495488015,
+          "score": 0.9117272495488014,
           "logit": 2.3349094187963795,
           "counts": {
             "direct": 5,
@@ -5590,7 +5589,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.9207422776458223,
+          "score": 0.9207422776458222,
           "logit": 2.4524753172989575,
           "counts": {
             "direct": 5,
@@ -5622,7 +5621,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.9142435472069429,
+          "score": 0.914243547206943,
           "logit": 2.36658566454067,
           "counts": {
             "direct": 5,
@@ -5638,7 +5637,7 @@
           "focus_edges_removed": 14,
           "supported": true,
           "rank": 2,
-          "score": 0.851490837744248,
+          "score": 0.8514908377442479,
           "logit": 1.7463420848775122,
           "counts": {
             "direct": 3,
@@ -5702,7 +5701,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8923269049238434,
+          "score": 0.8923269049238435,
           "logit": 2.1147328114194233,
           "counts": {
             "direct": 4,
@@ -5814,7 +5813,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.8972300802346226,
+          "score": 0.8972300802346227,
           "logit": 2.1668196279561194,
           "counts": {
             "direct": 4,
@@ -5894,7 +5893,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 2,
-          "score": 0.8481298815066826,
+          "score": 0.8481298815066824,
           "logit": 1.72000811424741,
           "counts": {
             "direct": 3,
@@ -5910,7 +5909,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 1,
-          "score": 0.9095699349847284,
+          "score": 0.9095699349847283,
           "logit": 2.308395099173927,
           "counts": {
             "direct": 5,
@@ -5958,7 +5957,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8515018533836332,
+          "score": 0.8515018533836333,
           "logit": 1.7464291992436276,
           "counts": {
             "direct": 3,
@@ -5990,7 +5989,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 1,
-          "score": 0.9162957294208002,
+          "score": 0.9162957294208003,
           "logit": 2.393049162636925,
           "counts": {
             "direct": 5,
@@ -6054,7 +6053,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8843809571842335,
+          "score": 0.8843809571842336,
           "logit": 2.0345872439356896,
           "counts": {
             "direct": 4,
@@ -6086,7 +6085,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8879646459353189,
+          "score": 0.887964645935319,
           "logit": 2.070117446287358,
           "counts": {
             "direct": 4,
@@ -6134,7 +6133,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.9115575895566511,
+          "score": 0.911557589556651,
           "logit": 2.332803162461431,
           "counts": {
             "direct": 5,
@@ -6182,7 +6181,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8930069011608235,
+          "score": 0.8930069011608234,
           "logit": 2.1218299733584987,
           "counts": {
             "direct": 4,
@@ -6374,7 +6373,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.892111137369945,
+          "score": 0.8921111373699451,
           "logit": 2.1124890707156263,
           "counts": {
             "direct": 4,
@@ -6422,7 +6421,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8856775481441572,
+          "score": 0.8856775481441571,
           "logit": 2.0473299625198242,
           "counts": {
             "direct": 4,
@@ -6470,7 +6469,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.9309604727585427,
+          "score": 0.9309604727585425,
           "logit": 2.60153762046974,
           "counts": {
             "direct": 6,
@@ -6502,7 +6501,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.85925098502893,
+          "score": 0.8592509850289299,
           "logit": 1.8090827935455465,
           "counts": {
             "direct": 3,
@@ -6566,7 +6565,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 3,
-          "score": 0.8479818649075082,
+          "score": 0.847981864907508,
           "logit": 1.718859426292495,
           "counts": {
             "direct": 3,
@@ -6598,7 +6597,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.8888231625545736,
+          "score": 0.8888231625545735,
           "logit": 2.07877623470009,
           "counts": {
             "direct": 4,
@@ -6614,7 +6613,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 1,
-          "score": 0.8844442847436911,
+          "score": 0.884444284743691,
           "logit": 2.0352067241120197,
           "counts": {
             "direct": 4,
@@ -6646,7 +6645,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8845978623524525,
+          "score": 0.8845978623524526,
           "logit": 2.0367102712068013,
           "counts": {
             "direct": 4,
@@ -6662,7 +6661,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.897977771022217,
+          "score": 0.8979777710222171,
           "logit": 2.1749545934275467,
           "counts": {
             "direct": 4,
@@ -6726,7 +6725,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8848645513507992,
+          "score": 0.8848645513507993,
           "logit": 2.0393253343485824,
           "counts": {
             "direct": 4,
@@ -6774,7 +6773,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9159566478128802,
+          "score": 0.9159566478128801,
           "logit": 2.388636272662409,
           "counts": {
             "direct": 5,
@@ -6790,7 +6789,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8849411461326089,
+          "score": 0.8849411461326088,
           "logit": 2.040077371039372,
           "counts": {
             "direct": 4,
@@ -6806,7 +6805,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8486473349187954,
+          "score": 0.8486473349187955,
           "logit": 1.724031067183138,
           "counts": {
             "direct": 3,
@@ -6822,7 +6821,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 38,
-          "score": 0.6967284331197365,
+          "score": 0.6967284331197364,
           "logit": 0.8317670479023624,
           "counts": {
             "direct": 1,
@@ -6854,7 +6853,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8514919761428852,
+          "score": 0.8514919761428851,
           "logit": 1.7463510873647412,
           "counts": {
             "direct": 3,
@@ -6902,7 +6901,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8972139234687303,
+          "score": 0.8972139234687304,
           "logit": 2.1666444197820622,
           "counts": {
             "direct": 4,
@@ -6966,7 +6965,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8867380520872752,
+          "score": 0.8867380520872753,
           "logit": 2.0578463606082718,
           "counts": {
             "direct": 4,
@@ -6982,7 +6981,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 12,
-          "score": 0.7943044864412973,
+          "score": 0.7943044864412974,
           "logit": 1.3510698861020718,
           "counts": {
             "direct": 2,
@@ -6998,7 +6997,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 8,
-          "score": 0.8069037803210541,
+          "score": 0.806903780321054,
           "logit": 1.4300158176060915,
           "counts": {
             "direct": 2,
@@ -7046,7 +7045,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.8348288169336283,
+          "score": 0.8348288169336284,
           "logit": 1.62024428494638,
           "counts": {
             "direct": 3,
@@ -7078,7 +7077,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 3,
-          "score": 0.8501895550068517,
+          "score": 0.8501895550068516,
           "logit": 1.7360885356043043,
           "counts": {
             "direct": 3,
@@ -7094,7 +7093,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8848375878604886,
+          "score": 0.8848375878604885,
           "logit": 2.0390607001163286,
           "counts": {
             "direct": 4,
@@ -7142,7 +7141,7 @@
           "focus_edges_removed": 14,
           "supported": true,
           "rank": 1,
-          "score": 0.842602184094736,
+          "score": 0.8426021840947361,
           "logit": 1.677718481822548,
           "counts": {
             "direct": 3,
@@ -7206,7 +7205,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 1,
-          "score": 0.9086628170853424,
+          "score": 0.9086628170853425,
           "logit": 2.2974161215305378,
           "counts": {
             "direct": 5,
@@ -7286,7 +7285,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8604712247619482,
+          "score": 0.8604712247619483,
           "logit": 1.8192093208575308,
           "counts": {
             "direct": 3,
@@ -7350,7 +7349,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 1,
-          "score": 0.9090779763142074,
+          "score": 0.9090779763142075,
           "logit": 2.3024286164128362,
           "counts": {
             "direct": 5,
@@ -7478,7 +7477,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8595561279819582,
+          "score": 0.8595561279819584,
           "logit": 1.8116082042115773,
           "counts": {
             "direct": 3,
@@ -7494,7 +7493,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 1,
-          "score": 0.9113196840081745,
+          "score": 0.9113196840081746,
           "logit": 2.32985580316648,
           "counts": {
             "direct": 5,
@@ -7590,7 +7589,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9289801453008659,
+          "score": 0.9289801453008658,
           "logit": 2.571127884867729,
           "counts": {
             "direct": 6,
@@ -7622,7 +7621,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 25,
-          "score": 0.7313997236373286,
+          "score": 0.7313997236373285,
           "logit": 1.0017358148717623,
           "counts": {
             "direct": 1,
@@ -7638,7 +7637,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9080712921651798,
+          "score": 0.9080712921651799,
           "logit": 2.2903095293110987,
           "counts": {
             "direct": 5,
@@ -7686,7 +7685,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.886764219130176,
+          "score": 0.8867642191301759,
           "logit": 2.0581069273840082,
           "counts": {
             "direct": 4,
@@ -7702,7 +7701,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 2,
-          "score": 0.8537368720888066,
+          "score": 0.8537368720888067,
           "logit": 1.764215788425228,
           "counts": {
             "direct": 3,
@@ -7750,7 +7749,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9139402201715415,
+          "score": 0.9139402201715416,
           "logit": 2.362722995630981,
           "counts": {
             "direct": 5,
@@ -7766,7 +7765,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8567037884545016,
+          "score": 0.8567037884545015,
           "logit": 1.7881783238500353,
           "counts": {
             "direct": 3,
@@ -7782,7 +7781,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 7,
-          "score": 0.8013951932674027,
+          "score": 0.8013951932674026,
           "logit": 1.3950372458619078,
           "counts": {
             "direct": 2,
@@ -7846,7 +7845,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 1,
-          "score": 0.9132073931303365,
+          "score": 0.9132073931303366,
           "logit": 2.3534415667468638,
           "counts": {
             "direct": 5,
@@ -7878,7 +7877,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 1,
-          "score": 0.9250647812274053,
+          "score": 0.9250647812274054,
           "logit": 2.5132397782286757,
           "counts": {
             "direct": 6,
@@ -7942,7 +7941,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9135458381587632,
+          "score": 0.9135458381587631,
           "logit": 2.3577192005979777,
           "counts": {
             "direct": 5,
@@ -7974,7 +7973,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8813150243483333,
+          "score": 0.8813150243483332,
           "logit": 2.004942418416946,
           "counts": {
             "direct": 4,
@@ -8070,7 +8069,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.9149423068025123,
+          "score": 0.9149423068025124,
           "logit": 2.375531240864789,
           "counts": {
             "direct": 5,
@@ -8182,7 +8181,7 @@
           "focus_edges_removed": 14,
           "supported": true,
           "rank": 1,
-          "score": 0.9132587669651687,
+          "score": 0.9132587669651688,
           "logit": 2.3540899117693455,
           "counts": {
             "direct": 5,
@@ -8278,7 +8277,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.8550127154079624,
+          "score": 0.8550127154079623,
           "logit": 1.7744702945416948,
           "counts": {
             "direct": 3,
@@ -8326,7 +8325,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.9274900811619239,
+          "score": 0.927490081161924,
           "logit": 2.5487587361969153,
           "counts": {
             "direct": 6,
@@ -8358,7 +8357,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 1,
-          "score": 0.8598333784956737,
+          "score": 0.8598333784956735,
           "logit": 1.8139067560008482,
           "counts": {
             "direct": 3,
@@ -8390,7 +8389,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 1,
-          "score": 0.925720384928735,
+          "score": 0.9257203849287351,
           "logit": 2.5227356745874063,
           "counts": {
             "direct": 6,
@@ -8422,7 +8421,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.9130732154908984,
+          "score": 0.9130732154908985,
           "logit": 2.3517498626134756,
           "counts": {
             "direct": 5,
@@ -8454,7 +8453,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 1,
-          "score": 0.8944228271810427,
+          "score": 0.8944228271810426,
           "logit": 2.1367364429976368,
           "counts": {
             "direct": 4,
@@ -8502,7 +8501,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8865012914495696,
+          "score": 0.8865012914495695,
           "logit": 2.055491123862687,
           "counts": {
             "direct": 4,
@@ -8518,7 +8517,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 10,
-          "score": 0.7878479506103917,
+          "score": 0.7878479506103916,
           "logit": 1.3120018834624607,
           "counts": {
             "direct": 2,
@@ -8598,7 +8597,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8590798890271144,
+          "score": 0.8590798890271143,
           "logit": 1.8076687790583865,
           "counts": {
             "direct": 3,
@@ -8614,7 +8613,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.842459767972716,
+          "score": 0.8424597679727159,
           "logit": 1.676645040849037,
           "counts": {
             "direct": 3,
@@ -8630,7 +8629,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8963417446418989,
+          "score": 0.896341744641899,
           "logit": 2.157222269492263,
           "counts": {
             "direct": 4,
@@ -8662,7 +8661,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8786676845608412,
+          "score": 0.8786676845608413,
           "logit": 1.9798735757110373,
           "counts": {
             "direct": 4,
@@ -8678,7 +8677,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8893159072127745,
+          "score": 0.8893159072127744,
           "logit": 2.083772390790209,
           "counts": {
             "direct": 4,
@@ -8710,7 +8709,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8871463053121741,
+          "score": 0.887146305312174,
           "logit": 2.0619176701499953,
           "counts": {
             "direct": 4,
@@ -8742,7 +8741,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8945605274829433,
+          "score": 0.8945605274829435,
           "logit": 2.138195498876236,
           "counts": {
             "direct": 4,
@@ -8822,7 +8821,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.9123633631646175,
+          "score": 0.9123633631646176,
           "logit": 2.3428391960234594,
           "counts": {
             "direct": 5,
@@ -8838,7 +8837,7 @@
           "focus_edges_removed": 15,
           "supported": true,
           "rank": 1,
-          "score": 0.9192163585972913,
+          "score": 0.9192163585972914,
           "logit": 2.4317470357930553,
           "counts": {
             "direct": 5,
@@ -8854,7 +8853,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 2,
-          "score": 0.8422325222809409,
+          "score": 0.8422325222809408,
           "logit": 1.6749338417807673,
           "counts": {
             "direct": 3,
@@ -8934,7 +8933,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 3,
-          "score": 0.8502514235120144,
+          "score": 0.8502514235120145,
           "logit": 1.7365743670864255,
           "counts": {
             "direct": 3,
@@ -8950,7 +8949,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8794217198043123,
+          "score": 0.8794217198043124,
           "logit": 1.9869653846837163,
           "counts": {
             "direct": 4,
@@ -8982,7 +8981,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 1,
-          "score": 0.9041861292931145,
+          "score": 0.9041861292931146,
           "logit": 2.2446277717663072,
           "counts": {
             "direct": 5,
@@ -9014,7 +9013,7 @@
           "focus_edges_removed": 14,
           "supported": true,
           "rank": 48,
-          "score": 0.6799988913867017,
+          "score": 0.6799988913867016,
           "logit": 0.7537667076508205,
           "counts": {
             "direct": 1,
@@ -9110,7 +9109,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 2,
-          "score": 0.8477348579637988,
+          "score": 0.8477348579637989,
           "logit": 1.7169445626792517,
           "counts": {
             "direct": 3,
@@ -9142,7 +9141,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 2,
-          "score": 0.8503075125591438,
+          "score": 0.8503075125591439,
           "logit": 1.7370149574687896,
           "counts": {
             "direct": 3,
@@ -9158,7 +9157,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8560792567709357,
+          "score": 0.8560792567709358,
           "logit": 1.7831002077303746,
           "counts": {
             "direct": 3,
@@ -9206,7 +9205,7 @@
           "focus_edges_removed": 14,
           "supported": true,
           "rank": 30,
-          "score": 0.7118291733496277,
+          "score": 0.7118291733496278,
           "logit": 0.9042845051698867,
           "counts": {
             "direct": 1,
@@ -9254,7 +9253,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9133965464624271,
+          "score": 0.913396546462427,
           "logit": 2.355830425814225,
           "counts": {
             "direct": 5,
@@ -9286,7 +9285,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 1,
-          "score": 0.8622100867499508,
+          "score": 0.8622100867499509,
           "logit": 1.8337688036715976,
           "counts": {
             "direct": 3,
@@ -9302,7 +9301,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 7,
-          "score": 0.7968120947137911,
+          "score": 0.796812094713791,
           "logit": 1.366487692560279,
           "counts": {
             "direct": 2,
@@ -9318,7 +9317,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8564194272033443,
+          "score": 0.8564194272033444,
           "logit": 1.7858638806582479,
           "counts": {
             "direct": 3,
@@ -9430,7 +9429,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.890723932700592,
+          "score": 0.8907239327005921,
           "logit": 2.0981571318207077,
           "counts": {
             "direct": 4,
@@ -9446,7 +9445,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 1,
-          "score": 0.9158549167834564,
+          "score": 0.9158549167834565,
           "logit": 2.3873154742079326,
           "counts": {
             "direct": 5,
@@ -9462,7 +9461,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9051657845630051,
+          "score": 0.9051657845630052,
           "logit": 2.2559878478102586,
           "counts": {
             "direct": 5,
@@ -9558,7 +9557,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8907968623165609,
+          "score": 0.890796862316561,
           "logit": 2.098906616793294,
           "counts": {
             "direct": 4,
@@ -9606,7 +9605,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 8,
-          "score": 0.7935844782895662,
+          "score": 0.7935844782895661,
           "logit": 1.3466687643071855,
           "counts": {
             "direct": 2,
@@ -9638,7 +9637,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 2,
-          "score": 0.8508153206583504,
+          "score": 0.8508153206583503,
           "logit": 1.7410100934003208,
           "counts": {
             "direct": 3,
@@ -9734,7 +9733,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8534948088355606,
+          "score": 0.8534948088355607,
           "logit": 1.7622785976092186,
           "counts": {
             "direct": 3,
@@ -9750,7 +9749,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 10,
-          "score": 0.8001384716901733,
+          "score": 0.8001384716901732,
           "logit": 1.3871600339959935,
           "counts": {
             "direct": 2,
@@ -9846,7 +9845,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.9171725366061686,
+          "score": 0.9171725366061687,
           "logit": 2.404535917993857,
           "counts": {
             "direct": 5,
@@ -9942,7 +9941,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8808996136024342,
+          "score": 0.8808996136024341,
           "logit": 2.000976952808071,
           "counts": {
             "direct": 4,
@@ -10006,7 +10005,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8835795305174987,
+          "score": 0.8835795305174986,
           "logit": 2.026772930774695,
           "counts": {
             "direct": 4,
@@ -10038,7 +10037,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8833160586251112,
+          "score": 0.8833160586251111,
           "logit": 2.0242141500656254,
           "counts": {
             "direct": 4,
@@ -10070,7 +10069,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.929735668706071,
+          "score": 0.9297356687060712,
           "logit": 2.5826360269574513,
           "counts": {
             "direct": 6,
@@ -10118,7 +10117,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 1,
-          "score": 0.8454879391111302,
+          "score": 0.8454879391111301,
           "logit": 1.6996417461397415,
           "counts": {
             "direct": 3,
@@ -10214,7 +10213,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8830967621925209,
+          "score": 0.8830967621925208,
           "logit": 2.022088212721605,
           "counts": {
             "direct": 4,
@@ -10326,7 +10325,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8745518206381769,
+          "score": 0.8745518206381768,
           "logit": 1.9418187903028932,
           "counts": {
             "direct": 4,
@@ -10374,7 +10373,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8854525075901815,
+          "score": 0.8854525075901813,
           "logit": 2.0451093044777675,
           "counts": {
             "direct": 4,
@@ -10390,7 +10389,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8668846778001794,
+          "score": 0.8668846778001793,
           "logit": 1.8736901182850583,
           "counts": {
             "direct": 3,
@@ -10422,7 +10421,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9256131507230858,
+          "score": 0.9256131507230857,
           "logit": 2.5211772143756503,
           "counts": {
             "direct": 6,
@@ -10454,7 +10453,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8659176880744435,
+          "score": 0.8659176880744436,
           "logit": 1.865335976165513,
           "counts": {
             "direct": 3,
@@ -10486,7 +10485,7 @@
           "focus_edges_removed": 14,
           "supported": true,
           "rank": 1,
-          "score": 0.8594832170634975,
+          "score": 0.8594832170634974,
           "logit": 1.8110043650918672,
           "counts": {
             "direct": 3,
@@ -10518,7 +10517,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8972328267893745,
+          "score": 0.8972328267893744,
           "logit": 2.166849414736065,
           "counts": {
             "direct": 4,
@@ -10566,7 +10565,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8565669223944653,
+          "score": 0.8565669223944652,
           "logit": 1.7870638811684285,
           "counts": {
             "direct": 3,
@@ -10630,7 +10629,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.9146203670298427,
+          "score": 0.9146203670298428,
           "logit": 2.3714014972195043,
           "counts": {
             "direct": 5,
@@ -10678,7 +10677,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9337046850258289,
+          "score": 0.933704685025829,
           "logit": 2.6450409745212413,
           "counts": {
             "direct": 6,
@@ -10694,7 +10693,7 @@
           "focus_edges_removed": 14,
           "supported": true,
           "rank": 8,
-          "score": 0.7965198444311,
+          "score": 0.7965198444311001,
           "logit": 1.3646835590839792,
           "counts": {
             "direct": 2,
@@ -10790,7 +10789,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8838625384218317,
+          "score": 0.8838625384218316,
           "logit": 2.0295270478866865,
           "counts": {
             "direct": 4,
@@ -10822,7 +10821,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8465522849258396,
+          "score": 0.8465522849258394,
           "logit": 1.7078120750795807,
           "counts": {
             "direct": 3,
@@ -10854,7 +10853,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8830844785701195,
+          "score": 0.8830844785701196,
           "logit": 2.021969233306348,
           "counts": {
             "direct": 4,
@@ -10870,7 +10869,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9096281237533372,
+          "score": 0.9096281237533371,
           "logit": 2.3091027452431954,
           "counts": {
             "direct": 5,
@@ -10950,7 +10949,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.9096774998413485,
+          "score": 0.9096774998413486,
           "logit": 2.309703540342026,
           "counts": {
             "direct": 5,
@@ -10966,7 +10965,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 1,
-          "score": 0.8903429287214132,
+          "score": 0.8903429287214131,
           "logit": 2.094248739352924,
           "counts": {
             "direct": 4,
@@ -11030,7 +11029,7 @@
           "focus_edges_removed": 15,
           "supported": true,
           "rank": 1,
-          "score": 0.8980903852546899,
+          "score": 0.8980903852546898,
           "logit": 2.176184424477336,
           "counts": {
             "direct": 4,
@@ -11046,7 +11045,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 4,
-          "score": 0.850668195488909,
+          "score": 0.8506681954889092,
           "logit": 1.7398514469542612,
           "counts": {
             "direct": 3,
@@ -11078,7 +11077,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8879660792837653,
+          "score": 0.8879660792837654,
           "logit": 2.0701318542787996,
           "counts": {
             "direct": 4,
@@ -11142,7 +11141,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8710671589432664,
+          "score": 0.8710671589432665,
           "logit": 1.9104274226076987,
           "counts": {
             "direct": 3,
@@ -11174,7 +11173,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 1,
-          "score": 0.8513849733617,
+          "score": 0.8513849733616999,
           "logit": 1.745505155350256,
           "counts": {
             "direct": 3,
@@ -11222,7 +11221,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8888042784650142,
+          "score": 0.8888042784650141,
           "logit": 2.078585146396869,
           "counts": {
             "direct": 4,
@@ -11286,7 +11285,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8396606621683664,
+          "score": 0.8396606621683663,
           "logit": 1.6557054057791876,
           "counts": {
             "direct": 3,
@@ -11334,7 +11333,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 9,
-          "score": 0.8072615267026702,
+          "score": 0.80726152670267,
           "logit": 1.4323134791671668,
           "counts": {
             "direct": 2,
@@ -11366,7 +11365,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8839790037750831,
+          "score": 0.8839790037750832,
           "logit": 2.030662134303494,
           "counts": {
             "direct": 4,
@@ -11382,7 +11381,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 1,
-          "score": 0.8853821717975766,
+          "score": 0.8853821717975765,
           "logit": 2.0444160231971082,
           "counts": {
             "direct": 4,
@@ -11414,7 +11413,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 9,
-          "score": 0.7912250958709882,
+          "score": 0.7912250958709881,
           "logit": 1.332325840718439,
           "counts": {
             "direct": 2,
@@ -11430,7 +11429,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 5,
-          "score": 0.8085470568629574,
+          "score": 0.8085470568629575,
           "logit": 1.4405968293179348,
           "counts": {
             "direct": 2,
@@ -11526,7 +11525,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 2,
-          "score": 0.85250952377505,
+          "score": 0.8525095237750501,
           "logit": 1.7544207749500738,
           "counts": {
             "direct": 3,
@@ -11542,7 +11541,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.8628689881349658,
+          "score": 0.8628689881349659,
           "logit": 1.8393261098914577,
           "counts": {
             "direct": 3,
@@ -11574,7 +11573,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 1,
-          "score": 0.8875452722735655,
+          "score": 0.8875452722735654,
           "logit": 2.065908810618759,
           "counts": {
             "direct": 4,
@@ -11590,7 +11589,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8923481282080312,
+          "score": 0.8923481282080311,
           "logit": 2.114953723285847,
           "counts": {
             "direct": 4,
@@ -11606,7 +11605,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 3,
-          "score": 0.8572121306109485,
+          "score": 0.8572121306109484,
           "logit": 1.7923253168940667,
           "counts": {
             "direct": 3,
@@ -11670,7 +11669,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.912402802374867,
+          "score": 0.9124028023748669,
           "logit": 2.343332554987893,
           "counts": {
             "direct": 5,
@@ -11750,7 +11749,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 1,
-          "score": 0.891129737706103,
+          "score": 0.8911297377061029,
           "logit": 2.102333106838973,
           "counts": {
             "direct": 4,
@@ -11830,7 +11829,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8938112605382095,
+          "score": 0.8938112605382094,
           "logit": 2.1302765631658955,
           "counts": {
             "direct": 4,
@@ -11846,7 +11845,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 1,
-          "score": 0.8800687037925625,
+          "score": 0.8800687037925624,
           "logit": 1.9930809296977465,
           "counts": {
             "direct": 4,
@@ -11862,7 +11861,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9084267228794626,
+          "score": 0.9084267228794627,
           "logit": 2.294574732698096,
           "counts": {
             "direct": 5,
@@ -11894,7 +11893,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 14,
-          "score": 0.7795007702770816,
+          "score": 0.7795007702770818,
           "logit": 1.2627594751048037,
           "counts": {
             "direct": 2,
@@ -11958,7 +11957,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8979913976786894,
+          "score": 0.8979913976786895,
           "logit": 2.175103342622336,
           "counts": {
             "direct": 4,
@@ -12006,7 +12005,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 10,
-          "score": 0.794445799660547,
+          "score": 0.7944457996605471,
           "logit": 1.3519350164455861,
           "counts": {
             "direct": 2,
@@ -12070,7 +12069,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.854638457817934,
+          "score": 0.8546384578179341,
           "logit": 1.7714544897250597,
           "counts": {
             "direct": 3,
@@ -12118,7 +12117,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 2,
-          "score": 0.8460967901049274,
+          "score": 0.8460967901049276,
           "logit": 1.704309864524136,
           "counts": {
             "direct": 3,
@@ -12326,7 +12325,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8854898786990062,
+          "score": 0.8854898786990063,
           "logit": 2.0454778123874204,
           "counts": {
             "direct": 4,
@@ -12342,7 +12341,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8868175377442329,
+          "score": 0.886817537744233,
           "logit": 2.0586380272860456,
           "counts": {
             "direct": 4,
@@ -12374,7 +12373,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.9296437574318446,
+          "score": 0.9296437574318447,
           "logit": 2.58122994074816,
           "counts": {
             "direct": 6,
@@ -12470,7 +12469,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8895845364525908,
+          "score": 0.889584536452591,
           "logit": 2.0865043483619212,
           "counts": {
             "direct": 4,
@@ -12518,7 +12517,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8685879317081618,
+          "score": 0.868587931708162,
           "logit": 1.8885308802874692,
           "counts": {
             "direct": 3,
@@ -12550,7 +12549,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 9,
-          "score": 0.7923095496197401,
+          "score": 0.7923095496197402,
           "logit": 1.338903409056363,
           "counts": {
             "direct": 2,
@@ -12566,7 +12565,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 1,
-          "score": 0.9248298458225471,
+          "score": 0.924829845822547,
           "logit": 2.509855503891753,
           "counts": {
             "direct": 6,
@@ -12614,7 +12613,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9084942804048525,
+          "score": 0.9084942804048524,
           "logit": 2.295387112605135,
           "counts": {
             "direct": 5,
@@ -12630,7 +12629,7 @@
           "focus_edges_removed": 14,
           "supported": true,
           "rank": 9,
-          "score": 0.8005841790564342,
+          "score": 0.8005841790564343,
           "logit": 1.389949487878441,
           "counts": {
             "direct": 2,
@@ -12646,7 +12645,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8919541624855224,
+          "score": 0.8919541624855225,
           "logit": 2.110859185398297,
           "counts": {
             "direct": 4,
@@ -12742,7 +12741,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.887846109462786,
+          "score": 0.8878461094627861,
           "logit": 2.068926476975979,
           "counts": {
             "direct": 4,
@@ -12758,7 +12757,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8441917131232708,
+          "score": 0.8441917131232709,
           "logit": 1.6897532958339172,
           "counts": {
             "direct": 3,
@@ -12774,7 +12773,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8598240694196406,
+          "score": 0.8598240694196405,
           "logit": 1.8138295171860006,
           "counts": {
             "direct": 3,
@@ -12790,7 +12789,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.8821028022024446,
+          "score": 0.8821028022024447,
           "logit": 2.0124955653593037,
           "counts": {
             "direct": 4,
@@ -12822,7 +12821,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 1,
-          "score": 0.9092585893465447,
+          "score": 0.9092585893465446,
           "logit": 2.3046157102317775,
           "counts": {
             "direct": 5,
@@ -12870,7 +12869,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 2,
-          "score": 0.864357221634544,
+          "score": 0.8643572216345439,
           "logit": 1.8519613338965344,
           "counts": {
             "direct": 3,
@@ -12918,7 +12917,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 1,
-          "score": 0.8458922674978292,
+          "score": 0.8458922674978293,
           "logit": 1.702740088577378,
           "counts": {
             "direct": 3,
@@ -12934,7 +12933,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 1,
-          "score": 0.9051765210880445,
+          "score": 0.9051765210880446,
           "logit": 2.2561129291619944,
           "counts": {
             "direct": 5,
@@ -12950,7 +12949,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 1,
-          "score": 0.9097213988464257,
+          "score": 0.9097213988464256,
           "logit": 2.310237940225589,
           "counts": {
             "direct": 5,
@@ -13014,7 +13013,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.8864213008559343,
+          "score": 0.8864213008559344,
           "logit": 2.054696365282627,
           "counts": {
             "direct": 4,
@@ -13030,7 +13029,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8484090043080585,
+          "score": 0.8484090043080584,
           "logit": 1.7221767596433282,
           "counts": {
             "direct": 3,
@@ -13126,7 +13125,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8926737761440977,
+          "score": 0.8926737761440978,
           "logit": 2.118348184549933,
           "counts": {
             "direct": 4,
@@ -13142,7 +13141,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9047507719843706,
+          "score": 0.9047507719843707,
           "logit": 2.2511626065494212,
           "counts": {
             "direct": 5,
@@ -13158,7 +13157,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 10,
-          "score": 0.7784063732867073,
+          "score": 0.7784063732867071,
           "logit": 1.2564035243734353,
           "counts": {
             "direct": 2,
@@ -13174,7 +13173,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8910687926960342,
+          "score": 0.8910687926960341,
           "logit": 2.101705075569627,
           "counts": {
             "direct": 4,
@@ -13238,7 +13237,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8916760671646634,
+          "score": 0.8916760671646633,
           "logit": 2.1079767971520997,
           "counts": {
             "direct": 4,
@@ -13254,7 +13253,7 @@
           "focus_edges_removed": 14,
           "supported": true,
           "rank": 48,
-          "score": 0.6778149287716007,
+          "score": 0.6778149287716008,
           "logit": 0.7437481484612116,
           "counts": {
             "direct": 1,
@@ -13286,7 +13285,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.878940025355582,
+          "score": 0.8789400253555821,
           "logit": 1.9824305838005316,
           "counts": {
             "direct": 4,
@@ -13302,7 +13301,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.9116663474445157,
+          "score": 0.9116663474445156,
           "logit": 2.3341529248883877,
           "counts": {
             "direct": 5,
@@ -13318,7 +13317,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 1,
-          "score": 0.889689999220006,
+          "score": 0.8896899992200059,
           "logit": 2.0875784955149,
           "counts": {
             "direct": 4,
@@ -13366,7 +13365,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 2,
-          "score": 0.8595302618602939,
+          "score": 0.8595302618602938,
           "logit": 1.8113939542141957,
           "counts": {
             "direct": 3,
@@ -13382,7 +13381,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 3,
-          "score": 0.8488163386197459,
+          "score": 0.8488163386197458,
           "logit": 1.7253474379431044,
           "counts": {
             "direct": 3,
@@ -13446,7 +13445,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.906998814616821,
+          "score": 0.9069988146168211,
           "logit": 2.2775289040591398,
           "counts": {
             "direct": 5,
@@ -13558,7 +13557,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 1,
-          "score": 0.8810039412646449,
+          "score": 0.881003941264645,
           "logit": 2.0019717268602424,
           "counts": {
             "direct": 4,
@@ -13654,7 +13653,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9102089220862167,
+          "score": 0.9102089220862166,
           "logit": 2.3161885425787396,
           "counts": {
             "direct": 5,
@@ -13686,7 +13685,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.9109066773615706,
+          "score": 0.9109066773615705,
           "logit": 2.324756062895097,
           "counts": {
             "direct": 5,
@@ -13702,7 +13701,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8512681173414605,
+          "score": 0.8512681173414606,
           "logit": 1.7445819007034145,
           "counts": {
             "direct": 3,
@@ -13750,7 +13749,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8536977215726974,
+          "score": 0.8536977215726975,
           "logit": 1.7639022935569078,
           "counts": {
             "direct": 3,
@@ -13894,7 +13893,7 @@
           "focus_edges_removed": 16,
           "supported": true,
           "rank": 1,
-          "score": 0.8675348474038933,
+          "score": 0.8675348474038932,
           "logit": 1.8793360693710202,
           "counts": {
             "direct": 3,
@@ -13926,7 +13925,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9117915677648941,
+          "score": 0.911791567764894,
           "logit": 2.335708857821059,
           "counts": {
             "direct": 5,
@@ -13942,7 +13941,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8878837493344038,
+          "score": 0.887883749334404,
           "logit": 2.06930453614424,
           "counts": {
             "direct": 4,
@@ -13958,7 +13957,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 2,
-          "score": 0.8546102539238124,
+          "score": 0.8546102539238123,
           "logit": 1.7712274812040378,
           "counts": {
             "direct": 3,
@@ -13974,7 +13973,7 @@
           "focus_edges_removed": 14,
           "supported": true,
           "rank": 1,
-          "score": 0.8942256069058723,
+          "score": 0.8942256069058724,
           "logit": 2.1346496411714124,
           "counts": {
             "direct": 4,
@@ -13990,7 +13989,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 1,
-          "score": 0.8827351953079855,
+          "score": 0.8827351953079854,
           "logit": 2.0185905981784265,
           "counts": {
             "direct": 4,
@@ -14006,7 +14005,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.8477230040075527,
+          "score": 0.8477230040075526,
           "logit": 1.7168527317627935,
           "counts": {
             "direct": 3,
@@ -14038,7 +14037,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 1,
-          "score": 0.9125069883194554,
+          "score": 0.9125069883194555,
           "logit": 2.3446368201935943,
           "counts": {
             "direct": 5,
@@ -14086,7 +14085,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 1,
-          "score": 0.8839284548762459,
+          "score": 0.8839284548762458,
           "logit": 2.0301693566732597,
           "counts": {
             "direct": 4,
@@ -14182,7 +14181,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 2,
-          "score": 0.854068288509067,
+          "score": 0.8540682885090671,
           "logit": 1.7668723709424523,
           "counts": {
             "direct": 3,
@@ -14214,7 +14213,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 1,
-          "score": 0.8543152588639134,
+          "score": 0.8543152588639132,
           "logit": 1.7688553014899326,
           "counts": {
             "direct": 3,
@@ -14278,7 +14277,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.9176836092913258,
+          "score": 0.9176836092913259,
           "logit": 2.4112824331084024,
           "counts": {
             "direct": 5,
@@ -14326,7 +14325,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8919691347813816,
+          "score": 0.8919691347813815,
           "logit": 2.1110145543627246,
           "counts": {
             "direct": 4,
@@ -14374,7 +14373,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 1,
-          "score": 0.9115746137928196,
+          "score": 0.9115746137928197,
           "logit": 2.333014346309935,
           "counts": {
             "direct": 5,
@@ -14406,7 +14405,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.884737343655889,
+          "score": 0.8847373436558889,
           "logit": 2.0380773218463197,
           "counts": {
             "direct": 4,
@@ -14438,7 +14437,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.9037308243602923,
+          "score": 0.9037308243602922,
           "logit": 2.239383374638993,
           "counts": {
             "direct": 5,
@@ -14454,7 +14453,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.849706422728761,
+          "score": 0.8497064227287608,
           "logit": 1.7323003416806568,
           "counts": {
             "direct": 3,
@@ -14486,7 +14485,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.9163340868873739,
+          "score": 0.9163340868873738,
           "logit": 2.3935493780536747,
           "counts": {
             "direct": 5,
@@ -14518,7 +14517,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 1,
-          "score": 0.9147387470864292,
+          "score": 0.9147387470864293,
           "logit": 2.37291839575766,
           "counts": {
             "direct": 5,
@@ -14550,7 +14549,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8426789952875159,
+          "score": 0.842678995287516,
           "logit": 1.678297763006346,
           "counts": {
             "direct": 3,
@@ -14566,7 +14565,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8835795305174987,
+          "score": 0.8835795305174986,
           "logit": 2.026772930774695,
           "counts": {
             "direct": 4,
@@ -14694,7 +14693,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 5,
-          "score": 0.7924433724868446,
+          "score": 0.7924433724868445,
           "logit": 1.3397168428060067,
           "counts": {
             "direct": 2,
@@ -14710,7 +14709,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8605557962390682,
+          "score": 0.8605557962390681,
           "logit": 1.8199139069876316,
           "counts": {
             "direct": 3,
@@ -14726,7 +14725,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8924925747452325,
+          "score": 0.8924925747452324,
           "logit": 2.1164582766862807,
           "counts": {
             "direct": 4,
@@ -14742,7 +14741,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.8955957054088662,
+          "score": 0.8955957054088663,
           "logit": 2.1492182789690437,
           "counts": {
             "direct": 4,
@@ -14790,7 +14789,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 6,
-          "score": 0.8087136187400128,
+          "score": 0.8087136187400127,
           "logit": 1.4416731768210458,
           "counts": {
             "direct": 2,
@@ -14806,7 +14805,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8843847202790905,
+          "score": 0.8843847202790904,
           "logit": 2.034624046879383,
           "counts": {
             "direct": 4,
@@ -14902,7 +14901,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 1,
-          "score": 0.854668145078553,
+          "score": 0.8546681450785532,
           "logit": 1.7716934771117223,
           "counts": {
             "direct": 3,
@@ -14934,7 +14933,7 @@
           "focus_edges_removed": 13,
           "supported": true,
           "rank": 39,
-          "score": 0.7030671000149656,
+          "score": 0.7030671000149658,
           "logit": 0.8619461480554655,
           "counts": {
             "direct": 1,
@@ -14950,7 +14949,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8582785551039456,
+          "score": 0.8582785551039455,
           "logit": 1.8010652277235282,
           "counts": {
             "direct": 3,
@@ -14966,7 +14965,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 8,
-          "score": 0.8014178462612876,
+          "score": 0.8014178462612875,
           "logit": 1.395179579565556,
           "counts": {
             "direct": 2,
@@ -14982,7 +14981,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.9139073324426724,
+          "score": 0.9139073324426725,
           "logit": 2.3623049336185487,
           "counts": {
             "direct": 5,
@@ -15014,7 +15013,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 1,
-          "score": 0.8456264664279896,
+          "score": 0.8456264664279897,
           "logit": 1.700702524850197,
           "counts": {
             "direct": 3,
@@ -15030,7 +15029,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 2,
-          "score": 0.8531324887627231,
+          "score": 0.8531324887627232,
           "logit": 1.759383960093832,
           "counts": {
             "direct": 3,
@@ -15158,7 +15157,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8640702643830166,
+          "score": 0.8640702643830165,
           "logit": 1.84951598766338,
           "counts": {
             "direct": 3,
@@ -15174,7 +15173,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 5,
-          "score": 0.81169748024798,
+          "score": 0.8116974802479799,
           "logit": 1.4610778923162633,
           "counts": {
             "direct": 2,
@@ -15206,7 +15205,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.9059954907637744,
+          "score": 0.9059954907637745,
           "logit": 2.2656915772310713,
           "counts": {
             "direct": 5,
@@ -15254,7 +15253,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8848049240157918,
+          "score": 0.8848049240157919,
           "logit": 2.038740191714254,
           "counts": {
             "direct": 4,
@@ -15302,7 +15301,7 @@
           "focus_edges_removed": 12,
           "supported": true,
           "rank": 10,
-          "score": 0.7925460614652758,
+          "score": 0.792546061465276,
           "logit": 1.3403412937214767,
           "counts": {
             "direct": 2,
@@ -15398,7 +15397,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8926649981503035,
+          "score": 0.8926649981503036,
           "logit": 2.118256566505205,
           "counts": {
             "direct": 4,
@@ -15430,7 +15429,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8450346958091648,
+          "score": 0.8450346958091647,
           "logit": 1.6961764387110587,
           "counts": {
             "direct": 3,
@@ -15462,7 +15461,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 1,
-          "score": 0.8858574585782155,
+          "score": 0.8858574585782156,
           "logit": 2.0491080250060643,
           "counts": {
             "direct": 4,
@@ -15574,7 +15573,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.8846759931172582,
+          "score": 0.8846759931172583,
           "logit": 2.0374758505601607,
           "counts": {
             "direct": 4,
@@ -15590,7 +15589,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.934198071169573,
+          "score": 0.9341980711695729,
           "logit": 2.6530393319450907,
           "counts": {
             "direct": 6,
@@ -15622,7 +15621,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8518155108096581,
+          "score": 0.851815510809658,
           "logit": 1.748911920722615,
           "counts": {
             "direct": 3,
@@ -15670,7 +15669,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8559329517017643,
+          "score": 0.8559329517017644,
           "logit": 1.7819132412287668,
           "counts": {
             "direct": 3,
@@ -15718,7 +15717,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 4,
-          "score": 0.8491074100733351,
+          "score": 0.849107410073335,
           "logit": 1.7276174332266045,
           "counts": {
             "direct": 3,
@@ -15734,7 +15733,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9299508488835923,
+          "score": 0.9299508488835921,
           "logit": 2.5859345796308277,
           "counts": {
             "direct": 6,
@@ -15766,7 +15765,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 1,
-          "score": 0.9111018980585843,
+          "score": 0.9111018980585842,
           "logit": 2.3271639521764076,
           "counts": {
             "direct": 5,
@@ -15782,7 +15781,7 @@
           "focus_edges_removed": 11,
           "supported": true,
           "rank": 2,
-          "score": 0.8674344405568154,
+          "score": 0.8674344405568155,
           "logit": 1.8784626248106913,
           "counts": {
             "direct": 3,
@@ -15814,7 +15813,7 @@
           "focus_edges_removed": 15,
           "supported": true,
           "rank": 7,
-          "score": 0.8050783173736626,
+          "score": 0.8050783173736628,
           "logit": 1.41834171101671,
           "counts": {
             "direct": 2,
@@ -15830,7 +15829,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 2,
-          "score": 0.8539470487032693,
+          "score": 0.8539470487032692,
           "logit": 1.7658999519355147,
           "counts": {
             "direct": 3,
@@ -15878,7 +15877,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 12,
-          "score": 0.7835671502514323,
+          "score": 0.7835671502514324,
           "logit": 1.2865764271056526,
           "counts": {
             "direct": 2,
@@ -15958,7 +15957,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 1,
-          "score": 0.8885581726314832,
+          "score": 0.8885581726314833,
           "logit": 2.0760973911899123,
           "counts": {
             "direct": 4,
@@ -16006,7 +16005,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8868120347536309,
+          "score": 0.8868120347536308,
           "logit": 2.058583202600402,
           "counts": {
             "direct": 4,
@@ -16022,7 +16021,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 1,
-          "score": 0.8968632343634619,
+          "score": 0.8968632343634618,
           "logit": 2.1628474512142386,
           "counts": {
             "direct": 4,
@@ -16038,7 +16037,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 1,
-          "score": 0.9039324043524478,
+          "score": 0.9039324043524477,
           "logit": 2.241702518630672,
           "counts": {
             "direct": 5,
@@ -16126,7 +16125,7 @@
         "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
         "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
         "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
-        "scorer": "float64-fixed-order-v1",
+        "scorer": "decimal80-binary64-v1",
         "group_map_sha256": "e428edd4119421bff3406c8897ca39416e4e64535730e1c8fe4de27a9d2e997d"
       },
       "group_id": "pubmed:22037378",
@@ -16150,9 +16149,7 @@
           "direct": 0,
           "interaction": 23,
           "pathway": 518
-        },
-        "legacy_score": 0.7797277175837919,
-        "legacy_rank": 8
+        }
       },
       "structured_group_outcome": {
         "disease_id": "Disease::DOID:5408",
@@ -16211,7 +16208,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 6,
-          "score": 0.7775423509779851,
+          "score": 0.7775423509779852,
           "logit": 1.2514013712661818,
           "counts": {
             "direct": 0,
@@ -16227,7 +16224,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7787520604031889,
+          "score": 0.7787520604031888,
           "logit": 1.2584087445928576,
           "counts": {
             "direct": 0,
@@ -16259,7 +16256,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7751132730893858,
+          "score": 0.7751132730893857,
           "logit": 1.2374123380130329,
           "counts": {
             "direct": 0,
@@ -16307,7 +16304,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 7,
-          "score": 0.7790500916944331,
+          "score": 0.7790500916944332,
           "logit": 1.2601393297878414,
           "counts": {
             "direct": 0,
@@ -16323,7 +16320,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 9,
-          "score": 0.7772422582610766,
+          "score": 0.7772422582610765,
           "logit": 1.249667267437739,
           "counts": {
             "direct": 0,
@@ -16355,7 +16352,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7801999410801974,
+          "score": 0.7801999410801973,
           "logit": 1.266831911523247,
           "counts": {
             "direct": 0,
@@ -16371,7 +16368,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7776912858224007,
+          "score": 0.7776912858224008,
           "logit": 1.2522626202939695,
           "counts": {
             "direct": 0,
@@ -16419,7 +16416,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7771498754978132,
+          "score": 0.7771498754978131,
           "logit": 1.2491337636513726,
           "counts": {
             "direct": 0,
@@ -16435,7 +16432,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 8,
-          "score": 0.7762250395435534,
+          "score": 0.7762250395435533,
           "logit": 1.2438015715075459,
           "counts": {
             "direct": 0,
@@ -16483,7 +16480,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7745537688094905,
+          "score": 0.7745537688094906,
           "logit": 1.2342053934492034,
           "counts": {
             "direct": 0,
@@ -16499,7 +16496,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7798435662479668,
+          "score": 0.7798435662479669,
           "logit": 1.2647549873007917,
           "counts": {
             "direct": 0,
@@ -16627,7 +16624,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7801981164741567,
+          "score": 0.7801981164741568,
           "logit": 1.2668212717077776,
           "counts": {
             "direct": 0,
@@ -16691,7 +16688,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 7,
-          "score": 0.7867562239177661,
+          "score": 0.786756223917766,
           "logit": 1.305482446904523,
           "counts": {
             "direct": 0,
@@ -16707,7 +16704,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 7,
-          "score": 0.7848985359834636,
+          "score": 0.7848985359834637,
           "logit": 1.2944446134401217,
           "counts": {
             "direct": 0,
@@ -16723,7 +16720,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 7,
-          "score": 0.7821156268780289,
+          "score": 0.7821156268780288,
           "logit": 1.2780380665179016,
           "counts": {
             "direct": 0,
@@ -16835,7 +16832,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.776831653554558,
+          "score": 0.7768316535545581,
           "logit": 1.2472972613516136,
           "counts": {
             "direct": 0,
@@ -16915,7 +16912,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7804522358890154,
+          "score": 0.7804522358890155,
           "logit": 1.2683037282787384,
           "counts": {
             "direct": 0,
@@ -16963,7 +16960,7 @@
           "focus_edges_removed": 1,
           "supported": true,
           "rank": 8,
-          "score": 0.7788680353849039,
+          "score": 0.778868035384904,
           "logit": 1.2590819806689661,
           "counts": {
             "direct": 0,
@@ -16995,7 +16992,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7815139573198416,
+          "score": 0.7815139573198415,
           "logit": 1.2745108747550038,
           "counts": {
             "direct": 0,
@@ -17107,7 +17104,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7807160547095522,
+          "score": 0.7807160547095523,
           "logit": 1.269844073566384,
           "counts": {
             "direct": 0,
@@ -17155,7 +17152,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 9,
-          "score": 0.7734046605992635,
+          "score": 0.7734046605992634,
           "logit": 1.227636624406742,
           "counts": {
             "direct": 0,
@@ -17187,7 +17184,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7753291363436811,
+          "score": 0.775329136343681,
           "logit": 1.2386511282210084,
           "counts": {
             "direct": 0,
@@ -17363,7 +17360,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7776912858224007,
+          "score": 0.7776912858224008,
           "logit": 1.2522626202939695,
           "counts": {
             "direct": 0,
@@ -17395,7 +17392,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.777393037187279,
+          "score": 0.7773930371872791,
           "logit": 1.2505383440055342,
           "counts": {
             "direct": 0,
@@ -17491,7 +17488,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7794893296722143,
+          "score": 0.7794893296722142,
           "logit": 1.2626929144966244,
           "counts": {
             "direct": 0,
@@ -17539,7 +17536,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7793365911037349,
+          "score": 0.7793365911037348,
           "logit": 1.261804529706765,
           "counts": {
             "direct": 0,
@@ -17555,7 +17552,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7765333140732836,
+          "score": 0.7765333140732837,
           "logit": 1.245577197844319,
           "counts": {
             "direct": 0,
@@ -17619,7 +17616,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 7,
-          "score": 0.7783850649192834,
+          "score": 0.7783850649192833,
           "logit": 1.2562799946148935,
           "counts": {
             "direct": 0,
@@ -17635,7 +17632,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7832768144909048,
+          "score": 0.7832768144909047,
           "logit": 1.2848652677529606,
           "counts": {
             "direct": 0,
@@ -17667,7 +17664,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7767907037511816,
+          "score": 0.7767907037511818,
           "logit": 1.247061070040788,
           "counts": {
             "direct": 0,
@@ -17731,7 +17728,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7792019234937202,
+          "score": 0.7792019234937201,
           "logit": 1.2610216179849005,
           "counts": {
             "direct": 0,
@@ -17827,7 +17824,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7777825239990851,
+          "score": 0.7777825239990852,
           "logit": 1.2527904289852558,
           "counts": {
             "direct": 0,
@@ -17843,7 +17840,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7783805283693469,
+          "score": 0.7783805283693468,
           "logit": 1.2562536962348696,
           "counts": {
             "direct": 0,
@@ -17859,7 +17856,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7801295487133384,
+          "score": 0.7801295487133385,
           "logit": 1.2664214788669415,
           "counts": {
             "direct": 0,
@@ -17939,7 +17936,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7776912858224007,
+          "score": 0.7776912858224008,
           "logit": 1.2522626202939695,
           "counts": {
             "direct": 0,
@@ -18243,7 +18240,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7799413643076433,
+          "score": 0.7799413643076432,
           "logit": 1.2653247061783734,
           "counts": {
             "direct": 0,
@@ -18259,7 +18256,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 8,
-          "score": 0.7800473290081775,
+          "score": 0.7800473290081776,
           "logit": 1.2659422047055695,
           "counts": {
             "direct": 0,
@@ -18371,7 +18368,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.779552928348162,
+          "score": 0.7795529283481619,
           "logit": 1.263062958362151,
           "counts": {
             "direct": 0,
@@ -18419,7 +18416,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7846514808562907,
+          "score": 0.7846514808562908,
           "logit": 1.2929819107984313,
           "counts": {
             "direct": 0,
@@ -18451,7 +18448,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 6,
-          "score": 0.7770916098189052,
+          "score": 0.7770916098189053,
           "logit": 1.2487973646793271,
           "counts": {
             "direct": 0,
@@ -18515,7 +18512,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 8,
-          "score": 0.7774002149985159,
+          "score": 0.777400214998516,
           "logit": 1.250579821989474,
           "counts": {
             "direct": 0,
@@ -18835,7 +18832,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7767907037511816,
+          "score": 0.7767907037511818,
           "logit": 1.247061070040788,
           "counts": {
             "direct": 0,
@@ -18947,7 +18944,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 8,
-          "score": 0.7736992287294346,
+          "score": 0.7736992287294345,
           "logit": 1.2293182438837618,
           "counts": {
             "direct": 0,
@@ -18963,7 +18960,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 7,
-          "score": 0.7760031205902189,
+          "score": 0.776003120590219,
           "logit": 1.2425244210026165,
           "counts": {
             "direct": 0,
@@ -18979,7 +18976,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7877790091676085,
+          "score": 0.7877790091676083,
           "logit": 1.3115894639798298,
           "counts": {
             "direct": 0,
@@ -19011,7 +19008,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7870093485422929,
+          "score": 0.787009348542293,
           "logit": 1.306991852177388,
           "counts": {
             "direct": 0,
@@ -19123,7 +19120,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7797374969748855,
+          "score": 0.7797374969748856,
           "logit": 1.2641372900716834,
           "counts": {
             "direct": 0,
@@ -19155,7 +19152,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7782456113414562,
+          "score": 0.7782456113414563,
           "logit": 1.2554717581553825,
           "counts": {
             "direct": 0,
@@ -19187,7 +19184,7 @@
           "focus_edges_removed": 1,
           "supported": true,
           "rank": 8,
-          "score": 0.7787201467576775,
+          "score": 0.7787201467576776,
           "logit": 1.2582235298506437,
           "counts": {
             "direct": 0,
@@ -19267,7 +19264,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7792126192042548,
+          "score": 0.7792126192042547,
           "logit": 1.2610837866980065,
           "counts": {
             "direct": 0,
@@ -19283,7 +19280,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7790500916944331,
+          "score": 0.7790500916944332,
           "logit": 1.2601393297878414,
           "counts": {
             "direct": 0,
@@ -19347,7 +19344,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7763403192970506,
+          "score": 0.7763403192970507,
           "logit": 1.244465365842033,
           "counts": {
             "direct": 0,
@@ -19363,7 +19360,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7820619329837214,
+          "score": 0.7820619329837213,
           "logit": 1.2777230094277012,
           "counts": {
             "direct": 0,
@@ -19379,7 +19376,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7778403485131987,
+          "score": 0.7778403485131986,
           "logit": 1.2531250213051852,
           "counts": {
             "direct": 0,
@@ -19395,7 +19392,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 7,
-          "score": 0.7803941237628351,
+          "score": 0.7803941237628352,
           "logit": 1.2679646108459421,
           "counts": {
             "direct": 0,
@@ -19427,7 +19424,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7812160531331567,
+          "score": 0.7812160531331566,
           "logit": 1.272767049242316,
           "counts": {
             "direct": 0,
@@ -19475,7 +19472,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7798587419471329,
+          "score": 0.7798587419471328,
           "logit": 1.2648433808509034,
           "counts": {
             "direct": 0,
@@ -19491,7 +19488,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 7,
-          "score": 0.7754656239324464,
+          "score": 0.7754656239324466,
           "logit": 1.239434835760812,
           "counts": {
             "direct": 0,
@@ -19539,7 +19536,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7791383736598039,
+          "score": 0.7791383736598038,
           "logit": 1.26065227969292,
           "counts": {
             "direct": 0,
@@ -19731,7 +19728,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7826204242690332,
+          "score": 0.7826204242690333,
           "logit": 1.2810027850087489,
           "counts": {
             "direct": 0,
@@ -19811,7 +19808,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 7,
-          "score": 0.7775423509779851,
+          "score": 0.7775423509779852,
           "logit": 1.2514013712661818,
           "counts": {
             "direct": 0,
@@ -19827,7 +19824,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 6,
-          "score": 0.7824716196709051,
+          "score": 0.782471619670905,
           "logit": 1.280128326677296,
           "counts": {
             "direct": 0,
@@ -19939,7 +19936,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7784521564635162,
+          "score": 0.7784521564635161,
           "logit": 1.2566689692651725,
           "counts": {
             "direct": 0,
@@ -20035,7 +20032,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7828435723645207,
+          "score": 0.7828435723645206,
           "logit": 1.2823149376436926,
           "counts": {
             "direct": 0,
@@ -20051,7 +20048,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 7,
-          "score": 0.784044472808844,
+          "score": 0.7840444728088442,
           "logit": 1.289393250411232,
           "counts": {
             "direct": 0,
@@ -20099,7 +20096,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7743598419672014,
+          "score": 0.7743598419672013,
           "logit": 1.2330951684065632,
           "counts": {
             "direct": 0,
@@ -20163,7 +20160,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 7,
-          "score": 0.7761833439946944,
+          "score": 0.7761833439946945,
           "logit": 1.2435615435859972,
           "counts": {
             "direct": 0,
@@ -20275,7 +20272,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7784667799770805,
+          "score": 0.7784667799770804,
           "logit": 1.2567537627595948,
           "counts": {
             "direct": 0,
@@ -20307,7 +20304,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7783805283693469,
+          "score": 0.7783805283693468,
           "logit": 1.2562536962348696,
           "counts": {
             "direct": 0,
@@ -20371,7 +20368,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7855554339492493,
+          "score": 0.7855554339492492,
           "logit": 1.29833975511286,
           "counts": {
             "direct": 0,
@@ -20403,7 +20400,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 6,
-          "score": 0.7779208479830337,
+          "score": 0.7779208479830336,
           "logit": 1.2535909222479955,
           "counts": {
             "direct": 0,
@@ -20515,7 +20512,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7822321701997041,
+          "score": 0.782232170199704,
           "logit": 1.278722094963283,
           "counts": {
             "direct": 0,
@@ -20595,7 +20592,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7784521564635162,
+          "score": 0.7784521564635161,
           "logit": 1.2566689692651725,
           "counts": {
             "direct": 0,
@@ -20611,7 +20608,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.777393037187279,
+          "score": 0.7773930371872791,
           "logit": 1.2505383440055342,
           "counts": {
             "direct": 0,
@@ -20643,7 +20640,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7767907037511816,
+          "score": 0.7767907037511818,
           "logit": 1.247061070040788,
           "counts": {
             "direct": 0,
@@ -20691,7 +20688,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 8,
-          "score": 0.7825246401726484,
+          "score": 0.7825246401726486,
           "logit": 1.2804398549960239,
           "counts": {
             "direct": 0,
@@ -20755,7 +20752,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7849821690426246,
+          "score": 0.7849821690426247,
           "logit": 1.294940043554807,
           "counts": {
             "direct": 0,
@@ -20819,7 +20816,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 7,
-          "score": 0.7769960879096826,
+          "score": 0.7769960879096824,
           "logit": 1.2482460011775487,
           "counts": {
             "direct": 0,
@@ -20851,7 +20848,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7785028502430948,
+          "score": 0.778502850243095,
           "logit": 1.2569629309781831,
           "counts": {
             "direct": 0,
@@ -20899,7 +20896,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7790948714135395,
+          "score": 0.7790948714135396,
           "logit": 1.2603994976733968,
           "counts": {
             "direct": 0,
@@ -20979,7 +20976,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7775423509779851,
+          "score": 0.7775423509779852,
           "logit": 1.2514013712661818,
           "counts": {
             "direct": 0,
@@ -20995,7 +20992,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7770916098189052,
+          "score": 0.7770916098189053,
           "logit": 1.2487973646793271,
           "counts": {
             "direct": 0,
@@ -21043,7 +21040,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 8,
-          "score": 0.7797920474237675,
+          "score": 0.7797920474237674,
           "logit": 1.2644549393928242,
           "counts": {
             "direct": 0,
@@ -21075,7 +21072,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7760407108878385,
+          "score": 0.7760407108878387,
           "logit": 1.242740690989023,
           "counts": {
             "direct": 0,
@@ -21171,7 +21168,7 @@
           "focus_edges_removed": 1,
           "supported": true,
           "rank": 7,
-          "score": 0.7788680353849039,
+          "score": 0.778868035384904,
           "logit": 1.2590819806689661,
           "counts": {
             "direct": 0,
@@ -21187,7 +21184,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.78241688794323,
+          "score": 0.7824168879432299,
           "logit": 1.279806801345429,
           "counts": {
             "direct": 0,
@@ -21283,7 +21280,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7792126192042548,
+          "score": 0.7792126192042547,
           "logit": 1.2610837866980065,
           "counts": {
             "direct": 0,
@@ -21315,7 +21312,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7751132730893858,
+          "score": 0.7751132730893857,
           "logit": 1.2374123380130329,
           "counts": {
             "direct": 0,
@@ -21411,7 +21408,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7792126192042548,
+          "score": 0.7792126192042547,
           "logit": 1.2610837866980065,
           "counts": {
             "direct": 0,
@@ -21459,7 +21456,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7799763944919296,
+          "score": 0.7799763944919295,
           "logit": 1.2655288173934789,
           "counts": {
             "direct": 0,
@@ -21635,7 +21632,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 6,
-          "score": 0.7799763944919296,
+          "score": 0.7799763944919295,
           "logit": 1.2655288173934789,
           "counts": {
             "direct": 0,
@@ -21651,7 +21648,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 7,
-          "score": 0.7749691343265921,
+          "score": 0.774969134326592,
           "logit": 1.236585628318178,
           "counts": {
             "direct": 0,
@@ -21667,7 +21664,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7846309846760147,
+          "score": 0.7846309846760148,
           "logit": 1.2928606168176506,
           "counts": {
             "direct": 0,
@@ -21763,7 +21760,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7743598419672014,
+          "score": 0.7743598419672013,
           "logit": 1.2330951684065632,
           "counts": {
             "direct": 0,
@@ -21811,7 +21808,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7776912858224007,
+          "score": 0.7776912858224008,
           "logit": 1.2522626202939695,
           "counts": {
             "direct": 0,
@@ -21875,7 +21872,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7794563728985631,
+          "score": 0.779456372898563,
           "logit": 1.2625011882218404,
           "counts": {
             "direct": 0,
@@ -21891,7 +21888,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7745102663840306,
+          "score": 0.7745102663840305,
           "logit": 1.2339562845637118,
           "counts": {
             "direct": 0,
@@ -21907,7 +21904,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 8,
-          "score": 0.7768460345424963,
+          "score": 0.7768460345424962,
           "logit": 1.2473802157057694,
           "counts": {
             "direct": 0,
@@ -21923,7 +21920,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7785400770981317,
+          "score": 0.7785400770981316,
           "logit": 1.257178831709643,
           "counts": {
             "direct": 0,
@@ -22083,7 +22080,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7849290177230271,
+          "score": 0.784929017723027,
           "logit": 1.294625166645651,
           "counts": {
             "direct": 0,
@@ -22115,7 +22112,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7798435662479668,
+          "score": 0.7798435662479669,
           "logit": 1.2647549873007917,
           "counts": {
             "direct": 0,
@@ -22163,7 +22160,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7839426724899415,
+          "score": 0.7839426724899414,
           "logit": 1.2887921182432114,
           "counts": {
             "direct": 0,
@@ -22195,7 +22192,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 6,
-          "score": 0.7820375149356353,
+          "score": 0.7820375149356352,
           "logit": 1.2775797513383786,
           "counts": {
             "direct": 0,
@@ -22211,7 +22208,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7760407108878385,
+          "score": 0.7760407108878387,
           "logit": 1.242740690989023,
           "counts": {
             "direct": 0,
@@ -22227,7 +22224,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 9,
-          "score": 0.7733014066095586,
+          "score": 0.7733014066095585,
           "logit": 1.2270475378071224,
           "counts": {
             "direct": 0,
@@ -22275,7 +22272,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7812160531331567,
+          "score": 0.7812160531331566,
           "logit": 1.272767049242316,
           "counts": {
             "direct": 0,
@@ -22307,7 +22304,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7770916098189052,
+          "score": 0.7770916098189053,
           "logit": 1.2487973646793271,
           "counts": {
             "direct": 0,
@@ -22323,7 +22320,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.777212173454538,
+          "score": 0.7772121734545379,
           "logit": 1.2494935125255249,
           "counts": {
             "direct": 0,
@@ -22435,7 +22432,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7776912858224007,
+          "score": 0.7776912858224008,
           "logit": 1.2522626202939695,
           "counts": {
             "direct": 0,
@@ -22451,7 +22448,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7782883052174329,
+          "score": 0.7782883052174328,
           "logit": 1.2557191620761607,
           "counts": {
             "direct": 0,
@@ -22547,7 +22544,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 9,
-          "score": 0.7731020338512429,
+          "score": 0.773102033851243,
           "logit": 1.225910608997018,
           "counts": {
             "direct": 0,
@@ -22579,7 +22576,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7784614264202745,
+          "score": 0.7784614264202744,
           "logit": 1.2567227200432407,
           "counts": {
             "direct": 0,
@@ -22595,7 +22592,7 @@
           "focus_edges_removed": 10,
           "supported": true,
           "rank": 8,
-          "score": 0.7754021849398065,
+          "score": 0.7754021849398066,
           "logit": 1.2390705289366966,
           "counts": {
             "direct": 0,
@@ -22627,7 +22624,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7783558955443121,
+          "score": 0.7783558955443122,
           "logit": 1.2561109064691838,
           "counts": {
             "direct": 0,
@@ -22723,7 +22720,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 8,
-          "score": 0.783250326793339,
+          "score": 0.7832503267933391,
           "logit": 1.2847092390971373,
           "counts": {
             "direct": 0,
@@ -22739,7 +22736,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.776537606606865,
+          "score": 0.7765376066068649,
           "logit": 1.2456019346599254,
           "counts": {
             "direct": 0,
@@ -22947,7 +22944,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7740664894032196,
+          "score": 0.7740664894032198,
           "logit": 1.2314170184344442,
           "counts": {
             "direct": 0,
@@ -22963,7 +22960,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 6,
-          "score": 0.7837075715397224,
+          "score": 0.7837075715397225,
           "logit": 1.2874046277457645,
           "counts": {
             "direct": 0,
@@ -23011,7 +23008,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 6,
-          "score": 0.7803975837515138,
+          "score": 0.7803975837515137,
           "logit": 1.2679848000495937,
           "counts": {
             "direct": 0,
@@ -23059,7 +23056,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7787559452713867,
+          "score": 0.7787559452713866,
           "logit": 1.2584312922060075,
           "counts": {
             "direct": 0,
@@ -23203,7 +23200,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7749623247236802,
+          "score": 0.7749623247236803,
           "logit": 1.2365465810524265,
           "counts": {
             "direct": 0,
@@ -23299,7 +23296,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7826204242690332,
+          "score": 0.7826204242690333,
           "logit": 1.2810027850087489,
           "counts": {
             "direct": 0,
@@ -23379,7 +23376,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7842911506066059,
+          "score": 0.784291150606606,
           "logit": 1.290850738032416,
           "counts": {
             "direct": 0,
@@ -23427,7 +23424,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7760407108878385,
+          "score": 0.7760407108878387,
           "logit": 1.242740690989023,
           "counts": {
             "direct": 0,
@@ -23475,7 +23472,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 7,
-          "score": 0.7774252526578415,
+          "score": 0.7774252526578413,
           "logit": 1.2507245130703073,
           "counts": {
             "direct": 0,
@@ -23491,7 +23488,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7812160531331567,
+          "score": 0.7812160531331566,
           "logit": 1.272767049242316,
           "counts": {
             "direct": 0,
@@ -23587,7 +23584,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7775423509779851,
+          "score": 0.7775423509779852,
           "logit": 1.2514013712661818,
           "counts": {
             "direct": 0,
@@ -23619,7 +23616,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7812160531331567,
+          "score": 0.7812160531331566,
           "logit": 1.272767049242316,
           "counts": {
             "direct": 0,
@@ -23651,7 +23648,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7788791744337178,
+          "score": 0.7788791744337179,
           "logit": 1.259146656279174,
           "counts": {
             "direct": 0,
@@ -23699,7 +23696,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 7,
-          "score": 0.784102777473039,
+          "score": 0.7841027774730389,
           "logit": 1.2897376326632994,
           "counts": {
             "direct": 0,
@@ -23715,7 +23712,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7760407108878385,
+          "score": 0.7760407108878387,
           "logit": 1.242740690989023,
           "counts": {
             "direct": 0,
@@ -23779,7 +23776,7 @@
           "focus_edges_removed": 1,
           "supported": true,
           "rank": 8,
-          "score": 0.7799007188824002,
+          "score": 0.7799007188824003,
           "logit": 1.2650879057338775,
           "counts": {
             "direct": 0,
@@ -23907,7 +23904,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7816417495986301,
+          "score": 0.78164174959863,
           "logit": 1.275259450426853,
           "counts": {
             "direct": 0,
@@ -23939,7 +23936,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7781805690551339,
+          "score": 0.7781805690551338,
           "logit": 1.2550949143681247,
           "counts": {
             "direct": 0,
@@ -23971,7 +23968,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7801295487133384,
+          "score": 0.7801295487133385,
           "logit": 1.2664214788669415,
           "counts": {
             "direct": 0,
@@ -23987,7 +23984,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7826204242690332,
+          "score": 0.7826204242690333,
           "logit": 1.2810027850087489,
           "counts": {
             "direct": 0,
@@ -24003,7 +24000,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7793365911037349,
+          "score": 0.7793365911037348,
           "logit": 1.261804529706765,
           "counts": {
             "direct": 0,
@@ -24067,7 +24064,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 6,
-          "score": 0.7800456579606998,
+          "score": 0.7800456579606999,
           "logit": 1.2659324651887847,
           "counts": {
             "direct": 0,
@@ -24083,7 +24080,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7764543325112059,
+          "score": 0.7764543325112058,
           "logit": 1.2451221069066045,
           "counts": {
             "direct": 0,
@@ -24131,7 +24128,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7787520604031889,
+          "score": 0.7787520604031888,
           "logit": 1.2584087445928576,
           "counts": {
             "direct": 0,
@@ -24163,7 +24160,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7809733889356036,
+          "score": 0.7809733889356035,
           "logit": 1.2713478420492537,
           "counts": {
             "direct": 0,
@@ -24275,7 +24272,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7781600531775511,
+          "score": 0.778160053177551,
           "logit": 1.2549760653025257,
           "counts": {
             "direct": 0,
@@ -24291,7 +24288,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7811891906381276,
+          "score": 0.7811891906381275,
           "logit": 1.2726098897768923,
           "counts": {
             "direct": 0,
@@ -24371,7 +24368,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7784676721528186,
+          "score": 0.7784676721528188,
           "logit": 1.2567589361123201,
           "counts": {
             "direct": 0,
@@ -24403,7 +24400,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 9,
-          "score": 0.7760407108878385,
+          "score": 0.7760407108878387,
           "logit": 1.242740690989023,
           "counts": {
             "direct": 0,
@@ -24435,7 +24432,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7810389906565165,
+          "score": 0.7810389906565166,
           "logit": 1.2717313981714402,
           "counts": {
             "direct": 0,
@@ -24467,7 +24464,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 9,
-          "score": 0.7763403192970506,
+          "score": 0.7763403192970507,
           "logit": 1.244465365842033,
           "counts": {
             "direct": 0,
@@ -24563,7 +24560,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7765333140732836,
+          "score": 0.7765333140732837,
           "logit": 1.245577197844319,
           "counts": {
             "direct": 0,
@@ -24627,7 +24624,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7778403485131987,
+          "score": 0.7778403485131986,
           "logit": 1.2531250213051852,
           "counts": {
             "direct": 0,
@@ -24643,7 +24640,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7760407108878385,
+          "score": 0.7760407108878387,
           "logit": 1.242740690989023,
           "counts": {
             "direct": 0,
@@ -24675,7 +24672,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7752643528585362,
+          "score": 0.7752643528585361,
           "logit": 1.238279261781474,
           "counts": {
             "direct": 0,
@@ -24691,7 +24688,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 7,
-          "score": 0.7784141100065836,
+          "score": 0.7784141100065837,
           "logit": 1.256448378112003,
           "counts": {
             "direct": 0,
@@ -24755,7 +24752,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7760407108878385,
+          "score": 0.7760407108878387,
           "logit": 1.242740690989023,
           "counts": {
             "direct": 0,
@@ -24835,7 +24832,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7754656239324464,
+          "score": 0.7754656239324466,
           "logit": 1.239434835760812,
           "counts": {
             "direct": 0,
@@ -24979,7 +24976,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7752643528585362,
+          "score": 0.7752643528585361,
           "logit": 1.238279261781474,
           "counts": {
             "direct": 0,
@@ -25043,7 +25040,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7745102663840306,
+          "score": 0.7745102663840305,
           "logit": 1.2339562845637118,
           "counts": {
             "direct": 0,
@@ -25171,7 +25168,7 @@
           "focus_edges_removed": 1,
           "supported": true,
           "rank": 8,
-          "score": 0.7787201467576775,
+          "score": 0.7787201467576776,
           "logit": 1.2582235298506437,
           "counts": {
             "direct": 0,
@@ -25187,7 +25184,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7820619329837214,
+          "score": 0.7820619329837213,
           "logit": 1.2777230094277012,
           "counts": {
             "direct": 0,
@@ -25347,7 +25344,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7725808491999809,
+          "score": 0.772580849199981,
           "logit": 1.2229418683247046,
           "counts": {
             "direct": 0,
@@ -25363,7 +25360,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7787520604031889,
+          "score": 0.7787520604031888,
           "logit": 1.2584087445928576,
           "counts": {
             "direct": 0,
@@ -25491,7 +25488,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7778403485131987,
+          "score": 0.7778403485131986,
           "logit": 1.2531250213051852,
           "counts": {
             "direct": 0,
@@ -25507,7 +25504,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7809733889356036,
+          "score": 0.7809733889356035,
           "logit": 1.2713478420492537,
           "counts": {
             "direct": 0,
@@ -25587,7 +25584,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 7,
-          "score": 0.7799472613207282,
+          "score": 0.7799472613207281,
           "logit": 1.2653590648131277,
           "counts": {
             "direct": 0,
@@ -25651,7 +25648,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7785028502430948,
+          "score": 0.778502850243095,
           "logit": 1.2569629309781831,
           "counts": {
             "direct": 0,
@@ -25731,7 +25728,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 9,
-          "score": 0.7774578570962594,
+          "score": 0.7774578570962593,
           "logit": 1.250912949512589,
           "counts": {
             "direct": 0,
@@ -25747,7 +25744,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7809663001964313,
+          "score": 0.7809663001964314,
           "logit": 1.2713064009925703,
           "counts": {
             "direct": 0,
@@ -25763,7 +25760,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7822615883329596,
+          "score": 0.7822615883329594,
           "logit": 1.278894800747996,
           "counts": {
             "direct": 0,
@@ -25779,7 +25776,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 8,
-          "score": 0.7742316896915901,
+          "score": 0.7742316896915902,
           "logit": 1.232361871689228,
           "counts": {
             "direct": 0,
@@ -25795,7 +25792,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 9,
-          "score": 0.7718144901495404,
+          "score": 0.7718144901495403,
           "logit": 1.2185852855907948,
           "counts": {
             "direct": 0,
@@ -25811,7 +25808,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 6,
-          "score": 0.7862176860677286,
+          "score": 0.7862176860677285,
           "logit": 1.302275435686876,
           "counts": {
             "direct": 0,
@@ -25859,7 +25856,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7854520693027981,
+          "score": 0.7854520693027982,
           "logit": 1.2977262699468033,
           "counts": {
             "direct": 0,
@@ -25907,7 +25904,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 6,
-          "score": 0.7849607992536187,
+          "score": 0.7849607992536186,
           "logit": 1.2948134387182877,
           "counts": {
             "direct": 0,
@@ -26035,7 +26032,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 6,
-          "score": 0.785050530434244,
+          "score": 0.7850505304342439,
           "logit": 1.2953451104613374,
           "counts": {
             "direct": 0,
@@ -26067,7 +26064,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7778403485131987,
+          "score": 0.7778403485131986,
           "logit": 1.2531250213051852,
           "counts": {
             "direct": 0,
@@ -26179,7 +26176,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7748571883843544,
+          "score": 0.7748571883843545,
           "logit": 1.2359438201728177,
           "counts": {
             "direct": 0,
@@ -26195,7 +26192,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7799763944919296,
+          "score": 0.7799763944919295,
           "logit": 1.2655288173934789,
           "counts": {
             "direct": 0,
@@ -26211,7 +26208,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7800456579606998,
+          "score": 0.7800456579606999,
           "logit": 1.2659324651887847,
           "counts": {
             "direct": 0,
@@ -26243,7 +26240,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7751132730893858,
+          "score": 0.7751132730893857,
           "logit": 1.2374123380130329,
           "counts": {
             "direct": 0,
@@ -26307,7 +26304,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 8,
-          "score": 0.7775078513030481,
+          "score": 0.7775078513030482,
           "logit": 1.251201927912942,
           "counts": {
             "direct": 0,
@@ -26371,7 +26368,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7756855842418139,
+          "score": 0.7756855842418138,
           "logit": 1.2406985536831643,
           "counts": {
             "direct": 0,
@@ -26387,7 +26384,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7799763944919296,
+          "score": 0.7799763944919295,
           "logit": 1.2655288173934789,
           "counts": {
             "direct": 0,
@@ -26403,7 +26400,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 8,
-          "score": 0.7720472877038935,
+          "score": 0.7720472877038934,
           "logit": 1.2199075964177404,
           "counts": {
             "direct": 0,
@@ -26611,7 +26608,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7734046605992635,
+          "score": 0.7734046605992634,
           "logit": 1.227636624406742,
           "counts": {
             "direct": 0,
@@ -26659,7 +26656,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 7,
-          "score": 0.785366017807763,
+          "score": 0.7853660178077632,
           "logit": 1.2972157048625264,
           "counts": {
             "direct": 0,
@@ -26707,7 +26704,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 10,
-          "score": 0.7749623247236802,
+          "score": 0.7749623247236803,
           "logit": 1.2365465810524265,
           "counts": {
             "direct": 0,
@@ -26739,7 +26736,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7760407108878385,
+          "score": 0.7760407108878387,
           "logit": 1.242740690989023,
           "counts": {
             "direct": 0,
@@ -26787,7 +26784,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 6,
-          "score": 0.7735026709008138,
+          "score": 0.7735026709008137,
           "logit": 1.22819597021704,
           "counts": {
             "direct": 0,
@@ -26819,7 +26816,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7775423509779851,
+          "score": 0.7775423509779852,
           "logit": 1.2514013712661818,
           "counts": {
             "direct": 0,
@@ -26867,7 +26864,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7745537688094905,
+          "score": 0.7745537688094906,
           "logit": 1.2342053934492034,
           "counts": {
             "direct": 0,
@@ -26963,7 +26960,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7772422582610766,
+          "score": 0.7772422582610765,
           "logit": 1.249667267437739,
           "counts": {
             "direct": 0,
@@ -26979,7 +26976,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7815225109876391,
+          "score": 0.7815225109876393,
           "logit": 1.2745609701801677,
           "counts": {
             "direct": 0,
@@ -26995,7 +26992,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 7,
-          "score": 0.7768460345424963,
+          "score": 0.7768460345424962,
           "logit": 1.2473802157057694,
           "counts": {
             "direct": 0,
@@ -27043,7 +27040,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 7,
-          "score": 0.7783127974905486,
+          "score": 0.7783127974905487,
           "logit": 1.2558611061099263,
           "counts": {
             "direct": 0,
@@ -27091,7 +27088,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 7,
-          "score": 0.7708112525279249,
+          "score": 0.770811252527925,
           "logit": 1.212897646102585,
           "counts": {
             "direct": 0,
@@ -27107,7 +27104,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7792019234937202,
+          "score": 0.7792019234937201,
           "logit": 1.2610216179849005,
           "counts": {
             "direct": 0,
@@ -27235,7 +27232,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 7,
-          "score": 0.773556440504168,
+          "score": 0.7735564405041679,
           "logit": 1.2285029066135056,
           "counts": {
             "direct": 0,
@@ -27267,7 +27264,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7768489682831755,
+          "score": 0.7768489682831756,
           "logit": 1.2473971389723517,
           "counts": {
             "direct": 0,
@@ -27283,7 +27280,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 8,
-          "score": 0.7762239852979059,
+          "score": 0.7762239852979058,
           "logit": 1.243795502160777,
           "counts": {
             "direct": 0,
@@ -27299,7 +27296,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 7,
-          "score": 0.7822321701997041,
+          "score": 0.782232170199704,
           "logit": 1.278722094963283,
           "counts": {
             "direct": 0,
@@ -27315,7 +27312,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 7,
-          "score": 0.777513788738812,
+          "score": 0.7775137887388119,
           "logit": 1.2512362507822985,
           "counts": {
             "direct": 0,
@@ -27363,7 +27360,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7839934821103279,
+          "score": 0.7839934821103278,
           "logit": 1.2890921240370183,
           "counts": {
             "direct": 0,
@@ -27379,7 +27376,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 8,
-          "score": 0.7791577890500617,
+          "score": 0.7791577890500616,
           "logit": 1.2607651097850114,
           "counts": {
             "direct": 0,
@@ -27411,7 +27408,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.773556440504168,
+          "score": 0.7735564405041679,
           "logit": 1.2285029066135056,
           "counts": {
             "direct": 0,
@@ -27475,7 +27472,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 8,
-          "score": 0.7760397690764652,
+          "score": 0.7760397690764651,
           "logit": 1.2427352721069984,
           "counts": {
             "direct": 0,
@@ -27491,7 +27488,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7859232069312166,
+          "score": 0.7859232069312168,
           "logit": 1.300524289783028,
           "counts": {
             "direct": 0,
@@ -27603,7 +27600,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7763403192970506,
+          "score": 0.7763403192970507,
           "logit": 1.244465365842033,
           "counts": {
             "direct": 0,
@@ -27667,7 +27664,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7793486347977928,
+          "score": 0.7793486347977927,
           "logit": 1.261874564333843,
           "counts": {
             "direct": 0,
@@ -27699,7 +27696,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7809733889356036,
+          "score": 0.7809733889356035,
           "logit": 1.2713478420492537,
           "counts": {
             "direct": 0,
@@ -27715,7 +27712,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.775081581853216,
+          "score": 0.7750815818532161,
           "logit": 1.2372305402806265,
           "counts": {
             "direct": 0,
@@ -27827,7 +27824,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 6,
-          "score": 0.7837407953653476,
+          "score": 0.7837407953653477,
           "logit": 1.287600637837078,
           "counts": {
             "direct": 0,
@@ -27939,7 +27936,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7823741766860399,
+          "score": 0.78237417668604,
           "logit": 1.279555931659296,
           "counts": {
             "direct": 0,
@@ -27971,7 +27968,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7778403485131987,
+          "score": 0.7778403485131986,
           "logit": 1.2531250213051852,
           "counts": {
             "direct": 0,
@@ -27987,7 +27984,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 10,
-          "score": 0.7725808491999809,
+          "score": 0.772580849199981,
           "logit": 1.2229418683247046,
           "counts": {
             "direct": 0,
@@ -28003,7 +28000,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 7,
-          "score": 0.7768402085760933,
+          "score": 0.7768402085760931,
           "logit": 1.2473466091215162,
           "counts": {
             "direct": 0,
@@ -28099,7 +28096,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7824716196709051,
+          "score": 0.782471619670905,
           "logit": 1.280128326677296,
           "counts": {
             "direct": 0,
@@ -28179,7 +28176,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 7,
-          "score": 0.7752598551817551,
+          "score": 0.7752598551817552,
           "logit": 1.2382534473017726,
           "counts": {
             "direct": 0,
@@ -28339,7 +28336,7 @@
           "focus_edges_removed": 8,
           "supported": true,
           "rank": 9,
-          "score": 0.7718144901495404,
+          "score": 0.7718144901495403,
           "logit": 1.2185852855907948,
           "counts": {
             "direct": 0,
@@ -28387,7 +28384,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7778403485131987,
+          "score": 0.7778403485131986,
           "logit": 1.2531250213051852,
           "counts": {
             "direct": 0,
@@ -28515,7 +28512,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7805691863426715,
+          "score": 0.7805691863426716,
           "logit": 1.26898639655284,
           "counts": {
             "direct": 0,
@@ -28579,7 +28576,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7804023154596729,
+          "score": 0.780402315459673,
           "logit": 1.2680124101688441,
           "counts": {
             "direct": 0,
@@ -28675,7 +28672,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7776912858224007,
+          "score": 0.7776912858224008,
           "logit": 1.2522626202939695,
           "counts": {
             "direct": 0,
@@ -28739,7 +28736,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 7,
-          "score": 0.7783558955443121,
+          "score": 0.7783558955443122,
           "logit": 1.2561109064691838,
           "counts": {
             "direct": 0,
@@ -28787,7 +28784,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 8,
-          "score": 0.7838027308172884,
+          "score": 0.7838027308172882,
           "logit": 1.287966095685518,
           "counts": {
             "direct": 0,
@@ -28835,7 +28832,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7752613664330499,
+          "score": 0.7752613664330498,
           "logit": 1.2382621211090965,
           "counts": {
             "direct": 0,
@@ -28851,7 +28848,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 9,
-          "score": 0.7752643528585362,
+          "score": 0.7752643528585361,
           "logit": 1.238279261781474,
           "counts": {
             "direct": 0,
@@ -28883,7 +28880,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7792019234937202,
+          "score": 0.7792019234937201,
           "logit": 1.2610216179849005,
           "counts": {
             "direct": 0,
@@ -28995,7 +28992,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.773556440504168,
+          "score": 0.7735564405041679,
           "logit": 1.2285029066135056,
           "counts": {
             "direct": 0,
@@ -29027,7 +29024,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7814017548799841,
+          "score": 0.7814017548799842,
           "logit": 1.2738538805367017,
           "counts": {
             "direct": 0,
@@ -29075,7 +29072,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7763403192970506,
+          "score": 0.7763403192970507,
           "logit": 1.244465365842033,
           "counts": {
             "direct": 0,
@@ -29251,7 +29248,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7819070861236005,
+          "score": 0.7819070861236004,
           "logit": 1.276814735358028,
           "counts": {
             "direct": 0,
@@ -29267,7 +29264,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7734046605992635,
+          "score": 0.7734046605992634,
           "logit": 1.227636624406742,
           "counts": {
             "direct": 0,
@@ -29331,7 +29328,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.779481952282624,
+          "score": 0.7794819522826241,
           "logit": 1.2626499946931253,
           "counts": {
             "direct": 0,
@@ -29363,7 +29360,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7776912858224007,
+          "score": 0.7776912858224008,
           "logit": 1.2522626202939695,
           "counts": {
             "direct": 0,
@@ -29459,7 +29456,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7807721696811143,
+          "score": 0.7807721696811142,
           "logit": 1.2701718809765798,
           "counts": {
             "direct": 0,
@@ -29491,7 +29488,7 @@
           "focus_edges_removed": 9,
           "supported": true,
           "rank": 8,
-          "score": 0.7731776086279335,
+          "score": 0.7731776086279334,
           "logit": 1.2263414931909895,
           "counts": {
             "direct": 0,
@@ -29635,7 +29632,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 7,
-          "score": 0.781869185324209,
+          "score": 0.7818691853242089,
           "logit": 1.276592494217149,
           "counts": {
             "direct": 0,
@@ -29683,7 +29680,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7812160531331567,
+          "score": 0.7812160531331566,
           "logit": 1.272767049242316,
           "counts": {
             "direct": 0,
@@ -29699,7 +29696,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 8,
-          "score": 0.7768563766515412,
+          "score": 0.7768563766515413,
           "logit": 1.2474398748093825,
           "counts": {
             "direct": 0,
@@ -29715,7 +29712,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.780910127839137,
+          "score": 0.7809101278391369,
           "logit": 1.270978049229532,
           "counts": {
             "direct": 0,
@@ -29827,7 +29824,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 7,
-          "score": 0.7810185933837563,
+          "score": 0.7810185933837565,
           "logit": 1.271612131789306,
           "counts": {
             "direct": 0,
@@ -29923,7 +29920,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.7764657194374672,
+          "score": 0.7764657194374673,
           "logit": 1.2451877111921328,
           "counts": {
             "direct": 0,
@@ -29971,7 +29968,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7763403192970506,
+          "score": 0.7763403192970507,
           "logit": 1.244465365842033,
           "counts": {
             "direct": 0,
@@ -30003,7 +30000,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7805556380508256,
+          "score": 0.7805556380508255,
           "logit": 1.2689072984824923,
           "counts": {
             "direct": 0,
@@ -30019,7 +30016,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7794893296722143,
+          "score": 0.7794893296722142,
           "logit": 1.2626929144966244,
           "counts": {
             "direct": 0,
@@ -30035,7 +30032,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7803383699539215,
+          "score": 0.7803383699539214,
           "logit": 1.267639316148058,
           "counts": {
             "direct": 0,
@@ -30051,7 +30048,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7787520604031889,
+          "score": 0.7787520604031888,
           "logit": 1.2584087445928576,
           "counts": {
             "direct": 0,
@@ -30115,7 +30112,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7799763944919296,
+          "score": 0.7799763944919295,
           "logit": 1.2655288173934789,
           "counts": {
             "direct": 0,
@@ -30195,7 +30192,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 6,
-          "score": 0.7849821690426246,
+          "score": 0.7849821690426247,
           "logit": 1.294940043554807,
           "counts": {
             "direct": 0,
@@ -30211,7 +30208,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 7,
-          "score": 0.7797256428086763,
+          "score": 0.7797256428086764,
           "logit": 1.2640682702810635,
           "counts": {
             "direct": 0,
@@ -30227,7 +30224,7 @@
           "focus_edges_removed": 1,
           "supported": true,
           "rank": 7,
-          "score": 0.7787201467576775,
+          "score": 0.7787201467576776,
           "logit": 1.2582235298506437,
           "counts": {
             "direct": 0,
@@ -30259,7 +30256,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7770916098189052,
+          "score": 0.7770916098189053,
           "logit": 1.2487973646793271,
           "counts": {
             "direct": 0,
@@ -30371,7 +30368,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 6,
-          "score": 0.7792019234937202,
+          "score": 0.7792019234937201,
           "logit": 1.2610216179849005,
           "counts": {
             "direct": 0,
@@ -30451,7 +30448,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 8,
-          "score": 0.773556440504168,
+          "score": 0.7735564405041679,
           "logit": 1.2285029066135056,
           "counts": {
             "direct": 0,
@@ -30499,7 +30496,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7778403485131987,
+          "score": 0.7778403485131986,
           "logit": 1.2531250213051852,
           "counts": {
             "direct": 0,
@@ -30643,7 +30640,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7828435723645207,
+          "score": 0.7828435723645206,
           "logit": 1.2823149376436926,
           "counts": {
             "direct": 0,
@@ -30675,7 +30672,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 7,
-          "score": 0.7882004832049943,
+          "score": 0.7882004832049941,
           "logit": 1.3141123260658476,
           "counts": {
             "direct": 0,
@@ -30723,7 +30720,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 7,
-          "score": 0.7839071574689023,
+          "score": 0.7839071574689024,
           "logit": 1.2885824498741671,
           "counts": {
             "direct": 0,
@@ -30771,7 +30768,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 7,
-          "score": 0.7778403485131987,
+          "score": 0.7778403485131986,
           "logit": 1.2531250213051852,
           "counts": {
             "direct": 0,
@@ -30787,7 +30784,7 @@
           "focus_edges_removed": 1,
           "supported": true,
           "rank": 8,
-          "score": 0.7787201467576775,
+          "score": 0.7787201467576776,
           "logit": 1.2582235298506437,
           "counts": {
             "direct": 0,
@@ -30835,7 +30832,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 9,
-          "score": 0.777363060544506,
+          "score": 0.7773630605445059,
           "logit": 1.2503651301075183,
           "counts": {
             "direct": 0,
@@ -30947,7 +30944,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7775423509779851,
+          "score": 0.7775423509779852,
           "logit": 1.2514013712661818,
           "counts": {
             "direct": 0,
@@ -30995,7 +30992,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 9,
-          "score": 0.7732530135060532,
+          "score": 0.7732530135060531,
           "logit": 1.2267715098392962,
           "counts": {
             "direct": 0,
@@ -31075,7 +31072,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 8,
-          "score": 0.7778403485131987,
+          "score": 0.7778403485131986,
           "logit": 1.2531250213051852,
           "counts": {
             "direct": 0,
@@ -31235,7 +31232,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 6,
-          "score": 0.7850779398448566,
+          "score": 0.7850779398448565,
           "logit": 1.2955075477820157,
           "counts": {
             "direct": 0,
@@ -31251,7 +31248,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7796422016728787,
+          "score": 0.7796422016728788,
           "logit": 1.2635825173374218,
           "counts": {
             "direct": 0,
@@ -31267,7 +31264,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 8,
-          "score": 0.7809186055455472,
+          "score": 0.780918605545547,
           "logit": 1.2710276012149828,
           "counts": {
             "direct": 0,
@@ -31299,7 +31296,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 7,
-          "score": 0.7857285368942811,
+          "score": 0.785728536894281,
           "logit": 1.2993676295494545,
           "counts": {
             "direct": 0,
@@ -31427,7 +31424,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.776173600203441,
+          "score": 0.7761736002034411,
           "logit": 1.2435054562875172,
           "counts": {
             "direct": 0,
@@ -31459,7 +31456,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7752643528585362,
+          "score": 0.7752643528585361,
           "logit": 1.238279261781474,
           "counts": {
             "direct": 0,
@@ -31507,7 +31504,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7751132730893858,
+          "score": 0.7751132730893857,
           "logit": 1.2374123380130329,
           "counts": {
             "direct": 0,
@@ -31555,7 +31552,7 @@
           "focus_edges_removed": 5,
           "supported": true,
           "rank": 6,
-          "score": 0.775715679796081,
+          "score": 0.7757156797960811,
           "logit": 1.240871527413499,
           "counts": {
             "direct": 0,
@@ -31635,7 +31632,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 8,
-          "score": 0.7735026709008138,
+          "score": 0.7735026709008137,
           "logit": 1.22819597021704,
           "counts": {
             "direct": 0,
@@ -31667,7 +31664,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 7,
-          "score": 0.7835852517948265,
+          "score": 0.7835852517948264,
           "logit": 1.2866831676351445,
           "counts": {
             "direct": 0,
@@ -31747,7 +31744,7 @@
           "focus_edges_removed": 1,
           "supported": true,
           "rank": 8,
-          "score": 0.7787201467576775,
+          "score": 0.7787201467576776,
           "logit": 1.2582235298506437,
           "counts": {
             "direct": 0,
@@ -31843,7 +31840,7 @@
           "focus_edges_removed": 2,
           "supported": true,
           "rank": 7,
-          "score": 0.7778403485131987,
+          "score": 0.7778403485131986,
           "logit": 1.2531250213051852,
           "counts": {
             "direct": 0,
@@ -31923,7 +31920,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 8,
-          "score": 0.7807721696811143,
+          "score": 0.7807721696811142,
           "logit": 1.2701718809765798,
           "counts": {
             "direct": 0,
@@ -31939,7 +31936,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 8,
-          "score": 0.7801295487133384,
+          "score": 0.7801295487133385,
           "logit": 1.2664214788669415,
           "counts": {
             "direct": 0,
@@ -32003,7 +32000,7 @@
           "focus_edges_removed": 7,
           "supported": true,
           "rank": 8,
-          "score": 0.781598095785998,
+          "score": 0.7815980957859981,
           "logit": 1.275003701661826,
           "counts": {
             "direct": 0,
@@ -32035,7 +32032,7 @@
           "focus_edges_removed": 6,
           "supported": true,
           "rank": 7,
-          "score": 0.780788133310827,
+          "score": 0.7807881333108271,
           "logit": 1.270265146902877,
           "counts": {
             "direct": 0,
@@ -32051,7 +32048,7 @@
           "focus_edges_removed": 4,
           "supported": true,
           "rank": 7,
-          "score": 0.7841342068868028,
+          "score": 0.7841342068868027,
           "logit": 1.2899233015537948,
           "counts": {
             "direct": 0,
@@ -32083,7 +32080,7 @@
           "focus_edges_removed": 3,
           "supported": true,
           "rank": 7,
-          "score": 0.7843047834739736,
+          "score": 0.7843047834739737,
           "logit": 1.2909313226004178,
           "counts": {
             "direct": 0,
@@ -32207,7 +32204,7 @@
       ]
     }
   ],
-  "runtime_seconds": 12.016553764000491,
+  "runtime_seconds": 45.15464342799896,
   "environment": {
     "python": "3.12.14",
     "numpy": "2.3.5"

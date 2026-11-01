@@ -37,7 +37,7 @@
     "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
     "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
     "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
-    "scorer": "float64-fixed-order-v1",
+    "scorer": "decimal80-binary64-v1",
     "group_map_sha256": "e428edd4119421bff3406c8897ca39416e4e64535730e1c8fe4de27a9d2e997d"
   },
   "baseline": {
@@ -50,9 +50,7 @@
       "direct": 0,
       "interaction": 23,
       "pathway": 518
-    },
-    "legacy_score": 0.7797277175837919,
-    "legacy_rank": 8
+    }
   },
   "results": [
     {
@@ -829,7 +827,7 @@
         "name": "Amifostine"
       },
       "baseline_rank": 1,
-      "baseline_score": 0.9907880450557162,
+      "baseline_score": 0.9907880450557163,
       "worst_supported_rank": 1,
       "unsupported_attainable": false,
       "robust": true
@@ -862,7 +860,7 @@
         "name": "Menadione"
       },
       "baseline_rank": 4,
-      "baseline_score": 0.8738906742771997,
+      "baseline_score": 0.8738906742771998,
       "worst_supported_rank": 4,
       "unsupported_attainable": false,
       "robust": true
@@ -940,9 +938,9 @@
     "search_budget": 2,
     "scenarios_evaluated": 2,
     "covered_scenarios": 2,
-    "scenario_table_sha256": "051f886117d275a6686c890da5238b6114b4d5c5bef97e6410a3712a0905a2aa",
+    "scenario_table_sha256": "1069ea8252413724aae620bd477d374ffbe5eec980a4e3df5ddc45d8ed9cded2",
     "group_map_sha256": "e428edd4119421bff3406c8897ca39416e4e64535730e1c8fe4de27a9d2e997d"
   },
-  "interpretation": "Exact for this fixed model and the selected provenance-group withdrawal space. Withdrawing a group removes every recorded BINDS edge mentioning that provider label or imported PubMed identifier, including records with other annotations. Overlapping groups remove a record once. An annotation is not proof of independent corroboration, and a PubMed group is not necessarily one experiment. This is a conservative record-quarantine stress scenario, not a factual retraction, clinical effect, or probability of error. All competing compounds change jointly. Protected groups are assumed unavailable for withdrawal; protection does not mean a review or experiment has established that assumption. Binary64 exactness is relative to the declared scorer and numerical runtime; verification rejects numerical mismatches. Other relation families, new records, refitting and unselected groups are outside scope.",
-  "certificate_sha256": "9d0f3dfb7e8cb3ae028572e6952c15f501317fdefd1f5138564ca3f7b73e4bb3"
+  "interpretation": "Exact for this fixed model and the selected provenance-group withdrawal space. Withdrawing a group removes every recorded BINDS edge mentioning that provider label or imported PubMed identifier, including records with other annotations. Overlapping groups remove a record once. An annotation is not proof of independent corroboration, and a PubMed group is not necessarily one experiment. This is a conservative record-quarantine stress scenario, not a factual retraction, clinical effect, or probability of error. All competing compounds change jointly. Protected groups are assumed unavailable for withdrawal; protection does not mean a review or experiment has established that assumption. Exactness is relative to the declared decimal80-binary64-v1 finite arithmetic contract; strict verification rejects numerical mismatches. Legacy GraphEngine scores are separate and unchanged. Other relation families, new records, refitting and unselected groups are outside scope.",
+  "certificate_sha256": "8f8b31e10687f9d785042fe2ecbc29a82f1cd74531dfc5284793680276e0f609"
 }

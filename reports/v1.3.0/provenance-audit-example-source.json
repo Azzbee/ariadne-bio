@@ -140,7 +140,7 @@
     "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
     "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
     "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
-    "scorer": "float64-fixed-order-v1",
+    "scorer": "decimal80-binary64-v1",
     "group_map_sha256": "e428edd4119421bff3406c8897ca39416e4e64535730e1c8fe4de27a9d2e997d"
   },
   "baseline": {
@@ -153,9 +153,7 @@
       "direct": 6,
       "interaction": 59,
       "pathway": 1901
-    },
-    "legacy_score": 0.9241421386479369,
-    "legacy_rank": 1
+    }
   },
   "results": [
     {
@@ -574,7 +572,7 @@
           "after": {
             "supported": true,
             "rank": 1096,
-            "score": 0.13030119453504302,
+            "score": 0.13030119453504305,
             "logit": -1.8982982994284345,
             "evidence_count": 206,
             "counts": {
@@ -961,7 +959,7 @@
           "after": {
             "supported": true,
             "rank": 1096,
-            "score": 0.13030119453504302,
+            "score": 0.13030119453504305,
             "logit": -1.8982982994284345,
             "evidence_count": 206,
             "counts": {
@@ -1341,7 +1339,7 @@
           "after": {
             "supported": false,
             "rank": null,
-            "score": 0.012125190931948054,
+            "score": 0.012125190931948053,
             "logit": -4.400270794585356,
             "evidence_count": 0,
             "counts": {
@@ -1388,7 +1386,7 @@
         "name": "Diclofenac"
       },
       "baseline_rank": 2,
-      "baseline_score": 0.86542923961096,
+      "baseline_score": 0.8654292396109601,
       "worst_supported_rank": 129,
       "unsupported_attainable": false,
       "robust": false
@@ -1399,7 +1397,7 @@
         "name": "Dexamethasone"
       },
       "baseline_rank": 3,
-      "baseline_score": 0.856202973551711,
+      "baseline_score": 0.8562029735517112,
       "worst_supported_rank": 190,
       "unsupported_attainable": false,
       "robust": false
@@ -1454,7 +1452,7 @@
         "name": "Tolmetin"
       },
       "baseline_rank": 8,
-      "baseline_score": 0.8249840433961341,
+      "baseline_score": 0.8249840433961342,
       "worst_supported_rank": 264,
       "unsupported_attainable": false,
       "robust": false
@@ -1488,9 +1486,9 @@
     "search_budget": 2,
     "scenarios_evaluated": 106,
     "covered_scenarios": 106,
-    "scenario_table_sha256": "91419f865d80fb96d38ac8338fd98f37f0d4faa0f65d6920a048b545b76ba800",
+    "scenario_table_sha256": "55f29f34eb8a8f3a96180e7628bfbfc113c5367555c927d352a4fb5ffd3b649f",
     "group_map_sha256": "e428edd4119421bff3406c8897ca39416e4e64535730e1c8fe4de27a9d2e997d"
   },
-  "interpretation": "Exact for this fixed model and the selected provenance-group withdrawal space. Withdrawing a group removes every recorded BINDS edge mentioning that provider label or imported PubMed identifier, including records with other annotations. Overlapping groups remove a record once. An annotation is not proof of independent corroboration, and a PubMed group is not necessarily one experiment. This is a conservative record-quarantine stress scenario, not a factual retraction, clinical effect, or probability of error. All competing compounds change jointly. Protected groups are assumed unavailable for withdrawal; protection does not mean a review or experiment has established that assumption. Binary64 exactness is relative to the declared scorer and numerical runtime; verification rejects numerical mismatches. Other relation families, new records, refitting and unselected groups are outside scope.",
-  "certificate_sha256": "537ca865cf877f328925be98b409c68387526e32ce81cd02b5440904afd4a4a8"
+  "interpretation": "Exact for this fixed model and the selected provenance-group withdrawal space. Withdrawing a group removes every recorded BINDS edge mentioning that provider label or imported PubMed identifier, including records with other annotations. Overlapping groups remove a record once. An annotation is not proof of independent corroboration, and a PubMed group is not necessarily one experiment. This is a conservative record-quarantine stress scenario, not a factual retraction, clinical effect, or probability of error. All competing compounds change jointly. Protected groups are assumed unavailable for withdrawal; protection does not mean a review or experiment has established that assumption. Exactness is relative to the declared decimal80-binary64-v1 finite arithmetic contract; strict verification rejects numerical mismatches. Legacy GraphEngine scores are separate and unchanged. Other relation families, new records, refitting and unselected groups are outside scope.",
+  "certificate_sha256": "7b6bec88464c25177254cd511a4df0d8c0527f77f6dcd73c1bf456bbf087dbb7"
 }

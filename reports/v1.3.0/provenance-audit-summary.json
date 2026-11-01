@@ -1,23 +1,24 @@
 {
   "schema_version": "1.0",
   "title": "Exact correlated provenance-group withdrawal benchmark",
-  "executed_at": "2026-11-01T10:58:22.960138+00:00",
+  "executed_at": "2026-11-01T13:02:50.546679+00:00",
   "status": "passed",
   "source": {
-    "git_revision": "84b35517be2aba052f97efcf61d4f8e26501ec1a",
-    "working_tree_dirty": true,
+    "git_revision": "27f5557dfeaacc6b6a19c17e0253b8d7de506c62",
+    "working_tree_dirty": false,
     "file_sha256": {
-      "app/provenance_audit.py": "fa43318f2e94769f016ac1279ee97f96a452d4d6d278b1035959183f27f5d56d",
-      "app/binding_audit.py": "e2e662cffff5be1f36f91850a4b176db906c14efcc820e7b18d04021a5ce4e0b",
+      "app/audit_numerics.py": "80527c14035edc0f448825e8b981d68bb7126ff9f65f6e0381d8a71c415d53c7",
+      "app/provenance_audit.py": "bd897086af7c446cc5cfadac5b9137b25590d4a14985deda6493d6af838413bd",
+      "app/binding_audit.py": "4356019800543e89e4658d89926b998993b9ddc1d9d0db312cc1770a6e509ffa",
       "app/graph_engine.py": "80c18947f85dfaea71f32fd0b7608d5977b11be2d1f01fcdf2cc6e292910b81c",
-      "scripts/benchmark_provenance.py": "aa88e8626aa15a7b35365aa9991e78b2495258615734439db54cb8da170cdc2e"
+      "scripts/benchmark_provenance.py": "4cd6e49708fa11d74c5afd34e28ebc1018b79951e74ac23561d1099bc4083d0d"
     }
   },
   "identity": {
     "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
     "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
     "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
-    "scorer": "float64-fixed-order-v1",
+    "scorer": "decimal80-binary64-v1",
     "group_map_sha256": "e428edd4119421bff3406c8897ca39416e4e64535730e1c8fe4de27a9d2e997d"
   },
   "protocol": {
@@ -148,7 +149,7 @@
     "failed_checks": 0,
     "source_group_count": 14,
     "distinct_source_scenarios_per_disease": 106,
-    "max_certificate_bytes": 31402
+    "max_certificate_bytes": 31423
   },
   "summary": [
     {
@@ -198,7 +199,7 @@
     "greedy_suboptimal_queries": 0,
     "maximum_greedy_group_gap": 0
   },
-  "runtime_seconds": 251.58502706599938,
+  "runtime_seconds": 1248.2556994279985,
   "environment": {
     "python": "3.12.14",
     "numpy": "2.3.5",
@@ -207,7 +208,7 @@
   },
   "full_report": {
     "file": "provenance-audit-benchmark.json",
-    "sha256": "5207a33eeb4615d7de463512769d1a782410eceeb2f6808dec533e43b1cbc643"
+    "sha256": "ca0f67883fd40daf09c3d85619b4c007c451b2508cfe38e7b0c8dfcb983cb145"
   },
   "examples": {
     "source": {
