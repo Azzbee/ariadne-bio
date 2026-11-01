@@ -140,6 +140,20 @@ def _check_roles(certificates: list, kind: str) -> None:
             raise ValueError("Live certificate roles do not describe the same selected pair")
 
 
+def _matches_complete_joint(auditor, certificate, disease, compound):
+    """Bind a required joint role to the exact default all-source top-ten query."""
+    canonical = auditor.audit(
+        disease,
+        compound,
+        top_k=10,
+        group_budget=1,
+        edge_budget=1,
+        group_kind="source",
+        group_ids=None,
+    )
+    return certificate.get("certificate_sha256") == canonical["certificate_sha256"]
+
+
 def replay(artifact_dir: Path, graph_path: Path, kind: str) -> dict:
     """Recompute every required example or live certificate; do not trust saved verdicts."""
     if kind not in ARTIFACT_FILES:
@@ -202,11 +216,22 @@ def replay(artifact_dir: Path, graph_path: Path, kind: str) -> dict:
                 ),
             )
             for (_, _, certificate), (disease, candidate) in zip(certificates, expected):
-                canonical = auditor.audit(disease, candidate["id"], top_k=10)
-                if certificate.get("certificate_sha256") != canonical["certificate_sha256"]:
+                if not _matches_complete_joint(auditor, certificate, disease, candidate["id"]):
                     raise ValueError(
                         "Mixed example does not match its complete canonical cohort role"
                     )
+        elif kind == "integration":
+            auditor = MixedAuditor(engine)
+            auditors[MIXED_METHOD] = auditor
+            live_joint = next(
+                certificate for _, method, certificate in certificates if method == MIXED_METHOD
+            )
+            if not _matches_complete_joint(
+                auditor, live_joint, live_joint["disease"]["id"], live_joint["compound"]["id"]
+            ):
+                raise ValueError(
+                    "Live joint certificate does not match its complete canonical source scope"
+                )
         for location, method, certificate in certificates:
             if certificate.get("method") != method:
                 raise ValueError(f"Unexpected certificate method at {location}")

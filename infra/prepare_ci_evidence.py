@@ -26,6 +26,7 @@ RUN_REPORTS = (
     "runner-resources.txt",
     "docker-disk-usage.txt",
     "ci-integration.json",
+    "ci-integration-replay.json",
 )
 QUALITY_OUTPUTS = (
     "coverage.xml",
@@ -35,6 +36,7 @@ QUALITY_OUTPUTS = (
     "data/processed/model.json",
     "data/processed/manifest.json",
     "reports/ci-quality.json",
+    "reports/ci-quality-replay.json",
     "reports/v1.1.0/score-regression.json",
     "reports/v1.1.0/assessment-nicotine-interacts.json",
     "reports/v1.1.0/assessment-galantamine-interacts.json",
@@ -54,6 +56,7 @@ QUALITY_OUTPUTS = (
 )
 MIXED_OUTPUTS = (
     "reports/ci-mixed.json",
+    "reports/ci-mixed-replay.json",
     "reports/v1.4.0/mixed-audit-benchmark.json",
     "reports/v1.4.0/mixed-audit-summary.json",
     "reports/v1.4.0/mixed-audit-example-first.json",
