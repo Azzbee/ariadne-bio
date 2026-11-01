@@ -121,12 +121,24 @@ def _check_binary64():
     odd = np.float64(float.fromhex("0x1.0000000000001p+0"))
     normal = np.float64(float.fromhex("0x1p-1022"))
     tiny = np.float64(float.fromhex("0x1p-1074"))
-    if (
-        np.add(even, halfway) != even
-        or np.add(odd, halfway) != float.fromhex("0x1.0000000000002p+0")
-        or np.add(-even, -halfway) != -even
-        or np.multiply(normal, np.float64(0.5)) != float.fromhex("0x1p-1023")
-        or np.add(tiny, np.float64(0.0)) != tiny
+    observed = (
+        np.add(even, halfway),
+        np.add(odd, halfway),
+        np.add(-even, -halfway),
+        np.multiply(normal, np.float64(0.5)),
+        np.add(tiny, np.float64(0.0)),
+    )
+    expected_bits = (
+        0x3FF0000000000000,
+        0x3FF0000000000002,
+        0xBFF0000000000000,
+        0x0008000000000000,
+        0x0000000000000001,
+    )
+    # A DAZ runtime can also compare an expected subnormal as zero. Inspect
+    # integer representations so the guard cannot inherit that false equality.
+    if tuple(int(np.asarray(value, dtype=np.float64).view(np.uint64)) for value in observed) != (
+        expected_bits
     ):
         raise RuntimeError("Audit scoring requires nearest-even arithmetic and gradual underflow")
 
