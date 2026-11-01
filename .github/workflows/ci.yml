@@ -78,7 +78,7 @@ jobs:
             demo.executed.ipynb
 
   integration:
-    needs: quality
+    # Independent checkout, data fit and retained model; publication requires both jobs.
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
