@@ -32,7 +32,7 @@ def test_audit_and_verification_roundtrip_preserve_the_hashed_scientific_payload
     assert certificate["baseline"]["supported"]
     assert certificate["scope"]["universe"] == "all_recorded_BINDS_edges"
     assert certificate["scope"]["includes_competitor_changes"] is True
-    assert certificate["identity"]["scorer"] == "float64-fixed-order-v1"
+    assert certificate["identity"]["scorer"] == "decimal80-binary64-v1"
     assert [row["budget"] for row in certificate["results"]] == [0, 1, 2]
     replay = audit_client.post("/api/audit/verify", json={"certificate": certificate})
     assert replay.status_code == 200, replay.text
