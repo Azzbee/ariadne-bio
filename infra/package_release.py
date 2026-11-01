@@ -227,13 +227,20 @@ def build(repo: Path, ref: str, snapshot: Path, output: Path, evidence: Path | N
         }
     )
     research = {name: files["frontend/" + name] for name in RUNTIME_FILES}
+    research.update(
+        {
+            name.removeprefix("frontend/"): content
+            for name, content in files.items()
+            if name.startswith("frontend/assets/")
+        }
+    )
     research.update(snapshot_files)
     research.update({name: content for name, content in files.items() if name.startswith("docs/")})
     research.update(
         {
             name: content
             for name, content in files.items()
-            if name.startswith("reports/") and name.endswith((".json", ".jpg", ".png"))
+            if name.startswith("reports/") and name.endswith((".json", ".jpg", ".png", ".html"))
         }
     )
     for name in ("manifest.json", "model.json", "evaluation.json"):
