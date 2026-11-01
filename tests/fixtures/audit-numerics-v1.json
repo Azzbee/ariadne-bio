@@ -1,0 +1,699 @@
+{
+  "model": {
+    "class_weight": "balanced",
+    "coefficients": [
+      0.3228075516663152,
+      0.886842169115829,
+      4.028486079269539,
+      0.31687379001385685,
+      -0.346121172079039,
+      -2.669991924903594,
+      -0.8184159672333643,
+      -1.379976452279364
+    ],
+    "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+    "feature_names": [
+      "log_direct",
+      "log_interaction",
+      "log_pathway",
+      "normalized_direct",
+      "normalized_interaction",
+      "normalized_pathway",
+      "log_compound_degree",
+      "log_disease_degree"
+    ],
+    "fit_scope": "Training split only; no refit on validation or test labels",
+    "intercept": -0.5903294074627062,
+    "interpretation": "Relative retrieval score; not calibrated clinical probability",
+    "mean": [
+      0.29633369852200747,
+      1.0139479738011008,
+      4.89283005021538,
+      0.011665114262097119,
+      0.09592414403867225,
+      2.0614783502002973,
+      1.7342632989095008,
+      5.01064288854549
+    ],
+    "model_sha256": "9e07aa28d768d4fedc6080566b44b605cc2488e374afe184d22ffe91dd634838",
+    "name": "Typed-path logistic retrieval",
+    "negative_sampling_seed": 43,
+    "regularization_C": 10.0,
+    "scale": [
+      0.5160971623752143,
+      1.1811835841241562,
+      2.3639134330057314,
+      0.02195736026985026,
+      0.16144380687506094,
+      1.1629784513257757,
+      0.9576089201068587,
+      1.030146314281978
+    ],
+    "seed": 42,
+    "selection": "Maximum validation MRR, then Recall@10, then stronger regularization",
+    "training_positive_pairs": 528,
+    "training_unobserved_pairs": 5280,
+    "validation_metrics": {
+      "evaluated_diseases": 44,
+      "evaluated_links": 113,
+      "hits_at_10": 9,
+      "mean_rank": 287.46902654867256,
+      "median_rank": 155.0,
+      "mrr": 0.027357082678330917,
+      "recall_at_10": 0.07964601769911504
+    },
+    "validation_search": [
+      {
+        "C": 0.01,
+        "evaluated_diseases": 44,
+        "evaluated_links": 113,
+        "hits_at_10": 4,
+        "mean_rank": 306.39823008849555,
+        "median_rank": 175.0,
+        "mrr": 0.018908297474223262,
+        "recall_at_10": 0.035398230088495575
+      },
+      {
+        "C": 0.1,
+        "evaluated_diseases": 44,
+        "evaluated_links": 113,
+        "hits_at_10": 5,
+        "mean_rank": 297.87610619469024,
+        "median_rank": 158.0,
+        "mrr": 0.024553378021032482,
+        "recall_at_10": 0.04424778761061947
+      },
+      {
+        "C": 1.0,
+        "evaluated_diseases": 44,
+        "evaluated_links": 113,
+        "hits_at_10": 8,
+        "mean_rank": 289.2300884955752,
+        "median_rank": 160.0,
+        "mrr": 0.02606531424723157,
+        "recall_at_10": 0.07079646017699115
+      },
+      {
+        "C": 10.0,
+        "evaluated_diseases": 44,
+        "evaluated_links": 113,
+        "hits_at_10": 9,
+        "mean_rank": 287.46902654867256,
+        "median_rank": 155.0,
+        "mrr": 0.027357082678330917,
+        "recall_at_10": 0.07964601769911504
+      }
+    ],
+    "version": "1.0"
+  },
+  "reference": {
+    "historical_ci_fields": "expected_ci_score and expected_ci_rank describe the original historical scorer artifact; expected contains the new finite arithmetic golden values.",
+    "input_file_sha256": "edff8c8d3b0d22deb7ea62e2e70a4589c07dbd19d8faa4f1146c6639eb10ed39",
+    "method": "Python standard-library _pydecimal reference implementation, explicit precision-80 context, scalar binary64 operations; no ARIADNE imports.",
+    "script_sha256": "b61226b058c3521197d477bd26f2c4d51e43538a44078625c8976dd210fd62c2"
+  },
+  "rows": [
+    {
+      "compound_degree": 24,
+      "compound_id": "Compound::DB00786",
+      "counts": [
+        6,
+        59,
+        1901
+      ],
+      "disease_degree": 267,
+      "disease_id": "Disease::DOID:7148",
+      "example": "source",
+      "expected": {
+        "divisor_hex": "0x1.40332f1b4762ap+6",
+        "features_hex": [
+          "0x1.f2272ae325a57p+0",
+          "0x1.0609bdc65328bp+2",
+          "0x1.e33e08a793f9dp+2",
+          "0x1.280c0771379f4p-4",
+          "0x1.1ab7a0e3147c8p-1",
+          "0x1.9ab7b2d22236bp+1",
+          "0x1.9c041f7ed8d33p+1",
+          "0x1.65d2bb0e69fa9p+2"
+        ],
+        "logit_hex": "0x1.40002621cbb87p+1",
+        "score_hex": "0x1.d929288cb25d6p-1"
+      },
+      "expected_ci_rank": 1,
+      "expected_ci_score": 0.9241421386479328
+    },
+    {
+      "compound_degree": 30,
+      "compound_id": "Compound::DB00586",
+      "counts": [
+        4,
+        19,
+        1996
+      ],
+      "disease_degree": 267,
+      "disease_id": "Disease::DOID:7148",
+      "example": "source",
+      "expected": {
+        "divisor_hex": "0x1.65fe91dfce140p+6",
+        "features_hex": [
+          "0x1.9c041f7ed8d33p+0",
+          "0x1.7f7427b73e391p+1",
+          "0x1.e65c97690cc83p+2",
+          "0x1.662ec7d81c822p-5",
+          "0x1.8a44ed53cf446p-3",
+          "0x1.93035db5e86bfp+1",
+          "0x1.b78ce48912b5ap+1",
+          "0x1.65d2bb0e69fa9p+2"
+        ],
+        "logit_hex": "0x1.dc735f85ef140p+0",
+        "score_hex": "0x1.bb198a92432bbp-1"
+      },
+      "expected_ci_rank": 2,
+      "expected_ci_score": 0.8654292396109533
+    },
+    {
+      "compound_degree": 31,
+      "compound_id": "Compound::DB01234",
+      "counts": [
+        3,
+        29,
+        1648
+      ],
+      "disease_degree": 267,
+      "disease_id": "Disease::DOID:7148",
+      "example": "source",
+      "expected": {
+        "divisor_hex": "0x1.6be97de5c2978p+6",
+        "features_hex": [
+          "0x1.62e42fefa39efp+0",
+          "0x1.b35a6f90bd69bp+1",
+          "0x1.da1b6e9e28bb5p+2",
+          "0x1.09c5dfbfba9c5p-5",
+          "0x1.1b54c956cb812p-2",
+          "0x1.79a7da2a919d1p+1",
+          "0x1.bb9d3beb8c86bp+1",
+          "0x1.65d2bb0e69fa9p+2"
+        ],
+        "logit_hex": "0x1.c8bb15eb0e070p+0",
+        "score_hex": "0x1.b6603c7448f98p-1"
+      },
+      "expected_ci_rank": 3,
+      "expected_ci_score": 0.8562029735517055
+    },
+    {
+      "compound_degree": 11,
+      "compound_id": "Compound::DB01017",
+      "counts": [
+        4,
+        31,
+        1947
+      ],
+      "disease_degree": 267,
+      "disease_id": "Disease::DOID:7148",
+      "example": "source",
+      "expected": {
+        "divisor_hex": "0x1.b18d82010b7a8p+5",
+        "features_hex": [
+          "0x1.9c041f7ed8d33p+0",
+          "0x1.bb9d3beb8c86bp+1",
+          "0x1.e4c590f2d27ecp+2",
+          "0x1.23af200450f7ap-4",
+          "0x1.cf3780d4eda1bp-2",
+          "0x1.cdf154f42144fp+1",
+          "0x1.3e116bcd39e7dp+1",
+          "0x1.65d2bb0e69fa9p+2"
+        ],
+        "logit_hex": "0x1.c3f48cb7096a4p+0",
+        "score_hex": "0x1.b5313206dffd5p-1"
+      },
+      "expected_ci_rank": 4,
+      "expected_ci_score": 0.8538909562485013
+    },
+    {
+      "compound_degree": 12,
+      "compound_id": "Compound::DB00155",
+      "counts": [
+        3,
+        9,
+        596
+      ],
+      "disease_degree": 267,
+      "disease_id": "Disease::DOID:7148",
+      "example": "source",
+      "expected": {
+        "divisor_hex": "0x1.c4d4c2993cae2p+5",
+        "features_hex": [
+          "0x1.62e42fefa39efp+0",
+          "0x1.26bb1bbb55516p+1",
+          "0x1.99152b8430e49p+2",
+          "0x1.a70f7fa31467dp-5",
+          "0x1.2e32843623a6dp-3",
+          "0x1.38f23e581838ap+1",
+          "0x1.485042b318c51p+1",
+          "0x1.65d2bb0e69fa9p+2"
+        ],
+        "logit_hex": "0x1.b65571d704b0cp+0",
+        "score_hex": "0x1.b1ba995cbc53bp-1"
+      },
+      "expected_ci_rank": 5,
+      "expected_ci_score": 0.8471267629339886
+    },
+    {
+      "compound_degree": 11,
+      "compound_id": "Compound::DB01197",
+      "counts": [
+        3,
+        25,
+        1127
+      ],
+      "disease_degree": 267,
+      "disease_id": "Disease::DOID:7148",
+      "example": "source",
+      "expected": {
+        "divisor_hex": "0x1.b18d82010b7a8p+5",
+        "features_hex": [
+          "0x1.62e42fefa39efp+0",
+          "0x1.a1094eaf01acdp+1",
+          "0x1.c1ce0d6118ed8p+2",
+          "0x1.b95fd4f70911ep-5",
+          "0x1.846f06a11cb99p-2",
+          "0x1.8a757254078b9p+1",
+          "0x1.3e116bcd39e7dp+1",
+          "0x1.65d2bb0e69fa9p+2"
+        ],
+        "logit_hex": "0x1.a7ddf10eafa60p+0",
+        "score_hex": "0x1.ade87118cde43p-1"
+      },
+      "expected_ci_rank": 6,
+      "expected_ci_score": 0.8396640150812761
+    },
+    {
+      "compound_degree": 26,
+      "compound_id": "Compound::DB01136",
+      "counts": [
+        4,
+        17,
+        3082
+      ],
+      "disease_degree": 267,
+      "disease_id": "Disease::DOID:7148",
+      "example": "source",
+      "expected": {
+        "divisor_hex": "0x1.4d4650375d3f3p+6",
+        "features_hex": [
+          "0x1.9c041f7ed8d33p+0",
+          "0x1.71f7b3a6b9186p+1",
+          "0x1.0113bad6e02f7p+3",
+          "0x1.8022ea65e7626p-5",
+          "0x1.7c455cfe74bd9p-3",
+          "0x1.d1943d5a7ace7p+1",
+          "0x1.a5ddfb8038490p+1",
+          "0x1.65d2bb0e69fa9p+2"
+        ],
+        "logit_hex": "0x1.940d555988e64p+0",
+        "score_hex": "0x1.a86e72d50708cp-1"
+      },
+      "expected_ci_rank": 7,
+      "expected_ci_score": 0.828967655662852
+    },
+    {
+      "compound_degree": 6,
+      "compound_id": "Compound::DB00500",
+      "counts": [
+        3,
+        9,
+        793
+      ],
+      "disease_degree": 267,
+      "disease_id": "Disease::DOID:7148",
+      "example": "source",
+      "expected": {
+        "divisor_hex": "0x1.40332f1b4762ap+5",
+        "features_hex": [
+          "0x1.62e42fefa39efp+0",
+          "0x1.26bb1bbb55516p+1",
+          "0x1.ab5555deae030p+2",
+          "0x1.280c0771379f4p-4",
+          "0x1.9f6350e62ec6bp-3",
+          "0x1.848d3761ba468p+1",
+          "0x1.f2272ae325a57p+0",
+          "0x1.65d2bb0e69fa9p+2"
+        ],
+        "logit_hex": "0x1.8cecb588893fcp+0",
+        "score_hex": "0x1.a6644efc3768dp-1"
+      },
+      "expected_ci_rank": 8,
+      "expected_ci_score": 0.8249840433961297
+    },
+    {
+      "compound_degree": 26,
+      "compound_id": "Compound::DB01050",
+      "counts": [
+        3,
+        21,
+        2105
+      ],
+      "disease_degree": 267,
+      "disease_id": "Disease::DOID:7148",
+      "example": "source",
+      "expected": {
+        "divisor_hex": "0x1.4d4650375d3f3p+6",
+        "features_hex": [
+          "0x1.62e42fefa39efp+0",
+          "0x1.8ba74773dc5c8p+1",
+          "0x1.e9c34f0251071p+2",
+          "0x1.21c71b08fb327p-5",
+          "0x1.cc58410c4ad27p-3",
+          "0x1.a254e88943f3cp+1",
+          "0x1.a5ddfb8038490p+1",
+          "0x1.65d2bb0e69fa9p+2"
+        ],
+        "logit_hex": "0x1.898e7a6e66bb8p+0",
+        "score_hex": "0x1.a56a4185d8b7cp-1"
+      },
+      "expected_ci_rank": 9,
+      "expected_ci_score": 0.8230762935530573
+    },
+    {
+      "compound_degree": 13,
+      "compound_id": "Compound::DB01009",
+      "counts": [
+        3,
+        14,
+        1260
+      ],
+      "disease_degree": 267,
+      "disease_id": "Disease::DOID:7148",
+      "example": "source",
+      "expected": {
+        "divisor_hex": "0x1.d75250db9c792p+5",
+        "features_hex": [
+          "0x1.62e42fefa39efp+0",
+          "0x1.5aa16394d481fp+1",
+          "0x1.c8f031e7e1221p+2",
+          "0x1.96de63c1f9bbbp-5",
+          "0x1.b4a12a233b840p-3",
+          "0x1.8de23577b99ffp+1",
+          "0x1.51cca16d7bba7p+1",
+          "0x1.65d2bb0e69fa9p+2"
+        ],
+        "logit_hex": "0x1.88efb2ce997a6p+0",
+        "score_hex": "0x1.a53bf9e6e8d42p-1"
+      },
+      "expected_ci_rank": 10,
+      "expected_ci_score": 0.8227232069370202
+    },
+    {
+      "compound_degree": 3,
+      "compound_id": "Compound::DB01143",
+      "counts": [
+        2,
+        2,
+        7
+      ],
+      "disease_degree": 16,
+      "disease_id": "Disease::DOID:5408",
+      "example": "pubmed",
+      "expected": {
+        "divisor_hex": "0x1.bb67ae8584caap+2",
+        "features_hex": [
+          "0x1.193ea7aad030bp+0",
+          "0x1.193ea7aad030bp+0",
+          "0x1.0a2b23f3bab73p+1",
+          "0x1.03b38ff077a00p-2",
+          "0x1.03b38ff077a00p-2",
+          "0x1.658994dbe99eap-1",
+          "0x1.62e42fefa39efp+0",
+          "0x1.6aa6bc1fa7f7ap+1"
+        ],
+        "logit_hex": "0x1.2b6453fdae5abp+2",
+        "score_hex": "0x1.fb489215906d0p-1"
+      },
+      "expected_ci_rank": 1,
+      "expected_ci_score": 0.9907880450557177
+    },
+    {
+      "compound_degree": 5,
+      "compound_id": "Compound::DB05260",
+      "counts": [
+        1,
+        0,
+        37
+      ],
+      "disease_degree": 16,
+      "disease_id": "Disease::DOID:5408",
+      "example": "pubmed",
+      "expected": {
+        "divisor_hex": "0x1.1e3779b97f4a8p+3",
+        "features_hex": [
+          "0x1.62e42fefa39efp-1",
+          "0x0.0p+0",
+          "0x1.d19c6c5c341a8p+1",
+          "0x1.b21ba11b3d0adp-4",
+          "0x0.0p+0",
+          "0x1.a2ec266cae287p+0",
+          "0x1.cab0bfa2a2002p+0",
+          "0x1.6aa6bc1fa7f7ap+1"
+        ],
+        "logit_hex": "0x1.157bcc38d8cdap+1",
+        "score_hex": "0x1.cb6e130808641p-1"
+      },
+      "expected_ci_rank": 2,
+      "expected_ci_score": 0.8973241755777012
+    },
+    {
+      "compound_degree": 2,
+      "compound_id": "Compound::DB01022",
+      "counts": [
+        1,
+        1,
+        1
+      ],
+      "disease_degree": 16,
+      "disease_id": "Disease::DOID:5408",
+      "example": "pubmed",
+      "expected": {
+        "divisor_hex": "0x1.6a09e667f3bcdp+2",
+        "features_hex": [
+          "0x1.62e42fefa39efp-1",
+          "0x1.62e42fefa39efp-1",
+          "0x1.62e42fefa39efp-1",
+          "0x1.4d5f1f2d492e9p-3",
+          "0x1.4d5f1f2d492e9p-3",
+          "0x1.4d5f1f2d492e9p-3",
+          "0x1.193ea7aad030bp+0",
+          "0x1.6aa6bc1fa7f7ap+1"
+        ],
+        "logit_hex": "0x1.0ef0c9c98fc5dp+1",
+        "score_hex": "0x1.c8f81e7cdf1c7p-1"
+      },
+      "expected_ci_rank": 3,
+      "expected_ci_score": 0.8925179984503808
+    },
+    {
+      "compound_degree": 21,
+      "compound_id": "Compound::DB00170",
+      "counts": [
+        1,
+        1,
+        55
+      ],
+      "disease_degree": 16,
+      "disease_id": "Disease::DOID:5408",
+      "example": "pubmed",
+      "expected": {
+        "divisor_hex": "0x1.2548eb9151e85p+4",
+        "features_hex": [
+          "0x1.62e42fefa39efp-1",
+          "0x1.62e42fefa39efp-1",
+          "0x1.019f5cb2a6c50p+2",
+          "0x1.b3254f6b4a01ap-5",
+          "0x1.b3254f6b4a01ap-5",
+          "0x1.62ec5024a1690p+0",
+          "0x1.8ba74773dc5c8p+1",
+          "0x1.6aa6bc1fa7f7ap+1"
+        ],
+        "logit_hex": "0x1.ef90fcd6ab860p+0",
+        "score_hex": "0x1.bf6e993499935p-1"
+      },
+      "expected_ci_rank": 4,
+      "expected_ci_score": 0.8738906742771977
+    },
+    {
+      "compound_degree": 15,
+      "compound_id": "Compound::DB06716",
+      "counts": [
+        1,
+        0,
+        21
+      ],
+      "disease_degree": 16,
+      "disease_id": "Disease::DOID:5408",
+      "example": "pubmed",
+      "expected": {
+        "divisor_hex": "0x1.efbdeb14f4edap+3",
+        "features_hex": [
+          "0x1.62e42fefa39efp-1",
+          "0x0.0p+0",
+          "0x1.8ba74773dc5c8p+1",
+          "0x1.00366f89b1d31p-4",
+          "0x0.0p+0",
+          "0x1.b6aaca240f357p-1",
+          "0x1.62e42fefa39efp+1",
+          "0x1.6aa6bc1fa7f7ap+1"
+        ],
+        "logit_hex": "0x1.8fb37a58da6fcp+0",
+        "score_hex": "0x1.a730d5bb7ed03p-1"
+      },
+      "expected_ci_rank": 5,
+      "expected_ci_score": 0.8265444556595017
+    },
+    {
+      "compound_degree": 132,
+      "compound_id": "Compound::DB01268",
+      "counts": [
+        0,
+        24,
+        732
+      ],
+      "disease_degree": 16,
+      "disease_id": "Disease::DOID:5408",
+      "example": "pubmed",
+      "expected": {
+        "divisor_hex": "0x1.6fa6ea162d0f0p+5",
+        "features_hex": [
+          "0x0.0p+0",
+          "0x1.9c041f7ed8d33p+1",
+          "0x1.a637a29b23356p+2",
+          "0x0.0p+0",
+          "0x1.ae43395fbd164p-2",
+          "0x1.6a1bdcbdf72a2p+1",
+          "0x1.38fb7ae8ef02cp+2",
+          "0x1.6aa6bc1fa7f7ap+1"
+        ],
+        "logit_hex": "0x1.60d22beee6d8ep+0",
+        "score_hex": "0x1.98ef955b61b6ep-1"
+      },
+      "expected_ci_rank": 6,
+      "expected_ci_score": 0.7987028764772341
+    },
+    {
+      "compound_degree": 34,
+      "compound_id": "Compound::DB00753",
+      "counts": [
+        0,
+        7,
+        102
+      ],
+      "disease_degree": 16,
+      "disease_id": "Disease::DOID:5408",
+      "example": "pubmed",
+      "expected": {
+        "divisor_hex": "0x1.752e50db3a3a2p+4",
+        "features_hex": [
+          "0x0.0p+0",
+          "0x1.0a2b23f3bab73p+1",
+          "0x1.289f6655913ecp+2",
+          "0x0.0p+0",
+          "0x1.0cc1ec6741992p-2",
+          "0x1.ae71f2f739553p+0",
+          "0x1.c715a530ff3c5p+1",
+          "0x1.6aa6bc1fa7f7ap+1"
+        ],
+        "logit_hex": "0x1.4ac6e528b017ep+0",
+        "score_hex": "0x1.91aa3e7b51126p-1"
+      },
+      "expected_ci_rank": 7,
+      "expected_ci_score": 0.7845019841702524
+    },
+    {
+      "compound_degree": 85,
+      "compound_id": "Compound::DB08865",
+      "counts": [
+        0,
+        23,
+        518
+      ],
+      "disease_degree": 16,
+      "disease_id": "Disease::DOID:5408",
+      "example": "pubmed",
+      "expected": {
+        "divisor_hex": "0x1.2706821902e9ap+5",
+        "features_hex": [
+          "0x0.0p+0",
+          "0x1.96ca77c922cf9p+1",
+          "0x1.901f3176fbb49p+2",
+          "0x0.0p+0",
+          "0x1.f05322dc86902p-2",
+          "0x1.5b0643120459dp+1",
+          "0x1.1d1406ae9bd46p+2",
+          "0x1.6aa6bc1fa7f7ap+1"
+        ],
+        "logit_hex": "0x1.439ac513f3433p+0",
+        "score_hex": "0x1.8f3878ad9d435p-1"
+      },
+      "expected_ci_rank": 8,
+      "expected_ci_score": 0.7797277175838021
+    },
+    {
+      "compound_degree": 52,
+      "compound_id": "Compound::DB00398",
+      "counts": [
+        0,
+        8,
+        260
+      ],
+      "disease_degree": 16,
+      "disease_id": "Disease::DOID:5408",
+      "example": "pubmed",
+      "expected": {
+        "divisor_hex": "0x1.cd82b446159f3p+4",
+        "features_hex": [
+          "0x0.0p+0",
+          "0x1.193ea7aad030bp+1",
+          "0x1.64211a33d8095p+2",
+          "0x0.0p+0",
+          "0x1.f553406c8126bp-3",
+          "0x1.26e88d877eabbp+1",
+          "0x1.fc32868223cabp+1",
+          "0x1.6aa6bc1fa7f7ap+1"
+        ],
+        "logit_hex": "0x1.38133a5796408p+0",
+        "score_hex": "0x1.8b35d7af390cdp-1"
+      },
+      "expected_ci_rank": 9,
+      "expected_ci_score": 0.7718951608080944
+    },
+    {
+      "compound_degree": 104,
+      "compound_id": "Compound::DB06616",
+      "counts": [
+        0,
+        25,
+        748
+      ],
+      "disease_degree": 16,
+      "disease_id": "Disease::DOID:5408",
+      "example": "pubmed",
+      "expected": {
+        "divisor_hex": "0x1.465655f122ff6p+5",
+        "features_hex": [
+          "0x0.0p+0",
+          "0x1.a1094eaf01acdp+1",
+          "0x1.a7996b64bddf1p+2",
+          "0x0.0p+0",
+          "0x1.e97baa9a9e2f9p-2",
+          "0x1.7b233e5abef5bp+1",
+          "0x1.29da7c8333aa5p+2",
+          "0x1.6aa6bc1fa7f7ap+1"
+        ],
+        "logit_hex": "0x1.37916608036aap+0",
+        "score_hex": "0x1.8b08195868fc4p-1"
+      },
+      "expected_ci_rank": 10,
+      "expected_ci_score": 0.7715461655065997
+    }
+  ],
+  "scorer": "decimal80-binary64-v1",
+  "source": "Downloaded quality artifact 13082241344, PR run 41301561071"
+}
