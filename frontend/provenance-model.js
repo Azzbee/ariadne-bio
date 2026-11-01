@@ -39,6 +39,7 @@ export function provenanceExampleURL(currentURL) {
   url.searchParams.set('dependency_budget', '1');
   url.searchParams.delete('audit_k');
   url.searchParams.delete('audit_budget');
+  url.searchParams.delete('mixed_audit');
   url.searchParams.delete('exclude');
   url.searchParams.delete('view');
   url.hash = 'dependency-section';
