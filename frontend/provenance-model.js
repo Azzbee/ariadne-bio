@@ -1,5 +1,5 @@
 import { RequestGate } from './investigation.js';
-import { copyJSON } from './audit-model.js';
+import { copyJSON, SUPPORTED_AUDIT_SCORERS } from './audit-model.js';
 import { escapeHTML as esc, number } from './utils.js';
 
 const HASH = /^[a-f0-9]{64}$/;
@@ -75,7 +75,7 @@ export function validateProvenanceAudit(c, diseaseId, compoundId, options = {}) 
   const eligible = s.group_ids.filter(id => !s.protected_group_ids.includes(id));
   requireClaim(s.eligible_group_count === s.group_ids.length && s.available_group_count === eligible.length, 'invalid group counts');
   for (const key of ['dataset_sha256', 'graph_sha256', 'model_sha256', 'group_map_sha256']) requireClaim(HASH.test(c.identity?.[key] || ''), `missing ${key}`);
-  requireClaim(c.identity.scorer === 'float64-fixed-order-v1' && HASH.test(c.certificate_sha256 || ''), 'missing scorer or certificate identity');
+  requireClaim(SUPPORTED_AUDIT_SCORERS.includes(c.identity.scorer) && HASH.test(c.certificate_sha256 || ''), 'unknown scorer or missing certificate identity');
   requireClaim(validateState(c.baseline), 'invalid baseline');
   requireClaim(Array.isArray(c.results) && c.results.length === p.budget + 1, 'incomplete budget results');
   for (let index = 0; index <= p.budget; index += 1) {

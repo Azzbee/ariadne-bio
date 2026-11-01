@@ -7,6 +7,8 @@ const numericScore = value => Number.isFinite(value) ? value.toFixed(6) : '—';
 const plural = value => value === 1 ? 'record' : 'records';
 const message = error => error?.message || 'The audit could not be completed. Please try again.';
 const slug = value => String(value).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const hasLegacyRank = baseline => Object.hasOwn(baseline, 'legacy_rank')
+  && (baseline.legacy_rank === null || (Number.isSafeInteger(baseline.legacy_rank) && baseline.legacy_rank > 0));
 
 function recordHTML(edge, index) {
   const sources = sourceEntries(edge.sources || edge.data?.sources).map(item => item.name);
@@ -28,12 +30,18 @@ function recordHTML(edge, index) {
 
 function proofHTML(certificate) {
   const { scope, identity, proof, baseline } = certificate;
+  const comparison = [];
+  if (hasLegacyRank(baseline)) comparison.push(`Explorer rank ${rank(baseline.legacy_rank)}`);
+  if (Number.isFinite(baseline.score_difference)) comparison.push(`score difference ${esc(baseline.score_difference.toExponential(3))}`);
+  const arithmetic = identity.scorer === 'decimal80-binary64-v1'
+    ? 'This audit uses its declared decimal/binary64 arithmetic contract, separately from the explorer ranking. Replay must use the same scorer identity.'
+    : 'This historical certificate uses fixed-order float64 arithmetic. Exact replay depends on reproducing that scorer’s numerical behavior.';
   return `<details class="audit-proof"><summary><span>${icon('shield')} Scope, arithmetic & proof</span><span class="audit-proof-stamp">${number(scope.eligible_edges)} eligible records</span></summary><div class="audit-proof-body">
     <p>This certificate covers withdrawal of any set of at most <strong>${certificate.budget} recorded BINDS ${plural(certificate.budget)}</strong> across <strong>all ${number(scope.candidate_count)} compounds</strong>. Other relationship families and the fitted model stay fixed. Rank uses the declared canonical scorer and compound-ID tie breaking.</p>
     <dl class="audit-proof-metrics"><div><dt>Local states evaluated</dt><dd>${number(proof.local_states_evaluated)}</dd></div><div><dt>Global states covered by the envelope</dt><dd>${number(proof.covered_global_states)}</dd></div><div><dt>Envelope search budget</dt><dd>0–${proof.search_budget} withdrawals</dd></div></dl>
     <p>The bounds cover combinations through the envelope; the solver does not independently rebuild every global graph. The displayed verdict is restricted to your requested budget. Losing all support is reported separately from a numerical rank.</p>
     <p class="audit-scope-limit">The guarantee does not extend to other edge families, source-wide or correlated failures, added records, model refitting, or a larger withdrawal budget. It is a statement about this graph and model, not about biological truth or drug efficacy.</p>
-    <dl class="audit-identity"><dt>Canonical scorer</dt><dd><code>${esc(identity.scorer)}</code></dd><dt>Explorer comparison</dt><dd>Explorer rank ${rank(baseline.legacy_rank)} · score difference ${esc(Number.isFinite(baseline.score_difference) ? baseline.score_difference.toExponential(3) : 'not recorded')}. The certificate uses its own declared arithmetic.</dd>
+    <p>${arithmetic}</p><dl class="audit-identity"><dt>Declared audit scorer</dt><dd><code>${esc(identity.scorer)}</code></dd>${comparison.length ? `<dt>Recorded explorer comparison</dt><dd>${comparison.join(' · ')}.</dd>` : ''}
       <dt>Certificate SHA-256</dt><dd><code>${esc(certificate.certificate_sha256)}</code></dd><dt>Envelope SHA-256</dt><dd><code>${esc(proof.envelope_bounds_sha256)}</code></dd>
       <dt>Graph SHA-256</dt><dd><code>${esc(identity.graph_sha256)}</code></dd><dt>Model SHA-256</dt><dd><code>${esc(identity.model_sha256)}</code></dd><dt>Dataset SHA-256</dt><dd><code>${esc(identity.dataset_sha256)}</code></dd></dl>
     <p class="audit-interpretation">${esc(certificate.interpretation)}</p><button type="button" class="text-link" data-audit-action="method">Read the method & research scope ${icon('arrow')}</button>
@@ -178,7 +186,7 @@ export class AuditPanel {
     if (!c) return;
     const verdict = auditVerdict(c), row = c.results.at(-1);
     this.find('audit-body').innerHTML = `<div class="audit-result ${verdict.kind}"><div class="audit-verdict"><div><span class="audit-verdict-label">${icon('shield')} ${this.api.mode === 'snapshot' ? 'RECORDED EXACT RESULT' : 'EXACT BOUNDED RESULT'}</span><h3>${esc(verdict.title)}</h3><p>${esc(verdict.summary)}</p></div><div class="audit-budget-mark" aria-hidden="true"><span>UP TO</span><strong>${c.budget}</strong><span>WITHDRAWALS</span></div></div>
-      ${!c.baseline.rank_agrees_with_legacy ? `<p class="audit-arithmetic-note">The canonical audit baseline is ${rank(c.baseline.rank)}; the explorer reports ${rank(c.baseline.legacy_rank)}. This certificate consistently uses its fixed-order scorer and tie rule. See the proof details.</p>` : ''}
+      ${c.baseline.rank_agrees_with_legacy === false && hasLegacyRank(c.baseline) ? `<p class="audit-arithmetic-note">The audit baseline is ${rank(c.baseline.rank)}; the recorded explorer rank is ${rank(c.baseline.legacy_rank)}. This certificate uses its declared scorer and tie rule. See the proof details.</p>` : ''}
       <div class="audit-metrics"><div><span>Baseline rank</span><strong>${rank(c.baseline.rank)}</strong><small>Canonical audit scoring</small></div><div><span>Worst supported rank</span><strong>${rank(row.worst_supported_rank)}</strong><small>Across the full binding universe</small></div><div><span>Support can vanish</span><strong>${row.unsupported_attainable ? 'Yes' : 'No'}</strong><small>Reported independently of rank</small></div><div><span>Minimum failure budget</span><strong>${c.minimum_failure_budget === null ? `None ≤ ${c.budget}` : c.minimum_failure_budget}</strong><small>${c.minimum_failure_budget === 0 ? 'Outside the shortlist at baseline' : 'Within the requested scope'}</small></div></div>
       <div class="audit-analysis-grid">${boundsHTML(c, this.selectedBudget)}<div class="audit-competition"><div class="audit-block-heading"><span class="eyebrow">WHY RIVALS MATTER</span><h3>Challenge the whole ranking.</h3></div><div class="audit-rank-comparison"><div><span>Selected compound only</span><strong>${rank(row.focus_only_worst_rank)}</strong><small>${row.focus_only_unsupported_attainable ? 'Support can also vanish' : 'Support retained within budget'}</small></div><div class="global"><span>Any compound’s records</span><strong>${rank(row.worst_supported_rank)}</strong><small>${row.unsupported_attainable ? 'Support can also vanish' : 'Support retained within budget'}</small></div></div><p>${row.competitor_rank_gap > 0 ? `Allowing withdrawals on rivals worsens the supported-rank bound by ${number(row.competitor_rank_gap)} ${row.competitor_rank_gap === 1 ? 'place' : 'places'}.` : 'The supported-rank bounds coincide in this case. Rivals are still included in the global audit.'} Removing evidence can raise a rival’s score, so a focus-only check is a narrower question.</p></div></div>
       <div id="audit-witness-area">${witnessHTML(c, this.selectedBudget, this.selectedKind)}</div>

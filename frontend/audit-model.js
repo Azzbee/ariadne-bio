@@ -1,5 +1,8 @@
 import { RequestGate } from './investigation.js';
 
+/** Historical certificates keep their own arithmetic identity; unknown scorers fail closed. */
+export const SUPPORTED_AUDIT_SCORERS = Object.freeze(['decimal80-binary64-v1', 'float64-fixed-order-v1']);
+
 /** Audit scope is always the complete graph; explorer family exclusions are absent. */
 export function auditContext(diseaseId, compoundId, topK = 10, budget = 2) {
   return JSON.stringify([diseaseId || null, compoundId || null, topK, budget]);
@@ -78,7 +81,7 @@ export function validateAudit(certificate, diseaseId, compoundId, topK, budget) 
     && c.scope?.includes_competitor_changes === true, 'the full-graph withdrawal scope is missing');
   requireAudit(Number.isInteger(c.scope.eligible_edges) && c.scope.eligible_edges >= 0
     && Number.isInteger(c.scope.candidate_count) && c.scope.candidate_count > 0, 'invalid graph coverage');
-  requireAudit(c.identity?.scorer === 'float64-fixed-order-v1', 'unknown canonical scorer');
+  requireAudit(SUPPORTED_AUDIT_SCORERS.includes(c.identity?.scorer), 'unknown canonical scorer');
   for (const key of ['dataset_sha256', 'graph_sha256', 'model_sha256']) {
     requireAudit(/^[a-f0-9]{64}$/.test(c.identity[key] || ''), `missing ${key}`);
   }
