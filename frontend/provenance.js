@@ -7,9 +7,10 @@ const rank = value => value === null ? 'No supported rank' : `#${number(value)}`
 const errorText = error => error?.message || 'The shared-dependency audit could not complete.';
 const labelFor = (certificate, id) => certificate.scope.groups.find(group => group.group_id === id)?.label || id;
 const slug = value => String(value).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const exportName = (c, suffix) => `ariadne-${slug(c.disease.name)}-${slug(c.compound.name)}-${c.scope.group_kind}-budget${c.budget}-${suffix}`;
 
 /** Native modal review; the embedded document has no script or external-resource permission. */
-export function openDossierDialog({ html, title, onDownload, documentObject = document, restoreFocus = documentObject.activeElement }) {
+export function openDossierDialog({ html, title, downloadName = 'ariadne-review.html', documentObject = document, restoreFocus = documentObject.activeElement }) {
   const dialog = documentObject.createElement('dialog');
   dialog.className = 'dependency-dossier-dialog';
   dialog.setAttribute('aria-labelledby', 'dependency-review-title');
@@ -22,7 +23,7 @@ export function openDossierDialog({ html, title, onDownload, documentObject = do
   heading.append(titleElement, description);
   const controls = documentObject.createElement('div'); controls.className = 'dependency-dossier-controls';
   const print = documentObject.createElement('button'); print.type = 'button'; print.className = 'button button-outline'; print.textContent = 'Print'; print.disabled = true;
-  const download = documentObject.createElement('button'); download.type = 'button'; download.className = 'button button-dark'; download.textContent = 'Download HTML';
+  const download = documentObject.createElement('a'); download.className = 'button button-dark'; download.textContent = 'Download HTML'; download.download = downloadName;
   const close = documentObject.createElement('button'); close.type = 'button'; close.className = 'button button-quiet'; close.textContent = 'Close'; close.setAttribute('aria-label', 'Close review dossier');
   controls.append(print, download, close); header.append(heading, controls);
   const frame = documentObject.createElement('iframe'); frame.className = 'dependency-dossier-frame'; frame.title = `${title} — document preview`;
@@ -32,18 +33,32 @@ export function openDossierDialog({ html, title, onDownload, documentObject = do
   frame.srcdoc = html;
   const status = documentObject.createElement('p'); status.className = 'dependency-dossier-status'; status.setAttribute('role', 'status');
   status.textContent = 'The document contains the complete certificate. Printing excludes the raw JSON appendix.';
+  let downloadURL = null;
+  try {
+    downloadURL = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
+    download.href = downloadURL;
+  } catch {
+    download.setAttribute('aria-disabled', 'true');
+    status.textContent = 'The HTML export could not be prepared. The preview remains available.';
+  }
   print.addEventListener('click', () => {
     if (print.disabled) return;
     try { frame.contentWindow.focus(); frame.contentWindow.print(); }
     catch { status.textContent = 'The browser could not open its print dialog. The preview remains available for review.'; }
   });
-  download.addEventListener('click', () => {
-    try { status.textContent = onDownload() === false ? 'The HTML export could not be prepared. The preview remains available.' : 'HTML prepared; check your browser’s downloads.'; }
-    catch { status.textContent = 'The HTML export could not be prepared. The preview remains available.'; }
+  download.addEventListener('click', event => {
+    if (!downloadURL) { event.preventDefault(); return; }
+    // The visible link performs its own native download; do not synthesize a second click.
+    status.textContent = 'HTML prepared; check your browser’s downloads.';
   });
   close.addEventListener('click', () => dialog.close());
   dialog.addEventListener('cancel', event => { event.preventDefault(); dialog.close(); });
-  dialog.addEventListener('close', () => { frame.remove(); dialog.remove(); if (restoreFocus?.isConnected) restoreFocus.focus({ preventScroll: true }); });
+  dialog.addEventListener('close', () => {
+    frame.remove(); dialog.remove();
+    // Keep the URL available while the link is visible, then allow an in-flight download to start.
+    if (downloadURL) { const url = downloadURL; downloadURL = null; setTimeout(() => URL.revokeObjectURL(url), 30000); }
+    if (restoreFocus?.isConnected) restoreFocus.focus({ preventScroll: true });
+  });
   dialog.append(header, frame, status); documentObject.body.append(dialog); dialog.showModal(); close.focus({ preventScroll: true });
   return dialog;
 }
@@ -195,7 +210,7 @@ export class ProvenancePanel {
     if (action === 'reset') { this.session.setParameters({ groupKind: 'source', groupIds: null, protectedGroupIds: [] }); this.catalogSelected.clear(); this.renderCatalogSelection(); }
     if (action === 'use-groups' && this.api.mode === 'live' && this.catalogSelected.size) { this.session.setParameters({ groupKind: this.find('dependency-kind').value, groupIds: [...this.catalogSelected.keys()], protectedGroupIds: [] }); this.find('dependency-custom').open = false; this.run(); }
     if (action === 'protect' && this.api.mode === 'live' && this.session.certificate) { const c = this.session.certificate; this.session.setParameters({ groupKind: c.scope.group_kind, groupIds: c.scope.group_ids, protectedGroupIds: [...c.scope.protected_group_ids, ...c.protection_plan.representative] }); this.run(); }
-    if (action === 'json') this.download(action);
+    if (action === 'json') this.download();
     if (action === 'dossier') this.openDossier();
   }
 
@@ -203,19 +218,17 @@ export class ProvenancePanel {
     try {
       const certificate = this.session.exportCertificate(); if (!certificate) return;
       const html = provenanceDossier(certificate, { edition: this.api.mode, verification: this.session.verification });
-      openDossierDialog({ html, title: `Review dossier · ${certificate.compound.name}`, onDownload: () => this.download('dossier', certificate, html) });
+      openDossierDialog({ html, title: `Review dossier · ${certificate.compound.name}`, downloadName: exportName(certificate, 'review.html') });
     } catch (error) { this.callbacks.onNotice?.(errorText(error)); }
   }
 
-  download(kind, preparedCertificate = null, preparedText = null) {
+  download() {
     try {
-      const c = preparedCertificate || this.session.exportCertificate(); if (!c) return false;
-      const dossier = kind === 'dossier', text = preparedText ?? (dossier ? provenanceDossier(c, { edition: this.api.mode, verification: this.session.verification }) : JSON.stringify(c, null, 2) + '\n');
-      const url = URL.createObjectURL(new Blob([text], { type: dossier ? 'text/html;charset=utf-8' : 'application/json' }));
-      const anchor = document.createElement('a'); anchor.href = url;
-      anchor.download = `ariadne-${slug(c.disease.name)}-${slug(c.compound.name)}-${c.scope.group_kind}-budget${c.budget}-${dossier ? 'review.html' : 'certificate.json'}`;
+      const c = this.session.exportCertificate(); if (!c) return false;
+      const url = URL.createObjectURL(new Blob([JSON.stringify(c, null, 2) + '\n'], { type: 'application/json' }));
+      const anchor = document.createElement('a'); anchor.href = url; anchor.download = exportName(c, 'certificate.json');
       document.body.append(anchor); anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 30000);
-      this.callbacks.onNotice?.(dossier ? 'Dossier prepared; check your browser’s downloads.' : 'The complete group certificate is ready for verification with the matching graph and model.');
+      this.callbacks.onNotice?.('The complete group certificate is ready for verification with the matching graph and model.');
       return true;
     } catch (error) { this.callbacks.onNotice?.(errorText(error)); return false; }
   }
