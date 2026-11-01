@@ -141,6 +141,35 @@ def test_nonfinite_arithmetic_is_rejected_instead_of_sealed():
         canonical_scores([1, 0, 0], sys.float_info.max, sys.float_info.max, model)
 
 
+def test_runtime_guard_rejects_flushing_even_when_float_comparison_also_flushes(monkeypatch):
+    """Model DAZ/FTZ without modifying the pytest process's real CPU control state."""
+
+    class FlushedZero(float):
+        """A zero result whose floating comparison treats a subnormal as zero too."""
+
+        def __ne__(self, _other):
+            return False
+
+    original_add, original_multiply = np.add, np.multiply
+
+    def flushed_add(left, right):
+        if int(np.asarray(left, dtype=np.float64).view(np.uint64)) == 1:
+            return FlushedZero(0.0)
+        return original_add(left, right)
+
+    def flushed_multiply(left, right):
+        if int(np.asarray(left, dtype=np.float64).view(np.uint64)) == 0x0010000000000000:
+            return FlushedZero(0.0)
+        return original_multiply(left, right)
+
+    # This is the false-negative mode of a float-comparison-only guard.
+    assert not (FlushedZero(0.0) != float.fromhex("0x1p-1023"))
+    monkeypatch.setattr(np, "add", flushed_add)
+    monkeypatch.setattr(np, "multiply", flushed_multiply)
+    with pytest.raises(RuntimeError, match="gradual underflow"):
+        audit_numerics._check_binary64()
+
+
 @pytest.mark.parametrize(
     "name, auditor_type", [("binding", BindingAuditor), ("provenance", ProvenanceAuditor)]
 )
