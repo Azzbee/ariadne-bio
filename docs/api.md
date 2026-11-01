@@ -22,6 +22,9 @@ exclusions are drawn only from `BINDS`, `ASSOCIATES`, `INTERACTS` and `PARTICIPA
 | `GET /api/similar/{compound_id}?algorithm=gds&limit=10` | Compound target-neighborhood similarity; default `algorithm=cypher` |
 | `GET /api/evaluation` | Recorded evaluation protocol, metrics, intervals and failures |
 | `GET /api/provenance` | Dataset identity, source information and license policy |
+| `GET /api/provenance/groups?kind=source&q=&limit=30&offset=0` | Imported binding-record source or PubMed groups, membership digests and annotation coverage |
+| `POST /api/provenance/audit` | Exact correlated group withdrawals, original shortlist and minimum conditional protection sets |
+| `POST /api/provenance/audit/verify` | Recompute the complete group certificate and independently replay its matrix witnesses |
 
 Ranking and algorithm limits are bounded to 100, evidence display to 30, and
 challenge results to 50. Disease pagination allows at most 137 per request.
@@ -125,6 +128,76 @@ Malformed/unbounded requests receive HTTP 422, unknown entities 404, and a
 missing fitted model 503. Verification rejects nonfinite JSON values and
 certificate payloads above 256 KiB. The Nginx request-size bound also applies.
 See the [formal proof and limitations](binding_audit_proof.md).
+
+## Shared provenance-group audit
+
+```bash
+curl 'http://localhost:8080/api/provenance/groups?kind=source&limit=100'
+
+curl -X POST 'http://localhost:8080/api/provenance/audit' \
+  -H 'Content-Type: application/json' \
+  -d '{"disease_id":"Disease::DOID:7148","compound_id":"Compound::DB00786","top_k":10,"budget":1}' \
+  --output provenance-audit.json
+
+python -m scripts.verify_audit provenance-audit.json --data-dir data/processed
+```
+
+The example selects Marimastat and rheumatoid arthritis. The default group
+universe contains every imported BINDS source label (14 in the pinned dataset).
+`budget` counts groups, not records. A withdrawn group removes **every binding
+record mentioning it**, including records carrying other labels. Overlapping
+memberships remove a record only once. The fixed model reranks the complete
+compound universe jointly. Other evidence-family controls do not change this
+audit's baseline.
+
+| Request field | Contract |
+| --- | --- |
+| `disease_id`, `compound_id` | Exact typed identifiers; missing entities receive 404 |
+| `top_k` | Strict integer 1..100; default 10 |
+| `budget` | Strict integer 0..2; default 2 |
+| `group_kind` | `source` or `pubmed`; default `source` |
+| `group_ids` | An explicit list of 1..16 unique IDs, or omitted/null for the complete source-label universe |
+| `protected_group_ids` | Unique IDs within the selected universe; these group actions are assumed unavailable for withdrawal |
+
+A PubMed audit requires explicit IDs such as `"pubmed:22037378"`. The catalog
+supports substring search, a maximum page size of 100 and an offset bounded by
+the catalog implementation. It inventories imported annotations, including
+records missing the selected annotation kind; it does not verify the cited
+paper or infer which source independently supports a consolidated record.
+
+| Certificate field | Meaning |
+| --- | --- |
+| `scope.group_ids`, `scope.groups` | Exact selected universe, label names, complete membership digests and record/compound counts |
+| `scope.protected_group_ids` | Explicit conditional exclusions from the withdrawal actions |
+| `identity.group_map_sha256` | Digest binding the complete imported group membership map |
+| `results[].scenario_count` | All allowed group subsets for that budget after protection exclusions |
+| `results[].worst_supported_rank`, `unsupported_attainable` | Exact joint-rank bound and separately attainable loss of every supporting path |
+| `results[].robust` | Every allowed scenario stays supported and within the requested top-k |
+| `results[].rank_witness`, `unsupported_witness` | Attaining group IDs, complete union digest/count, affected-compound count, at most 12 actual record previews and focus before/after |
+| `protection_plan` | Minimum number of additional unavailable groups, a representative set, exact optimum-set count and up to 12 alternatives |
+| `shortlist` | Original top-k outcomes under the same allowed scenario family, capped at 20 displayed rows with `shortlist_truncated` |
+| `proof` | Complete scenario-table digest, construction budget and evaluated/covered scenario counts |
+
+Protection is a mathematical condition: the listed group actions cannot occur.
+Reviewing a group does not establish that condition or that its records are true.
+A protected group's overlapping record can still be withdrawn through another
+unprotected group. The optimum minimizes group count, not cost, reviewer time or
+experimental value. An unsupported or off-list baseline yields
+`status="impossible_baseline"`; a robust scope needs no additional groups.
+
+Verification accepts `{ "certificate": <complete object> }` with the same 256 KiB
+finite-JSON bound as the individual-record verifier. It checks identities, all
+recomputed claims including the protection optimum, and independent matrix
+witness replays. Correctly rehashing a fabricated result does not make it valid.
+The HTTP verification response distinguishes a completed invalid verdict from
+transport errors. The CLI exits zero only for a verified certificate.
+
+Both verifiers require the exact matching graph and fitted model. Docker can fit
+a separate model from the frozen research edition; retained live-container
+artifacts identify the model used for its certificates. See the
+[group-audit guide](provenance_audit.md), [proof](provenance_audit_proof.md) and
+[deployment instructions](deployment.md). Scientific validity and clinical
+efficacy remain outside these finite model guarantees.
 
 ## Compound-aware agent
 

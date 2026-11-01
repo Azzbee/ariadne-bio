@@ -64,6 +64,7 @@ visualization and query results without clipping model features.
 | GDS | Project evidence and compute personalized PageRank and target-neighborhood similarity |
 | Graph engine | Compute exact typed-path features, apply the saved model and reconstruct selected-pair scores from its signed terms |
 | Binding auditor | Enumerate local binding-deletion envelopes, allocate a global budget across focus and competitors, and return exact bounded ranking certificates |
+| Provenance auditor | Enumerate correlated provider/citation withdrawals, score all compounds jointly, and compute exact conditional protection sets |
 | LangGraph | Orchestrate entity resolution, retrieval, comparison and explanation |
 | LLM provider | Parse the research request into a validated, typed investigation plan |
 | Evaluation script | Fix the split, fit preprocessing/model on permitted data and write measured metrics |
@@ -131,3 +132,32 @@ bounded cache, then independently replay witnesses using edited graph matrices.
 The static exporter stores certificates and export-time verification; JavaScript
 does not pretend to rerun the optimizer. The scientific tests compare the method
 with exhaustive global enumeration on independent tiny graphs.
+
+## Correlated provenance audit
+
+The v1.3 catalogue indexes the observed provider labels and imported PubMed
+identifiers on BINDS records. Each selected group maps to an explicit set of
+edge IDs; overlapping groups remove the union once. The index and source bytes
+are bound into the certificate. Missing annotations remain outside group-based
+withdrawals and are exposed as coverage, never invented.
+
+A selected group can affect several compounds, invalidating the independent
+compound budget allocation used by the individual-edge audit. The provenance
+auditor instead enumerates every group subset through budget two (up to 16
+selected groups), jointly updates every affected compound's counts and degree,
+and applies the same canonical scorer. It keeps supported rank and complete
+loss of support separate. The graph and model remain immutable.
+
+The failing scenario family defines an exact finite hitting-set problem.
+Additional protected groups must intersect every failing withdrawal subset.
+The auditor enumerates protection-set sizes in increasing order, counts all
+optimal sets and preserves a bounded preview. This is a conditional assumption
+about allowed withdrawals, not a measured consequence of reviewing evidence.
+The [proof](provenance_audit_proof.md) and [user guide](provenance_audit.md)
+cover overlap semantics, baseline failures, witnesses and numerical limits.
+
+Neo4j remains the source evidence store throughout these in-memory scenarios.
+Startup and ingestion now bind it to the prepared graph SHA-256 as well as the
+archive identity, refusing changed or unmarked nonempty volumes before writes.
+This prevents accidental mixing of dataset generations without deleting an
+operator's existing database.
