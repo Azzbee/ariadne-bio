@@ -262,7 +262,7 @@ def build(repo: Path, ref: str, snapshot: Path, output: Path, evidence: Path | N
             name: content
             for name, content in files.items()
             if name.startswith("reports/")
-            and name.endswith((".json", ".jpg", ".png", ".svg", ".html"))
+            and name.endswith((".json", ".jpg", ".png", ".svg", ".html", ".md", ".zip", ".tar.gz"))
         }
     )
     for name in ("manifest.json", "model.json", "evaluation.json"):
