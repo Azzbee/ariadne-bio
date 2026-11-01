@@ -1,0 +1,222 @@
+{
+  "schema_version": "1.0",
+  "title": "Exact correlated provenance-group withdrawal benchmark",
+  "executed_at": "2026-11-01T10:58:22.960138+00:00",
+  "status": "passed",
+  "source": {
+    "git_revision": "84b35517be2aba052f97efcf61d4f8e26501ec1a",
+    "working_tree_dirty": true,
+    "file_sha256": {
+      "app/provenance_audit.py": "fa43318f2e94769f016ac1279ee97f96a452d4d6d278b1035959183f27f5d56d",
+      "app/binding_audit.py": "e2e662cffff5be1f36f91850a4b176db906c14efcc820e7b18d04021a5ce4e0b",
+      "app/graph_engine.py": "80c18947f85dfaea71f32fd0b7608d5977b11be2d1f01fcdf2cc6e292910b81c",
+      "scripts/benchmark_provenance.py": "aa88e8626aa15a7b35365aa9991e78b2495258615734439db54cb8da170cdc2e"
+    }
+  },
+  "identity": {
+    "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+    "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
+    "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
+    "scorer": "float64-fixed-order-v1",
+    "group_map_sha256": "e428edd4119421bff3406c8897ca39416e4e64535730e1c8fe4de27a9d2e997d"
+  },
+  "protocol": {
+    "population": "Every graph disease and its canonical baseline supported top-k candidates",
+    "top_k": 10,
+    "budgets": [
+      0,
+      1,
+      2
+    ],
+    "selected_groups": [
+      {
+        "group_id": "source:BindingDB",
+        "label": "BindingDB",
+        "edge_count": 209,
+        "compound_count": 84,
+        "edge_ids_sha256": "fc1779d596c36bedf531401f03c8b63f5fd08dfb32dfb4bfb36f74966e301c8d"
+      },
+      {
+        "group_id": "source:ChEMBL",
+        "label": "ChEMBL",
+        "edge_count": 1711,
+        "compound_count": 470,
+        "edge_ids_sha256": "4aa4eb32cc34f9d6b0f0d0d5b8c89d44e2ccee5383e2481de5adca6292a8a29d"
+      },
+      {
+        "group_id": "source:DrugBank (carrier)",
+        "label": "DrugBank (carrier)",
+        "edge_count": 217,
+        "compound_count": 172,
+        "edge_ids_sha256": "4be65958a81d53c8737b7084d72644ad01cd7a8a2b1f3d0893639213d4c0f27c"
+      },
+      {
+        "group_id": "source:DrugBank (enzyme)",
+        "label": "DrugBank (enzyme)",
+        "edge_count": 3216,
+        "compound_count": 877,
+        "edge_ids_sha256": "56e1283d5a515d28201f763576c8e63c94c226eb1383350c82b613a16e10989b"
+      },
+      {
+        "group_id": "source:DrugBank (target)",
+        "label": "DrugBank (target)",
+        "edge_count": 4603,
+        "compound_count": 1182,
+        "edge_ids_sha256": "2df76bbe4afdb45fa354889a21ce20ed6946827e643423749499e1e7fc3e0db0"
+      },
+      {
+        "group_id": "source:DrugBank (transporter)",
+        "label": "DrugBank (transporter)",
+        "edge_count": 1517,
+        "compound_count": 522,
+        "edge_ids_sha256": "525ef5544babafc7afc58b6429cd3fb5a81e814d01b723205d8f08414d8db0f8"
+      },
+      {
+        "group_id": "source:DrugCentral (ChEMBL)",
+        "label": "DrugCentral (ChEMBL)",
+        "edge_count": 1836,
+        "compound_count": 792,
+        "edge_ids_sha256": "8a2c057a3761eb3547cd4e26585280bacaaef23c65496db8b5bc2b29ad928c2d"
+      },
+      {
+        "group_id": "source:DrugCentral (IUPHAR)",
+        "label": "DrugCentral (IUPHAR)",
+        "edge_count": 56,
+        "compound_count": 39,
+        "edge_ids_sha256": "71343f32fbee7d6f8762039e53171d86487f647049c476d9ebb86653f63c8c2a"
+      },
+      {
+        "group_id": "source:DrugCentral (KEGG DRUG)",
+        "label": "DrugCentral (KEGG DRUG)",
+        "edge_count": 25,
+        "compound_count": 8,
+        "edge_ids_sha256": "4d8ed69bca09de9807bd1ed4155498ae00ad07234478a4c32b88915b827b5e6a"
+      },
+      {
+        "group_id": "source:DrugCentral (label)",
+        "label": "DrugCentral (label)",
+        "edge_count": 68,
+        "compound_count": 35,
+        "edge_ids_sha256": "c9172eb96ef1acad92ffd32fbae9a63ab53c055f52453af65f092eb17ec6e0cf"
+      },
+      {
+        "group_id": "source:DrugCentral (literature)",
+        "label": "DrugCentral (literature)",
+        "edge_count": 182,
+        "compound_count": 81,
+        "edge_ids_sha256": "6c8849de0048c807454f9b32443bc718d1516b22176f90732ff4d32006fdd6bf"
+      },
+      {
+        "group_id": "source:PDSP Ki",
+        "label": "PDSP Ki",
+        "edge_count": 521,
+        "compound_count": 186,
+        "edge_ids_sha256": "f3e00692f34497cc466ad9469f5c526b27cc871046b82353a08bb9d830eaa4ab"
+      },
+      {
+        "group_id": "source:PubChem",
+        "label": "PubChem",
+        "edge_count": 137,
+        "compound_count": 32,
+        "edge_ids_sha256": "22284a82ec78765640fe1830e7aa9def80d70ca930095b18a2a345858a28d221"
+      },
+      {
+        "group_id": "source:US Patent",
+        "label": "US Patent",
+        "edge_count": 23,
+        "compound_count": 9,
+        "edge_ids_sha256": "9d269508ab9c60d88eec29d07d93ad223d990fe5e5762eb6557b59a610ddb382"
+      }
+    ],
+    "group_scope": "Every observed BINDS provider label; exact at-most-two label subsets; all compounds jointly reranked",
+    "withdrawal_semantics": "Remove union of all BINDS records mentioning any withdrawn label; retain no independent-corroboration assumption",
+    "comparison": "Same model and cohort, individual-edge budgets 0..2; scopes differ, so differences are not failed v1.2 guarantees or clinical error rates",
+    "protection": "Exact minimum-cardinality additional group conditions; frequency-greedy baseline sees the same full failure family and removes redundant choices",
+    "verification": "Every certificate separately recomputed and distinct witnesses replayed with full sparse matrix edits; exact and greedy protection rerun for feasibility",
+    "maximality_oracle": "Independent literal-path and all-world enumeration on small graphs in tests/test_provenance_audit.py",
+    "clinical_interpretation": "Finite fixed-model sensitivity only; no efficacy, retraction, error probability or prospective savings claim"
+  },
+  "coverage": {
+    "diseases_total": 137,
+    "diseases_processed": 137,
+    "diseases_without_supported_candidates": 3,
+    "candidate_queries": 1330,
+    "budget_results": 3990,
+    "certificates_verified": 1330,
+    "witness_replay_checks": 4168,
+    "protection_feasibility_checks": 2660,
+    "failed_checks": 0,
+    "source_group_count": 14,
+    "distinct_source_scenarios_per_disease": 106,
+    "max_certificate_bytes": 31402
+  },
+  "summary": [
+    {
+      "budget": 0,
+      "candidate_queries": 1330,
+      "robust": 1330,
+      "fragile": 0,
+      "unsupported_attainable": 0,
+      "individual_edge_robust": 1330,
+      "individual_edge_robust_but_group_fragile": 0,
+      "individual_edge_fragile_but_group_robust": 0
+    },
+    {
+      "budget": 1,
+      "candidate_queries": 1330,
+      "robust": 39,
+      "fragile": 1291,
+      "unsupported_attainable": 205,
+      "individual_edge_robust": 256,
+      "individual_edge_robust_but_group_fragile": 226,
+      "individual_edge_fragile_but_group_robust": 9
+    },
+    {
+      "budget": 2,
+      "candidate_queries": 1330,
+      "robust": 4,
+      "fragile": 1326,
+      "unsupported_attainable": 535,
+      "individual_edge_robust": 104,
+      "individual_edge_robust_but_group_fragile": 102,
+      "individual_edge_fragile_but_group_robust": 2
+    }
+  ],
+  "protection_summary": {
+    "minimum_group_count_histogram": {
+      "0": 4,
+      "1": 488,
+      "2": 375,
+      "3": 212,
+      "4": 150,
+      "5": 62,
+      "6": 33,
+      "7": 5,
+      "8": 1
+    },
+    "queries_with_multiple_optimal_plans": 165,
+    "greedy_suboptimal_queries": 0,
+    "maximum_greedy_group_gap": 0
+  },
+  "runtime_seconds": 251.58502706599938,
+  "environment": {
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39"
+  },
+  "full_report": {
+    "file": "provenance-audit-benchmark.json",
+    "sha256": "5207a33eeb4615d7de463512769d1a782410eceeb2f6808dec533e43b1cbc643"
+  },
+  "examples": {
+    "source": {
+      "file": "provenance-audit-example-source.json",
+      "status": "passed"
+    },
+    "pubmed": {
+      "file": "provenance-audit-example-pubmed.json",
+      "status": "passed"
+    }
+  }
+}
