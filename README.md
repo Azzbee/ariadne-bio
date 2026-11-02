@@ -272,13 +272,14 @@ Use a disposable checkout for that route so the sealed reference artifacts stay
 available. See the [reproduction guide](docs/reproducibility.md).
 
 For a complete fresh experiment, the following sequence also regenerates the
-research reports and browser snapshot. Generate the snapshot before running
-tests to include all seven recorded cases and all sixteen exclusion sets.
+research reports and browser snapshot. `make test` prepares the checksummed graph
+and exports all seven recorded cases and sixteen exclusion sets automatically,
+using the saved model without refitting. Preparation or export failures stop the
+test command; the same prerequisites apply with `INTEGRATION=1`.
 
 ```bash
 make install          # Python 3.11+; the verified reference runtime is Python 3.12
 make data             # Download, checksum, prepare, train and evaluate
-make snapshot         # Export every recorded scenario for frontend verification
 make audit-licenses   # Inventory actual source-license text and missing metadata
 make benchmark-audits # All diseases, top ten, global binding budgets zero to two
 make benchmark-provenance # All diseases, correlated source groups and protection sets
