@@ -20,23 +20,24 @@ certificates. Its results are research hypotheses, not treatment advice.
 
 ## Verification and version status
 
-This checkout is the **v1.4.1 submission candidate**, checked on **2 November
+The **v1.4.1 submission-readiness update** was locally checked on **2 November
 2026**. It fixes native browser controls and certificate transport, separates
 core-only startup from local-model startup, preserves the reference notebook's
 scientific identities, and serves both API references without external requests.
-The currently sealed public baseline is **v1.4.0**. Its Neo4j/GDS/LLM results
-must not be relabeled as a passing full-stack run for this update.
+Use the [v1.4.1 release page](https://github.com/Azzbee/ariadne-bio/releases/tag/v1.4.1)
+to confirm publication, the exact source commit and matching CI evidence. Earlier
+**v1.4.0** Neo4j/GDS/LLM results remain historical evidence for that version.
 
 | Item | Available evidence or current status |
 | --- | --- |
 | Public repository | [Azzbee/ariadne-bio](https://github.com/Azzbee/ariadne-bio). |
 | Sealed baseline source | [v1.4.0](https://github.com/Azzbee/ariadne-bio/tree/v1.4.0), commit [`8077a8944def2ef7b432bd9c3539878ec24769da`](https://github.com/Azzbee/ariadne-bio/commit/8077a8944def2ef7b432bd9c3539878ec24769da). |
 | Baseline download and verification | [v1.4.0 release assets](https://github.com/Azzbee/ariadne-bio/releases/tag/v1.4.0): source, research edition, executed notebook, verification archive, manifest and SHA-256 checksums. |
-| Submission-readiness update | **v1.4.1**. The generated `release-manifest.json` binds the source archive, research edition and executed notebook to one exact Git commit. Local evidence is distributed in the separate verification archive; public publication and a matching full-stack CI run must be checked independently. |
-| Current local quality gates | **744 Python tests**, **170 frontend tests** and **6 real Chromium scenarios** passed. Combined line/branch coverage **93.08%**; Pylint **9.90/10**; formatting passed. The seven invalid-provider-output cases are included in the Python total. |
-| Current execution evidence | All **14 notebook code cells** executed. Live Nginx/FastAPI smoke passed using the **memory backend and deterministic planner**, including certificate replay and size limits. Swagger executed a live health request; ReDoc navigation worked; both made zero nonlocal requests. |
+| Submission-readiness update | [v1.4.1 release and verification](https://github.com/Azzbee/ariadne-bio/releases/tag/v1.4.1). Its `release-manifest.json` binds the source archive, research edition and executed notebook to one exact Git commit. Check the release page and linked CI run for publication and full-stack execution at that same commit; the dated local record below remains separate. |
+| Local quality gates (2 November 2026) | **744 Python tests**, **170 frontend tests** and **6 real Chromium scenarios** passed. Combined line/branch coverage **93.08%**; Pylint **9.90/10**; formatting passed. The seven invalid-provider-output cases are included in the Python total. |
+| Local execution evidence (2 November 2026) | All **14 notebook code cells** executed. Live Nginx/FastAPI smoke passed using the **memory backend and deterministic planner**, including certificate replay and size limits. Swagger executed a live health request; ReDoc navigation worked; both made zero nonlocal requests. |
 | CI | [Actual workflow runs](https://github.com/Azzbee/ariadne-bio/actions/workflows/ci.yml). Match the run's commit to the version being assessed; a badge for another revision is insufficient. |
-| Public images | [API](https://github.com/Azzbee/ariadne-bio/pkgs/container/ariadne-bio-api), [frontend](https://github.com/Azzbee/ariadne-bio/pkgs/container/ariadne-bio-frontend); release evidence binds anonymous image verification to a source commit. |
+| Public images | [API](https://github.com/Azzbee/ariadne-bio/pkgs/container/ariadne-bio-api), [frontend](https://github.com/Azzbee/ariadne-bio/pkgs/container/ariadne-bio-frontend); use the assessed version's release evidence for source-bound anonymous image verification. |
 | Merged implementation evidence | [Merged PR #1](https://github.com/Azzbee/ariadne-bio/pull/1) and [complete PR history](https://github.com/Azzbee/ariadne-bio/pulls); this alone does not establish one substantial PR per registered member. |
 | Current demonstration video | `ariadne-v1.4.1-walkthrough.mp4`: **8 min 23 sec**, captioned, with disclosed synthetic narration. It shows the current interface and code, and explicitly labels the earlier v1.4.0 full-stack provider evidence. SHA-256: `4afdc2275bdf1b182e191bddb0aae61a221e1668d486b4a83b96c592f48ba756`. Video and reproducible production sources are separate hand-in artifacts. |
 | Project registration | The registered team's public repository URL was entered in the project information spreadsheet and read back successfully on **2 November 2026**. |
@@ -54,8 +55,9 @@ details expansion, navigation and source links, a byte-exact certificate
 download, Swagger execution and ReDoc navigation. An isolated negative control
 that restores the old navigation selector fails: the checkbox cannot change.
 This verifies that the regression gate detects the original interaction bug.
-Current local checks do **not** establish a new Docker/Neo4j/GDS/provider run;
-retain the final matching CI artifact when that run completes.
+The dated local checks cover the recorded memory-backend and deterministic
+workflows. For Docker/Neo4j/GDS/provider execution, inspect the matching CI job
+artifacts linked from the assessed release and confirm their source commit.
 
 ### Local verification on 2 November 2026
 
@@ -89,10 +91,11 @@ docker compose ps
 curl --fail http://localhost:8080/api/health
 ```
 
-To reproduce the sealed baseline specifically, run `git checkout v1.4.0` before
-startup. For v1.4.1, use the complete source archive or check out the exact
-commit in its `release-manifest.json` once that commit is public. Cloning the
-repository alone does not select an unpublished submission candidate.
+To reproduce the historical baseline, run `git checkout v1.4.0` before startup.
+For v1.4.1, obtain the complete source archive and `release-manifest.json` from
+the [release page](https://github.com/Azzbee/ariadne-bio/releases/tag/v1.4.1),
+or check out the exact commit recorded in that manifest. Selecting the exact
+commit reproduces the release even if the repository's main branch later moves.
 Prepare large downloads before a timed demonstration. `make docker-run` creates
 private local credentials, prepares the checksummed graph, launches Neo4j/GDS,
 FastAPI and Nginx, and prepares the configured local language model.
