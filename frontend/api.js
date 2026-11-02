@@ -1,6 +1,7 @@
 import { compoundReferences, diseaseReferences, exclusionKey, isUnsafeQuestion, makeChallenge, requestedExclusions, requestsTopCandidate } from './utils.js';
 import { auditKey, copyJSON, stableJSON, validateAudit } from './audit-model.js';
 import { provenanceKey, provenanceParameters, validateProvenanceAudit } from './provenance-model.js';
+import { mixedKey, mixedParameters, validateMixedAudit } from './mixed-model.js';
 import { snapshotFileRecord, validateSnapshotCase, verifySnapshotBytes } from './integrity.js';
 
 export class APIError extends Error {
@@ -71,7 +72,7 @@ export class AriadneAPI {
       this.mode = 'snapshot';
       this.healthData = {
         status: 'ok', graph_backend: 'published research snapshot', dataset_ready: true,
-        agent_mode: 'deterministic', version: '1.3.0', ...(this.manifest.health || {})
+        agent_mode: 'deterministic', version: '1.4.0', ...(this.manifest.health || {})
       };
       return this.healthData;
     } catch {
@@ -152,6 +153,34 @@ export class AriadneAPI {
     if (this.mode === 'live') return this.get(`/diseases?q=${encodeURIComponent(query)}&limit=${limit}&offset=${offset}`);
     const items = this.manifest.diseases.filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
     return { items: items.slice(offset, offset + limit), total: items.length };
+  }
+
+  async mixedAudit(diseaseId, compoundId, options = {}) {
+    const p = mixedParameters(options);
+    if (this.mode === 'live') return this.post('/mixed/audit', {
+      disease_id: diseaseId, compound_id: compoundId, top_k: p.topK,
+      group_budget: p.groupBudget, edge_budget: p.edgeBudget, group_kind: p.groupKind, group_ids: p.groupIds
+    });
+    if (p.groupKind !== 'source' || p.groupIds !== null) throw new APIError('Custom joint provenance scopes require the live application. The snapshot records the complete source-label scope.');
+    const data = await this.loadCase(diseaseId), key = mixedKey(p.topK, p.groupBudget, p.edgeBudget);
+    const certificate = data.mixed_audits?.[compoundId]?.[key];
+    if (!certificate) throw new APIError('This joint audit is not included in the recorded case. Run the full application for a new audit.');
+    const completeScope = this.manifest.provenance_catalog?.items?.map(item => item.group_id).sort();
+    if (!completeScope || !Array.isArray(certificate.scope?.group_ids) || stableJSON([...certificate.scope.group_ids].sort()) !== stableJSON(completeScope)) throw new APIError('The recorded joint audit does not include the complete published source-label catalog.');
+    return copyJSON(validateMixedAudit(certificate, diseaseId, compoundId, p));
+  }
+
+  async verifyMixedAudit(certificate) {
+    if (this.mode === 'live') return this.post('/mixed/audit/verify', { certificate });
+    const data = await this.loadCase(certificate?.disease?.id), key = mixedKey(certificate?.top_k, certificate?.group_budget, certificate?.edge_budget);
+    const recorded = data.mixed_audits?.[certificate?.compound?.id]?.[key];
+    if (!recorded || stableJSON(recorded) !== stableJSON(certificate)) return {
+      status: 'invalid', valid: false, checks: [], errors: ['This result does not exactly match a published joint certificate.'],
+      verification_method: 'Exact comparison with the recorded certificate; no graph solver runs in the browser.', replayed_witnesses: 0
+    };
+    const result = data.mixed_verifications?.[certificate.compound.id]?.[key];
+    if (!result || result.valid !== true || result.status !== 'verified' || result.errors?.length !== 0 || result.certificate_sha256 !== certificate.certificate_sha256 || result.verification_execution !== 'recorded_at_export') throw new APIError('This joint result has no matching successful recorded verification.');
+    return copyJSON(result);
   }
 
   async rankings(diseaseId, excluded = [], limit = 12, offset = 0) {

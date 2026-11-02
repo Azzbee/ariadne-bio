@@ -1,0 +1,136 @@
+{
+  "schema_version": "1.0",
+  "method": "binding-envelope-v1",
+  "disease": {
+    "id": "Disease::DOID:7148",
+    "name": "rheumatoid arthritis"
+  },
+  "compound": {
+    "id": "Compound::DB00786",
+    "name": "Marimastat"
+  },
+  "top_k": 10,
+  "budget": 2,
+  "scope": {
+    "relationship": "BINDS",
+    "operation": "delete_record",
+    "universe": "all_recorded_BINDS_edges",
+    "eligible_edges": 11571,
+    "candidate_count": 1552,
+    "includes_competitor_changes": true
+  },
+  "identity": {
+    "dataset_sha256": "a342ab57e9073e6c02bb5e109d1f16917e6f933be4e5c77ebbaebfa26b984c19",
+    "graph_sha256": "2371c391ba7b7103a9fba9c3232e61da9ff7338f214148d2947704e52fd057b0",
+    "model_sha256": "311897fb3678a7885b8ddb7d63becfe990860bfb3c39cb6195166bad531d14f3",
+    "scorer": "decimal80-binary64-v1"
+  },
+  "baseline": {
+    "supported": true,
+    "rank": 1,
+    "score": 0.9241421386479369,
+    "logit": 2.5000045456904516,
+    "counts": {
+      "direct": 6,
+      "interaction": 59,
+      "pathway": 1901
+    },
+    "evidence_count": 1966
+  },
+  "results": [
+    {
+      "budget": 0,
+      "worst_supported_rank": 1,
+      "unsupported_attainable": false,
+      "top_k_robust": true,
+      "focus_only_worst_rank": 1,
+      "focus_only_unsupported_attainable": false,
+      "competitor_rank_gap": 0,
+      "rank_witness": {
+        "removed_edge_ids": [],
+        "removed_records": [],
+        "deletions_used": 0,
+        "focus": {
+          "supported": true,
+          "rank": 1,
+          "score": 0.9241421386479369,
+          "logit": 2.5000045456904516,
+          "counts": {
+            "direct": 6,
+            "interaction": 59,
+            "pathway": 1901
+          },
+          "evidence_count": 1966
+        },
+        "changed_compounds": []
+      },
+      "unsupported_witness": null
+    },
+    {
+      "budget": 1,
+      "worst_supported_rank": 1,
+      "unsupported_attainable": false,
+      "top_k_robust": true,
+      "focus_only_worst_rank": 1,
+      "focus_only_unsupported_attainable": false,
+      "competitor_rank_gap": 0,
+      "rank_witness": {
+        "removed_edge_ids": [],
+        "removed_records": [],
+        "deletions_used": 0,
+        "focus": {
+          "supported": true,
+          "rank": 1,
+          "score": 0.9241421386479369,
+          "logit": 2.5000045456904516,
+          "counts": {
+            "direct": 6,
+            "interaction": 59,
+            "pathway": 1901
+          },
+          "evidence_count": 1966
+        },
+        "changed_compounds": []
+      },
+      "unsupported_witness": null
+    },
+    {
+      "budget": 2,
+      "worst_supported_rank": 1,
+      "unsupported_attainable": false,
+      "top_k_robust": true,
+      "focus_only_worst_rank": 1,
+      "focus_only_unsupported_attainable": false,
+      "competitor_rank_gap": 0,
+      "rank_witness": {
+        "removed_edge_ids": [],
+        "removed_records": [],
+        "deletions_used": 0,
+        "focus": {
+          "supported": true,
+          "rank": 1,
+          "score": 0.9241421386479369,
+          "logit": 2.5000045456904516,
+          "counts": {
+            "direct": 6,
+            "interaction": 59,
+            "pathway": 1901
+          },
+          "evidence_count": 1966
+        },
+        "changed_compounds": []
+      },
+      "unsupported_witness": null
+    }
+  ],
+  "minimum_failure_budget": null,
+  "robust_through_budget": 2,
+  "proof": {
+    "local_states_evaluated": 117147,
+    "covered_global_states": 66949807,
+    "envelope_bounds_sha256": "4b0b216baec7446e7d3b87ff433e2f380fa0920c461bedf8066fbbc4c799aa62",
+    "search_budget": 2
+  },
+  "interpretation": "This is an exact finite-budget audit of this fixed model under withdrawal of any recorded BINDS edges, including edges of competing compounds. It is not a biological intervention or a probability of efficacy. Source labels are not independent studies. The declared decimal80-binary64-v1 scorer uses fixed Decimal transforms and ordered nearest-even IEEE-754 binary64 arithmetic, with score/compound-ID ties. Exactness is relative to that finite arithmetic contract; strict verification rejects every numerical mismatch. Legacy GraphEngine scores remain separate and unchanged. A null worst supported rank means no supported scenario exists. Unsupported outcomes are reported separately. The guarantee does not cover other edge families, correlated source-group failures, new edges, model refitting, or larger deletion budgets.",
+  "certificate_sha256": "75a176e19f2f3948cf1758b301f27deceba6e2269a4aaa1d549d5d17dbcd172c"
+}

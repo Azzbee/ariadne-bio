@@ -38,6 +38,9 @@ def verify_frontend_headers(base_url: str) -> dict:
         "/audit.js",
         "/provenance.css",
         "/provenance.js",
+        "/landing.css",
+        "/landing.js",
+        "/mixed.js",
     ):
         req = urllib.request.Request(base_url.rstrip("/") + path, method="HEAD")
         with urllib.request.urlopen(req, timeout=15) as response:
@@ -145,6 +148,50 @@ def verify_binding_audit(base_url: str, disease_id: str, compound_id: str) -> di
     rejected = request(base_url, "/api/audit/verify", {"certificate": altered})
     assert rejected["valid"] is False and rejected["status"] == "invalid", rejected
     assert rejected["errors"], rejected
+    return {
+        "certificate": certificate,
+        "verification": verification,
+        "rehashed_false_claim": {
+            "changed_field": "results[0].worst_supported_rank",
+            "certificate_sha256": altered["certificate_sha256"],
+            "verification": rejected,
+        },
+    }
+
+
+def verify_mixed_audit(base_url: str, disease_id: str, compound_id: str) -> dict:
+    """Verify the joint rectangle and reject a checksum-valid false frontier."""
+    certificate = request(
+        base_url,
+        "/api/mixed/audit",
+        {
+            "disease_id": disease_id,
+            "compound_id": compound_id,
+            "top_k": 10,
+            "group_budget": 1,
+            "edge_budget": 1,
+        },
+    )
+    assert certificate["method"] == "mixed-group-edge-envelope-v1"
+    assert certificate["identity"]["scorer"] == "decimal80-binary64-v1"
+    assert certificate["disease"]["id"] == disease_id
+    assert certificate["compound"]["id"] == compound_id
+    assert certificate["scope"]["includes_competitor_changes"] is True
+    assert certificate["certificate_sha256"] == _certificate_hash(certificate)
+    assert {(row["group_budget"], row["edge_budget"]) for row in certificate["results"]} == {
+        (0, 0),
+        (0, 1),
+        (1, 0),
+        (1, 1),
+    }
+    verification = request(base_url, "/api/mixed/audit/verify", {"certificate": certificate})
+    assert verification["valid"] is True and verification["status"] == "verified", verification
+    assert verification["errors"] == [] and verification["replayed_witnesses"] >= 1
+    altered = json.loads(json.dumps(certificate))
+    altered["results"][0]["worst_supported_rank"] += 1
+    altered["certificate_sha256"] = _certificate_hash(altered)
+    rejected = request(base_url, "/api/mixed/audit/verify", {"certificate": altered})
+    assert rejected["valid"] is False and rejected["errors"], rejected
     return {
         "certificate": certificate,
         "verification": verification,
@@ -267,6 +314,7 @@ def run(base_url: str) -> dict:
     assert unsupported["current"]["evidence_count"] == 0
     audit = verify_binding_audit(base_url, disease["id"], compound["id"])
     provenance_audit = verify_provenance_audit(base_url, disease["id"], compound["id"])
+    mixed_audit = verify_mixed_audit(base_url, disease["id"], compound["id"])
     rejected = request(
         base_url,
         "/api/agent",
@@ -288,6 +336,7 @@ def run(base_url: str) -> dict:
         },
         "binding_audit": audit,
         "provenance_audit": provenance_audit,
+        "mixed_audit": mixed_audit,
         "disease": disease,
         "compound": {"id": compound["id"], "name": compound["name"]},
         "displayed_paths": len(evidence["paths"]),

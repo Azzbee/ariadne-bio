@@ -12,6 +12,7 @@ from pathlib import Path
 
 from app.binding_audit import BindingAuditor
 from app.graph_engine import GraphEngine
+from app.mixed_audit import METHOD as MIXED_METHOD, MixedAuditor
 from app.provenance_audit import METHOD as PROVENANCE_METHOD, ProvenanceAuditor
 
 
@@ -21,11 +22,11 @@ def verify_file(certificate_path: Path, data_dir: Path) -> dict:
         if certificate_path.stat().st_size > 262_144:
             raise ValueError("Certificate exceeds the 256 KiB verification limit")
         certificate = json.loads(certificate_path.read_text(encoding="utf-8"))
-        auditor_type = (
-            ProvenanceAuditor
-            if isinstance(certificate, dict) and certificate.get("method") == PROVENANCE_METHOD
-            else BindingAuditor
-        )
+        method = certificate.get("method") if isinstance(certificate, dict) else None
+        auditor_type = {
+            PROVENANCE_METHOD: ProvenanceAuditor,
+            MIXED_METHOD: MixedAuditor,
+        }.get(method, BindingAuditor)
         result = auditor_type(GraphEngine(data_dir)).verify(certificate)
     except (OSError, ValueError, RuntimeError) as error:
         result = {

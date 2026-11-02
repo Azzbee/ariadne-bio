@@ -128,5 +128,18 @@ export function validateSnapshotCase(data, manifest, diseaseId) {
       }
     }
   }
+  if (data.mixed_audits !== undefined) {
+    if (!data.mixed_audits || typeof data.mixed_audits !== 'object' || Array.isArray(data.mixed_audits)) fail('invalid joint audit map');
+    const catalogIdentity = manifest.provenance_catalog?.identity;
+    if (!HASH.test(catalogIdentity?.group_map_sha256 || '') || catalogIdentity.dataset_sha256 !== expected.dataset_sha256 || catalogIdentity.graph_sha256 !== expected.graph_sha256) fail('the joint-audit catalog does not match the graph identity');
+    for (const [compoundId, variants] of Object.entries(data.mixed_audits)) {
+      if (!variants || typeof variants !== 'object' || Array.isArray(variants)) fail('invalid joint audit variants');
+      for (const [key, certificate] of Object.entries(variants)) {
+        if (certificate?.disease?.id !== diseaseId || certificate?.compound?.id !== compoundId || key !== `${certificate.top_k}:${certificate.group_budget}:${certificate.edge_budget}`) fail('a joint audit does not match its case or configuration');
+        for (const [identity, value] of Object.entries(expected)) if (certificate.identity?.[identity] !== value) fail(`a joint audit ${identity} does not match the manifest`);
+        if (certificate.identity?.group_map_sha256 !== catalogIdentity.group_map_sha256) fail('a joint audit group map does not match the catalog');
+      }
+    }
+  }
   return data;
 }

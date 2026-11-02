@@ -34,12 +34,23 @@ RUNTIME_FILES = (
     "provenance.js",
     "provenance-model.js",
     "provenance.css",
+    "landing.js",
+    "landing-model.js",
+    "landing.css",
+    "mixed.js",
+    "mixed-model.js",
+    "mixed.css",
 )
 # These immutable references close links in the delivered docs, without turning
 # the recorded research edition into the separate executable source distribution.
 REFERENCE_FILES = (
     "app/binding_audit.py",
+    "app/mixed_audit.py",
     "infra/bootstrap_model.py",
+    "scripts/benchmark_mixed.py",
+    "scripts/benchmark_mixed_scaling.py",
+    "scripts/plot_mixed_benchmark.py",
+    "scripts/plot_mixed_scaling.py",
     "reports/v1.1.0/unit-junit.xml",
     "reports/v1.1.0/frontend.tap",
     "demo.ipynb",
@@ -250,7 +261,8 @@ def build(repo: Path, ref: str, snapshot: Path, output: Path, evidence: Path | N
         {
             name: content
             for name, content in files.items()
-            if name.startswith("reports/") and name.endswith((".json", ".jpg", ".png", ".html"))
+            if name.startswith("reports/")
+            and name.endswith((".json", ".jpg", ".png", ".svg", ".html", ".md", ".zip", ".tar.gz"))
         }
     )
     for name in ("manifest.json", "model.json", "evaluation.json"):

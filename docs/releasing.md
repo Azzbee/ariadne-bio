@@ -2,11 +2,13 @@
 
 Release evidence must describe the exact tested source revision. A public image,
 a local successful test or a previous release report does not establish that a
-new revision passed. Both CI jobs therefore start with their own fresh checkout identity and remove
-only their prior generated outputs before installing dependencies or running tests.
-Quality and full-stack integration run concurrently on isolated runners; neither
-consumes the other's artifacts or fitted model. Image publication still requires
-both jobs to succeed for the same workflow run and source revision.
+new revision passed. All three verification jobs start with their own fresh
+checkout identity and remove only their prior generated outputs before installing
+dependencies or running tests.
+Quality, full-stack integration and the joint-audit research workload run
+concurrently on isolated runners. Each retains its own artifacts and fitted
+model. Image publication requires all three jobs to succeed for the same
+workflow run and source revision.
 
 ## Before merging
 
@@ -16,8 +18,9 @@ Review comments and human contribution claims must describe work that happened;
 automated agents do not stand in for a second human teammate.
 
 Run `make data`, `make audit-licenses`, `make benchmark-audits`,
-`make benchmark-provenance`, `make provenance-controls`, `make snapshot`,
-`make verify-scores`, `make lint`, `make test` and `make notebook`.
+`make benchmark-provenance`, `make benchmark-mixed`, `make benchmark-mixed-scaling`,
+`make provenance-controls`, `make snapshot`, `make verify-scores`, `make lint`,
+`make test` and `make notebook`.
 The PR's fresh runner then executes the complete `make docker-run` path, the HTTP
 smoke check, real Neo4j/GDS checks and actual LLM HTTP checks. Preserve failures;
 do not convert them to successful fallbacks or skip the provider gate.
@@ -34,14 +37,17 @@ the blocked action and use a permitted alternative or obtain explicit approval.
 
 | Artifact | Required content |
 | --- | --- |
-| `ci-quality.json`, `ci-integration.json` | Checkout SHA, Actions run and attempt, job and start time; each job has a separate context |
+| `ci-quality.json`, `ci-integration.json`, `ci-mixed.json` | Checkout SHA, Actions run and attempt, job and start time; each job has a separate context |
+| `ci-quality-replay.json`, `ci-integration-replay.json`, `ci-mixed-replay.json` | Successful required in-job replays using that job's retained fitted model, exact input hashes, context and recomputed certificate/witness results |
 | `ollama-model.json` | Actual full model digest, expected digest, size and whether it was reused; the reference default must be `verified` |
-| `http_smoke.json` | Live HTTP checks, frontend headers, exact assessment reconstruction, retained unsupported pair, full binding certificate, recomputed bound/witness verification and rejection of a rehashed false rank claim |
-| `live-model.json`, `live-manifest.json`, `live-evaluation.json`, `live-artifacts-verification.json` | Bytes copied directly from the running API container after smoke, model self-hash and exact identity binding for binding/provider/conditional/PubMed certificates; never substitute the quality-job fit |
+| `http_smoke.json` | Live HTTP checks, frontend headers, exact assessment reconstruction, retained unsupported pair, complete binding/provenance/joint certificates, recomputed verification and rejection of correctly rehashed false claims |
+| `live-model.json`, `live-manifest.json`, `live-evaluation.json`, `live-artifacts-verification.json` | Bytes copied directly from the running API container after smoke, model self-hash and exact identity binding for binding/provider/conditional/PubMed/joint certificates; never substitute another job's fit |
 | `v1.2.0/binding-audit-benchmark.json` | Full disease/top-ten workload, graph/model/scorer identities, exact budget results, local/global state counts, focus-only comparisons and actual runtime |
 | `v1.2.0/license-inventory.json` | Actual observed license/source counts and missing metadata, bound to graph bytes; legal clearance remains unassessed |
 | `v1.3.0/provenance-audit-benchmark.json` and companion reports | Full provider-group workload, exact scenario/protection outcomes, selected PubMed scope, source/model/group identities, runtime and actual verification |
 | `v1.3.0/provenance-size-matched-controls.json` | Fixed-seed random withdrawals matched on removed-edge count for two disclosed postselected illustrations; descriptive results, not a population or causal claim |
+| `v1.4.0/mixed-audit-benchmark.json` and companion reports | Complete four-cell joint workload, independent witness replay, both greedy orders, interaction failures, exact source/input identities, actual runtime and explicit unavailable examples when a selection criterion has no match |
+| `v1.4.0/scaling/` | Complete synthetic timing report and summary, matched raw trials, first-trial certificates and every generated graph/model/manifest/evaluation input; preserve the directory recursively |
 | `neo4j-junit.xml` | Genuine database and graph-algorithm tests |
 | `llm-junit.xml` and `llm-*.json` | Actual planner success, evidence challenge, rejection, and named-compound assessment with correct ranking context |
 | Container logs/status and runner resource reports | Startup, service health and disk/memory observations |
@@ -51,20 +57,57 @@ The uploaded evidence is an output of the run. Files preserved in the repository
 as historical reference must never substitute for a missing new result. Confirm
 the workflow and job conclusions, not just artifact existence.
 
-Keep three model origins separate: the committed frozen research-snapshot model,
-the quality job's fresh fit and the running Compose API's fresh fit. Numerical
-libraries or execution conditions can produce small fitted-parameter differences,
+The [synthetic scaling protocol](mixed_scaling.md) has a separate meaning from
+the full Hetionet audit: it compares matched implementations on generated small
+graphs. Report actual paired times and the scope of those measurements; counts
+of covered actions are not runtime measurements. Before collecting new scaling
+evidence, clear its declared generated output directory so an interrupted run
+cannot upload an old summary. Retain the entire subtree, including inputs; a
+top-level JSON-only artifact glob is insufficient.
+
+Keep four model origins separate: the committed frozen research-snapshot model,
+the quality job's fresh fit, the joint-research job's fresh fit, and the running
+Compose API's fresh fit. Numerical libraries or execution conditions can produce
+small fitted-parameter differences,
 so matching seeds and retrieval ranks do not establish matching model identities.
 Immediately after successful live HTTP smoke, CI uses `docker compose cp` to
 retain the actual container's model, manifest and evaluation. The
 `infra.verify_live_artifacts` gate independently recomputes that model's content
 self-hash and requires every retained smoke certificate and selected-compound
-assessment to identify it and the same prepared graph. All four successful
-binding/provider/conditional/PubMed certificates must match.
+assessment to identify it and the same prepared graph. All five successful
+binding/provider/conditional/PubMed/joint certificates must match.
+
+### Required retained-model replay gates
+
+Every verification job runs `python -m infra.replay_ci_certificates` as a required
+step after its inputs and tests are complete and before evidence upload. The
+command is strict by construction: it has no permissive mode, never fits a
+replacement model and does not trust a saved verification verdict.
+
+| Job | Evidence input directory | Retained model | Required certificates | Uploaded success receipt |
+|---|---|---|---|---|
+| Quality | Checkout root (`--artifact-dir .`) | `data/processed/model.json` | Four binding and two provenance examples | `reports/ci-quality-replay.json` |
+| Joint research | Checkout root (`--artifact-dir .`) | `data/processed/model.json` | Canonical first and last joint-workload examples | `reports/ci-mixed-replay.json` |
+| Integration | `--artifact-dir reports` | `reports/live-model.json`, copied from the running API | All five complete live smoke certificates | `reports/ci-integration-replay.json` |
+
+All three use `--graph data/processed/graph.json`. Integration's separately
+prepared host graph supplies only graph bytes: the replay reconstructs its engine
+with the retained container model, manifest and evaluation. A host-side fresh fit
+cannot replace the live fit.
+
+The command writes its initial and final verdict to
+`$RUNNER_TEMP/ariadne-<kind>-replay.json`, outside both the evidence input tree and
+prepared graph directory. The Bash step stops on any nonzero exit. Only a
+successful replay is copied to the corresponding `reports/ci-<kind>-replay.json`
+and included in the artifact. Each job's initial cleanup explicitly removes its
+old replay receipt, so an early failure cannot upload a stale success. Failure
+details remain in the actual job log. These gates use the existing read-only
+workflow permissions; they add no publication or permission channel.
 
 ### Reproduce certificates on another machine
 
-Download both artifacts from the actual run, verify the GitHub-provided ZIP
+Download `quality-evidence`, `integration-evidence` and `mixed-evidence` from
+the actual run, verify the GitHub-provided ZIP
 digests, and extract each into a separate directory. Prepare the pinned graph
 with `python -m scripts.prepare_data`; this does not fit a replacement model.
 Then use the retained parameters directly:
@@ -77,9 +120,26 @@ Then use the retained parameters directly:
 .venv/bin/python -m infra.replay_ci_certificates \
   --kind integration --artifact-dir /tmp/ariadne-integration-evidence \
   --graph data/processed/graph.json --output /tmp/ariadne-integration-replay.json
+
+.venv/bin/python -m infra.replay_ci_certificates \
+  --kind mixed --artifact-dir /tmp/ariadne-mixed-evidence \
+  --graph data/processed/graph.json --output /tmp/ariadne-mixed-replay.json
 ```
 
-The command requires all six quality examples or all four live certificates.
+The required in-job receipt is useful evidence, but independent release
+verification still downloads and replays the actual uploaded ZIP bytes. Perform
+the three-artifact download, digest check and replay for both the tested PR run
+and the post-merge main run: six distinct ZIPs, with separate run IDs, checkout
+identities, source-tree checks and replay receipts. Preserve each original
+archive; a local reconstruction or a receipt from another run cannot replace it.
+
+The command requires all six quality examples, all five live certificates, or
+both fixed first/last joint-workload examples, according to the selected kind.
+Joint replay rederives the first and last canonical top-ten query identities
+and the complete observed source-group scope. A valid certificate for a selected
+subset or another `top_k` cannot fill one of those benchmark roles. The live joint
+slot also must equal the canonical top-ten, all-source, one-group-plus-one-record
+certificate for the selected smoke pair; a valid narrower scope is rejected.
 It checks actual graph bytes, the retained model's parameter self-hash and
 evaluation identity, then recomputes every certificate and independently
 replays its matrix witnesses. It ignores saved verification verdicts. The
@@ -133,6 +193,21 @@ certificate was exported; the static client must not invent an uncomputed result
 Verify the complete certificate download and printable dossier, including
 truncated witness previews, the exact group catalogue and protection assumptions.
 
+Version 1.4 also requires `landing.js`, `landing-model.js`, `landing.css`,
+`mixed.js`, `mixed-model.js` and `mixed.css`, plus the complete local font asset
+directory and its licenses. The joint snapshot preset is top ten with group
+budget one and residual-record budget one. Every displayed compound must retain
+all four frontier cells, the source-group catalogue, matching scientific
+identities, and verification tied to the exact certificate. Missing presets
+must be unavailable, never synthesized from separate-axis results.
+
+Exercise a fresh landing-page visit without loading a case, the recorded example,
+workbench entry, existing case/audit deep links, back/forward navigation, motion
+pause, keyboard interaction and narrow layouts. Keep actual screenshots and
+browser findings. The hero is a conceptual illustration; its motion is not a
+live evidence computation. The recorded example retains its v1.3 identity rather
+than being relabeled as a new experiment.
+
 ## Versioned packaging command
 
 `infra/package_release.py` is the reproducible packaging entry point. It reads
@@ -154,7 +229,7 @@ separate new CI run, not by the presence of execution counts alone.
 After the final source commit and matching snapshot are ready:
 
 ```bash
-make package-release REF=FULL_TESTED_COMMIT_SHA OUTPUT=dist/release-v1.3.0
+make package-release REF=FULL_TESTED_COMMIT_SHA OUTPUT=dist/release-v1.4.0
 ```
 
 This writes the source ZIP, standalone research ZIP, recorded executed notebook,
@@ -169,7 +244,7 @@ every payload and use:
 .venv/bin/python infra/package_release.py \
   --ref FULL_TESTED_COMMIT_SHA --snapshot frontend/data \
   --evidence-dir reports/release-evidence \
-  --output dist/release-v1.3.0
+  --output dist/release-v1.4.0
 ```
 
 The additional verification ZIP retains the supplied checksums as

@@ -54,6 +54,30 @@ test('published cases are consumable through the actual frontend adapter in ever
   assert.ok(report.dataset_sha256);
 });
 
+test('every published joint certificate is consumable and tied to its exact recorded verification', { skip: !available }, async t => {
+  const api = new AriadneAPI({}, snapshotFetcher);
+  await api.initialize(true);
+  if (!api.manifest.mixed_audit_disclosure) { t.skip('This snapshot predates joint audits.'); return; }
+  let checked = 0;
+  for (const disease of api.manifest.diseases) {
+    const data = await api.loadCase(disease.id);
+    let caseCount = 0;
+    for (const [compoundId, variants] of Object.entries(data.mixed_audits || {})) {
+      for (const expected of Object.values(variants)) {
+        const c = await api.mixedAudit(disease.id, compoundId, { topK: expected.top_k, groupBudget: expected.group_budget, edgeBudget: expected.edge_budget });
+        assert.deepEqual(c, expected);
+        const verification = await api.verifyMixedAudit(c);
+        assert.equal(verification.valid, true);
+        assert.equal(verification.certificate_sha256, c.certificate_sha256);
+        assert.equal(verification.verification_execution, 'recorded_at_export');
+        checked += 1; caseCount += 1;
+      }
+    }
+    assert.equal(caseCount, api.manifest.cases[disease.id].coverage.mixed_audit_count);
+  }
+  assert.ok(checked > 0, 'a claimed joint-audit snapshot must contain actual certificates');
+});
+
 async function snapshotAPI() {
   const api = new AriadneAPI({}, snapshotFetcher);
   await api.initialize(true);

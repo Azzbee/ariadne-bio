@@ -2,7 +2,7 @@
 PYTHON ?= .venv/bin/python
 COMPOSE ?= docker compose
 
-.PHONY: help init install data evaluate ingest run docker-run docker-core docker-stop docker-logs test test-integration test-llm lint format notebook snapshot verify-scores audit-licenses benchmark-audits benchmark-provenance provenance-controls package-release smoke clean
+.PHONY: help init install data evaluate ingest run docker-run docker-core docker-stop docker-logs test test-integration test-llm lint format notebook snapshot verify-scores audit-licenses benchmark-audits benchmark-provenance benchmark-mixed benchmark-mixed-scaling provenance-controls package-release smoke clean
 
 help: ## List reproducible project commands
 	@awk 'BEGIN {FS = ":.*##"; printf "ARIADNE — trace evidence, challenge hypotheses\n\n"} /^[a-zA-Z_-]+:.*?##/ {printf "  %-19s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -81,6 +81,12 @@ benchmark-provenance: ## Audit correlated provider withdrawals and conditional p
 
 provenance-controls: ## Measure disclosed size-matched random controls for two illustrative cases
 	$(PYTHON) -m scripts.provenance_controls --data-dir data/processed --output reports/v1.3.0/provenance-size-matched-controls.json
+
+benchmark-mixed: ## Certify joint source and record withdrawals for every disease's top ten
+	$(PYTHON) -m scripts.benchmark_mixed --data-dir data/processed --output reports/v1.4.0/mixed-audit-benchmark.json
+
+benchmark-mixed-scaling: ## Compare exact envelopes and complete-world enumeration with cold caches
+	$(PYTHON) -m scripts.benchmark_mixed_scaling --output-dir reports/v1.4.0/scaling
 
 package-release: ## Package an explicit committed source ref and its matching research snapshot
 	$(PYTHON) infra/package_release.py --ref $(or $(REF),HEAD) --output $(or $(OUTPUT),dist/release)

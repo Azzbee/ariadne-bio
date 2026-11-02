@@ -24,6 +24,7 @@ def live_files(tmp_path):
         "assessment": {"fixed_model_sha256": model_hash},
         "binding_audit": {},
         "provenance_audit": {},
+        "mixed_audit": {},
     }
     for section, key, verification_key, method in verify_live_artifacts.CERTIFICATES:
         certificate = {"method": method, "identity": deepcopy(identity), "fixture": key}
@@ -47,18 +48,18 @@ def rewrite(directory, values):
         (directory / name).write_text(json.dumps(value))
 
 
-def test_all_four_certificate_bytes_are_bound_to_actual_model_parameters(live_files):
+def test_all_certificate_bytes_are_bound_to_actual_model_parameters(live_files):
     """Each audit variant must use the exact copied model and graph identity."""
     directory, _ = live_files
     report = verify_live_artifacts.verify(directory)
     assert report["status"] == "passed"
-    assert len(report["certificates"]) == 4
+    assert len(report["certificates"]) == len(verify_live_artifacts.CERTIFICATES) == 5
     for item in report["files"]:
         assert sha256((directory / item["path"]).read_bytes()).hexdigest() == item["sha256"]
     assert "quality-job" in report["input_contract"]
 
 
-@pytest.mark.parametrize("position", range(4))
+@pytest.mark.parametrize("position", range(len(verify_live_artifacts.CERTIFICATES)))
 def test_one_mismatched_rehashed_certificate_fails_the_entire_binding(live_files, position):
     """A valid content hash cannot hide a certificate from a different fitted model."""
     directory, values = live_files

@@ -5,6 +5,7 @@ from functools import cached_property
 from app.binding_audit import BindingAuditor
 from app.config import Settings
 from app.graph_engine import GraphEngine
+from app.mixed_audit import MixedAuditor
 from app.neo4j_repository import Neo4jRepository
 from app.provenance_audit import ProvenanceAuditor
 
@@ -32,6 +33,11 @@ class EvidenceService:
     def provenance_auditor(self):
         """Bind correlated record groups to the same immutable graph and fitted model."""
         return ProvenanceAuditor(self.engine)
+
+    @cached_property
+    def mixed_auditor(self):
+        """Audit simultaneous group and residual-record changes on the frozen graph."""
+        return MixedAuditor(self.engine)
 
     def evidence(self, disease_id, compound_id, exclude=(), limit=12):
         """Counts use exact sparse algebra, displayed paths use the selected backend."""

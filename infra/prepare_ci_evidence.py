@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 
 RUN_REPORTS = (
@@ -25,6 +26,7 @@ RUN_REPORTS = (
     "runner-resources.txt",
     "docker-disk-usage.txt",
     "ci-integration.json",
+    "ci-integration-replay.json",
 )
 QUALITY_OUTPUTS = (
     "coverage.xml",
@@ -34,6 +36,7 @@ QUALITY_OUTPUTS = (
     "data/processed/model.json",
     "data/processed/manifest.json",
     "reports/ci-quality.json",
+    "reports/ci-quality-replay.json",
     "reports/v1.1.0/score-regression.json",
     "reports/v1.1.0/assessment-nicotine-interacts.json",
     "reports/v1.1.0/assessment-galantamine-interacts.json",
@@ -51,26 +54,53 @@ QUALITY_OUTPUTS = (
     "reports/v1.3.0/provenance-catalog.json",
     "reports/v1.3.0/provenance-size-matched-controls.json",
 )
+MIXED_OUTPUTS = (
+    "reports/ci-mixed.json",
+    "reports/ci-mixed-replay.json",
+    "reports/v1.4.0/mixed-audit-benchmark.json",
+    "reports/v1.4.0/mixed-audit-summary.json",
+    "reports/v1.4.0/mixed-audit-example-first.json",
+    "reports/v1.4.0/mixed-audit-example-last.json",
+    "reports/v1.4.0/mixed-audit-example-interaction.json",
+    "reports/v1.4.0/mixed-audit-example-rank-gap.json",
+    "reports/v1.4.0/mixed-audit-example-greedy-gap.json",
+    "reports/v1.4.0/mixed-audit-results.svg",
+    "reports/v1.4.0/mixed-audit-results.png",
+    "reports/v1.4.0/mixed-audit-figure-manifest.json",
+    "data/processed/evaluation.json",
+    "data/processed/model.json",
+    "data/processed/manifest.json",
+)
 
 
 def prepare_reports(root: Path, context: dict, job: str = "integration") -> None:
     """Invalidate old results only for the selected job; preserve graph/source files."""
-    if job not in {"quality", "integration"}:
-        raise ValueError("Evidence job must be quality or integration")
-    outputs = (
-        QUALITY_OUTPUTS if job == "quality" else tuple("reports/" + name for name in RUN_REPORTS)
-    )
+    if job not in {"quality", "integration", "mixed"}:
+        raise ValueError("Evidence job must be quality, integration or mixed")
+    outputs = {
+        "quality": QUALITY_OUTPUTS,
+        "mixed": MIXED_OUTPUTS,
+        "integration": tuple("reports/" + name for name in RUN_REPORTS),
+    }[job]
     reports = root / "reports"
     reports.mkdir(parents=True, exist_ok=True)
     for name in outputs:
         (root / name).unlink(missing_ok=True)
+    if job == "mixed":
+        # This subtree contains only generated paired-study reports and replay inputs.
+        # Remove the whole old study so an early failure cannot upload stale success.
+        scaling = root / "reports/v1.4.0/scaling"
+        if scaling.is_symlink():
+            scaling.unlink()
+        elif scaling.exists():
+            shutil.rmtree(scaling)
     (reports / f"ci-{job}.json").write_text(json.dumps(context, indent=2) + "\n", encoding="utf-8")
 
 
 def main() -> None:
     """Record the checkout and Actions identifiers without reading any secrets."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--job", choices=("quality", "integration"), required=True)
+    parser.add_argument("--job", choices=("quality", "integration", "mixed"), required=True)
     arguments = parser.parse_args()
     context = {
         "started_at_utc": datetime.now(timezone.utc).isoformat(),

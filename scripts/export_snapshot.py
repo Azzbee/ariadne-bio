@@ -21,6 +21,8 @@ from app import __version__
 from app.audit_schemas import AuditResponse
 from app.binding_audit import BindingAuditor, certificate_digest
 from app.graph_engine import DISCLAIMER, FAMILIES, FEATURE_NAMES, GraphEngine
+from app.mixed_audit import MixedAuditor
+from app.mixed_schemas import MixedAuditResponse
 from app.provenance_audit import ProvenanceAuditor
 from app.provenance_schemas import ProvenanceAuditResponse
 from scripts.prepare_data import write_json
@@ -63,6 +65,7 @@ def build_case(
     top_k: int = 12,
     auditor: BindingAuditor | None = None,
     provenance_auditor: ProvenanceAuditor | None = None,
+    mixed_auditor: MixedAuditor | None = None,
 ) -> dict:
     """Materialize every supported interaction for one published disease case."""
     rankings = {}
@@ -97,6 +100,9 @@ def build_case(
     provenance_audits, provenance_verifications = _build_provenance_audits(
         provenance_auditor or ProvenanceAuditor(engine), disease_id, compounds
     )
+    mixed_audits, mixed_verifications = _build_mixed_audits(
+        mixed_auditor or MixedAuditor(engine), disease_id, compounds
+    )
     return {
         "disease": rankings[""]["disease"],
         "rankings": rankings,
@@ -106,6 +112,8 @@ def build_case(
         "audit_verifications": audit_verifications,
         "provenance_audits": provenance_audits,
         "provenance_verifications": provenance_verifications,
+        "mixed_audits": mixed_audits,
+        "mixed_verifications": mixed_verifications,
         "provenance_demonstration": (
             {
                 "compound_id": "Compound::DB00786",
@@ -152,6 +160,14 @@ def build_case(
             "provenance_audit_count": len(compounds) * len(PROVENANCE_BUDGETS),
             "provenance_top_k": PROVENANCE_TOP_K,
             "provenance_budgets": list(PROVENANCE_BUDGETS),
+            "mixed_audit_count": len(compounds),
+            "mixed_top_k": 10,
+            "mixed_group_budget": 1,
+            "mixed_edge_budget": 1,
+            "mixed_scope": (
+                "Unmodified full graph; all imported BINDS source labels; up to one "
+                "group plus one surviving binding record; all competing compounds"
+            ),
             "provenance_scope": (
                 "Unmodified full graph; every imported BINDS source label; any-mentioned "
                 "group withdrawal; all compounds; no conditional protection"
@@ -204,6 +220,25 @@ def _build_provenance_audits(auditor: ProvenanceAuditor, disease_id: str, compou
                 "certificate_sha256": certificate["certificate_sha256"],
                 "verification_execution": "recorded_at_export",
             }
+    return audits, verifications
+
+
+def _build_mixed_audits(auditor: MixedAuditor, disease_id: str, compounds: set) -> tuple:
+    """Publish joint frontiers only after exact recomputation and matrix replay."""
+    audits, verifications = {}, {}
+    for compound_id in sorted(compounds):
+        certificate = auditor.audit(disease_id, compound_id, top_k=10)
+        verification = auditor.verify(certificate)
+        if not verification["valid"]:
+            raise ValueError("A recorded joint audit failed verification and replay")
+        audits[compound_id] = {"10:1:1": certificate}
+        verifications[compound_id] = {
+            "10:1:1": {
+                **verification,
+                "certificate_sha256": certificate["certificate_sha256"],
+                "verification_execution": "recorded_at_export",
+            }
+        }
     return audits, verifications
 
 
@@ -336,6 +371,7 @@ def validate_case(case: dict) -> None:
             _validate_assessment(assessment, variants[""], variants[key])
     _validate_audits(case)
     _validate_provenance_audits(case)
+    _validate_mixed_audits(case)
 
 
 def _validate_audits(case: dict) -> None:
@@ -407,6 +443,59 @@ def _validate_provenance_audits(case: dict) -> None:
                 raise ValueError("Recorded verification does not validate this provenance audit")
 
 
+def _validate_mixed_audits(case: dict) -> None:
+    """Bind every joint certificate and recorded verification to the displayed pair."""
+    audits = case.get("mixed_audits", {})
+    verifications = case.get("mixed_verifications", {})
+    if set(audits) != set(case["assessments"]) or set(verifications) != set(audits):
+        raise ValueError("A published candidate is missing its joint audit or verification")
+    for compound_id, variants in audits.items():
+        if set(variants) != {"10:1:1"} or set(verifications[compound_id]) != {"10:1:1"}:
+            raise ValueError("A published candidate has an incorrect joint audit scope")
+        certificate = variants["10:1:1"]
+        MixedAuditResponse.model_validate(certificate)
+        reference = case["provenance_audits"][compound_id]["10:1"]
+        cells = [
+            (row.get("group_budget"), row.get("edge_budget")) for row in certificate["results"]
+        ]
+        scope = certificate["scope"]
+        if (
+            cells != [(0, 0), (0, 1), (1, 0), (1, 1)]
+            or scope.get("group_kind") != "source"
+            or scope.get("group_ids") != reference["scope"]["group_ids"]
+            or scope.get("operation") != "withdraw_group_then_delete_residual_record"
+            or scope.get("includes_competitor_changes") is not True
+            or any(
+                certificate["identity"].get(key) != reference["identity"].get(key)
+                for key in (
+                    "dataset_sha256",
+                    "graph_sha256",
+                    "model_sha256",
+                    "group_map_sha256",
+                    "scorer",
+                )
+            )
+        ):
+            raise ValueError("Joint audit frontier, source scope or scientific identity differs")
+        if (
+            certificate["disease"] != case["disease"]
+            or certificate["compound"]["id"] != compound_id
+            or (certificate["top_k"], certificate["group_budget"], certificate["edge_budget"])
+            != (10, 1, 1)
+            or certificate_digest(certificate) != certificate["certificate_sha256"]
+        ):
+            raise ValueError("Joint audit identity, scope or content checksum does not match")
+        verification = verifications[compound_id]["10:1:1"]
+        if (
+            verification.get("valid") is not True
+            or verification.get("status") != "verified"
+            or verification.get("errors") != []
+            or verification.get("certificate_sha256") != certificate["certificate_sha256"]
+            or verification.get("verification_execution") != "recorded_at_export"
+        ):
+            raise ValueError("Recorded verification does not validate this exact joint certificate")
+
+
 def _write_snapshot(
     engine: GraphEngine, output: Path, disease_ids=DEFAULT_DISEASES, top_k: int = 12
 ) -> dict:
@@ -422,9 +511,15 @@ def _write_snapshot(
     cases, diseases, files = {}, [], []
     auditor = BindingAuditor(engine)
     provenance_auditor = ProvenanceAuditor(engine)
+    mixed_auditor = MixedAuditor(engine)
     for disease_id in disease_ids:
         case = build_case(
-            engine, disease_id, top_k, auditor=auditor, provenance_auditor=provenance_auditor
+            engine,
+            disease_id,
+            top_k,
+            auditor=auditor,
+            provenance_auditor=provenance_auditor,
+            mixed_auditor=mixed_auditor,
         )
         validate_case(case)
         filename = case_filename(case["disease"])
@@ -492,6 +587,13 @@ def _write_snapshot(
             "protection plans are sensitivity statements, not evidence validation or an "
             "experiment policy. The browser loads recorded results; new scopes and imported "
             "PubMed-reference audits require the live application."
+        ),
+        "mixed_audit_disclosure": (
+            "Joint audits condition on up to one source-label withdrawal and optimize "
+            "up to one additional surviving BINDS-record withdrawal anywhere in the graph. "
+            "The exact four-cell frontier and witnesses were verified at export. The "
+            "browser retrieves these records; it does not execute the solver or replay "
+            "graph edits. Separate group and record guarantees do not establish joint robustness."
         ),
         "disclaimer": DISCLAIMER,
         "runtime_seconds": round(time.perf_counter() - started, 3),

@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "role": "Exact source of the clean reference benchmark; not a claim that this local Git checkpoint is publicly hosted",
+  "git_revision": "3f14898bdcc85147ec577287daea7240dae9ec30",
+  "git_tree": "3d33cfbfdb5f9c87837f919a5ab9edae22fbe38b",
+  "archive": {
+    "file": "reference-source-3f14898.tar.gz",
+    "bytes": 1898759,
+    "sha256": "63c7becd6f2107995127f45cea013264602f11e4fd41fafd30bb0f4eabb792b2",
+    "prefix": "ariadne-reference-3f14898/"
+  },
+  "scientific_module_sha256": {
+    "app/audit_numerics.py": "80527c14035edc0f448825e8b981d68bb7126ff9f65f6e0381d8a71c415d53c7",
+    "app/binding_audit.py": "4356019800543e89e4658d89926b998993b9ddc1d9d0db312cc1770a6e509ffa",
+    "app/provenance_audit.py": "bd897086af7c446cc5cfadac5b9137b25590d4a14985deda6493d6af838413bd",
+    "app/mixed_audit.py": "bdec2b54cf3ed5b4118e8bc1ae4f7b58308ecc00e4cb08df047078132ac29356",
+    "app/graph_engine.py": "80c18947f85dfaea71f32fd0b7608d5977b11be2d1f01fcdf2cc6e292910b81c",
+    "scripts/benchmark_mixed.py": "06352693b154cc0ef3e5f8d3d77a23a6417ea9c8d9f32f238712472dc067f9a5",
+    "scripts/benchmark_provenance.py": "4cd6e49708fa11d74c5afd34e28ebc1018b79951e74ac23561d1099bc4083d0d"
+  }
+}

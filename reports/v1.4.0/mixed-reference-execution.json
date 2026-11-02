@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "started_at": "2026-11-01T22:31:41.001340+00:00",
+  "command": [
+    "/workspace/scratch/6b648cf07c4b/ariadne/.venv/bin/python",
+    "-u",
+    "-m",
+    "scripts.benchmark_mixed",
+    "--data-dir",
+    "/workspace/scratch/6b648cf07c4b/ariadne/data/processed",
+    "--output",
+    "/workspace/scratch/6b648cf07c4b/ariadne-release-v1.4.0/reference/mixed-audit-benchmark.json"
+  ],
+  "working_directory": "/workspace/scratch/6b648cf07c4b/ariadne-v14-reference",
+  "source_archive": {
+    "file": "reference-source-3f14898.tar.gz",
+    "sha256": "63c7becd6f2107995127f45cea013264602f11e4fd41fafd30bb0f4eabb792b2"
+  },
+  "exit_code": 0,
+  "finished_at": "2026-11-01T22:48:47.456637+00:00",
+  "wall_seconds": 1026.4508446850014
+}

@@ -13,6 +13,7 @@ from app import __version__
 from app.agent import EvidenceAgent
 from app.audit_routes import router as audit_router
 from app.config import Settings
+from app.mixed_routes import router as mixed_router
 from app.provenance_routes import router as provenance_router
 from app.schemas import (
     AgentRequest,
@@ -200,6 +201,7 @@ def create_app(settings=None, service=None, agent=None) -> FastAPI:
 
     application.include_router(audit_router)
     application.include_router(provenance_router)
+    application.include_router(mixed_router)
 
     frontend = Path(__file__).resolve().parents[1] / "frontend"
     if (frontend / "index.html").exists():

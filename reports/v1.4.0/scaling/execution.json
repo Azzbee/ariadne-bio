@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "wait_started_at": "2026-11-01T22:44:23.376925+00:00",
+  "command": [
+    "/workspace/scratch/6b648cf07c4b/ariadne/.venv/bin/python",
+    "-u",
+    "-m",
+    "scripts.benchmark_mixed_scaling",
+    "--require-clean",
+    "--output-dir",
+    "/workspace/scratch/6b648cf07c4b/ariadne-release-v1.4.0/scaling"
+  ],
+  "working_directory": "/workspace/scratch/6b648cf07c4b/ariadne-v14-scaling-final",
+  "source_revision": "54da143b57d64717bb082fa3606776b3f6ab0db5",
+  "pid": 41281,
+  "dependency_receipt": "/workspace/scratch/6b648cf07c4b/ariadne-release-v1.4.0/reference/execution.json",
+  "scheduling": "Wait for full Hetionet benchmark to exit successfully before timing scaling; other system workload is not controlled.",
+  "source_archive": {
+    "file": "scaling-source-54da143.tar.gz",
+    "sha256": "30690700500c774beda4014c2878652a8bd206af6b61d58fdc7d330be600f623"
+  },
+  "started_at": "2026-11-01T22:48:51.962264+00:00",
+  "dependency": {
+    "status": "passed",
+    "started_at": "2026-11-01T22:31:41.001340+00:00",
+    "command": [
+      "/workspace/scratch/6b648cf07c4b/ariadne/.venv/bin/python",
+      "-u",
+      "-m",
+      "scripts.benchmark_mixed",
+      "--data-dir",
+      "/workspace/scratch/6b648cf07c4b/ariadne/data/processed",
+      "--output",
+      "/workspace/scratch/6b648cf07c4b/ariadne-release-v1.4.0/reference/mixed-audit-benchmark.json"
+    ],
+    "working_directory": "/workspace/scratch/6b648cf07c4b/ariadne-v14-reference",
+    "source_archive": {
+      "file": "reference-source-3f14898.tar.gz",
+      "sha256": "63c7becd6f2107995127f45cea013264602f11e4fd41fafd30bb0f4eabb792b2"
+    },
+    "exit_code": 0,
+    "finished_at": "2026-11-01T22:48:47.456637+00:00",
+    "wall_seconds": 1026.4508446850014
+  },
+  "completed_at": "2026-11-01T22:50:31.840445+00:00",
+  "exit_code": 0,
+  "report_sha256": "80d13822f2d6be1a6d34cd0155bfbc50433c345d619dc6a3ebd33454fcc95599"
+}

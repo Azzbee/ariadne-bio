@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "source_report_sha256": "80d13822f2d6be1a6d34cd0155bfbc50433c345d619dc6a3ebd33454fcc95599",
+  "archive": "mixed-scaling-replay-inputs.zip",
+  "archive_sha256": "395f0e1913ae493f920e45ec407b97c733d07c320b2551f680bde16cb79becbd",
+  "input_files": 96,
+  "verification": "All 96 archive entries exactly match the corresponding retained-input SHA-256 in the complete measured report."
+}

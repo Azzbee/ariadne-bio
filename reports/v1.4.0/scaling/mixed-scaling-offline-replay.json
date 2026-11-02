@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "executed_at": "2026-11-01T22:55:31.724065+00:00",
+  "scope": "Fresh offline reconstruction from the packaged input ZIP and the 72 retained first-trial certificates; distinct from the original timed study",
+  "source_report_sha256": "80d13822f2d6be1a6d34cd0155bfbc50433c345d619dc6a3ebd33454fcc95599",
+  "input_archive_sha256": "395f0e1913ae493f920e45ec407b97c733d07c320b2551f680bde16cb79becbd",
+  "datasets": 24,
+  "input_files_verified": 96,
+  "certificates_verified": 72,
+  "matrix_witness_replays": 276,
+  "failed_checks": 0,
+  "source_scientific_module_sha256": {
+    "app/audit_numerics.py": "80527c14035edc0f448825e8b981d68bb7126ff9f65f6e0381d8a71c415d53c7",
+    "app/binding_audit.py": "4356019800543e89e4658d89926b998993b9ddc1d9d0db312cc1770a6e509ffa",
+    "app/provenance_audit.py": "bd897086af7c446cc5cfadac5b9137b25590d4a14985deda6493d6af838413bd",
+    "app/mixed_audit.py": "bdec2b54cf3ed5b4118e8bc1ae4f7b58308ecc00e4cb08df047078132ac29356",
+    "app/graph_engine.py": "80c18947f85dfaea71f32fd0b7608d5977b11be2d1f01fcdf2cc6e292910b81c",
+    "scripts/benchmark_mixed_scaling.py": "bb27fef1c2d2d06f55503b70fd8bfebd050e939909fc0076babdc21e36eb2957",
+    "scripts/benchmark_provenance.py": "4cd6e49708fa11d74c5afd34e28ebc1018b79951e74ac23561d1099bc4083d0d"
+  },
+  "source_matches_measured_study": true,
+  "git_revision_at_replay_receipt": "54da143b57d64717bb082fa3606776b3f6ab0db5"
+}
