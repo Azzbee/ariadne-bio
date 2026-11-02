@@ -80,9 +80,15 @@ new evaluation or edit an artifact's hash to make a mismatch disappear.
 
 ## Test the application and actual database separately
 
-`make test` runs the unit, API and frontend suites and enforces the coverage
-threshold. With a running, ingested Neo4j/GDS stack and credentials in `.env` or
-the environment, use the same required command to include the real database:
+`make test` prepares the checksummed graph and regenerates the seven-case browser
+snapshot before running the unit, API and frontend suites with the coverage
+threshold. It uses the saved model and evaluation without refitting or changing
+the audit reports. A failed preparation or export stops the command; missing
+browser data cannot become skipped or silently omitted tests. The same
+prerequisites apply with `INTEGRATION=1` and parallel Make.
+
+With a running, ingested Neo4j/GDS stack and credentials in `.env` or the
+environment, use the same required command to include the real database:
 
 ```bash
 make docker-core
