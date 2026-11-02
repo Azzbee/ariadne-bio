@@ -4,8 +4,13 @@
 
 **Follow the evidence. Find what holds.**
 
-[![CI](https://github.com/Azzbee/ariadne-bio/actions/workflows/ci.yml/badge.svg)](https://github.com/Azzbee/ariadne-bio/actions/workflows/ci.yml)
+**Build / test:** [![Actual CI workflow status](https://github.com/Azzbee/ariadne-bio/actions/workflows/ci.yml/badge.svg)](https://github.com/Azzbee/ariadne-bio/actions/workflows/ci.yml)
+[![Local combined coverage: 93.08% on 2 November 2026](https://img.shields.io/badge/local_coverage-93.08%25-153f39.svg)](docs/submission.md#local-verification-on-2-november-2026)
 [![License: MIT](https://img.shields.io/badge/code-MIT-153f39.svg)](LICENSE)
+
+Coverage is the [dated local line/branch measurement](docs/submission.md#local-verification-on-2-november-2026)
+for tested commit `a35836b` on **2 November 2026**. The build/test badge follows
+the remote workflow's actual status; its run identifies the commit it verified.
 
 ARIADNE helps researchers explore medicines that might be worth investigating
 for another disease, inspect the biological evidence behind each suggestion,
@@ -338,14 +343,10 @@ verification. Repeat that verification for each release commit.
 
 ### Graph schema
 
-```mermaid
-flowchart TD
-    C["Compound"] -->|BINDS| G1["Gene A"]
-    D["Disease"] -->|ASSOCIATES| G2["Gene B"]
-    G1 ---|INTERACTS| G2
-    G1 -->|PARTICIPATES| P["Pathway"]
-    G2 -->|PARTICIPATES| P
-```
+![Graph schema: Compound binds Gene, Disease associates with Gene, genes interact and participate in Pathway; node identities and provenance are retained, while treatment labels stay outside predictive graph paths.](docs/diagrams/graph-schema.svg)
+
+[Open full-size schema](docs/diagrams/graph-schema.svg) ·
+[Editable diagram source](docs/diagrams/render.py)
 
 Gene A and Gene B are roles of the same `Gene` label. Each biological node also
 has the `Entity` label and a namespace-qualified ID. Original metadata and
@@ -375,18 +376,10 @@ limits of the transductive evaluation.
 
 ### Services and data flow
 
-```mermaid
-flowchart TD
-    U["Research interface · Nginx :8080"] --> A["FastAPI · :8000"]
-    A --> N["Neo4j + GDS · Bolt :7687 / Browser :7474"]
-    A --> M["Frozen graph features + model"]
-    A --> L["LangGraph investigation"]
-    L --> N
-    L --> O["Ollama · internal :11434, or configured provider"]
-    H["Checksummed Hetionet JSON"] --> E["Idempotent import + evaluation"]
-    E --> N
-    E --> M
-```
+![Architecture: browser through Nginx port8080 to FastAPI port8000, read-only Neo4j/GDS tools on Bolt7687 and Browser7474, optional internal Ollama11434, and a checksummed graph/model preparation pipeline with separate treatment labels.](docs/diagrams/architecture.svg)
+
+[Open full-size architecture](docs/diagrams/architecture.svg) ·
+[Regenerate both figures](docs/diagrams/README.md)
 
 Published development ports bind to `127.0.0.1`; Ollama has no host-published
 port. `make docker-run` prepares the local model and enables its API connection.

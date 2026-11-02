@@ -39,7 +39,8 @@ must not be relabeled as a passing full-stack run for this update.
 | Public images | [API](https://github.com/Azzbee/ariadne-bio/pkgs/container/ariadne-bio-api), [frontend](https://github.com/Azzbee/ariadne-bio/pkgs/container/ariadne-bio-frontend); release evidence binds anonymous image verification to a source commit. |
 | Merged implementation evidence | [Merged PR #1](https://github.com/Azzbee/ariadne-bio/pull/1) and [complete PR history](https://github.com/Azzbee/ariadne-bio/pulls); this alone does not establish one substantial PR per registered member. |
 | Current demonstration video | `ariadne-v1.4.1-walkthrough.mp4`: **8 min 23 sec**, captioned, with disclosed synthetic narration. It shows the current interface and code, and explicitly labels the earlier v1.4.0 full-stack provider evidence. SHA-256: `4afdc2275bdf1b182e191bddb0aae61a221e1668d486b4a83b96c592f48ba756`. Video and reproducible production sources are separate hand-in artifacts. |
-| Moodle hand-in | No final submission receipt or precise cutoff time is recorded here. |
+| Project registration | The registered team's public repository URL was entered in the project information spreadsheet and read back successfully on **2 November 2026**. |
+| Moodle hand-in | The signed-in assignment was checked on **2 November 2026**: due **Monday 2 November 2026, 23:59 Europe/Paris**; status **No submissions**, last modified **—**. Submission is held until the team's explicit green light. |
 
 Scientific reports identify their graph, model and scoring contract. CI quality,
 live integration and research jobs can produce different fitted model bytes;
@@ -55,6 +56,23 @@ that restores the old navigation selector fails: the checkbox cannot change.
 This verifies that the regression gate detects the original interaction bug.
 Current local checks do **not** establish a new Docker/Neo4j/GDS/provider run;
 retain the final matching CI artifact when that run completes.
+
+### Local verification on 2 November 2026
+
+The README's **93.08% coverage** badge is a dated local measurement for tested
+commit [`a35836be9d837f6741f886036070959469575616`](https://github.com/Azzbee/ariadne-bio/commit/a35836be9d837f6741f886036070959469575616),
+recorded at **08:29 UTC on 2 November 2026**. The
+[retained verification summary](evidence/local-verification-2026-11-02.json)
+records **744 Python**, **170 frontend** and **6 Chromium** checks passing with
+no failures or skips; **13 live-service tests were deselected** from this local
+run. Coverage combines **4,149 of 4,419 executable lines** and **1,167 of 1,292
+branches**: `(4,149 + 1,167) / (4,419 + 1,292) = 93.08%` after rounding.
+
+The summary and underlying coverage XML, JUnit reports and logs are retained in
+the verification archive. The **build / test** badge links to the actual remote
+workflow; its run and commit remain the authority for Docker image builds and
+live Neo4j/GDS/provider verification. Subsequent documentation-only changes do
+not turn this dated result into a new execution claim.
 
 ## Run the complete application
 
@@ -177,11 +195,18 @@ The instructor's 22 October 2026 submission email requires:
 3. The repository and video submitted through Moodle.
 4. The repository URL entered in the project information spreadsheet.
 
-If the video exceeds the upload limit, that email permits an uploaded PDF
-containing a public Drive link. The 23 October email confirms a **2 November
-2026 deadline**; the exact Moodle cutoff and final receipt still require direct
-confirmation. The project spreadsheet's repository field also needs the public
-URL. Private sheet links and mailbox details are deliberately absent here.
+The signed-in Moodle assignment, inspected on **2 November 2026**, gives the
+deadline as **Monday 2 November 2026 at 23:59 Europe/Paris**. Its upload form
+accepts up to **20 files**, each at most **100 MB**, and all file types. The
+current **15.34 MB** video fits that limit. The form has file submissions; a
+short PDF containing the public repository and release links can accompany the
+video. The instructor's alternative of a PDF with a public Drive video link is
+available if a different video exceeds the limit.
+
+The project spreadsheet's repository field is **completed and verified**. Moodle
+still reports **No submissions**, with no last-modified timestamp: the upload
+form was inspected and cancelled, and final submission awaits the team's
+explicit green light. Private sheet links and mailbox details are absent here.
 
 Any synthetic narration or edited/recorded sequence must be disclosed. A
 technical walkthrough demonstrates the artifact; it does not certify a

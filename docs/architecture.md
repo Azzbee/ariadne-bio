@@ -2,14 +2,9 @@
 
 ## Biological evidence model
 
-```mermaid
-flowchart LR
-    C["Compound"] -->|BINDS| G1["Gene A"]
-    D["Disease"] -->|ASSOCIATES| G2["Gene B"]
-    G1 ---|INTERACTS| G2
-    G1 -->|PARTICIPATES| P["Pathway"]
-    G2 -->|PARTICIPATES| P
-```
+![Implemented biological graph schema, including qualified identities, retained properties and separate treatment labels.](diagrams/graph-schema.svg)
+
+[Full-size figure](diagrams/graph-schema.svg) · [Editable source](diagrams/render.py)
 
 All biological nodes also carry a shared entity identity. A `Gene` in Hetionet
 represents the corresponding gene/protein concept used by its integrated sources.
@@ -99,18 +94,9 @@ visualization and query results without clipping model features.
 
 ## Services, ports and data flow
 
-```mermaid
-flowchart TD
-    U["Browser"] --> F["Nginx frontend :8080"]
-    F --> A["FastAPI :8000; LangGraph and audit engines"]
-    A --> N["Neo4j + GDS; Bolt :7687, Browser :7474"]
-    A --> O["Ollama :11434 or configured provider"]
-    H["Checksummed Hetionet archive"] --> P["Preparation, separate labels, fitting"]
-    P --> M["Prepared graph and saved model"]
-    M --> A
-    P --> I["Idempotent import"]
-    I --> N
-```
+![Service architecture: Nginx, FastAPI and LangGraph, Neo4j/GDS, the optional provider and the checksummed graph/model pipeline.](diagrams/architecture.svg)
+
+[Full-size figure](diagrams/architecture.svg) · [Editable source](diagrams/render.py)
 
 Nginx proxies `/api` and `/docs`; FastAPI owns validation and orchestration.
 The published development ports bind to `127.0.0.1`. Ollama's port is internal

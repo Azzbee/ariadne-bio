@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1070" viewBox="0 0 1000 1070" role="img" aria-labelledby="title desc">
+<title id="title">ARIADNE service architecture and data flow</title>
+<desc id="desc">The browser uses Nginx on port 8080 and FastAPI on 8000. FastAPI orchestrates read-only graph tools, fixed-model ranking and three audit engines. Neo4j with GDS uses Bolt 7687 and Browser 7474. An optional Ollama service on internal port 11434 or configured provider supplies validated plans, never scores. Checksummed Hetionet data is prepared with treatment labels separate, imported idempotently and fitted using a recorded split. Graph and saved model are fixed during challenges.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#506862"/></marker></defs>
+<rect width="1000" height="1070" rx="16" fill="#faf9f5"/>
+<g font-family="DejaVu Sans, Arial, sans-serif">
+<text x="36" y="45" font-size="14" font-weight="700" fill="#506862" text-anchor="start">SERVICES + DATA FLOW</text>
+<text x="36" y="82" font-size="28" font-weight="650" fill="#153f39" text-anchor="start">A traceable path from question to evidence.</text>
+<rect x="335" y="116" width="330" height="86" rx="12" fill="#ffffff" stroke="#bdcec5" stroke-width="1.5"/>
+<text x="355" y="150" font-size="20" font-weight="650" fill="#153f39" text-anchor="start">Research interface</text>
+<text x="355" y="178" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Browser · evidence, rankings, audits</text>
+<rect x="335" y="254" width="330" height="86" rx="12" fill="#ffffff" stroke="#bdcec5" stroke-width="1.5"/>
+<text x="355" y="288" font-size="20" font-weight="650" fill="#153f39" text-anchor="start">Nginx · :8080</text>
+<text x="355" y="316" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Static frontend + reverse proxy</text>
+<path d="M 500 202 L 500 254" fill="none" stroke="#506862" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="467.0" y="217" width="66" height="23" rx="4" fill="#faf9f5"/>
+<text x="500" y="234" font-size="15" font-weight="600" fill="#153f39" text-anchor="middle">HTTP</text>
+<rect x="215" y="404" width="570" height="112" rx="12" fill="#eef5f0" stroke="#bdcec5" stroke-width="1.5"/>
+<text x="235" y="438" font-size="20" font-weight="650" fill="#153f39" text-anchor="start">FastAPI · :8000</text>
+<text x="235" y="466" font-size="15" font-weight="400" fill="#506862" text-anchor="start">LangGraph · validated plans · typed, read-only tools</text>
+<text x="235" y="489" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Exact graph features · fixed-model ranking · three auditors</text>
+<path d="M 500 340 L 500 404" fill="none" stroke="#506862" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="400.5" y="361" width="199" height="23" rx="4" fill="#faf9f5"/>
+<text x="500" y="378" font-size="15" font-weight="600" fill="#153f39" text-anchor="middle">/api · /docs · /redoc</text>
+<rect x="36" y="609" width="430" height="112" rx="12" fill="#ffffff" stroke="#bdcec5" stroke-width="1.5"/>
+<text x="56" y="643" font-size="20" font-weight="650" fill="#153f39" text-anchor="start">Neo4j + Graph Data Science</text>
+<text x="56" y="671" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Bolt :7687 · Neo4j Browser :7474</text>
+<text x="56" y="694" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Typed evidence · indexes · graph algorithms</text>
+<rect x="534" y="609" width="430" height="112" rx="12" fill="#ffffff" stroke="#bdcec5" stroke-width="1.5"/>
+<text x="554" y="643" font-size="20" font-weight="650" fill="#153f39" text-anchor="start">Optional LLM provider</text>
+<text x="554" y="671" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Ollama :11434 (internal) or configured URL</text>
+<text x="554" y="694" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Typed planning only; no ranking or labels</text>
+<path d="M 350 516 L 350 558 Q 350 570 338 570 L 263 570 Q 251 570 251 582 L 251 609" fill="none" stroke="#506862" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M 650 516 L 650 558 Q 650 570 662 570 L 737 570 Q 749 570 749 582 L 749 609" fill="none" stroke="#506862" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="162.5" y="535" width="177" height="23" rx="4" fill="#faf9f5"/>
+<text x="251" y="552" font-size="15" font-weight="600" fill="#153f39" text-anchor="middle">Read-only queries</text>
+<rect x="673.0" y="535" width="152" height="23" rx="4" fill="#faf9f5"/>
+<text x="749" y="552" font-size="15" font-weight="600" fill="#153f39" text-anchor="middle">Plan request</text>
+<rect x="36" y="817" width="260" height="112" rx="12" fill="#ffffff" stroke="#bdcec5" stroke-width="1.5"/>
+<text x="56" y="851" font-size="20" font-weight="650" fill="#153f39" text-anchor="start">Pinned Hetionet JSON</text>
+<text x="56" y="879" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Source archive SHA-256</text>
+<text x="56" y="902" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Downloaded bytes verified</text>
+<rect x="366" y="817" width="268" height="112" rx="12" fill="#ffffff" stroke="#bdcec5" stroke-width="1.5"/>
+<text x="386" y="851" font-size="20" font-weight="650" fill="#153f39" text-anchor="start">Prepare + evaluate</text>
+<text x="386" y="879" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Graph and separate label table</text>
+<text x="386" y="902" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Recorded split → fit / evaluate</text>
+<rect x="704" y="817" width="260" height="112" rx="12" fill="#ffffff" stroke="#bdcec5" stroke-width="1.5"/>
+<text x="724" y="851" font-size="20" font-weight="650" fill="#153f39" text-anchor="start">Graph + saved model</text>
+<text x="724" y="879" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Source / model identities</text>
+<text x="724" y="902" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Fixed during challenges</text>
+<path d="M 296 872 L 366 872" fill="none" stroke="#506862" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M 634 872 L 704 872" fill="none" stroke="#506862" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M 416 817 L 416 721" fill="none" stroke="#506862" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="294.5" y="777" width="243" height="23" rx="4" fill="#faf9f5"/>
+<text x="416" y="794" font-size="15" font-weight="600" fill="#153f39" text-anchor="middle">Idempotent graph import</text>
+<path d="M 964 872 L 981 872 L 981 460 L 785 460" fill="none" stroke="#506862" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="783.0" y="421" width="194" height="23" rx="4" fill="#faf9f5"/>
+<text x="880" y="438" font-size="15" font-weight="600" fill="#153f39" text-anchor="middle">Load fixed artifacts</text>
+<text x="36" y="973" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Labels supervise fitting and evaluation; TREATS / PALLIATES never enter predictive evidence paths.</text>
+<text x="36" y="1003" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Binding, provenance and joint auditors return replayable certificates bound to the graph and model.</text>
+<text x="36" y="1033" font-size="15" font-weight="400" fill="#506862" text-anchor="start">Published ports bind to 127.0.0.1. Core-only startup uses deterministic planning by default.</text>
+</g></svg>
