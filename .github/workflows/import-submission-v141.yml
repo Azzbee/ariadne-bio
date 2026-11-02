@@ -1,0 +1,148 @@
+# One-time import only. Never merge this helper branch into the application branch.
+# Before adding this file, publish the exact final ci.yml and both payload chunks
+# on publication/import-submission-v141 using the signed-in GitHub editor.
+name: Import verified ARIADNE v1.4.1 submission
+
+on:
+  push:
+    branches: [publication/import-submission-v141]
+    paths:
+      - .github/workflows/import-submission-v141.yml
+      - .github/workflows/ci.yml
+      - publication/submission-v141/bundle.part-01.b64
+      - publication/submission-v141/bundle.part-02.b64
+
+permissions: {}
+
+concurrency:
+  group: ariadne-import-submission-v141
+  cancel-in-progress: false
+
+jobs:
+  import-exact-commit:
+    if: >-
+      github.repository == 'Azzbee/ariadne-bio' &&
+      github.ref == 'refs/heads/publication/import-submission-v141' &&
+      github.event_name == 'push' && github.event.deleted == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      EXPECTED_BASELINE: 8077a8944def2ef7b432bd9c3539878ec24769da
+      EXPECTED_SOURCE_COMMIT: f208d96b41fae7526f56069618f0713de11169c5
+      EXPECTED_BUNDLE_SHA256: 069f801c088b5706eef7b44d9a224c24ca14af48efe9aff7609071754e75f8ac
+      TARGET_REF: refs/heads/fix/submission-readiness
+    steps:
+      - name: Read the explicitly reviewed staging commit and full prerequisite history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Verify exact bundle and create only the requested submission branch
+        shell: bash
+        run: |
+          python3 -I - <<'PY'
+          import base64
+          from hashlib import sha256
+          import json
+          import os
+          from pathlib import Path
+          import re
+          import subprocess
+
+          def require(condition, message):
+              if not condition:
+                  raise SystemExit(message)
+
+          def git(*args, allowed=(0,)):
+              result = subprocess.run(
+                  ['git', '-c', 'core.hooksPath=/dev/null', *args],
+                  check=False, capture_output=True, text=True,
+                  env={**os.environ, 'GIT_TERMINAL_PROMPT': '0'},
+              )
+              require(result.returncode in allowed,
+                      'Git operation failed: ' + args[0] + '\n' + result.stderr)
+              return result
+
+          baseline = os.environ['EXPECTED_BASELINE']
+          expected = os.environ['EXPECTED_SOURCE_COMMIT']
+          digest = os.environ['EXPECTED_BUNDLE_SHA256']
+          target = os.environ['TARGET_REF']
+          require(re.fullmatch(r'[0-9a-f]{40}', baseline), 'Invalid baseline SHA.')
+          require(re.fullmatch(r'[0-9a-f]{40}', expected), 'Invalid source SHA.')
+          require(re.fullmatch(r'[0-9a-f]{64}', digest), 'Invalid bundle SHA-256.')
+          require(target == 'refs/heads/fix/submission-readiness', 'Unapproved target ref.')
+          require(git('remote', 'get-url', 'origin').stdout.strip() in {
+              'https://github.com/Azzbee/ariadne-bio',
+              'https://github.com/Azzbee/ariadne-bio.git',
+          }, 'Unexpected origin; refusing publication.')
+
+          encoded = []
+          for name in ['bundle.part-01.b64', 'bundle.part-02.b64']:
+              path = Path('publication/submission-v141') / name
+              require(path.is_file() and not path.is_symlink(), 'Missing/plain-file payload: ' + name)
+              raw = path.read_bytes()
+              require(0 < len(raw) < 900000, 'Payload chunk exceeds the reviewed UI bound.')
+              encoded.append(b''.join(raw.split()))
+          payload = base64.b64decode(b''.join(encoded), validate=True)
+          require(sha256(payload).hexdigest() == digest, 'Bundle SHA-256 mismatch.')
+          header = payload.split(b'\n\n', 1)[0].decode('ascii').splitlines()
+          require(len(header) == 3 and header[0] == '# v2 git bundle', 'Unexpected bundle format or refs.')
+          require(header[1].startswith('-' + baseline + ' '), 'Unexpected prerequisite baseline.')
+          require(header[2] == expected + ' ' + target, 'Unexpected bundled commit or target ref.')
+          bundle = Path(os.environ['RUNNER_TEMP']) / 'ariadne-submission-v141.bundle'
+          bundle.write_bytes(payload)
+
+          git('cat-file', '-e', baseline + '^{commit}')
+          git('merge-base', '--is-ancestor', baseline, 'HEAD')
+          git('bundle', 'verify', str(bundle))
+          require(git('bundle', 'list-heads', str(bundle)).stdout.strip() == expected + ' ' + target,
+                  'Bundle advertises an unexpected reference.')
+          git('-c', 'fetch.fsckObjects=true', 'fetch', '--no-tags', '--no-write-fetch-head',
+              str(bundle), target + ':refs/import/submission-v141')
+          require(git('rev-parse', 'refs/import/submission-v141^{commit}').stdout.strip() == expected,
+                  'Imported commit differs from the approved source.')
+          git('merge-base', '--is-ancestor', baseline, expected)
+
+          # GITHUB_TOKEN cannot introduce new workflow content. Every target workflow
+          # must already have been reviewed and committed at the same path via the UI.
+          workflows = git('ls-tree', '-r', '--name-only', expected, '--', '.github/workflows/').stdout.splitlines()
+          require(workflows == ['.github/workflows/ci.yml'], 'Unexpected source workflow inventory.')
+          for path in workflows:
+              require(git('rev-parse', expected + ':' + path).stdout.strip() ==
+                      git('rev-parse', 'HEAD:' + path).stdout.strip(),
+                      'Publish the exact final workflow through the signed-in UI first: ' + path)
+          forbidden = git('ls-tree', '-r', '--name-only', expected, '--',
+                          '.github/workflows/import-submission-v141.yml',
+                          'publication/submission-v141').stdout.strip()
+          require(not forbidden, 'The source commit unexpectedly contains publication helper files.')
+
+          def remote_tip():
+              result = git('ls-remote', '--exit-code', '--refs', 'origin', target, allowed=(0, 2))
+              if result.returncode == 2:
+                  return None
+              fields = result.stdout.strip().split()
+              require(len(fields) == 2 and fields[1] == target and
+                      re.fullmatch(r'[0-9a-f]{40}', fields[0]), 'Unexpected remote branch response.')
+              return fields[0]
+
+          before = remote_tip()
+          require(before in {None, expected}, 'Target branch already exists at another commit; no push attempted.')
+          if before is None:
+              # Explicit single-ref push. No force, no tags, no main, no staging history.
+              git('push', '--porcelain', 'origin', expected + ':' + target)
+          require(remote_tip() == expected, 'Remote branch does not match after import.')
+          receipt = {
+              'status': 'created' if before is None else 'already_exact',
+              'repository': 'Azzbee/ariadne-bio', 'target_ref': target,
+              'source_commit': expected, 'baseline_commit': baseline,
+              'bundle_sha256': digest, 'bundle_bytes': len(payload),
+              'ci': 'Not inferred. Open the actual source branch PR through the signed-in UI.',
+          }
+          print(json.dumps(receipt, indent=2))
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as summary:
+              summary.write('## Verified source import\n\n```json\n' +
+                            json.dumps(receipt, indent=2) + '\n```\n')
+          PY
