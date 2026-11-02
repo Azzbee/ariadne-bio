@@ -11,12 +11,29 @@ import {
 } from '../provenance-model.js';
 
 const dataRoot = new URL('../data/', import.meta.url);
-const manifest = JSON.parse(fs.readFileSync(new URL('manifest.json', dataRoot), 'utf8'));
-const diseaseId = 'Disease::DOID:7148';
-const caseBytes = fs.readFileSync(new URL(manifest.cases[diseaseId].file, dataRoot));
-const caseData = JSON.parse(caseBytes.toString('utf8'));
-const marimastat = caseData.provenance_audits['Compound::DB00786']['10:2'];
-const one = caseData.provenance_audits['Compound::DB00786']['10:1'];
+const fixtureBytes = fs.readFileSync(new URL('fixtures/provenance-marimastat.json', import.meta.url));
+const marimastat = JSON.parse(fixtureBytes.toString('utf8'));
+const one = JSON.parse(fs.readFileSync(new URL('fixtures/landing-v1.3-provenance.json', import.meta.url), 'utf8'));
+const diseaseId = marimastat.disease.id;
+// Immutable real certificates; the following transport records are explicit unit fixtures.
+// They exercise browser behavior and do not claim a fresh scientific verification.
+const verificationFixture = certificate => ({
+  status: 'verified', valid: true, checks: ['Unit response fixture; no verifier executed'], errors: [],
+  certificate_sha256: certificate.certificate_sha256, verification_execution: 'recorded_at_export',
+  verification_method: 'Unit response fixture; no verifier executed', replayed_witnesses: 0
+});
+const caseData = {
+  disease: marimastat.disease,
+  provenance_audits: { [marimastat.compound.id]: { '10:2': marimastat, '10:1': one } },
+  provenance_verifications: { [marimastat.compound.id]: { '10:2': verificationFixture(marimastat), '10:1': verificationFixture(one) } }
+};
+const caseBytes = Buffer.from(JSON.stringify(caseData));
+const caseFile = 'cases/provenance-unit-fixture.json';
+const manifest = {
+  cases: { [diseaseId]: { file: caseFile } }, diseases: [marimastat.disease], ...marimastat.identity, stats: {},
+  provenance_catalog: { identity: { ...marimastat.identity }, items: marimastat.scope.groups },
+  files: [{ path: caseFile, bytes: caseBytes.byteLength, sha256: createHash('sha256').update(caseBytes).digest('hex') }]
+};
 const response = (data, bytes = new TextEncoder().encode(JSON.stringify(data))) => ({
   ok: true, status: 200, headers: { get: () => 'application/json' }, json: async () => data,
   arrayBuffer: async () => bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)
@@ -36,6 +53,12 @@ function snapshotAPI(data = caseData, suppliedManifest = manifest) {
   });
   return { api, calls };
 }
+
+test('immutable provenance unit certificates retain their original identity and byte hash', () => {
+  assert.equal(createHash('sha256').update(fixtureBytes).digest('hex'), '84a5bc3d4eefe84b9844ee7dc9fbe5816739aca87cc1c1b5f74a1c1311edb2c4');
+  assert.deepEqual(marimastat.identity, one.identity);
+  assert.equal(marimastat.certificate_sha256, '7b6bec88464c25177254cd511a4df0d8c0527f77f6dcd73c1bf456bbf087dbb7');
+});
 
 test('live provenance calls preserve bounded group and conditional-protection scope', async () => {
   const calls = [], api = new AriadneAPI({}, async (url, options) => { calls.push({ url, options }); return response(marimastat); });
@@ -136,7 +159,16 @@ test('group audits bind graph, model and complete provenance-map identities befo
   assert.throws(() => validateSnapshotCase(caseData, wrongCatalog, diseaseId), /provenance catalog/);
 });
 
-test('all exported source certificates pass display invariants and verification bindings', () => {
+test('all exported source certificates pass display invariants and verification bindings', t => {
+  let manifestBytes;
+  try { manifestBytes = fs.readFileSync(new URL('manifest.json', dataRoot), 'utf8'); }
+  catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    t.skip('Run make snapshot to verify the generated source-certificate cohort.');
+    return;
+  }
+  // A malformed manifest or missing/corrupt case is an error, never a skipped export.
+  const manifest = JSON.parse(manifestBytes);
   let count = 0, maximumBytes = 0;
   for (const [id, descriptor] of Object.entries(manifest.cases)) {
     const bytes = fs.readFileSync(new URL(descriptor.file, dataRoot));

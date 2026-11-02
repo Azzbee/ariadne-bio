@@ -68,9 +68,17 @@ test('WebCrypto, absent WebCrypto, and unavailable digest all perform a real byt
   assert.equal(await sha256Hex(raw, { subtle: { digest: async () => new ArrayBuffer(0) } }), expected);
 });
 
-test('every actual published case also matches its checksum through the HTTP-preview fallback', async () => {
+test('every actual published case also matches its checksum through the HTTP-preview fallback', async t => {
   const base = new URL('../data/', import.meta.url);
-  const manifest = JSON.parse(await readFile(new URL('manifest.json', base), 'utf8'));
+  let manifestBytes;
+  try { manifestBytes = await readFile(new URL('manifest.json', base), 'utf8'); }
+  catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    t.skip('Run make snapshot to verify the generated published cases.');
+    return;
+  }
+  // Parsing and case reads stay outside the missing-manifest guard: broken exports fail.
+  const manifest = JSON.parse(manifestBytes);
   for (const record of manifest.files) {
     const bytes = await readFile(new URL(record.path, base));
     assert.equal(bytes.byteLength, record.bytes, record.path);

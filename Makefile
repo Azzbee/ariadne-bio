@@ -1,8 +1,9 @@
 .DEFAULT_GOAL := help
 PYTHON ?= .venv/bin/python
 COMPOSE ?= docker compose
+INTEGRATION ?= 0
 
-.PHONY: help init install data evaluate ingest run docker-run docker-core docker-stop docker-logs test test-integration test-llm lint format notebook snapshot verify-scores audit-licenses benchmark-audits benchmark-provenance benchmark-mixed benchmark-mixed-scaling provenance-controls package-release smoke clean
+.PHONY: help init install prepare-data data evaluate ingest run docker-run docker-core docker-stop docker-logs test test-integration test-llm test-browser lint format notebook notebook-refit snapshot verify-scores audit-licenses benchmark-audits benchmark-provenance benchmark-mixed benchmark-mixed-scaling provenance-controls package-release smoke clean
 
 help: ## List reproducible project commands
 	@awk 'BEGIN {FS = ":.*##"; printf "ARIADNE — trace evidence, challenge hypotheses\n\n"} /^[a-zA-Z_-]+:.*?##/ {printf "  %-19s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -14,8 +15,10 @@ install: ## Create a Python virtual environment and install pinned dependencies
 	python3 -m venv .venv
 	$(PYTHON) -m pip install -r requirements-dev.txt
 
-data: ## Download, checksum, prepare graph, train and evaluate the frozen model
+prepare-data: ## Prepare the checksummed graph without replacing the saved model or reports
 	$(PYTHON) -m scripts.prepare_data
+
+data: prepare-data ## Prepare graph, fit a new model and replace this checkout's evaluation
 	$(PYTHON) -m scripts.evaluate
 
 evaluate: ## Reproduce the fixed-seed held-out benchmark from prepared data
@@ -31,7 +34,7 @@ docker-run: init ## Build and launch Neo4j, API, web UI and a local language mod
 	$(COMPOSE) --profile llm up --build --detach --wait --wait-timeout 1800 neo4j ollama
 	@mkdir -p reports
 	$(COMPOSE) --profile llm run --rm ollama-init > reports/ollama-model.json
-	$(COMPOSE) --profile llm up --build --detach --wait --wait-timeout 1800 api frontend
+	$(COMPOSE) -f docker-compose.yml -f docker-compose.llm.yml --profile llm up --build --detach --wait --wait-timeout 1800 api frontend
 	@echo "Open http://localhost:8080 and http://localhost:8080/docs"
 
 docker-core: init ## Launch Neo4j, API and UI without downloading a language model
@@ -44,15 +47,21 @@ docker-stop: ## Stop containers; retain downloaded graph and database volumes
 docker-logs: ## Follow application and database startup logs
 	$(COMPOSE) logs --follow api neo4j frontend
 
-test: ## Run unit/API tests and enforce at least 60% branch coverage
+test: ## Run unit/API/frontend tests; INTEGRATION=1 also requires live Neo4j/GDS tests
 	$(PYTHON) -m pytest -m "not integration and not llm" --cov --cov-report=term-missing --cov-report=xml --junitxml=reports/junit.xml
 	node --test frontend/tests/*.test.js
+ifeq ($(INTEGRATION),1)
+	$(MAKE) test-integration
+endif
 
 test-integration: ## Run genuine Neo4j/GDS integration tests against configured service
-	$(PYTHON) -m pytest -m integration -v --junitxml=reports/neo4j-junit.xml
+	ARIADNE_REQUIRE_NEO4J=1 $(PYTHON) -m pytest -m integration -v --junitxml=reports/neo4j-junit.xml
 
 test-llm: ## Verify actual LLM inference, sensitivity routing and rejection over HTTP
 	$(PYTHON) -m pytest -m llm -v --junitxml=reports/llm-junit.xml
+
+test-browser: ## Run Chromium UI/API-reference checks; requires Python, npm ci, browser and snapshot
+	ARIADNE_BROWSER_PYTHON="$(PYTHON)" npm --prefix frontend run browser:smoke
 
 lint: ## Enforce pylint score >=9.5 and formatting
 	$(PYTHON) -m pylint app scripts --fail-under=9.5
@@ -61,8 +70,13 @@ lint: ## Enforce pylint score >=9.5 and formatting
 format: ## Format project Python source
 	$(PYTHON) -m black app scripts tests infra
 
-notebook: ## Execute the complete exploration notebook and save its outputs
+notebook: ## Execute the notebook with prepared data and matching saved model/reports
 	$(PYTHON) infra/run_notebook.py
+
+notebook-refit: ## Refit, refresh both notebook benchmarks, then execute (replaces local results)
+	$(MAKE) data
+	$(MAKE) benchmark-audits benchmark-provenance
+	$(MAKE) notebook
 
 snapshot: ## Export the frozen research edition for browser-only hosting
 	$(PYTHON) -m scripts.export_snapshot

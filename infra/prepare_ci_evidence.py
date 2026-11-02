@@ -9,6 +9,7 @@ import shutil
 import subprocess
 
 RUN_REPORTS = (
+    "core-smoke.json",
     "http_smoke.json",
     "live-model.json",
     "live-manifest.json",
@@ -86,6 +87,13 @@ def prepare_reports(root: Path, context: dict, job: str = "integration") -> None
     reports.mkdir(parents=True, exist_ok=True)
     for name in outputs:
         (root / name).unlink(missing_ok=True)
+    if job == "quality":
+        # Screenshots, downloads and traces belong only to the current browser run.
+        browser = reports / "browser"
+        if browser.is_symlink():
+            browser.unlink()
+        elif browser.exists():
+            shutil.rmtree(browser)
     if job == "mixed":
         # This subtree contains only generated paired-study reports and replay inputs.
         # Remove the whole old study so an early failure cannot upload stale success.

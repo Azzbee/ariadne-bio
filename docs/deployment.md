@@ -19,6 +19,21 @@ the graph and model between starts. A matching installed model is reused without
 pull. Reserve approximately 8 GB available RAM and 20 GB free disk for the local
 stack; image extraction requires substantially more space than compressed downloads.
 
+The base [Compose file](../docker-compose.yml) leaves the provider URL empty.
+After model initialization, `make docker-run` also applies
+[docker-compose.llm.yml](../docker-compose.llm.yml), which supplies the internal
+Ollama endpoint unless an explicit provider URL is configured. If manually
+recreating the API of an already initialized full stack, retain that overlay:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.llm.yml \
+  --profile llm up -d --force-recreate api
+```
+
+Use `make docker-run` for the complete ordered bootstrap. Commands such as
+`docker compose logs`, `exec`, `cp`, `ps` and `down` do not recreate the API and
+do not require the overlay.
+
 The default Qwen model's full manifest identity is pinned in
 [bootstrap_model.py](../infra/bootstrap_model.py). Initialization uses Ollama's
 [model inventory](https://docs.ollama.com/api/tags) and
@@ -38,13 +53,21 @@ and do not pass through the local Ollama initializer.
 | --- | --- |
 | http://localhost:8080 | Overview and research workbench |
 | http://localhost:8080/docs | Interactive Swagger documentation |
-| http://localhost:8000/api/health | Direct API health and execution mode |
+| http://localhost:8080/redoc | Alternative API reference |
+| http://localhost:8000/api/health | Direct API health, graph backend and agent configuration |
 | http://localhost:7474 | Neo4j Browser |
 | bolt://localhost:7687 | Neo4j Bolt connection |
 
 Host ports are bound to loopback. The Neo4j password is generated locally in a
 mode-0600 `.env` file. `make init` never overwrites an existing file. The default
 Neo4j username is `neo4j`.
+
+Swagger UI and ReDoc are served with pinned, self-hosted JavaScript/CSS and the
+local ARIADNE favicon. They load the same-origin `/openapi.json` and do not require
+CDN availability, Google Fonts or a runtime npm install. The
+[asset inventory and licenses](../app/static/docs/README.md) record official npm
+tarball integrity verification and checksums. Nginx proxies `/docs/assets` to
+FastAPI along with the existing documentation routes.
 
 ### Core stack without local model download
 
@@ -53,9 +76,18 @@ make docker-core
 ```
 
 This starts Neo4j, the API and frontend. The graph tools, ranking and challenge
-workflow remain available. Responses report deterministic execution when no
-language model is available. For the coursework agent demonstration, run and
-verify a live provider with the full stack or configured external service.
+workflow remain available. With the default empty `ARIADNE_LLM_BASE_URL` and
+`ARIADNE_AGENT_MODE=auto`, planning uses deterministic tools without attempting
+a provider connection. An explicitly configured provider URL remains active.
+For core-only use after an upgrade, clear an older
+`ARIADNE_LLM_BASE_URL=http://ollama:11434/v1` value in `.env`; initialization
+preserves existing configuration rather than replacing it.
+
+Health reports configured `auto` or `llm` policy when a provider is configured;
+this does not prove that inference succeeded. A completed investigation reports
+its actual mode, and rejection/error traces explain attempted workflows. For
+the coursework agent demonstration, require a successful request using the
+full local-model stack or a configured external provider.
 
 ### Configured language-model provider
 
@@ -69,10 +101,11 @@ ARIADNE_LLM_API_KEY=
 ARIADNE_LLM_TIMEOUT=120
 ```
 
-The API key belongs in the ignored local configuration, never in Git or the
-frontend. The default Docker model is `qwen2.5:1.5b`, served through Ollama's
-OpenAI-compatible endpoint. Model availability and behavior are checked by the
-application, and the response mode is visible to the user.
+Set the API key in ignored local configuration if the provider requires one;
+never place it in Git or the frontend. The default local Docker model is
+`qwen2.5:1.5b`, served through Ollama's OpenAI-compatible endpoint. `llm` mode
+rejects a failed provider invocation; `auto` may fall back and discloses that
+deterministic execution. The response status and trace accompany its mode.
 
 ```bash
 docker compose up -d --force-recreate api
@@ -80,23 +113,31 @@ docker compose up -d --force-recreate api
 
 ## Native Python development
 
-Install Python 3.11+ (3.12 is the reference), Node.js 18+ (22 in CI), Make and Git.
-Python dependencies are hash locked. The frontend has no package dependencies,
-but its test runner requires Node. The native API serves the frontend on the
-same port; use http://localhost:8000.
+Install Python 3.11+ (3.12 is the reference), Node.js, Make and Git. The plain
+frontend module tests support Node 18+; the complete browser gate requires
+Node 20+ (22 in CI). Python dependencies are hash locked. The browser client has
+no runtime package dependencies; the browser test harness uses pinned Playwright.
+The native API serves the frontend on the same port; use http://localhost:8000.
 
 ```bash
 make install
-make data
+make prepare-data
 ARIADNE_AGENT_MODE=deterministic make run
 ```
 
 This explicitly starts the deterministic in-memory implementation on port 8000.
-The shared `.env` defaults to the internal Docker Ollama hostname; the command
-above prevents accidental attempts to use that hostname from the native process.
-To use a running Neo4j service instead, export the local configuration:
+`make prepare-data` preserves the retained model and evaluation; `make data`
+deliberately fits a new model. The [reproduction guide](reproducibility.md)
+explains which reports must be refreshed after a refit. A newly created `.env`
+has an empty provider URL; the explicit deterministic mode also handles an older
+local configuration without attempting its provider.
+
+To use a running Neo4j service instead, keep host port 8000 free for the native
+API and export the local configuration. This example still uses deterministic
+planning, so it needs no language-model service:
 
 ```bash
+make init
 set -a
 . ./.env
 set +a
@@ -104,27 +145,50 @@ export ARIADNE_GRAPH_BACKEND=neo4j
 export NEO4J_URI=bolt://localhost:7687
 export NEO4J_USER=neo4j
 export NEO4J_DATABASE=neo4j
-export ARIADNE_LLM_BASE_URL=http://localhost:11434/v1
+export ARIADNE_AGENT_MODE=deterministic
 .venv/bin/python -m scripts.load_neo4j
 make run
 ```
 
-The Ollama Compose service has no published host port by default. The local URL
-above applies to a separately running native Ollama service, or a deliberately
-published local port. For the standard Compose application use the internal
-`http://ollama:11434/v1` URL already configured.
+For native LLM use, configure a provider reachable from the host. For example,
+`http://localhost:11434/v1` applies to a separately running native Ollama service
+or a deliberately published local port, with `ARIADNE_AGENT_MODE=llm` and the
+matching model name. The Compose Ollama service has no host-published port by
+default. Its internal `http://ollama:11434/v1` address is supplied to the
+containerized API by the full-stack overlay; it is not a native host endpoint.
 
 ## Verification commands
 
-`make snapshot` first exports the complete seven-case research edition. Then
-`make test` runs unit and API checks plus the frontend module tests. The coverage
-gate is 60% with branch measurement enabled. `make lint` enforces a Pylint score
-of at least 9.5 and checks Black formatting. `make notebook` executes every
-notebook cell with the current virtual environment's Python kernel.
+`make test` runs unit and API checks plus the frontend module tests. Run
+`make snapshot` first to export the complete seven-case research edition and
+include its actual-case frontend tests; snapshot-dependent tests report skips
+when no export exists. The coverage gate is 60% with branch measurement enabled.
+`make lint` enforces a Pylint score of at least 9.5 and checks Black formatting.
+`make notebook` validates artifact identities and executes every notebook cell
+with the current virtual environment's Python kernel into `demo.executed.ipynb`.
+It does not need a browser snapshot or silently refit the model.
 
-`make smoke` exercises the running reverse proxy and API. For Neo4j integration,
-export the `.env` values as above and run `make test-integration`. The CI workflow
-does this against a newly built Compose deployment and retains logs and reports.
+With native dependencies and graph data prepared, the default empty-provider
+configuration can verify both core and full-stack behavior:
+
+```bash
+make docker-core
+python3 infra/smoke.py --core-only --output reports/core-smoke.json
+make test INTEGRATION=1
+make docker-run
+make test-llm
+make smoke
+```
+
+The core smoke gate requires a completed deterministic investigation with
+citations from actual Neo4j evidence. `make test INTEGRATION=1` adds genuine
+Neo4j/Cypher/GDS tests to the ordinary unit/API/frontend command; it reads local
+database credentials from `.env` or the environment and fails when the requested
+database is unconfigured or unavailable. `make test-integration` remains an
+equivalent direct entrypoint for only the database suite. CI is configured to
+test the core stack before enabling the local model and to retain both results.
+Successful execution must still be established for the revision being released.
+
 `make test-llm` verifies actual provider inference, evidence exclusions, rejection,
 and named-compound focus against http://127.0.0.1:8080; set
 `ARIADNE_TEST_BASE_URL` when testing a different local address. It fails if an
@@ -140,6 +204,62 @@ verification/rejection results, including the joint audit's independent matrix
 witness replays.
 Invoke `python infra/smoke.py --base-url URL`
 through the Nginx address when ports are customized.
+
+### Real browser verification
+
+The Chromium gate uses native browser controls and actual exported cases. It
+requires Node 20+, the Python environment and prepared graph/model, a complete
+snapshot, and the locked Playwright installation:
+
+```bash
+make install
+make prepare-data
+make snapshot
+npm --prefix frontend ci --ignore-scripts
+cd frontend
+npx playwright install --with-deps chromium
+cd ..
+make test-browser
+```
+
+The six scenarios cover checkbox/ranking restoration, native details and form
+submission, view navigation/source inspection, a verified joint-certificate
+download, Swagger execution of the health endpoint, and ReDoc endpoint
+navigation. The certificate's downloaded bytes are compared with the exported
+case. Both API-reference scenarios block nonlocal requests, so a hidden CDN,
+font or script dependency fails the check.
+
+The harness starts temporary loopback servers at **4173** for the exported
+interface and **4180** for an isolated native API. Override them with
+`ARIADNE_BROWSER_PORT` and `ARIADNE_BROWSER_API_PORT` if needed. The API uses the
+prepared data without refitting, forces memory/deterministic operation, clears
+provider credentials and does not load `.env`. Live Neo4j/GDS and real-provider
+checks remain separate integration gates. `make test-browser` uses
+`.venv/bin/python`; `make test-browser PYTHON=python` selects another prepared
+interpreter, as in CI.
+
+Missing generated data fails explicitly. Results are retained under
+`reports/browser/`: JUnit, JSON, downloaded certificate bytes, and screenshots
+and traces for failures. An installed Chromium/Chrome binary can be selected
+with `ARIADNE_BROWSER_EXECUTABLE`; the default uses Playwright's installed
+Chromium. CI is configured to run this gate after snapshot export, and its
+actual run status must be checked for the submitted revision.
+
+### Certificate transport limits
+
+The three verification routes, `/api/audit/verify`, `/api/provenance/audit/verify`
+and `/api/mixed/audit/verify`, accept HTTP request bodies up to **1 MiB** through
+Nginx. This accommodates exported JSON with indentation and whitespace. The API
+independently bounds the parsed certificate content at **256 KiB**. Ordinary
+requests retain Nginx's **32 KiB** body cap.
+
+The full smoke gate replays actual valid certificates on all three routes with
+bodies larger than 32 KiB, requires HTTP 422 for oversized certificate content,
+and requires HTTP 413 above the 1 MiB transport limit. It also checks the ordinary
+request cap. These checks exercise the reverse proxy rather than only a direct
+FastAPI test client; their results appear under `certificate_transport` in the
+smoke report. See [Nginx configuration](../nginx.conf) and
+[smoke implementation](../infra/smoke.py).
 
 ### Exact audit and data-rights inventory
 

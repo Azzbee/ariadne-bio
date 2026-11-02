@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "retrieved_at": "2026-11-02",
+  "verification": "Official npm tarball SHA-512 integrity and SHA-1 shasum verified before extracting allowlisted files. Per-file transformations are explicitly recorded; all other package bytes are unmodified.",
+  "packages": [
+    {
+      "name": "swagger-ui-dist",
+      "version": "5.34.1",
+      "license": "Apache-2.0",
+      "metadata_url": "https://registry.npmjs.org/swagger-ui-dist/5.34.1",
+      "tarball_url": "https://registry.npmjs.org/swagger-ui-dist/-/swagger-ui-dist-5.34.1.tgz",
+      "integrity": "sha512-VSr8fXfI93obYaQicLJbLUKGRxDojj/SfRJDDLCioGTUBj4BK/Nj4eE9jCeCAnJxVLi7iS+08PbiZLyrQKBkJQ==",
+      "shasum": "90e88ce4bc7488810ac4fd456917b70c12828723",
+      "tarball_sha256": "8e7286de0230e431fc8a5a75490d28117af3d0c306413b6f9e17f7bb55045fb6"
+    },
+    {
+      "name": "redoc",
+      "version": "2.5.4",
+      "license": "MIT",
+      "metadata_url": "https://registry.npmjs.org/redoc/2.5.4",
+      "tarball_url": "https://registry.npmjs.org/redoc/-/redoc-2.5.4.tgz",
+      "integrity": "sha512-M6jWhG1qoBnH6TFmzJnstyCZ87HmOY/UzDm78mHiYihEdlV/YcS9ogOo1NlElnJMeLsyxHFe2yFc4sNjHTrABQ==",
+      "shasum": "c2b77b368800f56f69d43697d0fc45738fd8f466",
+      "tarball_sha256": "44922df4d0eb45c1b066c09ec251e6bd9bd7ded16bc69e87613337b9d911a56e",
+      "compatibility": "Highest stable 2.x version from official registry on 2026-11-02; classic-script distribution required by FastAPI get_redoc_html."
+    }
+  ],
+  "files": [
+    {
+      "path": "swagger-ui-bundle.js",
+      "package": "swagger-ui-dist",
+      "archive_member": "package/swagger-ui-bundle.js",
+      "bytes": 1685697,
+      "sha256": "36eeb4d5640b9c036b1d0f854499af1cceebbdb260b790a03a18be5e8488fbf5"
+    },
+    {
+      "path": "swagger-ui.css",
+      "package": "swagger-ui-dist",
+      "archive_member": "package/swagger-ui.css",
+      "bytes": 187576,
+      "sha256": "c3cfe8248c4b0b89673600fb829924eafbac6de4bc4b2b06f5f5243483074d0a"
+    },
+    {
+      "path": "swagger-ui-LICENSE",
+      "package": "swagger-ui-dist",
+      "archive_member": "package/LICENSE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "swagger-ui-NOTICE",
+      "package": "swagger-ui-dist",
+      "archive_member": "package/NOTICE",
+      "bytes": 55,
+      "sha256": "0d20d1adef18aee3f40dd258172155521ce702ac445cb5f7b7d60ed32dad2fb2"
+    },
+    {
+      "path": "swagger-ui-bundle.js.LICENSE.txt",
+      "package": "swagger-ui-dist",
+      "archive_member": "package/swagger-ui-bundle.js.LICENSE.txt",
+      "bytes": 4606,
+      "sha256": "37eb6e7e59aed57b2c1acf076574b818ea07b74265717e0bd67b59e0baf9abbb"
+    },
+    {
+      "path": "mark.svg",
+      "package": "ARIADNE",
+      "source": "frontend/assets/mark.svg",
+      "license": "MIT",
+      "bytes": 521,
+      "sha256": "15bf3b04452ce2e42842355d209bdef9bf4d2ce7513dce9467ff8fe107c8a4f5"
+    },
+    {
+      "path": "redoc.standalone.js",
+      "package": "redoc",
+      "archive_member": "package/bundles/redoc.standalone.js",
+      "bytes": 1103460,
+      "sha256": "51f018ccd0dabd9765829565cba349758b0f0b583da7b92a2f5b208e93294a09",
+      "upstream_original_sha256": "dcaf76612bc4a3fbcc923a8966dee2f6146a5f32e5ce1b6f02dd60cbbf89500b",
+      "upstream_original_bytes": 1103471,
+      "transformations": [
+        {
+          "kind": "exact-url-localization",
+          "from": "https://cdn.redoc.ly/redoc/logo-mini.svg",
+          "to": "/docs/assets/redocly-logo.svg",
+          "matches": 1,
+          "purpose": "Serve the unchanged upstream Redocly footer branding from the same origin."
+        }
+      ]
+    },
+    {
+      "path": "redoc-LICENSE",
+      "package": "redoc",
+      "archive_member": "package/LICENSE",
+      "bytes": 1091,
+      "sha256": "d3026d549cf68ab7355bcfa85877bf8f845b3334a7efbfdc63936432fb34ff0e"
+    },
+    {
+      "path": "redoc.standalone.js.LICENSE.txt",
+      "package": "redoc",
+      "archive_member": "package/bundles/redoc.standalone.js.LICENSE.txt",
+      "bytes": 2729,
+      "sha256": "eed602ec32e00b2b9df1984fbcc26a687b1b3193ec01961389c4b8439e6edf73"
+    },
+    {
+      "path": "d87bcbdbea8f8f5aa26f.worker.js.LICENSE.txt",
+      "package": "redoc",
+      "archive_member": "package/bundles/d87bcbdbea8f8f5aa26f.worker.js.LICENSE.txt",
+      "bytes": 1161,
+      "sha256": "aa1f7119b828e7ac26dd17359a30fd698a1672fba879215271960bbc88201ac2"
+    },
+    {
+      "path": "redocly-logo.svg",
+      "package": "Redocly branding",
+      "source_url": "https://cdn.redoc.ly/redoc/logo-mini.svg",
+      "retrieved_at": "2026-11-02",
+      "preservation": "Unmodified upstream footer logo; Redocly branding retained.",
+      "bytes": 539,
+      "sha256": "1dab4315f8de2177b2b2726b29e84a26314c69cd27d692228947c0058793d5a7"
+    }
+  ]
+}

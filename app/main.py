@@ -5,6 +5,11 @@ from pathlib import Path
 from typing import Annotated, Literal
 
 from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.openapi.docs import (
+    get_redoc_html,
+    get_swagger_ui_html,
+    get_swagger_ui_oauth2_redirect_html,
+)
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from neo4j.exceptions import Neo4jError, ServiceUnavailable
@@ -52,7 +57,44 @@ def create_app(settings=None, service=None, agent=None) -> FastAPI:
         "Scores are not clinical efficacy probabilities.",
         version=__version__,
         lifespan=lifespan,
+        docs_url=None,
+        redoc_url=None,
     )
+
+    application.mount(
+        "/docs/assets",
+        StaticFiles(directory=Path(__file__).resolve().parent / "static" / "docs"),
+        name="docs-assets",
+    )
+
+    @application.get("/docs", include_in_schema=False)
+    async def swagger_documentation():
+        """Serve the interactive reference without third-party runtime requests."""
+        return get_swagger_ui_html(
+            openapi_url=application.openapi_url,
+            title=application.title + " — API reference",
+            swagger_js_url="/docs/assets/swagger-ui-bundle.js",
+            swagger_css_url="/docs/assets/swagger-ui.css",
+            swagger_favicon_url="/docs/assets/mark.svg",
+            oauth2_redirect_url=application.swagger_ui_oauth2_redirect_url,
+            swagger_ui_parameters={"validatorUrl": None},
+        )
+
+    @application.get("/docs/oauth2-redirect", include_in_schema=False)
+    async def swagger_oauth_redirect():
+        """Preserve Swagger's same-origin OAuth redirect document."""
+        return get_swagger_ui_oauth2_redirect_html()
+
+    @application.get("/redoc", include_in_schema=False)
+    async def redoc_documentation():
+        """Serve the alternative reference with a local bundle and system fonts."""
+        return get_redoc_html(
+            openapi_url=application.openapi_url,
+            title=application.title + " — ReDoc",
+            redoc_js_url="/docs/assets/redoc.standalone.js",
+            redoc_favicon_url="/docs/assets/mark.svg",
+            with_google_fonts=False,
+        )
 
     @application.middleware("http")
     async def security_headers(request: Request, call_next):
@@ -96,7 +138,7 @@ def create_app(settings=None, service=None, agent=None) -> FastAPI:
             "graph_backend": config.graph_backend,
             "dataset_ready": bool(active.engine.model),
             "agent_mode": (
-                "llm"
+                config.agent_mode
                 if config.llm_base_url and config.agent_mode != "deterministic"
                 else "deterministic"
             ),

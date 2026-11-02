@@ -7,12 +7,17 @@ import math
 from pathlib import Path
 import time
 from urllib.parse import quote
+import urllib.error
 import urllib.request
 
 
-def request(base_url: str, path: str, payload: dict | None = None) -> dict:
+def request(base_url: str, path: str, payload: dict | bytes | None = None) -> dict:
     """Request JSON and propagate connection, status and decoding failures."""
-    data = json.dumps(payload).encode() if payload is not None else None
+    data = (
+        payload
+        if isinstance(payload, bytes)
+        else (json.dumps(payload).encode() if payload is not None else None)
+    )
     req = urllib.request.Request(
         base_url.rstrip("/") + path,
         data=data,
@@ -20,6 +25,79 @@ def request(base_url: str, path: str, payload: dict | None = None) -> dict:
     )
     with urllib.request.urlopen(req, timeout=180) as response:
         return json.load(response)
+
+
+def _expect_rejection(base_url, path, payload, status, message=None):
+    """Require the intended boundary to reject a request, not a downstream accident."""
+    try:
+        request(base_url, path, payload)
+    except urllib.error.HTTPError as error:
+        with error:
+            assert error.code == status, {"path": path, "expected": status, "actual": error.code}
+            if message is not None:
+                assert message in error.read().decode("utf-8"), path
+        return status
+    raise AssertionError(f"{path} accepted a request that must fail with HTTP {status}")
+
+
+def verify_certificate_transport(base_url: str, certificates: dict) -> dict:
+    """Replay real certificates through Nginx above the former 32 KiB wire limit."""
+    checked = []
+    for path, certificate in certificates.items():
+        data = json.dumps({"certificate": certificate}, indent=2, ensure_ascii=False).encode()
+        # Small certificates use legal JSON trailing whitespace to exercise the same boundary.
+        data += b"\n" * max(0, 32_769 - len(data))
+        assert 32_768 < len(data) < 1_048_576
+        verification = request(base_url, path, data)
+        assert verification["valid"] is True, {"path": path, "verification": verification}
+        content_rejection = _expect_rejection(
+            base_url,
+            path,
+            {"certificate": {"oversized": "x" * 262_144}},
+            422,
+            "256 KiB verification limit",
+        )
+        transport_rejection = _expect_rejection(base_url, path, b"{}" + b" " * 1_048_576, 413)
+        checked.append(
+            {
+                "path": path,
+                "valid_request_bytes": len(data),
+                "certificate_sha256": certificate["certificate_sha256"],
+                "valid": verification["valid"],
+                "oversized_certificate_status": content_rejection,
+                "oversized_transport_status": transport_rejection,
+            }
+        )
+    ordinary = json.dumps({"question": "MATCH (n) DETACH DELETE n"}).encode() + b" " * 32_768
+    ordinary_rejection = _expect_rejection(base_url, "/api/agent", ordinary, 413)
+    return {
+        "status": "passed",
+        "verification_http_limit_bytes": 1_048_576,
+        "parsed_certificate_limit_bytes": 262_144,
+        "ordinary_http_limit_bytes": 32_768,
+        "ordinary_oversized_request_status": ordinary_rejection,
+        "requests": checked,
+    }
+
+
+def verify_core(base_url: str) -> dict:
+    """Prove the default core stack uses Neo4j and deterministic tools without an LLM."""
+    health = request(base_url, "/api/health")
+    assert health["dataset_ready"] and health["graph_backend"] == "neo4j", health
+    assert health["agent_mode"] == "deterministic", health
+    investigation = request(
+        base_url,
+        "/api/agent",
+        {
+            "question": "Which compounds have evidence for asthma?",
+            "disease_id": "Disease::DOID:2841",
+        },
+    )
+    assert investigation["status"] == "complete", investigation
+    assert investigation["mode"] == "deterministic", investigation
+    assert investigation["citations"], investigation
+    assert investigation["evidence"]["execution_backend"] == "neo4j", investigation
+    return {"status": "passed", "health": health, "investigation": investigation}
 
 
 def verify_frontend_headers(base_url: str) -> dict:
@@ -315,6 +393,14 @@ def run(base_url: str) -> dict:
     audit = verify_binding_audit(base_url, disease["id"], compound["id"])
     provenance_audit = verify_provenance_audit(base_url, disease["id"], compound["id"])
     mixed_audit = verify_mixed_audit(base_url, disease["id"], compound["id"])
+    certificate_transport = verify_certificate_transport(
+        base_url,
+        {
+            "/api/audit/verify": audit["certificate"],
+            "/api/provenance/audit/verify": provenance_audit["certificate"],
+            "/api/mixed/audit/verify": mixed_audit["certificate"],
+        },
+    )
     rejected = request(
         base_url,
         "/api/agent",
@@ -337,6 +423,7 @@ def run(base_url: str) -> dict:
         "binding_audit": audit,
         "provenance_audit": provenance_audit,
         "mixed_audit": mixed_audit,
+        "certificate_transport": certificate_transport,
         "disease": disease,
         "compound": {"id": compound["id"], "name": compound["name"]},
         "displayed_paths": len(evidence["paths"]),
@@ -350,8 +437,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default="http://localhost:8080")
     parser.add_argument("--output", default="reports/http_smoke.json")
+    parser.add_argument(
+        "--core-only", action="store_true", help="Check default deterministic Neo4j startup"
+    )
     arguments = parser.parse_args()
-    report = run(arguments.base_url)
+    report = verify_core(arguments.base_url) if arguments.core_only else run(arguments.base_url)
     path = Path(arguments.output)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

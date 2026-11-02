@@ -34,6 +34,7 @@ reports/v1.4.0/scaling/inputs/
 .ipynb_checkpoints/
 demo.executed.ipynb
 reports/coverage/
+reports/browser/
 reports/junit.xml
 reports/lint.txt
 reports/container-logs.txt
