@@ -47,7 +47,7 @@ docker-stop: ## Stop containers; retain downloaded graph and database volumes
 docker-logs: ## Follow application and database startup logs
 	$(COMPOSE) logs --follow api neo4j frontend
 
-test: ## Run unit/API/frontend tests; INTEGRATION=1 also requires live Neo4j/GDS tests
+test: snapshot ## Prepare recorded cases, then run unit/API/frontend tests; INTEGRATION=1 adds Neo4j/GDS
 	$(PYTHON) -m pytest -m "not integration and not llm" --cov --cov-report=term-missing --cov-report=xml --junitxml=reports/junit.xml
 	node --test frontend/tests/*.test.js
 ifeq ($(INTEGRATION),1)
@@ -78,7 +78,7 @@ notebook-refit: ## Refit, refresh both notebook benchmarks, then execute (replac
 	$(MAKE) benchmark-audits benchmark-provenance
 	$(MAKE) notebook
 
-snapshot: ## Export the frozen research edition for browser-only hosting
+snapshot: prepare-data ## Export recorded browser cases with the saved model, without refitting
 	$(PYTHON) -m scripts.export_snapshot
 
 verify-scores: ## Compare every score with v1.0.0; requires that commit in local Git history
