@@ -12,7 +12,7 @@ import {
   loadCandidateInvestigation, rankMovement, signedNumber
 } from './investigation.js';
 import {
-  FAMILY_LABELS, compactNumber, escapeHTML as esc, evidenceSelection, exclusionKey, metricRows,
+  FAMILY_LABELS, agentPolicyLabel, compactNumber, escapeHTML as esc, evidenceSelection, exclusionKey, metricRows,
   metricValue, number, objectText, pct, safeURL, score, selectDisease, sourceEntries, titleCase
 } from './utils.js';
 
@@ -119,7 +119,7 @@ function setView(view, updateURL = true) {
     section.hidden = !active;
     section.classList.toggle('active', active);
   });
-  document.querySelectorAll('[data-view]').forEach(button => {
+  document.querySelectorAll('button[data-view], a[data-view]').forEach(button => {
     const active = button.dataset.view === view;
     button.classList.toggle('active', active);
     if (active) button.setAttribute('aria-current', 'page');
@@ -224,8 +224,7 @@ function renderOverview() {
     $('agent-mode').textContent = 'DETERMINISTIC GUIDE · PUBLISHED RESULTS';
   } else {
     $('edition-notice').hidden = true;
-    const mode = state.health.agent_mode || 'deterministic';
-    $('agent-mode').textContent = mode === 'llm' ? 'LANGGRAPH · LLM + READ-ONLY TOOLS' : 'LANGGRAPH · DETERMINISTIC TOOL WORKFLOW';
+    $('agent-mode').textContent = agentPolicyLabel(state.health.agent_mode);
   }
   const repository = safeURL(config.repository);
   if (repository) document.querySelectorAll('.repo-link').forEach(link => { link.href = repository; });
@@ -698,7 +697,7 @@ async function shareCase() {
   }
 }
 
-document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', event => {
+document.querySelectorAll('button[data-view], a[data-view]').forEach(button => button.addEventListener('click', event => {
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
   event.preventDefault();
   setView(button.dataset.view);

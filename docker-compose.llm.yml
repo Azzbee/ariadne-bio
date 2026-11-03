@@ -1,0 +1,6 @@
+# Applied by make docker-run after the local model identity has been verified.
+# Base Compose remains usable without a provider; explicit external URLs are honored.
+services:
+  api:
+    environment:
+      ARIADNE_LLM_BASE_URL: ${ARIADNE_LLM_BASE_URL:-http://ollama:11434/v1}

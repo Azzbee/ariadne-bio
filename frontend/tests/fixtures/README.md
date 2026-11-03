@@ -60,3 +60,27 @@ Mock verification responses inside unit tests test transport and asynchronous
 state handling. They are explicitly unit fixtures and are not publication
 evidence. Actual exported snapshots and release verification carry independently
 executed records.
+
+## Provenance transport and state tests
+
+`provenance-marimastat.json` is an unchanged byte-for-byte copy of
+`reports/v1.3.0/provenance-audit-example-source.json` from sealed source commit
+`8077a8944def2ef7b432bd9c3539878ec24769da`. It covers Marimastat / rheumatoid
+arthritis at source-group budget two and top-k ten. It shares the exact
+graph/model/scorer/group-map identity of the historical budget-one
+`landing-v1.3-provenance.json` above.
+
+- Fixture byte SHA-256: `84a5bc3d4eefe84b9844ee7dc9fbe5816739aca87cc1c1b5f74a1c1311edb2c4`.
+- Certificate SHA-256: `7b6bec88464c25177254cd511a4df0d8c0527f77f6dcd73c1bf456bbf087dbb7`.
+
+`provenance.test.js` uses these immutable certificates in an explicitly labeled
+unit snapshot to test validation, request scope, session races and dossier
+rendering even in a fresh checkout. Its mocked verification records say that
+no verifier was executed; they do not replace scientific evidence. Fresh model
+fits and regenerated reports cannot silently change these unit fixtures.
+
+The separate complete-export checks in `provenance.test.js`, `integrity.test.js`
+and `snapshot.test.js` still read the generated `frontend/data` publication.
+The first two skip only when its manifest is absent. Invalid existing JSON,
+missing case files, checksum mismatches and invalid certificate structure remain
+test failures. CI exports the full snapshot before running those checks.

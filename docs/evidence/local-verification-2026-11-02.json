@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "status": "local_checks_passed_publication_pending",
+  "created_at_utc": "2026-11-02T08:29:10.247351+00:00",
+  "source_commit": "a35836be9d837f6741f886036070959469575616",
+  "source_branch": "fix/submission-readiness",
+  "application_version": "1.4.1",
+  "python": {
+    "passed": 744,
+    "failed": 0,
+    "skipped": 0,
+    "deselected_live_tests": 13
+  },
+  "frontend": {
+    "passed": 170,
+    "failed": 0,
+    "skipped": 0
+  },
+  "browser": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "engine": "Chromium 156.0.8078.80",
+    "api_backend": "memory",
+    "agent_mode": "deterministic"
+  },
+  "coverage": {
+    "version": "7.17.0",
+    "timestamp": "1793607236354",
+    "lines-valid": "4419",
+    "lines-covered": "4149",
+    "line-rate": "0.9389",
+    "branches-valid": "1292",
+    "branches-covered": "1167",
+    "branch-rate": "0.9033",
+    "complexity": "0",
+    "combined_percent": 93.08
+  },
+  "pylint": 9.9,
+  "black": "passed",
+  "invalid_provider_outputs": {
+    "passed": 7,
+    "included_in_python_total": true,
+    "scope": "Controlled provider-boundary fault injection; no live inference claimed"
+  },
+  "final_docs_assets": {
+    "passed": 4,
+    "included_in_python_total": true,
+    "reason": "Targeted rerun after exact single-URL localization of the official footer SVG"
+  },
+  "notebook": {
+    "executed_cells": 14,
+    "errors": 0,
+    "retained_artifacts_identical_to_baseline": 70
+  },
+  "http_smoke": {
+    "passed": true,
+    "server": "Nginx 1.28.0",
+    "graph_backend": "memory",
+    "agent_mode": "deterministic",
+    "docker": false,
+    "certificate_methods": 3
+  },
+  "new_full_stack_execution": {
+    "status": "not_run",
+    "reason": "No Docker daemon in this workspace; connected GitHub write denied403. Previous genuine Neo4j/GDS/LLM evidence remains on baseline8077a8944def2ef7b432bd9c3539878ec24769da."
+  },
+  "publication": {
+    "github": "not_published",
+    "moodle": "not_submitted",
+    "grade": "not_self_awarded"
+  },
+  "upstream_license_whitespace": "Preserved verbatim; authored diff passes git diff --check excluding the two unchanged upstream license-text payloads."
+}

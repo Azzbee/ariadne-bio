@@ -5,6 +5,12 @@ http://localhost:8080/docs through the standard Compose reverse proxy. Namespace
 qualified identifiers refer to exact entities, not display names. Evidence-family
 exclusions are drawn only from `BINDS`, `ASSOCIATES`, `INTERACTS` and `PARTICIPATES`.
 
+Both `/docs` (Swagger UI) and `/redoc` load pinned local scripts, styles and the
+ARIADNE favicon from `/docs/assets`; they need no public CDN or external fonts.
+`/openapi.json` remains the application's schema. Package versions, licenses and
+verified file checksums are recorded in the
+[documentation asset inventory](../app/static/docs/README.md).
+
 ## Main routes
 
 | Route | Purpose |
@@ -302,8 +308,11 @@ Without an explicit name, the supplied selection provides the focus.
 
 `candidates` remains the correctly ordered top-K ranking for context; it is not
 reordered to make the focused compound look better. The answer includes bounded
-path citations and the actual LangGraph tool trace. `mode=llm` requires a
-successful real planner invocation; `mode=deterministic` discloses fallback or
+path citations and the actual LangGraph tool trace. For completed investigations,
+`mode=llm` requires a successful real planner invocation. Rejected requests and
+provider errors may retain `mode=llm` to identify the attempted workflow; inspect
+`status` and `trace` before treating a response as successful inference.
+`mode=deterministic` discloses fallback or
 explicit deterministic operation. The provider proposes a validated plan; the
 brief is composed from returned tool records. It does not supply model scores or
 feature contributions.

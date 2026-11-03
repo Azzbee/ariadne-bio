@@ -8,6 +8,13 @@ export const FAMILY_LABELS = Object.freeze({
   PARTICIPATES: 'Shared pathways'
 });
 
+/** Health describes a policy; only a completed agent request proves model use. */
+export function agentPolicyLabel(mode) {
+  if (mode === 'auto') return 'LANGGRAPH · LLM WHEN AVAILABLE · DETERMINISTIC FALLBACK';
+  if (mode === 'llm') return 'LANGGRAPH · LLM REQUIRED · READ-ONLY TOOLS';
+  return 'LANGGRAPH · DETERMINISTIC TOOL WORKFLOW';
+}
+
 export function exclusionKey(values = []) {
   const input = typeof values === 'string' ? values.split(',') : values;
   return [...new Set(input)].filter(value => FAMILIES.includes(value)).sort().join(',');

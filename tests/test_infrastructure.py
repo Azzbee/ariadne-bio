@@ -77,6 +77,42 @@ def test_help_and_entrypoint_are_valid_without_services():
     subprocess.run(["sh", "-n", "infra/entrypoint.sh"], cwd=ROOT, check=True)
 
 
+def test_explicit_integration_cannot_pass_by_skipping_unconfigured_neo4j(monkeypatch):
+    """The Make/CI integration request fails instead of reporting an all-skipped success."""
+    from tests import test_neo4j_integration as integration
+
+    monkeypatch.setattr(integration, "load_dotenv", lambda: None)
+    monkeypatch.setenv("NEO4J_PASSWORD", "")
+    monkeypatch.setenv("ARIADNE_REQUIRE_NEO4J", "1")
+    with pytest.raises(pytest.fail.Exception, match="explicitly requested integration tests"):
+        next(integration.real_graph.__wrapped__())
+
+
+@pytest.mark.parametrize("route", ["/api/audit", "/api/provenance/audit", "/api/mixed/audit"])
+def test_verification_accepts_large_valid_json_but_preserves_the_certificate_limit(tmp_path, route):
+    """Legal JSON whitespace cannot invalidate a certificate; excess content still fails."""
+    service = EvidenceService(Settings(), engine=create_fixture_engine(tmp_path))
+    with TestClient(create_app(Settings(), service=service)) as client:
+        created = client.post(
+            route, json={"disease_id": "Disease::D1", "compound_id": "Compound::C2"}
+        )
+        assert created.status_code == 200, created.text
+        certificate = created.json()
+        encoded = json.dumps({"certificate": certificate}, indent=2).encode()
+        encoded += b"\n" * max(0, 32_769 - len(encoded))
+        assert len(encoded) > 32_768
+        verified = client.post(
+            route + "/verify", content=encoded, headers={"Content-Type": "application/json"}
+        )
+        assert verified.status_code == 200, verified.text
+        assert verified.json()["valid"] is True
+        rejected = client.post(
+            route + "/verify", json={"certificate": {"oversized": "x" * 262_144}}
+        )
+        assert rejected.status_code == 422
+        assert "256 KiB verification limit" in rejected.text
+
+
 class ModelInventory:
     """Controlled Ollama protocol boundary with observable pulls."""
 
@@ -211,6 +247,9 @@ def test_quality_evidence_removes_only_outputs_that_this_job_rebuilds(tmp_path):
         target = tmp_path / name
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text("stale success")
+    browser_download = tmp_path / "reports/browser/artifacts/previous-run/certificate.json"
+    browser_download.parent.mkdir(parents=True)
+    browser_download.write_text("stale browser success")
     protected = [
         "data/processed/graph.json",
         "data/raw/input.bz2",
@@ -231,6 +270,7 @@ def test_quality_evidence_removes_only_outputs_that_this_job_rebuilds(tmp_path):
         for name in evidence.QUALITY_OUTPUTS
         if name != "reports/ci-quality.json"
     )
+    assert not (tmp_path / "reports/browser").exists()
     assert all(
         (tmp_path / name).read_text() == "preserved source or independent evidence"
         for name in protected

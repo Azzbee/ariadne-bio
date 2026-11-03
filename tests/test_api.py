@@ -41,6 +41,26 @@ def test_health_and_openapi_are_real_and_report_execution_mode(client):
     assert client.get("/docs").status_code == 200
 
 
+@pytest.mark.parametrize(
+    "mode,url,expected",
+    [
+        ("auto", "", "deterministic"),
+        ("auto", "http://unavailable-provider.invalid/v1", "auto"),
+        ("llm", "http://unavailable-provider.invalid/v1", "llm"),
+        ("deterministic", "http://unavailable-provider.invalid/v1", "deterministic"),
+    ],
+)
+def test_health_reports_execution_policy_without_claiming_provider_availability(
+    service, mode, url, expected
+):
+    """An auto policy is not proof that a configured provider has run successfully."""
+    settings = Settings(agent_mode=mode, llm_base_url=url)
+    with TestClient(create_app(settings, service=service)) as active:
+        response = active.get("/api/health")
+        assert response.status_code == 200
+        assert response.json()["agent_mode"] == expected
+
+
 def test_disease_lookup_paginates_and_handles_no_matches(client):
     first = client.get("/api/diseases", params={"limit": 1}).json()
     second = client.get("/api/diseases", params={"limit": 1, "offset": 1}).json()

@@ -72,7 +72,7 @@ export class AriadneAPI {
       this.mode = 'snapshot';
       this.healthData = {
         status: 'ok', graph_backend: 'published research snapshot', dataset_ready: true,
-        agent_mode: 'deterministic', version: '1.4.0', ...(this.manifest.health || {})
+        agent_mode: 'deterministic', version: '1.4.1', ...(this.manifest.health || {})
       };
       return this.healthData;
     } catch {

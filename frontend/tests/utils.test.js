@@ -3,8 +3,15 @@ import assert from 'node:assert/strict';
 import {
   exclusionKey, escapeHTML, safeURL, metricRows, metricValue, makeChallenge,
   isUnsafeQuestion, sourceEntries, selectDisease, diseaseMentions, diseaseReferences, compoundReferences,
-  requestedExclusions, requestsTopCandidate, evidenceSelection, number, score, pct
+  requestedExclusions, requestsTopCandidate, evidenceSelection, number, score, pct, agentPolicyLabel
 } from '../utils.js';
+
+test('agent policy distinguishes optional and required model use from deterministic tools', () => {
+  assert.match(agentPolicyLabel('auto'), /LLM WHEN AVAILABLE.*DETERMINISTIC FALLBACK/);
+  assert.match(agentPolicyLabel('llm'), /LLM REQUIRED/);
+  assert.doesNotMatch(agentPolicyLabel('deterministic'), /LLM/);
+  assert.doesNotMatch(agentPolicyLabel(undefined), /LLM/);
+});
 
 test('exclusions are allowlisted, deduplicated, and canonically sorted', () => {
   assert.equal(exclusionKey(['PARTICIPATES', 'INTERACTS', 'INTERACTS', 'DELETE']), 'INTERACTS,PARTICIPATES');

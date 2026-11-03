@@ -193,7 +193,9 @@ class HealthResponse(BaseModel):
     status: str
     graph_backend: str
     dataset_ready: bool
-    agent_mode: str
+    agent_mode: Literal["auto", "llm", "deterministic"] = Field(
+        description="Configured execution policy; each agent response reports its actual mode."
+    )
     version: str
 
 

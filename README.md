@@ -4,14 +4,33 @@
 
 **Follow the evidence. Find what holds.**
 
-[![CI](https://github.com/Azzbee/ariadne-bio/actions/workflows/ci.yml/badge.svg)](https://github.com/Azzbee/ariadne-bio/actions/workflows/ci.yml)
+**Build / test:** [![Actual CI workflow status](https://github.com/Azzbee/ariadne-bio/actions/workflows/ci.yml/badge.svg)](https://github.com/Azzbee/ariadne-bio/actions/workflows/ci.yml)
+[![Local combined coverage: 93.08% on 2 November 2026](https://img.shields.io/badge/local_coverage-93.08%25-153f39.svg)](docs/submission.md#local-verification-on-2-november-2026)
 [![License: MIT](https://img.shields.io/badge/code-MIT-153f39.svg)](LICENSE)
+
+Coverage is the [dated local line/branch measurement](docs/submission.md#local-verification-on-2-november-2026)
+for tested commit `a35836b` on **2 November 2026**. The build/test badge follows
+the remote workflow's actual status; its run identifies the commit it verified.
 
 ARIADNE helps researchers explore medicines that might be worth investigating
 for another disease, inspect the biological evidence behind each suggestion,
 and test which suggestions survive changes to that evidence. Its workbench
 combines a knowledge graph, a fixed ranking model, a bounded research agent and
 exact, replayable evidence audits.
+
+**For course assessment:** start with the [submission guide](docs/submission.md)
+for version status, Docker startup, verification evidence and
+remaining hand-in requirements. The [rubric matrix](docs/rubric.md),
+[9½-minute demonstration](docs/demo_script.md) and
+[defense guide](docs/defense_guide.md) provide a direct route through the work.
+
+**Version 1.4.1 hardens the submission path.** Native controls, forms and
+downloads work throughout the application; large valid certificates survive
+the web proxy; both API references are self-hosted. Core-only startup reports
+its deterministic mode honestly, and reference notebook reproduction preserves
+the saved scientific artifacts. Six real Chromium regression scenarios now
+cover the demonstrated interactions and API references. The submission guide
+separates current local verification from the earlier published full-stack run.
 
 **Version 1.4 adds an evidence-atlas landing page and a joint evidence audit.**
 The new threaded logo, animated conceptual map and interactive recorded example
@@ -63,8 +82,11 @@ packages all three audit methods, conditional protection plans, complete
 certificates, printable group-review dossiers, proofs, the executed notebook,
 measured benchmarks and checksums.
 The separate verification archive retains the actual run identities and replay
-evidence. Any accompanying narrated video and captions are explicitly labeled as
-the historical v1.1 walkthrough; they do not demonstrate the newer audit features.
+evidence. Videos attached to releases through v1.4.0 are explicitly labeled as
+the historical v1.1 walkthrough. The v1.4.1 submission bundle adds a captioned
+8-minute-23-second walkthrough of the current interface, code and joint audit;
+its [identity and evidence scope](docs/submission.md#verification-and-version-status)
+distinguish current execution from recorded full-stack results.
 
 ## Run the complete application
 
@@ -93,8 +115,12 @@ existing configuration. The Neo4j username is `neo4j`.
 
 `make docker-run` starts Neo4j 5.26.0 with GDS 2.13.4, FastAPI, Nginx, and a local
 Ollama model. `make docker-core` starts the three core services with explicitly
-reported deterministic agent behavior unless an external provider is configured.
+reported deterministic agent behavior unless a provider URL is configured.
 For a provider, edit the `ARIADNE_LLM_*` settings in `.env`.
+
+Existing `.env` configuration is preserved. For core-only use after upgrading,
+clear an old `ARIADNE_LLM_BASE_URL=http://ollama:11434/v1` value; `make docker-run`
+supplies the local Ollama connection through its full-stack Compose overlay.
 
 The browser-only research edition uses exported, frozen data and reports its
 snapshot status. The complete Compose application executes live Neo4j queries
@@ -227,15 +253,33 @@ and the [model card](docs/model_card.md).
 
 ## Reproduce and verify
 
-Native development requires Python 3.11+ (3.12 is the tested reference), Node.js
-18+ (CI uses 22), Make and Git. Node runs the dependency-free frontend tests;
-`make install` installs the Python environment. Generate the snapshot before
-running tests to include all seven recorded cases and all sixteen exclusion sets.
+Native development requires Python 3.11+ (3.12 is the tested reference), Node.js,
+Make and Git. The dependency-free frontend module tests support Node 18+; the
+complete Chromium browser gate requires Node 20+ (CI uses 22). `make install`
+installs the Python environment. To execute the notebook against
+the retained model and matching research reports, prepare only the graph:
+
+```bash
+make install
+make prepare-data     # Download/checksum/prepare; preserve the retained fitted model
+make notebook         # Check artifact identities, then execute all cells
+```
+
+`make data` fits a new model. A fresh fit can have different parameter bytes even
+with the same seed; it must not be paired with historical audit summaries.
+`make notebook-refit` fits and refreshes the reports required by the notebook.
+Use a disposable checkout for that route so the sealed reference artifacts stay
+available. See the [reproduction guide](docs/reproducibility.md).
+
+For a complete fresh experiment, the following sequence also regenerates the
+research reports and browser snapshot. `make test` prepares the checksummed graph
+and exports all seven recorded cases and sixteen exclusion sets automatically,
+using the saved model without refitting. Preparation or export failures stop the
+test command; the same prerequisites apply with `INTEGRATION=1`.
 
 ```bash
 make install          # Python 3.11+; the verified reference runtime is Python 3.12
 make data             # Download, checksum, prepare, train and evaluate
-make snapshot         # Export every recorded scenario for frontend verification
 make audit-licenses   # Inventory actual source-license text and missing metadata
 make benchmark-audits # All diseases, top ten, global binding budgets zero to two
 make benchmark-provenance # All diseases, correlated source groups and protection sets
@@ -246,10 +290,19 @@ make test             # Unit/API tests, branch coverage gate and frontend tests
 make lint             # Pylint >=9.5 and Black formatting
 make notebook         # Execute every notebook cell with the active interpreter
 make verify-scores    # Full legacy score parity; requires the v1.0 Git history
+make docker-run       # Start the complete live stack before the HTTP/database/provider checks
 make smoke            # Live HTTP workflow, certificate replay and tamper rejection
-make test-integration # Genuine Neo4j/Cypher/GDS tests; see deployment instructions
+make test INTEGRATION=1 # Include genuine Neo4j/Cypher/GDS tests; needs the live database
 make test-llm         # Actual provider investigation, challenge routing and rejection
 ```
+
+The separate `make test-browser` gate exercises real Chromium controls,
+certificate downloads and both self-hosted API reference pages. It requires the
+prepared graph, exported snapshot and locked Playwright/browser installation;
+follow the [browser verification setup](docs/deployment.md#real-browser-verification).
+The API reference checks block external network requests and use an isolated
+native test API; live Neo4j and LLM verification remains covered by the commands
+above.
 
 Version 1.1 historical verification and interface changes are recorded in the
 [1.1 verification notes](docs/releases/v1.1.0.md). The v1.2
@@ -289,18 +342,51 @@ verification. Repeat that verification for each release commit.
 
 ## Architecture
 
-```mermaid
-flowchart TD
-    U["Research interface · Nginx :8080"] --> A["FastAPI · :8000"]
-    A --> N["Neo4j + GDS · :7687"]
-    A --> M["Frozen graph features + model"]
-    A --> L["LangGraph investigation"]
-    L --> N
-    L --> O["Local or configured LLM"]
-    H["Checksummed Hetionet JSON"] --> E["Idempotent import + evaluation"]
-    E --> N
-    E --> M
-```
+### Graph schema
+
+![Graph schema: Compound binds Gene, Disease associates with Gene, genes interact and participate in Pathway; node identities and provenance are retained, while treatment labels stay outside predictive graph paths.](docs/diagrams/graph-schema.svg)
+
+[Open full-size schema](docs/diagrams/graph-schema.svg) ·
+[Editable diagram source](docs/diagrams/render.py)
+
+Gene A and Gene B are roles of the same `Gene` label. Each biological node also
+has the `Entity` label and a namespace-qualified ID. Original metadata and
+available provenance are retained. Known treatment links are stored separately
+as evaluation labels. The [schema reference](docs/architecture.md) documents
+properties, constraints, indexes and all three metapaths.
+
+### Modeling and anti-genericity appendix
+
+The comparison baseline was generated by the coding assistant during this
+implementation for the biomedical drug-repurposing brief. Its
+[actual prompt and full schema](docs/anti_genericity.md#baseline-prompt) are
+disclosed; it is a deliberately simple comparison, not an independently
+evaluated competing system.
+
+| Basic generated schema | ARIADNE's implemented choice | Why it matters |
+| --- | --- | --- |
+| Names and descriptions, without a stable identity policy | Namespace-qualified IDs with uniqueness constraints; names remain searchable properties | Names can collide or change; imports and certificate records need stable identities. |
+| Generic `Drug–TARGETS–Gene` and association edges | Hetionet's `Compound`, `Gene`, `Disease`, `Pathway` meanings and four typed evidence families | Each metapath has a defined biological interpretation; binding refers to the encoded protein. |
+| `Drug–TREATS–Disease` in the same proposed graph | Treatment labels kept outside evidence features, projections and displayed paths | Traversing the answer edge would make treatment-link recovery circular. |
+| No explicit provenance or path-count policy | Retained source/record metadata; exact feature counts separate from bounded displayed paths | An explanation can be traced to records without confusing a display limit with total evidence. |
+
+The fitted model stays fixed during evidence challenges, and the LLM cannot
+change scores or benchmark labels. The [full rationale](docs/anti_genericity.md)
+also explains distinct pathway genes, the full candidate universe and the
+limits of the transductive evaluation.
+
+### Services and data flow
+
+![Architecture: browser through Nginx port8080 to FastAPI port8000, read-only Neo4j/GDS tools on Bolt7687 and Browser7474, optional internal Ollama11434, and a checksummed graph/model preparation pipeline with separate treatment labels.](docs/diagrams/architecture.svg)
+
+[Open full-size architecture](docs/diagrams/architecture.svg) ·
+[Regenerate both figures](docs/diagrams/README.md)
+
+Published development ports bind to `127.0.0.1`; Ollama has no host-published
+port. `make docker-run` prepares the local model and enables its API connection.
+`make docker-core` runs the three core services with a deterministic agent unless
+a provider URL is configured. Completed responses report the actual execution
+mode; rejection/error traces explain attempted provider workflows.
 
 Neo4j stores typed, namespace-qualified entities and provenance. Sparse feature
 matrices support reproducible full-candidate ranking. GDS exposes graph proximity
@@ -338,6 +424,7 @@ curl -X POST 'http://localhost:8080/api/agent' \
 
 | Question | Document |
 | --- | --- |
+| Where should the examiner start? | [Submission guide and version status](docs/submission.md) |
 | How is the graph modeled? | [Architecture and schema](docs/architecture.md) |
 | Why these choices instead of a generic generated graph? | [Anti-genericity appendix](docs/anti_genericity.md) |
 | What is the new research claim, and what already exists? | [Contribution and prior art](docs/research_contribution.md) |
@@ -356,8 +443,10 @@ curl -X POST 'http://localhost:8080/api/agent' \
 | How does the interface introduce the research question? | [Brand, interaction and accessibility notes](docs/design.md) |
 | How do I release a tested source revision? | [Release verification](docs/releasing.md) |
 | How do I run, configure and troubleshoot it? | [Deployment](docs/deployment.md) |
+| How do I reproduce the retained notebook or make a fresh fit? | [Reproduction guide](docs/reproducibility.md) |
 | What does each grading criterion map to? | [Rubric evidence matrix](docs/rubric.md) |
-| What should the recorded demonstration show? | [Nine-minute walkthrough](docs/demo_script.md) |
+| What should the recorded demonstration show? | [9½-minute walkthrough](docs/demo_script.md) |
+| What should each teammate understand and defend? | [Defense guide](docs/defense_guide.md) |
 | What was automated and who contributed? | [Authorship and AI assistance](docs/authorship.md) |
 
 The source code is [MIT licensed](LICENSE). Dataset source licenses remain with

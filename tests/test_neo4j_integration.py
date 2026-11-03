@@ -3,6 +3,7 @@
 import json
 from hashlib import sha256
 import math
+import os
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -22,7 +23,10 @@ def real_graph():
     load_dotenv()
     settings = Settings.from_env()
     if not settings.neo4j_password:
-        pytest.skip("Set NEO4J_PASSWORD and run make docker-core before integration tests")
+        message = "Set NEO4J_PASSWORD and run make docker-core before integration tests"
+        if os.getenv("ARIADNE_REQUIRE_NEO4J") == "1":
+            pytest.fail(message + "; explicitly requested integration tests cannot be skipped")
+        pytest.skip(message)
     repository = Neo4jRepository(settings)
     engine = GraphEngine(settings.data_dir)
     repository.verify(engine.manifest["dataset_sha256"], engine.manifest["graph_sha256"])

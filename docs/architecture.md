@@ -2,14 +2,9 @@
 
 ## Biological evidence model
 
-```mermaid
-flowchart LR
-    C["Compound"] -->|BINDS| G1["Gene A"]
-    D["Disease"] -->|ASSOCIATES| G2["Gene B"]
-    G1 ---|INTERACTS| G2
-    G1 -->|PARTICIPATES| P["Pathway"]
-    G2 -->|PARTICIPATES| P
-```
+![Implemented biological graph schema, including qualified identities, retained properties and separate treatment labels.](diagrams/graph-schema.svg)
+
+[Full-size figure](diagrams/graph-schema.svg) · [Editable source](diagrams/render.py)
 
 All biological nodes also carry a shared entity identity. A `Gene` in Hetionet
 represents the corresponding gene/protein concept used by its integrated sources.
@@ -35,6 +30,33 @@ is never based on a human-readable name. Original attributes, source fields and
 available licenses survive preprocessing. A displayed edge ID points to the
 retained source record. Missing publication-level citations remain missing;
 database provenance is not promoted into a claim of a specific clinical study.
+
+### Properties, constraints and indexes
+
+The [preprocessor](../scripts/prepare_data.py) defines the retained records;
+the [Neo4j importer](../app/neo4j_repository.py) creates the following schema.
+Nested upstream metadata is serialized as JSON when stored in Neo4j, so it is
+retained without pretending every source shares a uniform set of properties.
+
+| Record | Properties and role |
+| --- | --- |
+| `Entity:Compound`, `Entity:Gene`, `Entity:Disease`, `Entity:Pathway` | `id` is the namespace-qualified key; `identifier` preserves the source ID; `name` is a display/search field; `url` and original `data` are retained when available. |
+| `BINDS`, `ASSOCIATES`, `INTERACTS`, `PARTICIPATES` | Stable `id`, relation `type`, original `direction`, normalized `sources`, available `license` and original `data`; typed start/end nodes carry the prepared source/target identities. |
+| `Dataset` | One import marker with `id`, source archive `sha256`, prepared `graph_sha256`, `import_status`, `nodes` and `edges`. It records a completed import and is excluded from biological node counts. |
+
+| Database rule | Reason |
+| --- | --- |
+| Unique `id` on `Entity` | One identity across every biological label; prevents cross-label collisions. |
+| Unique `id` on each of `Compound`, `Gene`, `Disease`, `Pathway` | Domain-specific query anchors and idempotent imports. |
+| Unique `id` on `Dataset` | One marker for the pinned dataset generation. |
+| Name indexes on `Disease.name` and `Compound.name` | Declared indexes for domain name lookups; name remains separate from identity. |
+
+Uniqueness constraints also provide their backing indexes. The measured
+[optimization report](../reports/query_optimization.json) compares an indexed
+identity lookup with an equivalent unanchored scan; it does not claim that a
+name index accelerates every possible text-search predicate. Batched ingestion
+uses parameterized `UNWIND` and `MERGE`, then verifies inventory counts before
+marking the import complete.
 
 The 755 known treatment pairs are a separate label table. Neither `TREATS` nor
 `PALLIATES` participates in predictive features, GDS evidence projections or
@@ -65,9 +87,25 @@ visualization and query results without clipping model features.
 | Graph engine | Compute exact typed-path features, apply the saved model and reconstruct selected-pair scores from its signed terms |
 | Binding auditor | Enumerate local binding-deletion envelopes, allocate a global budget across focus and competitors, and return exact bounded ranking certificates |
 | Provenance auditor | Enumerate correlated provider/citation withdrawals, score all compounds jointly, and compute exact conditional protection sets |
+| Joint auditor | Condition on each allowed group withdrawal, then certify one additional surviving binding-record deletion across all compounds; return the complete two-axis frontier |
 | LangGraph | Orchestrate entity resolution, retrieval, comparison and explanation |
 | LLM provider | Parse the research request into a validated, typed investigation plan |
 | Evaluation script | Fix the split, fit preprocessing/model on permitted data and write measured metrics |
+
+## Services, ports and data flow
+
+![Service architecture: Nginx, FastAPI and LangGraph, Neo4j/GDS, the optional provider and the checksummed graph/model pipeline.](diagrams/architecture.svg)
+
+[Full-size figure](diagrams/architecture.svg) · [Editable source](diagrams/render.py)
+
+Nginx proxies `/api` and `/docs`; FastAPI owns validation and orchestration.
+The published development ports bind to `127.0.0.1`. Ollama's port is internal
+to Compose. `make docker-run` also runs a one-shot model bootstrap, verifies
+the model manifest and enables the local provider connection. `make docker-core`
+uses deterministic planning unless a provider URL is configured. A completed
+response's `mode` records the execution that occurred; rejected requests also
+report the attempted workflow and reason in their trace. Configured `auto`
+policy alone is not evidence of a successful LLM request.
 
 ## Data flow and reproducibility
 
@@ -88,7 +126,10 @@ flowchart TD
     Q["Question"] --> V{"Allowed and unambiguous?"}
     V -->|Unsafe| R["Explain rejection"]
     V -->|Ambiguous| C["Request clarification"]
-    V -->|Resolved| T["Read-only graph tools"]
+    V -->|Resolved| P["Typed planner; LLM or deterministic"]
+    P --> G{"Valid allowlisted plan?"}
+    G -->|No| R
+    G -->|Yes| T["Read-only graph tools"]
     T --> E["Structured evidence + optional challenge"]
     E --> B["Cited research brief + tool trace"]
 ```
@@ -96,8 +137,17 @@ flowchart TD
 The LLM cannot alter the database, choose benchmark labels or replace model
 scores. Query identifiers and relationship choices pass explicit validation.
 Relationships are allowlisted, values parameterized, result sizes bounded and
-database execution timed out. An unavailable provider is visible in the response
-mode rather than disguised as a successful model invocation.
+database execution timed out. Status, mode and trace expose provider failures
+and any deterministic fallback instead of claiming a successful LLM invocation.
+
+Input rejection and provider-output validation are distinct boundaries. The
+planner accepts only `investigate` or `challenge`, allowlisted relation
+exclusions and a result limit from one to ten. Extra fields, arbitrary Cypher,
+invalid actions and malformed JSON fail validation. The
+[provider-output fault-injection test](../tests/test_agent.py) supplies seven
+invalid responses and asserts rejection before ranking executes. This is a
+controlled test of bad model output, separate from the
+[live-provider HTTP checks](../tests/test_llm_live.py).
 
 A question can include a disease and a compound independently. A single explicit
 compound name overrides an old UI compound selection; multiple names require
@@ -161,6 +211,32 @@ optimal sets and preserves a bounded preview. This is a conditional assumption
 about allowed withdrawals, not a measured consequence of reviewing evidence.
 The [proof](provenance_audit_proof.md) and [user guide](provenance_audit.md)
 cover overlap semantics, baseline failures, witnesses and numerical limits.
+
+## Joint provenance-and-record audit
+
+The v1.4 joint auditor checks every cell of a two-axis budget rectangle: zero
+or one selected provenance group, and zero or one additional individual BINDS
+record. It conditions on each group withdrawal, then computes exact local
+single-record envelopes on the surviving graph and allocates the remaining
+record budget across the focus and all competitors.
+
+The residual record must survive the group withdrawal; an overlapping record
+is removed once. Group and record budgets count different units. The fitted
+model, downstream relations and numerical contract stay fixed. Supported rank
+and complete loss of support are separate results, and success on each axis
+alone does not establish success at their joint corner. Group-protection
+assumptions are not inputs to this auditor.
+
+Each certificate identifies its selected groups, graph and model, declares the
+complete frontier and retains attaining witnesses. The verifier recomputes the
+envelopes with the same algorithm, then independently replays each group's record
+union plus its surviving residual record. Small-graph tests compare the optimum
+with exhaustive
+complete-world enumeration. See the [joint-audit guide](mixed_audit.md),
+[proof](mixed_audit_proof.md), [executed cohort results](mixed_audit_results.md)
+and [scope-matched scaling experiment](mixed_scaling.md).
+
+## Database identity guard
 
 Neo4j remains the source evidence store throughout these in-memory scenarios.
 Startup and ingestion now bind it to the prepared graph SHA-256 as well as the
